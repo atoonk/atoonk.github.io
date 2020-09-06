@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html amp lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Experimenting with StackPath Edge Computing and Anycast</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <link rel="icon" href="../../favicon.png" type="image/png" />
+    <link rel="canonical" href="../index.html" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    
+    <meta property="og:site_name" content="Andree&#x27;s Musings." />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Experimenting with StackPath Edge Computing and Anycast" />
+    <meta property="og:description" content="I love tinkering with new tech, and since it was a cold and snowy weekend here in Vancouver, I figured I’d explore Edge Containers from Stackpath. Earlier this week I read Stackpath’s blog in which they describe their new service: Introducing containers and virtual machines at the edge" />
+    <meta property="og:url" content="http://dark-shadow-4784.edge.mysocket.io/experimenting-with-stackpath-edge-computing-and-anycast/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1564425583885-822a00f3e1e6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta property="article:published_time" content="2019-02-11T00:00:00.000Z" />
+    <meta property="article:modified_time" content="2020-09-05T19:26:55.000Z" />
+    <meta property="article:tag" content="terraform" />
+    <meta property="article:tag" content="networking" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Experimenting with StackPath Edge Computing and Anycast" />
+    <meta name="twitter:description" content="I love tinkering with new tech, and since it was a cold and snowy weekend here in Vancouver, I figured I’d explore Edge Containers from Stackpath. Earlier this week I read Stackpath’s blog in which they describe their new service: Introducing containers and virtual machines at the edge" />
+    <meta name="twitter:url" content="http://dark-shadow-4784.edge.mysocket.io/experimenting-with-stackpath-edge-computing-and-anycast/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1564425583885-822a00f3e1e6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Andree Toonk" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="terraform, networking" />
+    <meta name="twitter:site" content="@atoonk" />
+    <meta name="twitter:creator" content="@atoonk" />
+    <meta property="og:image:width" content="2000" />
+    <meta property="og:image:height" content="1333" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Andree&#x27;s Musings.",
+        "url": "http://dark-shadow-4784.edge.mysocket.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "http://dark-shadow-4784.edge.mysocket.io/content/images/2020/09/download-5.png",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Andree Toonk",
+        "url": "http://dark-shadow-4784.edge.mysocket.io/author/andree/",
+        "sameAs": [
+            "http://dark-shadow-4784.edge.mysocket.io/about/",
+            "https://twitter.com/atoonk"
+        ]
+    },
+    "headline": "Experimenting with StackPath Edge Computing and Anycast",
+    "url": "http://dark-shadow-4784.edge.mysocket.io/experimenting-with-stackpath-edge-computing-and-anycast/",
+    "datePublished": "2019-02-11T00:00:00.000Z",
+    "dateModified": "2020-09-05T19:26:55.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1564425583885-822a00f3e1e6?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "width": 2000,
+        "height": 1333
+    },
+    "keywords": "terraform, networking",
+    "description": "\n\nI love tinkering with new tech, and since it was a cold and snowy weekend here\nin Vancouver, I figured I’d explore Edge Containers from Stackpath. Earlier this\nweek I read Stackpath’s blog in which they describe their new service: \nIntroducing containers and virtual machines at the edge\n[https://blog.stackpath.com/introducing-containers-and-virtual-machines-at-the-edge]\n\n&gt; Update June 21, 2020: a follow-up article is available here: Building a global\nanycast service in under a minute\n[https://",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://dark-shadow-4784.edge.mysocket.io/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.31" />
+    <link rel="alternate" type="application/rss+xml" title="Andree&#x27;s Musings." href="../../rss/index.html" />
+
+    <link href="https://fonts.googleapis.com/css?family=Domine|Rubik:400,500,700&display=swap" rel="stylesheet">
+
+
+    <style amp-custom>.u-bgColor{background-color:#161D25}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}[hidden],template{display:none}.kg-bookmark-container,body,figcaption,h1,h2,h3,h4,h5,h6{font-family:Rubik,Whitney SSm A,Whitney SSm B,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif}.article-excerpt{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif}.u-flexCenter{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex}.u-block{display:block}.u-relative{position:relative}.u-overflowHidden{overflow:hidden}.u-fontSizeSmaller{font-size:.875rem}.u-flex1{-webkit-box-flex:1;flex:1 1 auto}.u-absolute{position:absolute}.u-textCenter{text-align:center}.u-marginTop30{margin-top:30px}.u-container{margin-left:auto;margin-right:auto;padding-left:16px;padding-right:16px}*,:after,:before{box-sizing:border-box}body{font-size:1rem;font-style:normal;font-weight:400;letter-spacing:0;line-height:1.5em;text-rendering:optimizeLegibility;-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;-ms-text-size-adjust:100%;text-size-adjust:100%;color:#212529}a{color:#00a562;text-decoration:none;word-break:break-word}a:active,a:hover{outline:0}blockquote{border-left:4px solid #212529;font-size:1.125rem;font-style:italic;margin-left:-5px;margin-right:0;padding-bottom:2px;padding-left:20px}figure{margin:0;padding:0}img{-o-object-fit:cover;object-fit:cover;-o-object-position:center;object-position:center}figcaption{color:#6c757d;display:block;font-size:.875rem;font-style:normal;font-weight:400;margin-top:10px;text-align:center;width:100%}h1,h2,h3,h4,h5,h6{color:#111;font-style:normal;font-weight:700;line-height:1.2;margin:25px 0 0;word-break:break-word}h1{font-size:2rem}h2{font-size:1.75rem}h3{font-size:1.5rem}h4{font-size:1.375rem}h5{font-size:1.25rem}h6{font-size:1.125rem}strong{font-weight:700}p{margin:20px 0 0}hr{box-sizing:content-box;height:0;margin:1rem 0;overflow:visible;border:0;border-top:1px solid rgba(0,0,0,.1)}mark{background-color:transparent;background-image:linear-gradient(180deg,#d7fdd3,#d7fdd3);color:rgba(0,0,0,.8)}code,pre{font-family:Menlo,Courier,monospace;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-ms-hyphens:none;hyphens:none}p code{border-radius:2px;padding:1px 6px}p code,pre{background:#2a3644;color:#e5eff5;font-size:.875rem}pre{overflow-x:auto;margin:0;padding:20px;border:none;line-height:1.6em}pre code{padding:0;background:transparent}svg{width:100%;height:100%}svg:not(:root){overflow:hidden}table{border-collapse:collapse;border-spacing:0;display:inline-block;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;font-size:1rem;line-height:1.5;margin:20px 0 0;max-width:100%;overflow-x:auto;vertical-align:top;white-space:nowrap;width:auto;-webkit-overflow-scrolling:touch}table td,table th{padding:6px 13px;border:1px solid #dfe2e5}table tr:nth-child(2n){background-color:#f6f8fa}table th{letter-spacing:.0125rem;text-transform:uppercase;font-weight:500}.header{position:relative;width:100%;height:50px;line-height:1}.logo-link{color:#fff;font-size:1.5rem;font-weight:500}.social-media a{background:#212529;border-radius:4px;color:#fff;display:inline-block;height:36px;margin:0 2px;padding:8px;vertical-align:middle;width:36px}.social-media svg{fill:#fff;stroke:none}.sidebar{width:280px;background:#fff}.sidebar ul{list-style:none;list-style-image:none;margin:18px 0 20px;padding:0}.sidebar ul li a{padding:6px 20px;font-weight:500;font-size:1rem;display:block}.sidebar .social-media{padding:20px;border-top:1px solid #ddd}.close-sidebar{height:50px;font-size:1.5625rem;line-height:3.125rem;text-align:right;padding-right:20px;color:#fff}.hamburgermenu{background-color:transparent;border:none;padding:0;height:48px;position:relative;-webkit-transition:-webkit-transform .4s;transition:-webkit-transform .4s;transition:transform .4s;transition:transform .4s,-webkit-transform .4s;width:48px;margin-right:-15px}.hamburgermenu span{background-color:#fff;display:block;height:2px;left:14px;margin-top:-1px;position:absolute;top:50%;width:20px}.hamburgermenu span:first-child{-webkit-transform:translateY(-6px);transform:translateY(-6px)}.hamburgermenu span:last-child{-webkit-transform:translateY(6px);transform:translateY(6px)}.main{max-width:500px;margin:0 auto}.article{padding-top:25px}.article-title{margin-top:0}.article-excerpt{margin-bottom:20px;margin-top:15px;color:#6c757d;font-size:1.25rem;line-height:1.4}.article-meta{color:#6c757d;margin:15px 0;font-size:.875rem}.article-body{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif;line-height:1.7em;font-size:1.125rem;padding:20px 1rem}.article-body>*{margin-bottom:28px}.article-body a:not(.kg-bookmark-container){word-break:break-word;text-decoration:underline}.article-body ol,.article-body ul{padding-left:20px}.article-body ol li,.article-body ul li{margin-bottom:5px}.button--tags{border-radius:3px;color:#212529;display:inline-block;font-size:.875rem;font-weight:500;height:37px;line-height:2.1875rem;margin:0 8px 8px 0;padding:0 10px;border:2px solid #212529}.button--tags:before{content:"#"}.share-title{display:block;margin-bottom:8px}amp-social-share.custom-style{background-color:teal;background-image:url(https://raw.githubusercontent.com/google/material-design-icons/master/social/1x_web/ic_share_white_48dp.png);background-repeat:no-repeat;background-position:50%;background-size:contain}amp-social-share.rounded{border-radius:10%;background-size:85%}.related{padding-top:40px;padding-bottom:20px;margin-top:20px;background:#efefef}.related-title{border-bottom:1px solid rgba(0,0,0,.15);padding-bottom:15px;margin-bottom:30px;color:#212529;font-weight:500;font-size:1.25rem}.story-border{border-left:3px solid #cc116e;bottom:0;color:rgba(0,0,0,.2);font-size:2.25rem;font-weight:700;left:0;padding:15px 10px 10px;top:0;-webkit-text-fill-color:transparent;-webkit-text-stroke-width:1.4px;-webkit-text-stroke-color:#888}.story:nth-child(3n) .story-border{border-color:#f59e00}.story:nth-child(3n+2) .story-border{border-color:#26a8ed}.story-link{background-color:#fff;border-bottom:1px solid #e2e0e0;box-shadow:0 1px 7px rgba(0,0,0,.05);min-height:50px;padding:15px 15px 15px 55px}.story-title{color:#212529;line-height:1.2;font-size:1.0625rem;font-weight:500;margin:0}.kg-bookmark-container{display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;flex-direction:column;border:1px solid rgba(0,0,0,.1)}.kg-bookmark-content{padding:20px;-webkit-box-ordinal-group:2;order:1}.kg-bookmark-title{font-weight:500;line-height:1.2;font-size:1.125rem}.kg-bookmark-description{color:#6c757d;line-height:1.4;margin-top:10px;font-size:.875rem}.kg-bookmark-metadata{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;font-size:.875rem;margin-top:10px}.kg-bookmark-icon{margin-right:5px}.kg-bookmark-author:after{content:"•";margin:0 6px}.footer{background-color:#efefef;color:rgba(0,0,0,.44);padding-top:20px;font-size:.9375rem;padding-bottom:45px}</style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
+    <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+
+    
+</head>
+<body class="amp-template">
+    <header class="header u-bgColor u-flexCenter u-container">
+    <div class="u-flex1">
+
+
+
+        <a href="../../index.html" class="logo-link">Andree&#x27;s Musings.</a>
+    </div>
+
+    <button class="hamburgermenu" on="tap:sidenav.open" tabindex="0"><span></span><span></span><span></span></button>
+
+</header>
+
+    <main class="main">
+        
+<article class="article">
+    <header class="article-header u-container">
+        <h1 class="article-title">Experimenting with StackPath Edge Computing and Anycast</h1>
+
+        
+
+        <hr>
+
+        <div class="article-meta">
+            <span class="author-name">By <a href="../../author/andree/index.html">Andree Toonk</a></span>
+
+            <span class="timestamp">
+                <time class="datetime" datetime="2019-02-11">2 years ago</time>
+            </span>
+
+            
+                <span>in</span>
+                <span class="categories"><a href="../../tag/terraform/index.html" title="terraform">terraform</a></span>
+            
+        </div>
+    </header>
+
+        <figure class="article-image u-block u-marginTop30">
+            <amp-img src="https://images.unsplash.com/photo-1564425583885-822a00f3e1e6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" width="600" height="350" layout="responsive" alt="Experimenting with StackPath Edge Computing and Anycast"></amp-img>
+        </figure>
+
+    <div class="article-body u-container"> <p></p><p>I love tinkering with new tech, and since it was a cold and snowy weekend here in Vancouver, I figured I’d explore Edge Containers from Stackpath. Earlier this week I read Stackpath’s blog in which they describe their new service: <a href="https://blog.stackpath.com/introducing-containers-and-virtual-machines-at-the-edge" rel="noopener">Introducing containers and virtual machines at the edge</a></p><blockquote>Update June 21, 2020: a follow-up article is available here: <a href="https://medium.com/swlh/building-a-global-anycast-service-in-under-a-minute-99b0c59c1a4c?source=friends_link&amp;sk=5cbd024efe001ebe2cce422e70ef116f">Building a global anycast service in under a minute</a></blockquote><p>The service offering resonated strongly with me, mostly the ability to deploy your containers or VM’s to many of their locations in one operation, whether that’s an API call or click in the portal. That combined with the fact that Stackpath called out BGP Anycast support in the blog post (for those who know me, I’m a BGP geek), convinced me to give this a spin.</p><h3 id="brand-new-feature"><strong>Brand new Feature</strong></h3><p>So instead of building a snowman, I created an account with stackpath.com. I soon found out their new “Workload” feature is still gated, but within an hour or so Stackpath unlocked this feature for me and it showed up in the Stackpath portal.</p><p><strong><em>Update Feb 12 2019</em></strong><em>: Stackpath advised me that the “Workload” feature is no longer gated and available for all users now.</em></p><h3 id="creating-workloads"><strong>Creating workloads</strong></h3><p>I’ll briefly describe how I created the workload, but also make sure to check out their documentation <a href="https://support.stackpath.com/hc/en-us/articles/360022756051-Getting-Started-With-StackPath-Edge-Computing" rel="noopener">here</a>.<br />I gave my workload a name “stackpath-anycast-fun” and used the following docker image “atoonk/stackpath-fun:latest”, more about that later. Next up I exposed port 80 and defined the compute spec for each container. Also, note that I selected the “Add Anycast IP Address.”</p><figure class="kg-card kg-image-card kg-width-wide"><amp-img src="https://cdn-images-1.medium.com/max/2400/1*vBIbWeOFF8Cp4BShSD_Wjg.png" class="kg-image" alt width="2238" height="1392" layout="responsive"></amp-img></figure><p>Next up I defined what locations I want to deploy the workload to. This is grouped by continent, in my case I used Europe and North America. In each continent, I chose two PoPs: Amsterdam, London, New York, and Los Angeles. So with that my deployment should be live within four datacenters globally, great for my Anycast testing! Finally, I made sure to bring up two instances in each datacenter just so that I can test the load balancing or ECMP routing within a datacenter.</p><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*qKy_k6u3a0-9aTsFYmVbsw.png" class="kg-image" alt width="1600" height="656" layout="responsive"></amp-img></figure><h3 id="pricing"><strong>Pricing</strong></h3><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1200/1*6hyuUOzr7xcNE1YwAkcvNg.png" class="kg-image" alt width="910" height="446" layout="responsive"></amp-img></figure><p>At the end, it nicely showed me the pricing. Since I have a particular interest in Anycast, I looked specifically at pricing for that, which at 14 cents per hour comes to $100 per month. All in all for the month for these eight instances &amp; Anycast the price comes to about $627 per month.</p><h3 id="creating-a-docker-image"><strong>Creating a Docker image</strong></h3><p>Earlier on I defined the Docker image that I wanted to have deployed. Stackpath will pull these images from Dockerhub, in my case I defined <a href="https://cloud.docker.com/repository/docker/atoonk/stackpath-fun/" rel="noopener">atoonk/stackpath-fun:latest</a>. So what does this container do? Basically, it’s a container with Apache + PHP, and a little script that prints the hostname variable using <em>gethostname();.</em> This will allow me to, later on, test what instance I’m hitting by requesting a webpage.</p><h3 id="start-the-workload"><strong>Start the workload</strong></h3><p>Now that we have a Docker image on Dockerhub and the workload is created it’s time to test it. After you create the workload in the Stackpath portal, it takes about 2 minutes or so for all instances to come online. Eventually, it will look like this.</p><figure class="kg-card kg-image-card kg-width-wide"><amp-img src="https://cdn-images-1.medium.com/max/2400/1*eFdoPVGEcnUBKrQOQFRayg.png" class="kg-image" alt width="2300" height="1346" layout="responsive"></amp-img></figure><p>Cool, all my container instances went from Starting to Running. In addition to an external IP for each container, I also have an Anycast IP: 185.85.196.10</p><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*oxXwKP82dGujxchF_wtMTg.png" class="kg-image" alt width="1600" height="273" layout="responsive"></amp-img></figure><h3 id="time-to-test-anycast"><strong>Time to test Anycast</strong></h3><p>I can hit all the containers via their external IP address using my browser. Next up checked to see if the Anycast address worked, and yes it did! The example below shows I’m hitting one of the LAX instances, which is as expected since that’s the closest location from my home in Vancouver. <br />I refreshed my browser a few times and indeed saw it flip between the two Los Angeles instances I created: <code>stackpath-anycast-fun-na1-lax-0</code> and <code>stackpath-anycast-fun-na1-lax-1</code> (note the last digit).</p><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*CvE7aQK43NYBxvrlctG9Xw.png" class="kg-image" alt width="1576" height="852" layout="responsive"></amp-img></figure><h3 id="global-testing"><strong>Global testing</strong></h3><p>Next up it’s time to test from a few more locations to make sure the global Anycast setup works as expected. To test this, I did a curl from some shell servers in Amsterdam, London, New York and Seattle like this:</p><pre><code>time for i in `seq 1 15`; do curl -s 185.85.196.10/server.php | grep stackpath-anycast-fun; done</code></pre><figure class="kg-card kg-image-card kg-width-wide kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/2400/1*9bXqOdJKhlSJnGJTrOXvBA.png" class="kg-image" alt width="2400" height="1657" layout="responsive"></amp-img><figcaption>Curl tests from around the world to test Anycast Load Balancing</figcaption></figure><p>The screenshot above shows the full high availability and load balancing story in one picture.<br />My Amsterdam server is hitting the Amsterdam containers and being load balanced between the containers there. Seattle is routed to Los Angeles as expected, and similarly, the New York client is being served by the two containers in New York (JFK). <br />The one that stands out though is my London shell server. That client is following the Anycast route to New York. That’s odd, especially since I have a cluster deployed in both Amsterdam and London. Also note the last line, showing that to complete this request it took over 2secs, while the client in Amsterdam finished its requests in 200ms.</p><h4 id="the-london-routing-mystery"><strong>The London routing mystery</strong></h4><p>I did a bit of poking to understand why the London server is going to New York, instead of staying local in London. By looking at the routing table, I see the following in London:</p><pre><code>&gt; 185.85.196.0/24 
+*[BGP/170] 3d 13:19:37, MED 38020, localpref 100
+ AS path: 3356 209 33438 I, validation-state: unverified
+ 
+ [BGP/170] 23:46:15, MED 2011, localpref 100
+ AS path: 2914 1299 33438 I, validation-state: unverified
+ 
+ [BGP/170] 2w0d 09:36:24, MED 30, localpref 100
+ AS path: 3257 1299 33438 I, validation-state: unverified</code></pre><p>The above indicates this router learns the path to 185.85.196.10 via three ISPs:<code> Level3 (AS3356)</code>, <code>NTT (AS2914)</code> and<code> GTT (AS3257)</code>. The router selected the path via Level3. Level3 then uses the path via <code>Centurylink (AS209)</code> to send it to <code>Stackpath (AS33438)</code>. <br />This shows us that <code>Stackpath (AS33438)</code>, is buying connectivity from Centurylink in the USA. Since Level3 prefers the US path via Centurylink all Level3 customers in Europe are routed to the US, New York in this case. Just announcing Anycast routes out of the US and not scoping them (make sure the announcements stay in the US) will inevitably cause the Anycast routing challenges we see here.</p><p><strong><em>Update Feb 12 2019</em></strong><em>: The Anycast routing issue has now been resolved by the Stackpath network team. Routing from my test client in London is now correctly routed to the container cluster in London.</em></p><h3 id="summary"><strong>Summary</strong></h3><p>In summary, it was pretty easy to get going with Stackpath’s container service. It’s cool to be able to deploy your workloads around the world with just a single click. The icing on the cake for me is the global load balancing with Anycast feature. <br />Anycast used to be a feature used by mostly DNS operators and CDN folks. However over the last two years or so we’ve seen infrastructure providers such as Packet and AWS making this available to their customers directly. With these features, folks can now really deploy their high available services globally without necessarily needing to rely on CDN’s or any DNS tricks (or better, build your own DNS tricks now).</p><p>I think the pricing is a bit steep, but I’m guessing since it’s a new feature with possibly limited supply, this is one way to get to market while ramping up their capacity. The other thing to keep in mind is that folks like Packet and Stackpath are focusing on the Edge. They are deployed in some of the most expensive and most popular datacenters around the world. This will give its customers great low latency connectivity, but space and power are limited in these facilities, possibly pushing up the pricing.</p><p>Going forward I’d love to see some more features around, monitoring, metrics and logging for my containers. <br />Realizing this is early on, my first experience with Stackpath was a joy, it was easy to use, great support (thanks Ben and Sean) and I look forward to what’s next.</p> </div>
+
+        <div class="article-tags u-container u-marginTop30">
+            <span class="share-title">Tags:</span>
+                <a href="../../tag/terraform/index.html" title="terraform" class="button--tags">terraform</a>
+                <a href="../../tag/networking/index.html" title="networking" class="button--tags">networking</a>
+        </div>
+
+    <footer class="share u-container u-marginTop30">
+        <span class="share-title">Share this:</span>
+        <amp-social-share class="rounded"
+        type="email"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="facebook"
+        data-param-app_id="254325784911610"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="twitter"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="linkedin"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="whatsapp"
+        width="36"
+        height="36"></amp-social-share>
+    </footer>
+
+</article>
+
+
+            <div class="related u-container">
+        <div class="related-title">Related Articles</div>
+
+        <div class="story">
+            <a href="../../building-a-global-anycast-service-in-under-a-minute/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">1</span>
+                <h3 class="story-title">Building a global anycast service in under a minute</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../building-an-xdp-express-data-path-based-bgp-peering-router/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">2</span>
+                <h3 class="story-title">Building an XDP (eXpress Data Path) based BGP peering router</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../kernel-bypass-networking-with-fd-io-and-vpp/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">3</span>
+                <h3 class="story-title">Kernel bypass networking with FD.io and VPP.</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../linux-kernel-and-measuring-network-throughput/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">4</span>
+                <h3 class="story-title">Linux Kernel and Measuring network throughput.</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../building-a-high-performance-linux-based-traffic-generator-with-dpdk/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">5</span>
+                <h3 class="story-title">Building a high performance - Linux Based Traffic generator with DPDK</h3>
+            </a>
+        </div>
+
+    </div>
+    </main>
+
+    <amp-sidebar id="sidenav" class="sidebar" layout="nodisplay" side="right">
+    <div class="close-sidebar u-bgColor" role="button" aria-label="close sidebar" on="tap:sidenav.close" tabindex="0">✕</div>
+
+    <ul class="nav" role="menu">
+    <li role="menuitem"><a href="../../index.html" class="nav-home">Home</a></li>
+    <li role="menuitem"><a href="../../contact/index.html" class="nav-contact">Contact</a></li>
+    <li role="menuitem"><a href="../../about/index.html" class="nav-about">About</a></li>
+</ul>
+
+    <div class="social-media">
+
+            <a href="https://twitter.com/atoonk" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 18 18" width="100%" height="100%"><path d="M12.077 2c-1.812 0-3.282 1.582-3.282 3.534 0 .277.03.547.085.806-2.728-.148-5.147-1.555-6.766-3.693-.283.522-.445 1.13-.445 1.777 0 1.226.58 2.308 1.46 2.942-.54-.02-1.05-.178-1.49-.443v.045c0 1.712 1.13 3.14 2.63 3.465-.28.08-.57.124-.87.124-.21 0-.418-.022-.62-.063.418 1.404 1.63 2.426 3.067 2.455-1.125.94-2.54 1.51-4.078 1.51-.267 0-.528-.02-.785-.05 1.46 1 3.185 1.59 5.04 1.59 6.037 0 9.34-5.39 9.34-10.06 0-.153-.005-.306-.01-.457.64-.5 1.197-1.12 1.637-1.83-.59.28-1.22.47-1.885.557.677-.437 1.198-1.13 1.443-1.955-.633.405-1.336.7-2.084.858C13.88 2.43 13.028 2 12.08 2"></path></svg>
+</a>
+
+
+
+
+    </div>
+
+</amp-sidebar>
+
+    <footer class="footer">
+        <section class="u-container copyright u-textCenter">
+            &copy; 2020 <a href="../../index.html">Andree&#x27;s Musings.</a>
+        </section>
+    </footer>
+</body>
+</html>

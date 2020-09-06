@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html amp lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Building a high available Anycast service using AWS Global Accelerator</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <link rel="icon" href="../../favicon.png" type="image/png" />
+    <link rel="canonical" href="../index.html" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    
+    <meta property="og:site_name" content="Andree&#x27;s Musings." />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Building a high available Anycast service using AWS Global Accelerator" />
+    <meta property="og:description" content="In my last two blogs, I wrote about building highly available applications using anycast on Packet and Stackpath. Today we’ll look at how to do this on AWS using its recently released service: Global Accelerator." />
+    <meta property="og:url" content="http://dark-shadow-4784.edge.mysocket.io/building-a-high-available-anycast-service-using-aws-global-accelerator/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1544161497-6095fb868d58?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta property="article:published_time" content="2019-09-02T00:00:00.000Z" />
+    <meta property="article:modified_time" content="2020-09-05T19:13:26.000Z" />
+    <meta property="article:tag" content="networking" />
+    <meta property="article:tag" content="terraform" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Building a high available Anycast service using AWS Global Accelerator" />
+    <meta name="twitter:description" content="In my last two blogs, I wrote about building highly available applications using anycast on Packet and Stackpath. Today we’ll look at how to do this on AWS using its recently released service: Global Accelerator." />
+    <meta name="twitter:url" content="http://dark-shadow-4784.edge.mysocket.io/building-a-high-available-anycast-service-using-aws-global-accelerator/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1544161497-6095fb868d58?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Andree Toonk" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="networking, terraform" />
+    <meta name="twitter:site" content="@atoonk" />
+    <meta name="twitter:creator" content="@atoonk" />
+    <meta property="og:image:width" content="2000" />
+    <meta property="og:image:height" content="1333" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Andree&#x27;s Musings.",
+        "url": "http://dark-shadow-4784.edge.mysocket.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "http://dark-shadow-4784.edge.mysocket.io/content/images/2020/09/download-5.png",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Andree Toonk",
+        "url": "http://dark-shadow-4784.edge.mysocket.io/author/andree/",
+        "sameAs": [
+            "http://dark-shadow-4784.edge.mysocket.io/about/",
+            "https://twitter.com/atoonk"
+        ]
+    },
+    "headline": "Building a high available Anycast service using AWS Global Accelerator",
+    "url": "http://dark-shadow-4784.edge.mysocket.io/building-a-high-available-anycast-service-using-aws-global-accelerator/",
+    "datePublished": "2019-09-02T00:00:00.000Z",
+    "dateModified": "2020-09-05T19:13:26.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1544161497-6095fb868d58?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "width": 2000,
+        "height": 1333
+    },
+    "keywords": "networking, terraform",
+    "description": "In my last two blogs, I wrote about building highly available applications using anycast on Packet and Stackpath. Today we’ll look at how to do this on AWS using its recently released service: Global Accelerator.",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://dark-shadow-4784.edge.mysocket.io/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.31" />
+    <link rel="alternate" type="application/rss+xml" title="Andree&#x27;s Musings." href="../../rss/index.html" />
+
+    <link href="https://fonts.googleapis.com/css?family=Domine|Rubik:400,500,700&display=swap" rel="stylesheet">
+
+
+    <style amp-custom>.u-bgColor{background-color:#161D25}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}[hidden],template{display:none}.kg-bookmark-container,body,figcaption,h1,h2,h3,h4,h5,h6{font-family:Rubik,Whitney SSm A,Whitney SSm B,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif}.article-excerpt{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif}.u-flexCenter{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex}.u-block{display:block}.u-relative{position:relative}.u-overflowHidden{overflow:hidden}.u-fontSizeSmaller{font-size:.875rem}.u-flex1{-webkit-box-flex:1;flex:1 1 auto}.u-absolute{position:absolute}.u-textCenter{text-align:center}.u-marginTop30{margin-top:30px}.u-container{margin-left:auto;margin-right:auto;padding-left:16px;padding-right:16px}*,:after,:before{box-sizing:border-box}body{font-size:1rem;font-style:normal;font-weight:400;letter-spacing:0;line-height:1.5em;text-rendering:optimizeLegibility;-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;-ms-text-size-adjust:100%;text-size-adjust:100%;color:#212529}a{color:#00a562;text-decoration:none;word-break:break-word}a:active,a:hover{outline:0}blockquote{border-left:4px solid #212529;font-size:1.125rem;font-style:italic;margin-left:-5px;margin-right:0;padding-bottom:2px;padding-left:20px}figure{margin:0;padding:0}img{-o-object-fit:cover;object-fit:cover;-o-object-position:center;object-position:center}figcaption{color:#6c757d;display:block;font-size:.875rem;font-style:normal;font-weight:400;margin-top:10px;text-align:center;width:100%}h1,h2,h3,h4,h5,h6{color:#111;font-style:normal;font-weight:700;line-height:1.2;margin:25px 0 0;word-break:break-word}h1{font-size:2rem}h2{font-size:1.75rem}h3{font-size:1.5rem}h4{font-size:1.375rem}h5{font-size:1.25rem}h6{font-size:1.125rem}strong{font-weight:700}p{margin:20px 0 0}hr{box-sizing:content-box;height:0;margin:1rem 0;overflow:visible;border:0;border-top:1px solid rgba(0,0,0,.1)}mark{background-color:transparent;background-image:linear-gradient(180deg,#d7fdd3,#d7fdd3);color:rgba(0,0,0,.8)}code,pre{font-family:Menlo,Courier,monospace;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-ms-hyphens:none;hyphens:none}p code{border-radius:2px;padding:1px 6px}p code,pre{background:#2a3644;color:#e5eff5;font-size:.875rem}pre{overflow-x:auto;margin:0;padding:20px;border:none;line-height:1.6em}pre code{padding:0;background:transparent}svg{width:100%;height:100%}svg:not(:root){overflow:hidden}table{border-collapse:collapse;border-spacing:0;display:inline-block;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;font-size:1rem;line-height:1.5;margin:20px 0 0;max-width:100%;overflow-x:auto;vertical-align:top;white-space:nowrap;width:auto;-webkit-overflow-scrolling:touch}table td,table th{padding:6px 13px;border:1px solid #dfe2e5}table tr:nth-child(2n){background-color:#f6f8fa}table th{letter-spacing:.0125rem;text-transform:uppercase;font-weight:500}.header{position:relative;width:100%;height:50px;line-height:1}.logo-link{color:#fff;font-size:1.5rem;font-weight:500}.social-media a{background:#212529;border-radius:4px;color:#fff;display:inline-block;height:36px;margin:0 2px;padding:8px;vertical-align:middle;width:36px}.social-media svg{fill:#fff;stroke:none}.sidebar{width:280px;background:#fff}.sidebar ul{list-style:none;list-style-image:none;margin:18px 0 20px;padding:0}.sidebar ul li a{padding:6px 20px;font-weight:500;font-size:1rem;display:block}.sidebar .social-media{padding:20px;border-top:1px solid #ddd}.close-sidebar{height:50px;font-size:1.5625rem;line-height:3.125rem;text-align:right;padding-right:20px;color:#fff}.hamburgermenu{background-color:transparent;border:none;padding:0;height:48px;position:relative;-webkit-transition:-webkit-transform .4s;transition:-webkit-transform .4s;transition:transform .4s;transition:transform .4s,-webkit-transform .4s;width:48px;margin-right:-15px}.hamburgermenu span{background-color:#fff;display:block;height:2px;left:14px;margin-top:-1px;position:absolute;top:50%;width:20px}.hamburgermenu span:first-child{-webkit-transform:translateY(-6px);transform:translateY(-6px)}.hamburgermenu span:last-child{-webkit-transform:translateY(6px);transform:translateY(6px)}.main{max-width:500px;margin:0 auto}.article{padding-top:25px}.article-title{margin-top:0}.article-excerpt{margin-bottom:20px;margin-top:15px;color:#6c757d;font-size:1.25rem;line-height:1.4}.article-meta{color:#6c757d;margin:15px 0;font-size:.875rem}.article-body{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif;line-height:1.7em;font-size:1.125rem;padding:20px 1rem}.article-body>*{margin-bottom:28px}.article-body a:not(.kg-bookmark-container){word-break:break-word;text-decoration:underline}.article-body ol,.article-body ul{padding-left:20px}.article-body ol li,.article-body ul li{margin-bottom:5px}.button--tags{border-radius:3px;color:#212529;display:inline-block;font-size:.875rem;font-weight:500;height:37px;line-height:2.1875rem;margin:0 8px 8px 0;padding:0 10px;border:2px solid #212529}.button--tags:before{content:"#"}.share-title{display:block;margin-bottom:8px}amp-social-share.custom-style{background-color:teal;background-image:url(https://raw.githubusercontent.com/google/material-design-icons/master/social/1x_web/ic_share_white_48dp.png);background-repeat:no-repeat;background-position:50%;background-size:contain}amp-social-share.rounded{border-radius:10%;background-size:85%}.related{padding-top:40px;padding-bottom:20px;margin-top:20px;background:#efefef}.related-title{border-bottom:1px solid rgba(0,0,0,.15);padding-bottom:15px;margin-bottom:30px;color:#212529;font-weight:500;font-size:1.25rem}.story-border{border-left:3px solid #cc116e;bottom:0;color:rgba(0,0,0,.2);font-size:2.25rem;font-weight:700;left:0;padding:15px 10px 10px;top:0;-webkit-text-fill-color:transparent;-webkit-text-stroke-width:1.4px;-webkit-text-stroke-color:#888}.story:nth-child(3n) .story-border{border-color:#f59e00}.story:nth-child(3n+2) .story-border{border-color:#26a8ed}.story-link{background-color:#fff;border-bottom:1px solid #e2e0e0;box-shadow:0 1px 7px rgba(0,0,0,.05);min-height:50px;padding:15px 15px 15px 55px}.story-title{color:#212529;line-height:1.2;font-size:1.0625rem;font-weight:500;margin:0}.kg-bookmark-container{display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;flex-direction:column;border:1px solid rgba(0,0,0,.1)}.kg-bookmark-content{padding:20px;-webkit-box-ordinal-group:2;order:1}.kg-bookmark-title{font-weight:500;line-height:1.2;font-size:1.125rem}.kg-bookmark-description{color:#6c757d;line-height:1.4;margin-top:10px;font-size:.875rem}.kg-bookmark-metadata{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;font-size:.875rem;margin-top:10px}.kg-bookmark-icon{margin-right:5px}.kg-bookmark-author:after{content:"•";margin:0 6px}.footer{background-color:#efefef;color:rgba(0,0,0,.44);padding-top:20px;font-size:.9375rem;padding-bottom:45px}</style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
+    <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+
+    
+</head>
+<body class="amp-template">
+    <header class="header u-bgColor u-flexCenter u-container">
+    <div class="u-flex1">
+
+
+
+        <a href="../../index.html" class="logo-link">Andree&#x27;s Musings.</a>
+    </div>
+
+    <button class="hamburgermenu" on="tap:sidenav.open" tabindex="0"><span></span><span></span><span></span></button>
+
+</header>
+
+    <main class="main">
+        
+<article class="article">
+    <header class="article-header u-container">
+        <h1 class="article-title">Building a high available Anycast service using AWS Global Accelerator</h1>
+
+        <p class="article-excerpt">In my last two blogs, I wrote about building highly available applications using anycast on Packet and Stackpath. Today we’ll look at how to do this on AWS using its recently released service: Global Accelerator.</p>
+
+        <hr>
+
+        <div class="article-meta">
+            <span class="author-name">By <a href="../../author/andree/index.html">Andree Toonk</a></span>
+
+            <span class="timestamp">
+                <time class="datetime" datetime="2019-09-02">a year ago</time>
+            </span>
+
+            
+                <span>in</span>
+                <span class="categories"><a href="../../tag/networking/index.html" title="networking">networking</a></span>
+            
+        </div>
+    </header>
+
+        <figure class="article-image u-block u-marginTop30">
+            <amp-img src="https://images.unsplash.com/photo-1544161497-6095fb868d58?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" width="600" height="350" layout="responsive" alt="Building a high available Anycast service using AWS Global Accelerator"></amp-img>
+        </figure>
+
+    <div class="article-body u-container"> <p>Everything I’m demonstrating below can easily be replicated by using <a href="https://github.com/atoonk/aws_global_accelerator" rel="noopener"><strong>the terraform code </strong>here,</a> with that we will have a global anycast load-balancer, and origin web &amp; dns servers in under 5 minutes.</p><p>Global Accelerator became publicly available in late 2018, and I’ve looked at it various times since then with a few potential use-cases in mind. The main value proposition for users is the ability to get a static IPv4 address that isn’t tied to a region. With global accelerator, customers get two globally anycasted IPv4 addresses that can be used to load balance across 14 unique AWS regions. A user request will get routed to the closest AWS edge POP based on BGP routing. From there, you can load balance requests to the AWS regions where your applications are deployed. Global accelerator comes with traffic dials that allow you to control how much traffic goes to what region, as well as instances in that region. It also has built-in health checking to make sure traffic is only routed to healthy instances.</p><p>Global accelerator comes with a few primitives, let’s briefly review these:</p><ul><li><strong>Global Accelerator</strong>, think of this of your anycast endpoint. It’s a global primitive and comes with two IPv4 addresses.</li><li>Next up, you create a <strong>Listener</strong> which defines what port and protocol (tcp or udp) to listen on. A Global Accelerator can have multiple listeners. We’ll create two for this article later on.</li><li>For each Listener, you then create one or more <strong>Endpoint Groups. </strong>An endpoint group allows you to group endpoint together by region. For example, EU-CENTRAL-1 can be an endpoint group. Each endpoint group has a traffic dial that controls the percentage of traffic you’d like to send to a region.</li><li>Finally, we have an <strong>Endpoint</strong>, this can be either an Elastic IP address, a Network Load Balancer, or an Application Load Balancer. You can have multiple endpoints in an Endpoint group. For each endpoint, you can configure a weight that controls how traffic is load-balanced over the various endpoints within an endpoint group.</li></ul><p>These are some basic yet powerful primitives to help you build a highly available, low latency application with granular traffic control.</p><h3 id="let-s-start-building-">Let’s start building!</h3><p>Alright that sounds cool, let’s dive right in. In this example, we’re going to build a highly available web service and DNS service in four AWS regions, us-east-1, us-west-2, eu-central-1, and ap-southeast-1. Each region will have two ec2 instances with a simple Go web server and a simple DNS server. We’ll create the global accelerator, listeners, endpoint groups, endpoints, as well as all the supporting infrastructure such as VPCs, subnets, security groups all through terraform.</p><p>I’ve published the terraform and other supporting code on my github page: <a href="https://github.com/atoonk/aws_global_accelerator" rel="noopener">https://github.com/atoonk/aws_global_accelerator</a>. This allows you to try it yourself with minimum effort. Time to deploy our infrastructure:</p><pre><code>terraform init &amp;&amp; terraform plan &amp;&amp; terraform apply -auto-approve
+…
+Plan: 63 to add, 0 to change, 0 to destroy.
+...
+GlobalAccelerator = [
+  [
+    [
+      {
+        "ip_addresses" = [
+          "13.248.138.197",
+          "76.223.8.146",
+        ]
+        "ip_family" = "IPv4"
+      },
+    ],
+  ],
+]</code></pre><p><br />After a few minutes, all 63 components have been built. Now our globally distributed application is available over two anycast IPv4 addresses, in four regions, with two origin servers per region like the diagram below.</p><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*QzlZImYojTUNWc9EW9zZiw.png" class="kg-image" alt width="800" height="600" layout="responsive"></amp-img></figure><p>In the AWS console, you’ll now see something like this. In my example, you see two listeners, one for the webserver on TCP 80 and one for our DNS test on UDP 53.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*uWIV0IN_qoNgHlvcHhbMzw.png" class="kg-image" alt width="1600" height="545" layout="responsive"></amp-img><figcaption>Global Accelerator AWS Console</figcaption></figure><h3 id="time-to-start-testing-">Time to start testing.</h3><p>Now that we have our anycasted global load balancer up and running, it’s time to start testing. First let’s do a quick http check from 4 servers around the world, Tokyo, Amsterdam, New York and Seattle. To check if load balancing works as expected, I’m using to following test:</p><pre><code class="language-bash">for i in {1..100}
+	do curl -s -q http://13.248.138.197 
+ done | sort -n | uniq -c | sort -rn</code></pre><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*jmpHigFU_rYC75y0B16oSQ.png" class="kg-image" alt width="1600" height="648" layout="responsive"></amp-img><figcaption>http load balancing test</figcaption></figure><p>The above shows that the hundred requests from each of the servers indeed go to the region we’d expect it to go and are nicely balanced over the two origin servers in each region.</p><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1200/1*S0U1k8V8wcgRwps66ru_5Q.png" class="kg-image" alt width="832" height="474" layout="responsive"></amp-img></figure><p>Next, we’ll use RIPE Atlas, a globally distributed measurement network to check the traffic distribution globally on a larger scale. This will tell us how well the AWS anycast routing setup works.</p><p>I’m going to use the <a href="https://github.com/atoonk/aws_global_accelerator/blob/master/scripts/nsd.sh" rel="noopener">DNS listener </a>for this. Using RIPE Atlas, I’m asking 500 probes to run the following dig command. The output will tell us what node and region are being used.</p><pre><code class="language-bash">dig @13.248.138.197 id.server txt ch +short
+"i-0e32d5b1a3f76cc05.us-west-2c"</code></pre><p>The image below is visualization of the measurement results. It shows four different colors; each color represents one of the four regions. At first glance, there’s certainly a good distribution among the four geographic regions. The odd ones out are the clients in Australia and New Zealand, which AWS is sending to the us-west-2 region instead of the closer and lower latency Singapore, ap-southeast-1 region. I could, of course, solve this myself by creating a listener and origin server in Australia as well. Other than that there very few outliers, so that looks good.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*Ha-IOgGjbOfyESPI_hMqmw.png" class="kg-image" alt width="1600" height="819" layout="responsive"></amp-img><figcaption>Global Accelerator Anycast Traffic distribution using RIPE atlas</figcaption></figure><p>Based on this measure from 500 random Ripe Atlas nodes, We can see the region that is getting most of the traffic is the Europe region. In a real-life scenario, this region could now be running hot. To resolve that I’m going to lower the traffic dial for the Europe endpoint group to 50%. This means 50% of the traffic that was previously going to Europe should now go to the next best region. The visualization below shows that the majority of the 50% offload traffic ended up in the us-east region and small portion spilled over into ap-southeast-1 (remember, I’m only deployed in four regions).</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*N-jZ7UcqaiqyFotN6Trl1Q.png" class="kg-image" alt width="1600" height="814" layout="responsive"></amp-img><figcaption>50% of the EU traffic offloaded to alternative regions</figcaption></figure><h3 id="routing-and-session-termination">Routing and session termination</h3><p>An interesting difference between Global Accelerator and regular public ec2 IP addresses is how traffic is routed to AWS. For Global Accelerator AWS will try and get traffic on its own network as soon as possible. As compared to the scenario with regular AWS public IP addresses; Amazon only announces those prefixes out of the region where the IP addresses are used. That means that for Global Accelerator IP addresses your traffic is handed off to AWS at its closest Global Accelerator POP and then uses the AWS backbone to get to the origin. For regular AWS public IP addresses, AWS relies on public transit and peering to get the traffic to the region it needs to get to.</p><p>Let’s look at a traceroute to illustrate this. One of my origin servers in the ap-southeast-1 regions is 13.251.41.53, a traceroute to that ec2 instance in Singapore from a non AWS server in Sydney looks like this:</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*b8Dpylb2iOclIZgFlsxoxw.png" class="kg-image" alt width="1600" height="799" layout="responsive"></amp-img><figcaption>Traceroute from Sydney to an origin Server in Singapore, ap-southeast-1</figcaption></figure><p>In this case, we hand off traffic to NTT in Sydney, which sends it to Japan and then to Singapore, where it’s handed off to AWS, it eventually took 180ms to get there. It’s important to observe that traffic was handed of to AWS in Singapore, near the end of the traceroute.</p><p>Now, as a comparison, we’ll look at a traceroute from the same server in Sydney to the anycasted Global Accelerator IP</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*LhwltVZSHTsjKmTdT5QSOQ.png" class="kg-image" alt width="1194" height="220" layout="responsive"></amp-img><figcaption>Traceroute from Sydney to anycasted Global Accelerator IP</figcaption></figure><p>The Global Accelerator address on hop 4 is just under a millisecond away. In this case, AWS is announcing the prefix locally via the Internet Exchange and it is handed off to AWS on the second hop. Quite a latency difference.</p><p>Keep in mind, although you certainly get better “ping” times to your service’s IP address, the actual response time of the application will still be dependent on where the application is deployed. It’s interesting to note though, that based on the above, AWS does appear to terminate the network connection at all of its Global Accelerator sites even if your application is not deployed there. This is also visible in the logs of our webserver, this is where we observe that the source IP address of the client isn’t the actual client’s IP, instead it’s an IP address of AWS’ Global Accelerator service. Not being able to see the original client IP address, is I imagine, a challenge for many use-cases.</p><h3 id="conclusion">Conclusion</h3><p>In this article, we looked at how Global Accelerator works and behaves. I think it’s a powerful service. Having the ability to flexibly steer traffic to particular regions and even endpoints gives you a lot of control, which will be useful for high traffic applications. It also makes it easier to make applications highly available even on a per IP address basis (as compared to using DNS based load-balancing). A potentially useful feature for Global Accelerator would be to combine it with the Bring Your Own IP feature.</p><p>Global Accelerator is still a relatively young service, and new features will likely be added over time. Currently, I find one of the significant limitations the lack of client IP visibility. Interestingly, AWS just a few days ago, announced <a href="https://aws.amazon.com/blogs/aws/new-client-ip-address-preservation-for-aws-global-accelerator/" rel="noopener">Client IP preservation for ALB </a>(only) endpoints. Given that improvement, I’d imagine that Client IP preservation for other types of endpoints such as elastic IP and NLBs may come at some point too.</p><p>Finally, other than the <a href="https://docs.aws.amazon.com/global-accelerator/latest/dg/monitoring-global-accelerator.flow-logs.html" rel="noopener">flow logs</a>, I didn’t find any logging or statistics in the AWS console for Global Accelerator. This would, in my opinion, be a valuable add-on.</p><p>All in all, a cool and useful service that I’m sure will be valuable too many AWS users. For me, it was fun to test drive Global Accelerator, check out AWS’ anycast routing setup and build it all using terraform. Hope you enjoyed it too :)</p> </div>
+
+        <div class="article-tags u-container u-marginTop30">
+            <span class="share-title">Tags:</span>
+                <a href="../../tag/networking/index.html" title="networking" class="button--tags">networking</a>
+                <a href="../../tag/terraform/index.html" title="terraform" class="button--tags">terraform</a>
+        </div>
+
+    <footer class="share u-container u-marginTop30">
+        <span class="share-title">Share this:</span>
+        <amp-social-share class="rounded"
+        type="email"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="facebook"
+        data-param-app_id="254325784911610"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="twitter"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="linkedin"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="whatsapp"
+        width="36"
+        height="36"></amp-social-share>
+    </footer>
+
+</article>
+
+
+            <div class="related u-container">
+        <div class="related-title">Related Articles</div>
+
+        <div class="story">
+            <a href="../../building-a-global-anycast-service-in-under-a-minute/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">1</span>
+                <h3 class="story-title">Building a global anycast service in under a minute</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../building-an-xdp-express-data-path-based-bgp-peering-router/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">2</span>
+                <h3 class="story-title">Building an XDP (eXpress Data Path) based BGP peering router</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../kernel-bypass-networking-with-fd-io-and-vpp/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">3</span>
+                <h3 class="story-title">Kernel bypass networking with FD.io and VPP.</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../linux-kernel-and-measuring-network-throughput/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">4</span>
+                <h3 class="story-title">Linux Kernel and Measuring network throughput.</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../building-a-high-performance-linux-based-traffic-generator-with-dpdk/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">5</span>
+                <h3 class="story-title">Building a high performance - Linux Based Traffic generator with DPDK</h3>
+            </a>
+        </div>
+
+    </div>
+    </main>
+
+    <amp-sidebar id="sidenav" class="sidebar" layout="nodisplay" side="right">
+    <div class="close-sidebar u-bgColor" role="button" aria-label="close sidebar" on="tap:sidenav.close" tabindex="0">✕</div>
+
+    <ul class="nav" role="menu">
+    <li role="menuitem"><a href="../../index.html" class="nav-home">Home</a></li>
+    <li role="menuitem"><a href="../../contact/index.html" class="nav-contact">Contact</a></li>
+    <li role="menuitem"><a href="../../about/index.html" class="nav-about">About</a></li>
+</ul>
+
+    <div class="social-media">
+
+            <a href="https://twitter.com/atoonk" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 18 18" width="100%" height="100%"><path d="M12.077 2c-1.812 0-3.282 1.582-3.282 3.534 0 .277.03.547.085.806-2.728-.148-5.147-1.555-6.766-3.693-.283.522-.445 1.13-.445 1.777 0 1.226.58 2.308 1.46 2.942-.54-.02-1.05-.178-1.49-.443v.045c0 1.712 1.13 3.14 2.63 3.465-.28.08-.57.124-.87.124-.21 0-.418-.022-.62-.063.418 1.404 1.63 2.426 3.067 2.455-1.125.94-2.54 1.51-4.078 1.51-.267 0-.528-.02-.785-.05 1.46 1 3.185 1.59 5.04 1.59 6.037 0 9.34-5.39 9.34-10.06 0-.153-.005-.306-.01-.457.64-.5 1.197-1.12 1.637-1.83-.59.28-1.22.47-1.885.557.677-.437 1.198-1.13 1.443-1.955-.633.405-1.336.7-2.084.858C13.88 2.43 13.028 2 12.08 2"></path></svg>
+</a>
+
+
+
+
+    </div>
+
+</amp-sidebar>
+
+    <footer class="footer">
+        <section class="u-container copyright u-textCenter">
+            &copy; 2020 <a href="../../index.html">Andree&#x27;s Musings.</a>
+        </section>
+    </footer>
+</body>
+</html>

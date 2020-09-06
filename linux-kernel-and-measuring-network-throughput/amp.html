@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html amp lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Linux Kernel and Measuring network throughput.</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <link rel="icon" href="../favicon.png" type="image/png" />
+    <link rel="canonical" href="index.html" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    
+    <meta property="og:site_name" content="Andree&#x27;s Musings." />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Linux Kernel and Measuring network throughput." />
+    <meta property="og:description" content="can Linux route at line-rate between two network interfaces? That’s the question we will try to answer in the next few minutes." />
+    <meta property="og:url" content="http://dark-shadow-4784.edge.mysocket.io/linux-kernel-and-measuring-network-throughput/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1448056975861-28196f26abd6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta property="article:published_time" content="2020-03-29T18:21:00.000Z" />
+    <meta property="article:modified_time" content="2020-09-05T18:35:18.000Z" />
+    <meta property="article:tag" content="networking" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Linux Kernel and Measuring network throughput." />
+    <meta name="twitter:description" content="can Linux route at line-rate between two network interfaces? That’s the question we will try to answer in the next few minutes." />
+    <meta name="twitter:url" content="http://dark-shadow-4784.edge.mysocket.io/linux-kernel-and-measuring-network-throughput/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1448056975861-28196f26abd6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Andree Toonk" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="networking" />
+    <meta name="twitter:site" content="@atoonk" />
+    <meta name="twitter:creator" content="@atoonk" />
+    <meta property="og:image:width" content="2000" />
+    <meta property="og:image:height" content="1333" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Andree&#x27;s Musings.",
+        "url": "http://dark-shadow-4784.edge.mysocket.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "http://dark-shadow-4784.edge.mysocket.io/content/images/2020/09/download-5.png",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Andree Toonk",
+        "url": "http://dark-shadow-4784.edge.mysocket.io/author/andree/",
+        "sameAs": [
+            "http://dark-shadow-4784.edge.mysocket.io/about/",
+            "https://twitter.com/atoonk"
+        ]
+    },
+    "headline": "Linux Kernel and Measuring network throughput.",
+    "url": "http://dark-shadow-4784.edge.mysocket.io/linux-kernel-and-measuring-network-throughput/",
+    "datePublished": "2020-03-29T18:21:00.000Z",
+    "dateModified": "2020-09-05T18:35:18.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1448056975861-28196f26abd6?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "width": 2000,
+        "height": 1333
+    },
+    "keywords": "networking",
+    "description": "can Linux route at line-rate between two network interfaces? That’s the question we will try to answer in the next few minutes.",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://dark-shadow-4784.edge.mysocket.io/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.31" />
+    <link rel="alternate" type="application/rss+xml" title="Andree&#x27;s Musings." href="../rss/index.html" />
+
+    <link href="https://fonts.googleapis.com/css?family=Domine|Rubik:400,500,700&display=swap" rel="stylesheet">
+
+
+    <style amp-custom>.u-bgColor{background-color:#161D25}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}[hidden],template{display:none}.kg-bookmark-container,body,figcaption,h1,h2,h3,h4,h5,h6{font-family:Rubik,Whitney SSm A,Whitney SSm B,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif}.article-excerpt{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif}.u-flexCenter{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex}.u-block{display:block}.u-relative{position:relative}.u-overflowHidden{overflow:hidden}.u-fontSizeSmaller{font-size:.875rem}.u-flex1{-webkit-box-flex:1;flex:1 1 auto}.u-absolute{position:absolute}.u-textCenter{text-align:center}.u-marginTop30{margin-top:30px}.u-container{margin-left:auto;margin-right:auto;padding-left:16px;padding-right:16px}*,:after,:before{box-sizing:border-box}body{font-size:1rem;font-style:normal;font-weight:400;letter-spacing:0;line-height:1.5em;text-rendering:optimizeLegibility;-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;-ms-text-size-adjust:100%;text-size-adjust:100%;color:#212529}a{color:#00a562;text-decoration:none;word-break:break-word}a:active,a:hover{outline:0}blockquote{border-left:4px solid #212529;font-size:1.125rem;font-style:italic;margin-left:-5px;margin-right:0;padding-bottom:2px;padding-left:20px}figure{margin:0;padding:0}img{-o-object-fit:cover;object-fit:cover;-o-object-position:center;object-position:center}figcaption{color:#6c757d;display:block;font-size:.875rem;font-style:normal;font-weight:400;margin-top:10px;text-align:center;width:100%}h1,h2,h3,h4,h5,h6{color:#111;font-style:normal;font-weight:700;line-height:1.2;margin:25px 0 0;word-break:break-word}h1{font-size:2rem}h2{font-size:1.75rem}h3{font-size:1.5rem}h4{font-size:1.375rem}h5{font-size:1.25rem}h6{font-size:1.125rem}strong{font-weight:700}p{margin:20px 0 0}hr{box-sizing:content-box;height:0;margin:1rem 0;overflow:visible;border:0;border-top:1px solid rgba(0,0,0,.1)}mark{background-color:transparent;background-image:linear-gradient(180deg,#d7fdd3,#d7fdd3);color:rgba(0,0,0,.8)}code,pre{font-family:Menlo,Courier,monospace;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-ms-hyphens:none;hyphens:none}p code{border-radius:2px;padding:1px 6px}p code,pre{background:#2a3644;color:#e5eff5;font-size:.875rem}pre{overflow-x:auto;margin:0;padding:20px;border:none;line-height:1.6em}pre code{padding:0;background:transparent}svg{width:100%;height:100%}svg:not(:root){overflow:hidden}table{border-collapse:collapse;border-spacing:0;display:inline-block;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;font-size:1rem;line-height:1.5;margin:20px 0 0;max-width:100%;overflow-x:auto;vertical-align:top;white-space:nowrap;width:auto;-webkit-overflow-scrolling:touch}table td,table th{padding:6px 13px;border:1px solid #dfe2e5}table tr:nth-child(2n){background-color:#f6f8fa}table th{letter-spacing:.0125rem;text-transform:uppercase;font-weight:500}.header{position:relative;width:100%;height:50px;line-height:1}.logo-link{color:#fff;font-size:1.5rem;font-weight:500}.social-media a{background:#212529;border-radius:4px;color:#fff;display:inline-block;height:36px;margin:0 2px;padding:8px;vertical-align:middle;width:36px}.social-media svg{fill:#fff;stroke:none}.sidebar{width:280px;background:#fff}.sidebar ul{list-style:none;list-style-image:none;margin:18px 0 20px;padding:0}.sidebar ul li a{padding:6px 20px;font-weight:500;font-size:1rem;display:block}.sidebar .social-media{padding:20px;border-top:1px solid #ddd}.close-sidebar{height:50px;font-size:1.5625rem;line-height:3.125rem;text-align:right;padding-right:20px;color:#fff}.hamburgermenu{background-color:transparent;border:none;padding:0;height:48px;position:relative;-webkit-transition:-webkit-transform .4s;transition:-webkit-transform .4s;transition:transform .4s;transition:transform .4s,-webkit-transform .4s;width:48px;margin-right:-15px}.hamburgermenu span{background-color:#fff;display:block;height:2px;left:14px;margin-top:-1px;position:absolute;top:50%;width:20px}.hamburgermenu span:first-child{-webkit-transform:translateY(-6px);transform:translateY(-6px)}.hamburgermenu span:last-child{-webkit-transform:translateY(6px);transform:translateY(6px)}.main{max-width:500px;margin:0 auto}.article{padding-top:25px}.article-title{margin-top:0}.article-excerpt{margin-bottom:20px;margin-top:15px;color:#6c757d;font-size:1.25rem;line-height:1.4}.article-meta{color:#6c757d;margin:15px 0;font-size:.875rem}.article-body{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif;line-height:1.7em;font-size:1.125rem;padding:20px 1rem}.article-body>*{margin-bottom:28px}.article-body a:not(.kg-bookmark-container){word-break:break-word;text-decoration:underline}.article-body ol,.article-body ul{padding-left:20px}.article-body ol li,.article-body ul li{margin-bottom:5px}.button--tags{border-radius:3px;color:#212529;display:inline-block;font-size:.875rem;font-weight:500;height:37px;line-height:2.1875rem;margin:0 8px 8px 0;padding:0 10px;border:2px solid #212529}.button--tags:before{content:"#"}.share-title{display:block;margin-bottom:8px}amp-social-share.custom-style{background-color:teal;background-image:url(https://raw.githubusercontent.com/google/material-design-icons/master/social/1x_web/ic_share_white_48dp.png);background-repeat:no-repeat;background-position:50%;background-size:contain}amp-social-share.rounded{border-radius:10%;background-size:85%}.related{padding-top:40px;padding-bottom:20px;margin-top:20px;background:#efefef}.related-title{border-bottom:1px solid rgba(0,0,0,.15);padding-bottom:15px;margin-bottom:30px;color:#212529;font-weight:500;font-size:1.25rem}.story-border{border-left:3px solid #cc116e;bottom:0;color:rgba(0,0,0,.2);font-size:2.25rem;font-weight:700;left:0;padding:15px 10px 10px;top:0;-webkit-text-fill-color:transparent;-webkit-text-stroke-width:1.4px;-webkit-text-stroke-color:#888}.story:nth-child(3n) .story-border{border-color:#f59e00}.story:nth-child(3n+2) .story-border{border-color:#26a8ed}.story-link{background-color:#fff;border-bottom:1px solid #e2e0e0;box-shadow:0 1px 7px rgba(0,0,0,.05);min-height:50px;padding:15px 15px 15px 55px}.story-title{color:#212529;line-height:1.2;font-size:1.0625rem;font-weight:500;margin:0}.kg-bookmark-container{display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;flex-direction:column;border:1px solid rgba(0,0,0,.1)}.kg-bookmark-content{padding:20px;-webkit-box-ordinal-group:2;order:1}.kg-bookmark-title{font-weight:500;line-height:1.2;font-size:1.125rem}.kg-bookmark-description{color:#6c757d;line-height:1.4;margin-top:10px;font-size:.875rem}.kg-bookmark-metadata{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;font-size:.875rem;margin-top:10px}.kg-bookmark-icon{margin-right:5px}.kg-bookmark-author:after{content:"•";margin:0 6px}.footer{background-color:#efefef;color:rgba(0,0,0,.44);padding-top:20px;font-size:.9375rem;padding-bottom:45px}</style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
+    <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+
+    
+</head>
+<body class="amp-template">
+    <header class="header u-bgColor u-flexCenter u-container">
+    <div class="u-flex1">
+
+
+
+        <a href="../index.html" class="logo-link">Andree&#x27;s Musings.</a>
+    </div>
+
+    <button class="hamburgermenu" on="tap:sidenav.open" tabindex="0"><span></span><span></span><span></span></button>
+
+</header>
+
+    <main class="main">
+        
+<article class="article">
+    <header class="article-header u-container">
+        <h1 class="article-title">Linux Kernel and Measuring network throughput.</h1>
+
+        <p class="article-excerpt">can Linux route at line-rate between two network interfaces? That’s the question we will try to answer in the next few minutes.</p>
+
+        <hr>
+
+        <div class="article-meta">
+            <span class="author-name">By <a href="../author/andree/index.html">Andree Toonk</a></span>
+
+            <span class="timestamp">
+                <time class="datetime" datetime="2020-03-29">5 months ago</time>
+            </span>
+
+            
+                <span>in</span>
+                <span class="categories"><a href="../tag/networking/index.html" title="networking">networking</a></span>
+            
+        </div>
+    </header>
+
+        <figure class="article-image u-block u-marginTop30">
+            <amp-img src="https://images.unsplash.com/photo-1448056975861-28196f26abd6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" width="600" height="350" layout="responsive" alt="Linux Kernel and Measuring network throughput."></amp-img>
+        </figure>
+
+    <div class="article-body u-container"> <p>In <a href="https://medium.com/@atoonk/building-a-high-performance-linux-based-traffic-generator-with-dpdk-93bb9904416c">my last blog</a>, I wrote about how we can use dpdk pktgen for performance testing. Today I spent some time on some baseline testing to see what we can expect out of a vanilla Linux system nowadays when used as a router. Over the last two years I’ve been playing a fair bit with kernel bypass networking and hope to write about it in the near future. The promise of kernel bypass networking is higher performance, to determine how much of performance increase over the Kernel we need to establish a baseline first, we’ll do that in this article.</p><h3 id="test-setup">Test setup</h3><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1200/1*Z2de1wSgOo9UGYqJL5X2Ag.png" class="kg-image" alt width="1192" height="548" layout="responsive"></amp-img><figcaption>n2.large.x86 CPU specs.</figcaption></figure><p>I’m using two <a href="https://www.packet.com/cloud/servers/n2-xlarge/" rel="noopener">n2.xlarge.x86</a> servers from <a href="https://www.packet.com/" rel="noopener">packet.com</a>. With its two Numa nodes, 16cores per socket, 32 cores in total, 64 with hyper-threading, this is a very beefy machine! It also comes with a quad-port Intel x710 NIC, giving us 4 x 10Gbs. Packet allows you to create custom vlans and assign network ports to a vlan. I’ve created two vlans and assigned one NIC to each vlan. The setup looks like below.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*TvT0rHAopTG6cx8v8Ny9TA.png" class="kg-image" alt width="1478" height="638" layout="responsive"></amp-img><figcaption>Test setup</figcaption></figure><p>The Device Under Test (DUT), is a vanilla Ubuntu 19.04 system running a 5.0.0–38-generic kernel. The only minor tune I’ve done is to set the NIC rx ring to 4096. And I enabled ip forwarding ( net.ipv4.ip_forward=1)</p><p>Using the <a href="https://github.com/atoonk/dpdk_pktgen" rel="noopener">traffic generator</a>, I’m sending as many packets possible and observe when packets stop coming back at the same rate, which indicates packet-loss. I record the point that happens as the maximum throughput. I’m also keeping a close eye on the CPU usage, to get a sense of how many CPU cores (hyper threads) are needed to serve the traffic.</p><h3 id="test-1-packet-forwarding-on-linux">Test 1 — packet forwarding on Linux</h3><p>The first test was easy. I’m simply sending packets from 10.10.11.1 to 10.10.12.1 and vice versa, through the DUT (Device under Test), which is routing the packets between the two interfaces eno2 and eno4.<br />Note that that I did both a one directional test (10.10.11.1 &gt; 10.10.12.1) and a bidirectional test (10.10.11.1 &gt; 10.10.12.1 AND 10.10.12.1 &gt; 10.10.11.1). <br />I also tested with just one flow, and with 10,000 flows.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1200/1*moJCGd0xZ8uN0F_dSJrlBg.png" class="kg-image" alt width="584" height="156" layout="responsive"></amp-img><figcaption>Receive Side Scaling (RSS)</figcaption></figure><p>This is important as the NIC is doing something called<a href="https://medium.com/@anubhavchoudhary/introduction-to-receive-side-scaling-rss-7cd97307d220"> Receive Side Scaling (RSS)</a>, which will load balance different flows on to different NIC receive Queues. Each queue is then served by a different core, meaning the system scales horizontally. But, keep in mind, you may still be limited by what a single core can do depending on your traffic patterns.</p><p>Ok, show me the results! Keep in mind that we’re talking mostly about Packets Per Second (PPS) as that is the major indicator of the performance, it’s not super relevant how much data is caried in each packet. In the world of Linux networking, it really comes down to, how many interrrupts per second the system can process.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*qs0jj0QIJRCsGeY-Laf8QA.png" class="kg-image" alt width="1198" height="226" layout="responsive"></amp-img><figcaption>Test results for test 1</figcaption></figure><p>In the results above, you can see that one flow can go as high as 1.4Mpps. At that point, the core serving that queue is maxed out (running 100%), and can not process any more packets and will start dropping. The single flow forwarding performance is good to know for DDOS use-cases or large single flow network streams such as ESP. For services like these, the performance is as good as a single queue / cpu can handle.</p><p>When doing the same test with 10,000 flows, I get to 14 Mpps, full 10g line rate at the smallest possible packet size (64B), yay! At this point I can see all cores doing a fair amount of work. This is expected and is due to the hashing of flows over different queues. Looking at the CPU usage, I estimate that you’d need roughly 16 cores at 100% usage to serve this amount of packets (interrupts).</p><figure class="kg-card kg-image-card kg-width-wide kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/2400/1*orhgjD2BpWHCVxGdutKCPg.png" class="kg-image" alt width="2400" height="1438" layout="responsive"></amp-img><figcaption>14M pps, unidirectional test.</figcaption></figure><p>Interestingly, I wasn’t able to get to full line rate when doing the bidirectional test. Meaning both NICs both sending and receiving simultaneously. Although I am getting reasonably close at 12Mpps (24Mpps total per NIC). When eyeballing the cpu usage and amount of idle left over, I’d expect you’d need roughly 26 cores at 100% usage to do that.</p><h3 id="test-2-introducing-a-simple-stateful-iptables-rule">Test 2 - Introducing a simple stateful iptables rule</h3><p>In this test we’re adding two simple iptables rules to the DUT to see what the impact is. The hypothesis here is that since we’re now going to ask the system to invoke conntrack and do stateful session mapping, we’re starting to execute more code, which could impact the performance and system load. This test will show us the impact of that.</p><p>The Iptables rules added were:</p><pre><code>iptables -I FORWARD -d 10.10.11.1 -m conntrack — ctstate RELATED,ESTABLISHED -j ACCEPT
+iptables -I FORWARD -d 10.10.12.1 -m conntrack — ctstate RELATED,ESTABLISHED -j ACCEPT</code></pre><p></p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*2bA807FtoZwr2K3YgSot9Q.png" class="kg-image" alt width="1192" height="230" layout="responsive"></amp-img><figcaption>Test results for test 2, impact of conntrack</figcaption></figure><p>The results for the single flow performance test look exactly the same, that’s good. The results for the 10,000 flows test, look the same as well when it comes to packet per second. However, we do need a fair amount of extra CPU’s to do the work. Good thing, our test system has plenty. <br />So you can still achieve (close) to full line rate with a simple stateful iptables rule, as long as you have enough cpu’s. Note that in this case, the state table had 10,000 state entries. I didn’t test with more iptables rules.</p><h3 id="test-3-introducing-a-nat-rule">Test 3 - Introducing a NAT rule</h3><p>In this test, we’re starting from scratch as we did in test 1 and I’m adding a simple nat rule which causes all packets going through the DUT to be rewritten to a new source IP. These are the two rules:</p><pre><code>iptables -I POSTROUTING -t nat -d 10.10.12.1 -s 10.10.11.1 -j SNAT — to 10.10.12.2iptables -I POSTROUTING -t nat -d 10.10.11.1 -s 10.10.12.1 -j SNAT — to 10.10.11.2</code></pre><p>The results below are quite different than what we saw earlier.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*zGL9WLmMNQUSItaf0cSmXA.png" class="kg-image" alt width="1192" height="226" layout="responsive"></amp-img><figcaption>Test results for test 3</figcaption></figure><p>The results show that rewriting the packets is quite a bit more expensive than just allowing or dropping a packet. For example, if we look at the unidirectional test with 10,000 flows, we see that we dropped from 14M pps (test 1) to 3.2 Mpps, we also needed 13 cores more to do this!</p><figure class="kg-card kg-image-card kg-width-wide kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*vqQ8Ag_pkW7g19SRCpuhxQ.png" class="kg-image" alt width="1600" height="716" layout="responsive"></amp-img><figcaption>This is what a (unhappy) 64core system looks like when trying to forward and NAT 5.9M pps</figcaption></figure><p>For what it’s worth, i did do a quick measurement with using nftables instead of iptables, but saw no significant changes in NAT performance.</p><h3 id="conclusion">Conclusion</h3><p>One of the questions I had starting this experiment was: <strong>can Linux route at line-rate between two network interfaces?</strong> The answer is yes, we saw 14Mpps (unidirectional), as long as there are sufficient flows, and you have enough cores (~16). The bidirectional test made it to 12Mpps (24Mpps total per NIC) with 26cores at 100%.</p><p>We also saw that with the addition of two stateful Iptables rules, I was still able to get the same throughput, but needed extra CPU to do the work. So at least it scales horizontally.</p><p>Finally, we saw the rather dramatic drop in performance when adding SNAT rules to test. With SNAT the maximum I was able to get out of the system was 5.9Mpps; this was for 20k sessions (10k per direction).</p><p>So yes, you can build a close to line rate router in Linux, as long as you have sufficient cores and don’t do too much packet manipulations. All in all, an interesting test, and now we have a starting benchmark for future (kernel bypass / userland) networking experiments on Linux!</p> </div>
+
+        <div class="article-tags u-container u-marginTop30">
+            <span class="share-title">Tags:</span>
+                <a href="../tag/networking/index.html" title="networking" class="button--tags">networking</a>
+        </div>
+
+    <footer class="share u-container u-marginTop30">
+        <span class="share-title">Share this:</span>
+        <amp-social-share class="rounded"
+        type="email"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="facebook"
+        data-param-app_id="254325784911610"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="twitter"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="linkedin"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="whatsapp"
+        width="36"
+        height="36"></amp-social-share>
+    </footer>
+
+</article>
+
+
+            <div class="related u-container">
+        <div class="related-title">Related Articles</div>
+
+        <div class="story">
+            <a href="../building-a-global-anycast-service-in-under-a-minute/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">1</span>
+                <h3 class="story-title">Building a global anycast service in under a minute</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../building-an-xdp-express-data-path-based-bgp-peering-router/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">2</span>
+                <h3 class="story-title">Building an XDP (eXpress Data Path) based BGP peering router</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../kernel-bypass-networking-with-fd-io-and-vpp/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">3</span>
+                <h3 class="story-title">Kernel bypass networking with FD.io and VPP.</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../building-a-high-performance-linux-based-traffic-generator-with-dpdk/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">4</span>
+                <h3 class="story-title">Building a high performance - Linux Based Traffic generator with DPDK</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../tcp-bbr-exploring-tcp-congestion-control/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">5</span>
+                <h3 class="story-title">TCP BBR - Exploring TCP congestion control</h3>
+            </a>
+        </div>
+
+    </div>
+    </main>
+
+    <amp-sidebar id="sidenav" class="sidebar" layout="nodisplay" side="right">
+    <div class="close-sidebar u-bgColor" role="button" aria-label="close sidebar" on="tap:sidenav.close" tabindex="0">✕</div>
+
+    <ul class="nav" role="menu">
+    <li role="menuitem"><a href="../index.html" class="nav-home">Home</a></li>
+    <li role="menuitem"><a href="../contact/index.html" class="nav-contact">Contact</a></li>
+    <li role="menuitem"><a href="../about/index.html" class="nav-about">About</a></li>
+</ul>
+
+    <div class="social-media">
+
+            <a href="https://twitter.com/atoonk" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 18 18" width="100%" height="100%"><path d="M12.077 2c-1.812 0-3.282 1.582-3.282 3.534 0 .277.03.547.085.806-2.728-.148-5.147-1.555-6.766-3.693-.283.522-.445 1.13-.445 1.777 0 1.226.58 2.308 1.46 2.942-.54-.02-1.05-.178-1.49-.443v.045c0 1.712 1.13 3.14 2.63 3.465-.28.08-.57.124-.87.124-.21 0-.418-.022-.62-.063.418 1.404 1.63 2.426 3.067 2.455-1.125.94-2.54 1.51-4.078 1.51-.267 0-.528-.02-.785-.05 1.46 1 3.185 1.59 5.04 1.59 6.037 0 9.34-5.39 9.34-10.06 0-.153-.005-.306-.01-.457.64-.5 1.197-1.12 1.637-1.83-.59.28-1.22.47-1.885.557.677-.437 1.198-1.13 1.443-1.955-.633.405-1.336.7-2.084.858C13.88 2.43 13.028 2 12.08 2"></path></svg>
+</a>
+
+
+
+
+    </div>
+
+</amp-sidebar>
+
+    <footer class="footer">
+        <section class="u-container copyright u-textCenter">
+            &copy; 2020 <a href="../index.html">Andree&#x27;s Musings.</a>
+        </section>
+    </footer>
+</body>
+</html>

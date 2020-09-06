@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html amp lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Building a high performance - Linux Based Traffic generator with DPDK</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <link rel="icon" href="../../favicon.png" type="image/png" />
+    <link rel="canonical" href="../index.html" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    
+    <meta property="og:site_name" content="Andree&#x27;s Musings." />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Building a high performance - Linux Based Traffic generator with DPDK" />
+    <meta property="og:description" content="Often in my, now 20 years, networking career, I had to do some form of network performance testing. Use-cases varied, from troubleshooting a customer problem to testing new network hardware, and nowadays more and more Virtual network functions and software-based ‘bumps in the wire’. I’ve always enjoyed playing with" />
+    <meta property="og:url" content="http://dark-shadow-4784.edge.mysocket.io/building-a-high-performance-linux-based-traffic-generator-with-dpdk/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1489976908522-aabacf277f49?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta property="article:published_time" content="2020-03-18T18:32:00.000Z" />
+    <meta property="article:modified_time" content="2020-09-05T18:33:59.000Z" />
+    <meta property="article:tag" content="networking" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Building a high performance - Linux Based Traffic generator with DPDK" />
+    <meta name="twitter:description" content="Often in my, now 20 years, networking career, I had to do some form of network performance testing. Use-cases varied, from troubleshooting a customer problem to testing new network hardware, and nowadays more and more Virtual network functions and software-based ‘bumps in the wire’. I’ve always enjoyed playing with" />
+    <meta name="twitter:url" content="http://dark-shadow-4784.edge.mysocket.io/building-a-high-performance-linux-based-traffic-generator-with-dpdk/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1489976908522-aabacf277f49?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Andree Toonk" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="networking" />
+    <meta name="twitter:site" content="@atoonk" />
+    <meta name="twitter:creator" content="@atoonk" />
+    <meta property="og:image:width" content="2000" />
+    <meta property="og:image:height" content="1333" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Andree&#x27;s Musings.",
+        "url": "http://dark-shadow-4784.edge.mysocket.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "http://dark-shadow-4784.edge.mysocket.io/content/images/2020/09/download-5.png",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Andree Toonk",
+        "url": "http://dark-shadow-4784.edge.mysocket.io/author/andree/",
+        "sameAs": [
+            "http://dark-shadow-4784.edge.mysocket.io/about/",
+            "https://twitter.com/atoonk"
+        ]
+    },
+    "headline": "Building a high performance - Linux Based Traffic generator with DPDK",
+    "url": "http://dark-shadow-4784.edge.mysocket.io/building-a-high-performance-linux-based-traffic-generator-with-dpdk/",
+    "datePublished": "2020-03-18T18:32:00.000Z",
+    "dateModified": "2020-09-05T18:33:59.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1489976908522-aabacf277f49?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "width": 2000,
+        "height": 1333
+    },
+    "keywords": "networking",
+    "description": "\n--------------------------------------------------------------------------------\n\nOften in my, now 20 years, networking career, I had to do some form of network\nperformance testing. Use-cases varied, from troubleshooting a customer problem\nto testing new network hardware, and nowadays more and more Virtual network\nfunctions and software-based ‘bumps in the wire’.\n\nI’ve always enjoyed playing with hardware-based traffic generators. My first\nexperience with for example an IXIA hardware testing go",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://dark-shadow-4784.edge.mysocket.io/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.31" />
+    <link rel="alternate" type="application/rss+xml" title="Andree&#x27;s Musings." href="../../rss/index.html" />
+
+    <link href="https://fonts.googleapis.com/css?family=Domine|Rubik:400,500,700&display=swap" rel="stylesheet">
+
+
+    <style amp-custom>.u-bgColor{background-color:#161D25}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}[hidden],template{display:none}.kg-bookmark-container,body,figcaption,h1,h2,h3,h4,h5,h6{font-family:Rubik,Whitney SSm A,Whitney SSm B,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif}.article-excerpt{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif}.u-flexCenter{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex}.u-block{display:block}.u-relative{position:relative}.u-overflowHidden{overflow:hidden}.u-fontSizeSmaller{font-size:.875rem}.u-flex1{-webkit-box-flex:1;flex:1 1 auto}.u-absolute{position:absolute}.u-textCenter{text-align:center}.u-marginTop30{margin-top:30px}.u-container{margin-left:auto;margin-right:auto;padding-left:16px;padding-right:16px}*,:after,:before{box-sizing:border-box}body{font-size:1rem;font-style:normal;font-weight:400;letter-spacing:0;line-height:1.5em;text-rendering:optimizeLegibility;-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;-ms-text-size-adjust:100%;text-size-adjust:100%;color:#212529}a{color:#00a562;text-decoration:none;word-break:break-word}a:active,a:hover{outline:0}blockquote{border-left:4px solid #212529;font-size:1.125rem;font-style:italic;margin-left:-5px;margin-right:0;padding-bottom:2px;padding-left:20px}figure{margin:0;padding:0}img{-o-object-fit:cover;object-fit:cover;-o-object-position:center;object-position:center}figcaption{color:#6c757d;display:block;font-size:.875rem;font-style:normal;font-weight:400;margin-top:10px;text-align:center;width:100%}h1,h2,h3,h4,h5,h6{color:#111;font-style:normal;font-weight:700;line-height:1.2;margin:25px 0 0;word-break:break-word}h1{font-size:2rem}h2{font-size:1.75rem}h3{font-size:1.5rem}h4{font-size:1.375rem}h5{font-size:1.25rem}h6{font-size:1.125rem}strong{font-weight:700}p{margin:20px 0 0}hr{box-sizing:content-box;height:0;margin:1rem 0;overflow:visible;border:0;border-top:1px solid rgba(0,0,0,.1)}mark{background-color:transparent;background-image:linear-gradient(180deg,#d7fdd3,#d7fdd3);color:rgba(0,0,0,.8)}code,pre{font-family:Menlo,Courier,monospace;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-ms-hyphens:none;hyphens:none}p code{border-radius:2px;padding:1px 6px}p code,pre{background:#2a3644;color:#e5eff5;font-size:.875rem}pre{overflow-x:auto;margin:0;padding:20px;border:none;line-height:1.6em}pre code{padding:0;background:transparent}svg{width:100%;height:100%}svg:not(:root){overflow:hidden}table{border-collapse:collapse;border-spacing:0;display:inline-block;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;font-size:1rem;line-height:1.5;margin:20px 0 0;max-width:100%;overflow-x:auto;vertical-align:top;white-space:nowrap;width:auto;-webkit-overflow-scrolling:touch}table td,table th{padding:6px 13px;border:1px solid #dfe2e5}table tr:nth-child(2n){background-color:#f6f8fa}table th{letter-spacing:.0125rem;text-transform:uppercase;font-weight:500}.header{position:relative;width:100%;height:50px;line-height:1}.logo-link{color:#fff;font-size:1.5rem;font-weight:500}.social-media a{background:#212529;border-radius:4px;color:#fff;display:inline-block;height:36px;margin:0 2px;padding:8px;vertical-align:middle;width:36px}.social-media svg{fill:#fff;stroke:none}.sidebar{width:280px;background:#fff}.sidebar ul{list-style:none;list-style-image:none;margin:18px 0 20px;padding:0}.sidebar ul li a{padding:6px 20px;font-weight:500;font-size:1rem;display:block}.sidebar .social-media{padding:20px;border-top:1px solid #ddd}.close-sidebar{height:50px;font-size:1.5625rem;line-height:3.125rem;text-align:right;padding-right:20px;color:#fff}.hamburgermenu{background-color:transparent;border:none;padding:0;height:48px;position:relative;-webkit-transition:-webkit-transform .4s;transition:-webkit-transform .4s;transition:transform .4s;transition:transform .4s,-webkit-transform .4s;width:48px;margin-right:-15px}.hamburgermenu span{background-color:#fff;display:block;height:2px;left:14px;margin-top:-1px;position:absolute;top:50%;width:20px}.hamburgermenu span:first-child{-webkit-transform:translateY(-6px);transform:translateY(-6px)}.hamburgermenu span:last-child{-webkit-transform:translateY(6px);transform:translateY(6px)}.main{max-width:500px;margin:0 auto}.article{padding-top:25px}.article-title{margin-top:0}.article-excerpt{margin-bottom:20px;margin-top:15px;color:#6c757d;font-size:1.25rem;line-height:1.4}.article-meta{color:#6c757d;margin:15px 0;font-size:.875rem}.article-body{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif;line-height:1.7em;font-size:1.125rem;padding:20px 1rem}.article-body>*{margin-bottom:28px}.article-body a:not(.kg-bookmark-container){word-break:break-word;text-decoration:underline}.article-body ol,.article-body ul{padding-left:20px}.article-body ol li,.article-body ul li{margin-bottom:5px}.button--tags{border-radius:3px;color:#212529;display:inline-block;font-size:.875rem;font-weight:500;height:37px;line-height:2.1875rem;margin:0 8px 8px 0;padding:0 10px;border:2px solid #212529}.button--tags:before{content:"#"}.share-title{display:block;margin-bottom:8px}amp-social-share.custom-style{background-color:teal;background-image:url(https://raw.githubusercontent.com/google/material-design-icons/master/social/1x_web/ic_share_white_48dp.png);background-repeat:no-repeat;background-position:50%;background-size:contain}amp-social-share.rounded{border-radius:10%;background-size:85%}.related{padding-top:40px;padding-bottom:20px;margin-top:20px;background:#efefef}.related-title{border-bottom:1px solid rgba(0,0,0,.15);padding-bottom:15px;margin-bottom:30px;color:#212529;font-weight:500;font-size:1.25rem}.story-border{border-left:3px solid #cc116e;bottom:0;color:rgba(0,0,0,.2);font-size:2.25rem;font-weight:700;left:0;padding:15px 10px 10px;top:0;-webkit-text-fill-color:transparent;-webkit-text-stroke-width:1.4px;-webkit-text-stroke-color:#888}.story:nth-child(3n) .story-border{border-color:#f59e00}.story:nth-child(3n+2) .story-border{border-color:#26a8ed}.story-link{background-color:#fff;border-bottom:1px solid #e2e0e0;box-shadow:0 1px 7px rgba(0,0,0,.05);min-height:50px;padding:15px 15px 15px 55px}.story-title{color:#212529;line-height:1.2;font-size:1.0625rem;font-weight:500;margin:0}.kg-bookmark-container{display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;flex-direction:column;border:1px solid rgba(0,0,0,.1)}.kg-bookmark-content{padding:20px;-webkit-box-ordinal-group:2;order:1}.kg-bookmark-title{font-weight:500;line-height:1.2;font-size:1.125rem}.kg-bookmark-description{color:#6c757d;line-height:1.4;margin-top:10px;font-size:.875rem}.kg-bookmark-metadata{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;font-size:.875rem;margin-top:10px}.kg-bookmark-icon{margin-right:5px}.kg-bookmark-author:after{content:"•";margin:0 6px}.footer{background-color:#efefef;color:rgba(0,0,0,.44);padding-top:20px;font-size:.9375rem;padding-bottom:45px}</style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
+    <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+
+    
+</head>
+<body class="amp-template">
+    <header class="header u-bgColor u-flexCenter u-container">
+    <div class="u-flex1">
+
+
+
+        <a href="../../index.html" class="logo-link">Andree&#x27;s Musings.</a>
+    </div>
+
+    <button class="hamburgermenu" on="tap:sidenav.open" tabindex="0"><span></span><span></span><span></span></button>
+
+</header>
+
+    <main class="main">
+        
+<article class="article">
+    <header class="article-header u-container">
+        <h1 class="article-title">Building a high performance - Linux Based Traffic generator with DPDK</h1>
+
+        
+
+        <hr>
+
+        <div class="article-meta">
+            <span class="author-name">By <a href="../../author/andree/index.html">Andree Toonk</a></span>
+
+            <span class="timestamp">
+                <time class="datetime" datetime="2020-03-18">6 months ago</time>
+            </span>
+
+            
+                <span>in</span>
+                <span class="categories"><a href="../../tag/networking/index.html" title="networking">networking</a></span>
+            
+        </div>
+    </header>
+
+        <figure class="article-image u-block u-marginTop30">
+            <amp-img src="https://images.unsplash.com/photo-1489976908522-aabacf277f49?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" width="600" height="350" layout="responsive" alt="Building a high performance - Linux Based Traffic generator with DPDK"></amp-img>
+        </figure>
+
+    <div class="article-body u-container"> <hr></hr><p>Often in my, now 20 years, networking career, I had to do some form of network performance testing. Use-cases varied, from troubleshooting a customer problem to testing new network hardware, and nowadays more and more Virtual network functions and software-based ‘bumps in the wire’.</p><p>I’ve always enjoyed playing with hardware-based traffic generators. My first experience with for example an IXIA hardware testing goes back to I think 2003, at the <a href="https://www.ams-ix.net/ams" rel="noopener">Amsterdam Internet Exchange</a> where we were testing brand new Foundry 10G cards. These hardware-based testers were super powerful and a great tool to validate new gear, such as router line cards, firewalls, and IPsec gear. However, we don’t always have access to these hardware-based traffic generators, as they tend to be quite expensive or only available in a lab. In this blog, we will look at a software-based traffic generator that anyone can use - based on DPDK. As you’re going through this remember that the scripts and additional info can be found on <a href="https://github.com/atoonk/dpdk_pktgen/" rel="noopener">my GitHub page here</a>.</p><hr></hr><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1200/1*L3shetNxtIGOhKt-_0xv5A.png" class="kg-image" alt width="400" height="245" layout="responsive"></amp-img></figure><p>DPDK, The Data Plane Development Kit, is an Open source software project started by Intel and now managed by the Linux Foundation. It provides a set of data plane libraries and network interface controller polling-mode drivers that are running in userspace. Ok, let’s think about that for a sec, what does that mean? Userspace networking is something you likely increasingly hear and read about. The main driver behind userspace networking (aka Kernel bypass) has to do with the way Linux has built its networking stack; it is built as part of a generic, multi-purpose, multi-user OS. Networking in Linux is powerful and feature-rich, but it’s just one of the many features of Linux, and so; as a result, the networking stack needs to play fair and share its resources with the rest of the kernel and userland programs. The end result is that getting a few (1 to 3) million packets per second through the Linux networking stack is about what you can do on a standard system. That’s not enough to fill up a 10G link at 64 bytes packets, which is the equivalent of 14M packets per second (pps). This is the point where the traditional interrupt-driven (IRQs) way of networking in Linux starts to limit what is needed, and this is where DPDK comes in. With DPDK and userland networking programs, we take away the NIC from the kernel and give it to a userland DPDK program. The DPDK driver is a pull mode driver (PMD), which means that, typically, one core per nic always uses a 100% CPU, it’s in a busy loop always pulling for packets. This means that you will see that core running at 100%, regardless of how many packets are arriving or being sent on that nic. This is obviously a bit of waste, but nowadays, with plenty of cores and the need for high throughput systems, this is often a great trade-off, and best of all, it allows us to get to the 14M pps number on Linux.</p><p>Ok, high performance, we should all move to DPDK then, right?! Well, there’s just one problem… Since we’re now bypassing the kernel, we don’t get to benefit from the rich Linux features such as Netfilter and not even some of what we now think are basic features like a TCP/IP stack. This means you can’t just run your Nginx, Mysql, Bind, etc, socket-based applications with DPDK as all of these rely on the Linux Socket API and the Kernel to work. So although DPDK gives us a lot of speed and performance by bypassing the kernel, you also lose a lot of functionality.</p><p>Now there are quite a few DKDK based applications nowadays, varying from network forwarders such as software-based routers and switches as well as TCP/IP stacks such as F-stack.</p><p>In this blog, we’re going to look at DPDK-pktgen, a DPDK based traffic generator maintained by the DPDK team. I’m going to walk through installing DPDK, setting up SR-IOV, and running pktgen; all of the below was tested on a <a href="https://www.packet.com/" rel="noopener">Packet.com</a> server of type <a href="https://www.packet.com/cloud/servers/x1-small/" rel="noopener">x1.small.x86</a> which has a single Intel X710 10G nic and a 4 core E3–1578L Xeon CPU. I’m using Ubuntu 18.04.4 LTS.</p><h3 id="installing-dpdk-and-pktgen">Installing DPDK and Pktgen</h3><p>First, we need to install the DPKD libraries, tools, and drivers. There are various ways to install DPDK and pktgen; I elected to compile the code from source. There are a few things you need to do; to make it easier, you can download the <a href="https://github.com/atoonk/dpdk_pktgen/blob/master/install-dpdk-pktgen.sh" rel="noopener">same bash script </a>I used to help you with the installation.</p><h3 id="solving-the-single-nic-problem">Solving the single NIC problem</h3><p>One of the challenges with DPDK is that it will take full control of the nic. To use DPDK, you will need to release the nic from the kernel and give it to DPDK. Given we only have one nic, once we give it to DKDK, I’d lose all access (remember there’s no easy way to keep on using SSH, etc., since it relies on the Linux kernel). Typically folks solve this by having a management NIC (for Linux) and one or more NICs for DPDK. But I have only one NIC, so we need to be creative: we’re going to use SR-IOV to achieve the same. SR-IOV allows us to make one NIC appear as multiple PCI slots, so in a way, we’re virtualizing the NIC.</p><p>To use SR-IOV, we need to enable iommu in the kernel (done in the DPDK install script). After that, we can set the number of Virtual Functions (the number of new PCI NIC) like this.</p><pre><code class="language-bash">echo 1 &gt; /sys/class/net/eno1/device/sriov_numvfs
+ip link set eno1 vf 0 spoofchk off
+ip link set eno1 vf 0 trust on</code></pre><p></p><p>dmesg -t will show something like this:</p><pre><code class="language-bash">[Tue Mar 17 19:44:37 2020] i40e 0000:02:00.0: Allocating 1 VFs.
+[Tue Mar 17 19:44:37 2020] iommu: Adding device 0000:03:02.0 to group 1
+[Tue Mar 17 19:44:38 2020] iavf 0000:03:02.0: Multiqueue Enabled: Queue pair count = 4
+[Tue Mar 17 19:44:38 2020] iavf 0000:03:02.0: MAC address: 1a:b5:ea:3e:28:92
+[Tue Mar 17 19:44:38 2020] iavf 0000:03:02.0: GRO is enabled
+[Tue Mar 17 19:44:39 2020] iavf 0000:03:02.0 em1_0: renamed from eth0</code></pre><p>We can now see the new PCI device and nic name:</p><pre><code class="language-bash">root@ewr1-x1:~# lshw -businfo -class network | grep 000:03:02.0
+pci@0000:03:02.0 em1_0 network Illegal Vendor ID</code></pre><p>Next up we will unbind this NIC from the kernel and give it to DPDK to manage:</p><pre><code class="language-bash">/opt/dpdk-20.02/usertools/dpdk-devbind.py -b igb_uio 0000:03:02.0</code></pre><p>We can validate that like this (note em2 is not connected and not used):</p><pre><code class="language-bash">/opt/dpdk-20.02/usertools/dpdk-devbind.py -s
+Network devices using DPDK-compatible driver
+============================================
+0000:03:02.0 'Ethernet Virtual Function 700 Series 154c' drv=igb_uio unused=iavf,vfio-pci,uio_pci_generic
+Network devices using kernel driver
+===================================
+0000:02:00.0 'Ethernet Controller X710 for 10GbE backplane 1581' if=eno1 drv=i40e unused=igb_uio,vfio-pci,uio_pci_generic
+0000:02:00.1 'Ethernet Controller X710 for 10GbE backplane 1581' if=em2 drv=i40e unused=igb_uio,vfio-pci,uio_pci_generic</code></pre><h3 id="testing-setup">Testing setup</h3><p>Now that we’re ready to start testing, I should explain our simple test setup. I’m using two x1-small servers; one is the sender (running dpdk-pktgen), the other is a vanilla Ubuntu machine. What we’re going to test is the ability for the receiver Kernel, sometimes referred to as Device Under Test (DUT), to pick up the packets from the NIC. That’s all; we’re not processing anything, the IP address the packets are sent to isn’t even configured on the DUT, so the kernel will drop the packets asap after picking it up from the NIC.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*4dnNk4hTHqehbtjSq7c5kQ.png" class="kg-image" alt width="1392" height="640" layout="responsive"></amp-img><figcaption>test setup</figcaption></figure><h3 id="single-flow-traffic">Single flow traffic</h3><p>Ok, time to start testing! Let’s run pktgen and generate some packets! My first experiment is to figure out how much I can send in a single flow to the target machine before it starts dropping packets.</p><p>Note that you can find the exact config in the <a href="https://github.com/atoonk/dpdk_pktgen/" rel="noopener">GitHub repo for this blog</a>. The file <a href="https://github.com/atoonk/dpdk_pktgen/blob/master/pktgen.pkt" rel="noopener">pktgen.pkt</a> contains the commands to configure the test setup. Things that I configured were the mac and IP addresses, ports and protocols, and the sending rate. Note that I’m testing from 10.99.204.3 to 10.99.204.8. These are on /31 networks, so I’m setting the destination mac address to that of the default gateway. With the config as defined in <a href="https://github.com/atoonk/dpdk_pktgen/blob/master/pktgen.pkt" rel="noopener">pktgen.pkt</a> I’m sending the same 64 byte packets (5 tuple, UDP 10.99.204.3:1234 &gt; 10.99.204.8:81 ) over and over.</p><p>I’m using the following to start pktgen.</p><pre><code class="language-bash">/opt/pktgen-20.02.0/app/x86_64-native-linuxapp-gcc/pktgen - -T -P -m "2.[0]" -f pktgen.pkt</code></pre><p>After adjusting the sending rate properties on the sender and monitoring with <a href="https://github.com/atoonk/dpdk_pktgen/blob/master/monitorpkts.sh" rel="noopener"><em>./monitorpkts.sh</em></a> on the receiver, we find that a single flow (single queue, single-core) will run clean on this receiver machine up until about 120k pps. If we up the sending rate higher than that, I’m starting to observe packets being dropped on the receiver. That’s a bit lower than expected, and even though it’s one flow, I can see the CPU that is serving that queue having enough idle time left. There must be something else happening…</p><p>The answer has to do with the receive buffer ring on the receiver network card. It was too small for the higher packet rates. After I increased it from 512 to 4096. I can now receive up to 1.4Mpps before seeing drops, not bad for a single flow!</p><pre><code>ethtool -G eno1 rx 4096</code></pre><h3 id="multi-flow-traffic">Multi flow traffic</h3><p>Pktgen also comes with the ability to configure it for ranges. Examples of ranges include source and destination IP addresses as well as source and destination ports. You can find an example in the <a href="https://github.com/atoonk/dpdk_pktgen/blob/master/pktgen-range.pkt" rel="noopener">pktgen-range.pkt file</a>. For most environments, this is a more typical scenario as your server is likely to serve many different flows from many different IP addresses. In fact, the Linux system relies on the existence of many flows to be able to deal with these higher amounts of traffic. The Linux kernel hashes and load-balances these different flows to the available receive queues on the nic. Each queue is then served by a separate Interrupt thread, allowing the kernel to parallelize the work and leverage the multiple cores on the system.</p><p>Below you’ll find a screenshot from when I was running the test with many flows. The receiver terminals can be seen on the left, the sender on the right. The main thing to notice here is that on the receiving node, all available CPU’s are being used, note the <em>ksoftirqd/X</em> processes. Since we are using a wide range of source and destination ports, we’re getting proper load balancing over all cores. With this, I can now achieve 0% lost packets up to about 6Mpps. To get to 14Mpps, 10g line rate @64Bytes packets, I’d need more CPUs.</p><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*H4YbY1b8viqfjoHNi6NPjA.png" class="kg-image" alt width="1600" height="861" layout="responsive"></amp-img></figure><h3 id="imix-test">IMIX test</h3><p>Finally, we’ll run a basic IMIX test, using the dpdk-pktgen pcap feature. Internet Mix or IMIX refers to typical Internet traffic. When measuring equipment performance using an IMIX of packets, the performance is assumed to resemble what can be seen in “real-world” conditions.</p><p>The <a href="https://github.com/atoonk/dpdk_pktgen/blob/master/imix.pcap" rel="noopener">imix pcap file</a> contains 100 packets with the sizes and ratio according to the <a href="https://en.wikipedia.org/wiki/Internet_Mix" rel="noopener">IMIX specs</a>.</p><pre><code>tshark -r imix.pcap -V | grep 'Frame Length'| sort | uniq -c|sort -n
+9 Frame Length: 1514 bytes (12112 bits)
+33 Frame Length: 590 bytes (4720 bits)
+58 Frame Length: 60 bytes (480 bits)</code></pre><p>I need to rewrite the source and destination IP and MAC addresses so that they match my current setup, this can be done like this:</p><pre><code>tcprewrite \
+ - enet-dmac=44:ec:ce:c1:a8:20 \
+ - enet-smac=00:52:44:11:22:33 \
+ - pnat=16.0.0.0/8:10.10.0.0/16,48.0.0.0/8:10.99.204.8/32 \
+ - infile=imix.pcap \
+ - outfile=output.pcap</code></pre><blockquote>For more details also see my notes here : <a href="https://github.com/atoonk/dpdk_pktgen/blob/master/DPDKPktgen.md" rel="noopener">https://github.com/atoonk/dpdk_pktgen/blob/master/DPDKPktgen.md</a></blockquote><p>We then start the packetgen app and give it the pcap</p><pre><code>/opt/pktgen-20.02.0/app/x86_64-native-linuxapp-gcc/pktgen - -T -P -m "2.[0]" -s 0:output.pcap</code></pre><p>I can now see I’m sending and receiving packets at a rate of 3.2M pps at 10Gbs, well below the maximum we saw earlier. This means that the Device Under Test (DUT) is capable of receiving packets at 10Gbs using an IMIX traffic pattern.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*xxb0aQmNeSvhvFfOwTI4nw.png" class="kg-image" alt width="1600" height="1011" layout="responsive"></amp-img><figcaption>Result of IMIX test with a PCAP as the source. Receiver (DUT) on the left, sender window on the right.</figcaption></figure><h3 id="conclusion">Conclusion</h3><p>In this article, we looked at getting DPDK up and running, talked a bit about what DPDK is, and used its pktgen traffic generator application. A typical challenge when using DPDK is that you lose the network interface, meaning that the kernel can no longer use it. In this blog, we solved this using SR-IOV, which allowed us to create a second logical interface for DPDK. Using this interface, I was able to generate 14Mpps without issues.</p><p>On the receiving side of this test traffic, we had another Linux machine (no DPDK), and we tested its ability to receive traffic from the NIC (after which the kernel dropped it straight away). We saw how the packets per second number is limited by the rx-buffer, as well as the ability for the CPU cores to pick up the packets (soft interrupts). We saw a single core was able to do about 1,4Mpps. Once we started leveraging more cores, by creating more flows, we started seeing dropped packets at about 6M pps. If we would have had more CPU’s we’d likely be able to do more than that.</p><p>Also note that throughout this blog, I spoke mostly of packets per second and not much in terms of bits per second. The reason for this is that every new packet on the Linux receiver (DUT) creates an interrupt. As a result, the number of interrupts the system can handle is the most critical indicator of how many bits per second the Linux system can handle.</p><p>All in all, pktgen and dpdk require a bit of work to set up, and there is undoubtedly a bit of a learning curve. I hope the scripts and examples in the GitHub repo will help with your testing and remember: with great power comes great responsibility.</p><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*60-YU-v_jMuccCaCqqDw6A.jpeg" class="kg-image" alt width="1023" height="507" layout="responsive"></amp-img></figure> </div>
+
+        <div class="article-tags u-container u-marginTop30">
+            <span class="share-title">Tags:</span>
+                <a href="../../tag/networking/index.html" title="networking" class="button--tags">networking</a>
+        </div>
+
+    <footer class="share u-container u-marginTop30">
+        <span class="share-title">Share this:</span>
+        <amp-social-share class="rounded"
+        type="email"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="facebook"
+        data-param-app_id="254325784911610"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="twitter"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="linkedin"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="whatsapp"
+        width="36"
+        height="36"></amp-social-share>
+    </footer>
+
+</article>
+
+
+            <div class="related u-container">
+        <div class="related-title">Related Articles</div>
+
+        <div class="story">
+            <a href="../../building-a-global-anycast-service-in-under-a-minute/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">1</span>
+                <h3 class="story-title">Building a global anycast service in under a minute</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../building-an-xdp-express-data-path-based-bgp-peering-router/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">2</span>
+                <h3 class="story-title">Building an XDP (eXpress Data Path) based BGP peering router</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../kernel-bypass-networking-with-fd-io-and-vpp/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">3</span>
+                <h3 class="story-title">Kernel bypass networking with FD.io and VPP.</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../linux-kernel-and-measuring-network-throughput/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">4</span>
+                <h3 class="story-title">Linux Kernel and Measuring network throughput.</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../tcp-bbr-exploring-tcp-congestion-control/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">5</span>
+                <h3 class="story-title">TCP BBR - Exploring TCP congestion control</h3>
+            </a>
+        </div>
+
+    </div>
+    </main>
+
+    <amp-sidebar id="sidenav" class="sidebar" layout="nodisplay" side="right">
+    <div class="close-sidebar u-bgColor" role="button" aria-label="close sidebar" on="tap:sidenav.close" tabindex="0">✕</div>
+
+    <ul class="nav" role="menu">
+    <li role="menuitem"><a href="../../index.html" class="nav-home">Home</a></li>
+    <li role="menuitem"><a href="../../contact/index.html" class="nav-contact">Contact</a></li>
+    <li role="menuitem"><a href="../../about/index.html" class="nav-about">About</a></li>
+</ul>
+
+    <div class="social-media">
+
+            <a href="https://twitter.com/atoonk" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 18 18" width="100%" height="100%"><path d="M12.077 2c-1.812 0-3.282 1.582-3.282 3.534 0 .277.03.547.085.806-2.728-.148-5.147-1.555-6.766-3.693-.283.522-.445 1.13-.445 1.777 0 1.226.58 2.308 1.46 2.942-.54-.02-1.05-.178-1.49-.443v.045c0 1.712 1.13 3.14 2.63 3.465-.28.08-.57.124-.87.124-.21 0-.418-.022-.62-.063.418 1.404 1.63 2.426 3.067 2.455-1.125.94-2.54 1.51-4.078 1.51-.267 0-.528-.02-.785-.05 1.46 1 3.185 1.59 5.04 1.59 6.037 0 9.34-5.39 9.34-10.06 0-.153-.005-.306-.01-.457.64-.5 1.197-1.12 1.637-1.83-.59.28-1.22.47-1.885.557.677-.437 1.198-1.13 1.443-1.955-.633.405-1.336.7-2.084.858C13.88 2.43 13.028 2 12.08 2"></path></svg>
+</a>
+
+
+
+
+    </div>
+
+</amp-sidebar>
+
+    <footer class="footer">
+        <section class="u-container copyright u-textCenter">
+            &copy; 2020 <a href="../../index.html">Andree&#x27;s Musings.</a>
+        </section>
+    </footer>
+</body>
+</html>

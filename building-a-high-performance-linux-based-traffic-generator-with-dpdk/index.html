@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<!--
+    Design by:
+    ——————————
+        GODO FREDO
+        ✉ https://godofredo.ninja
+        ✎ @GodoFredoNinja
+        ✈ Lima - Perú
+-->
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Building a high performance - Linux Based Traffic generator with DPDK</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://fonts.googleapis.com/css?family=Domine&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Rubik:400,500,700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="../assets/styles/main.css%3Fv=6949e690f9.css"/>
+
+    <link rel="icon" href="../favicon.png" type="image/png" />
+    <link rel="canonical" href="index.html" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <link rel="amphtml" href="amp.html" />
+    
+    <meta property="og:site_name" content="Andree&#x27;s Musings." />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Building a high performance - Linux Based Traffic generator with DPDK" />
+    <meta property="og:description" content="Often in my, now 20 years, networking career, I had to do some form of network performance testing. Use-cases varied, from troubleshooting a customer problem to testing new network hardware, and nowadays more and more Virtual network functions and software-based ‘bumps in the wire’. I’ve always enjoyed playing with" />
+    <meta property="og:url" content="http://dark-shadow-4784.edge.mysocket.io/building-a-high-performance-linux-based-traffic-generator-with-dpdk/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1489976908522-aabacf277f49?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta property="article:published_time" content="2020-03-18T18:32:00.000Z" />
+    <meta property="article:modified_time" content="2020-09-05T18:33:59.000Z" />
+    <meta property="article:tag" content="networking" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Building a high performance - Linux Based Traffic generator with DPDK" />
+    <meta name="twitter:description" content="Often in my, now 20 years, networking career, I had to do some form of network performance testing. Use-cases varied, from troubleshooting a customer problem to testing new network hardware, and nowadays more and more Virtual network functions and software-based ‘bumps in the wire’. I’ve always enjoyed playing with" />
+    <meta name="twitter:url" content="http://dark-shadow-4784.edge.mysocket.io/building-a-high-performance-linux-based-traffic-generator-with-dpdk/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1489976908522-aabacf277f49?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Andree Toonk" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="networking" />
+    <meta name="twitter:site" content="@atoonk" />
+    <meta name="twitter:creator" content="@atoonk" />
+    <meta property="og:image:width" content="2000" />
+    <meta property="og:image:height" content="1333" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Andree&#x27;s Musings.",
+        "url": "http://dark-shadow-4784.edge.mysocket.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "http://dark-shadow-4784.edge.mysocket.io/content/images/2020/09/download-5.png",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Andree Toonk",
+        "url": "http://dark-shadow-4784.edge.mysocket.io/author/andree/",
+        "sameAs": [
+            "http://dark-shadow-4784.edge.mysocket.io/about/",
+            "https://twitter.com/atoonk"
+        ]
+    },
+    "headline": "Building a high performance - Linux Based Traffic generator with DPDK",
+    "url": "http://dark-shadow-4784.edge.mysocket.io/building-a-high-performance-linux-based-traffic-generator-with-dpdk/",
+    "datePublished": "2020-03-18T18:32:00.000Z",
+    "dateModified": "2020-09-05T18:33:59.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1489976908522-aabacf277f49?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "width": 2000,
+        "height": 1333
+    },
+    "keywords": "networking",
+    "description": "\n--------------------------------------------------------------------------------\n\nOften in my, now 20 years, networking career, I had to do some form of network\nperformance testing. Use-cases varied, from troubleshooting a customer problem\nto testing new network hardware, and nowadays more and more Virtual network\nfunctions and software-based ‘bumps in the wire’.\n\nI’ve always enjoyed playing with hardware-based traffic generators. My first\nexperience with for example an IXIA hardware testing go",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://dark-shadow-4784.edge.mysocket.io/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.31" />
+    <link rel="alternate" type="application/rss+xml" title="Andree&#x27;s Musings." href="../rss/index.html" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-177223425-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-177223425-1');
+</script>
+
+    <script>
+        if (typeof(Storage) !== 'undefined') {
+            var selectTheme = localStorage.getItem('selected-theme');
+            if (selectTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark')
+            } else if (selectTheme === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        }
+    </script>
+</head>
+<body class="is-article">
+    <div class="site-wrapper u-flexColumnTop">
+        <header class="header u-sizeFullWidth u-fontSizeSmaller u-bgheader u-flexCenter">
+    <div class="header-wrap u-flexCenter container u-flex1">
+        <div class="header-left u-flex0">
+            <a href="../index.html"
+                class="header-logo u-block u-lineHeight1 godo-tracking"
+                data-event-category="Header"
+                data-event-action="Logo"
+                data-event-label="Click"
+                data-event-non-interaction="true">
+                    <img src="../content/images/size/w600/2020/09/download-5.png" alt="Andree&#x27;s Musings."/>
+            </a>
+        </div>
+
+        <nav class="header-center u-relative mainMenu u-overflowHidden u-flex u-flex1 u-paddingRight20 u-flexCenter u-hide-before-lg u-menu-color">
+            <ul class="nav" role="menu">
+    <li role="menuitem"><a href="../index.html" class="nav-home">Home</a></li>
+    <li role="menuitem"><a href="../contact/index.html" class="nav-contact">Contact</a></li>
+    <li role="menuitem"><a href="../about/index.html" class="nav-about">About</a></li>
+</ul>
+        </nav>
+
+        <div class="header-right u-flex0 u-flex u-flexEnd u-menu-color">
+                <div class="js-social-media social-media u-flex">
+    
+    <a class="godo-tracking" data-event-category="Header" data-event-action="Social" data-event-label="Twitter" data-event-non-interaction="true" title="Twitter @atoonk" aria-label="Twitter @atoonk" href="https://twitter.com/atoonk" target="_blank" rel="noopener noreferrer">
+        <svg class="icon icon--twitter"><use xlink:href="#icon-twitter"></use></svg>
+    </a>
+</div>
+
+            <div class="header-action u-flexCenter">
+                <a href="javascript:;" class="js-dark-mode hla header-dark-mode" aria-label="Dark and Light Mode" >
+                    <svg class="icon icon--moon"><use xlink:href="#icon-moon"></use></svg>
+                    <svg class="icon icon--sunny u-hide"><use xlink:href="#icon-sunny"></use></svg>
+                </a>
+
+                <a href="javascript:;"
+                    aria-label="Toggle Search"
+                    class="js-search-open nav-search godo-tracking u-pointer u-hide"
+                    data-event-category="Header"
+                    data-event-action="Search"
+                    data-event-label="Click"
+                    data-event-non-interaction="true">
+                    <svg class="icon icon--search"><use xlink:href="#icon-search"></use></svg>
+                </a>
+
+                <div class="js-menu-toggle menu-burger u-relative u-hide-after-lg u-pointer"><span></span><span></span><span></span></div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<aside class="sideNav u-fixed u-absolute0 u-hide-after-lg u-bgheader">
+    <div class="sideNav-wrap u-absolute0">
+        <nav class="sideNav-menu sideNav-section">
+            <ul class="nav" role="menu">
+    <li role="menuitem"><a href="../index.html" class="nav-home">Home</a></li>
+    <li role="menuitem"><a href="../contact/index.html" class="nav-contact">Contact</a></li>
+    <li role="menuitem"><a href="../about/index.html" class="nav-about">About</a></li>
+</ul>
+        </nav>
+
+        <div class="sideNav-section">
+            <div class="js-social-media social-media u-flex">
+    
+    <a class="godo-tracking" data-event-category="Header" data-event-action="Social" data-event-label="Twitter" data-event-non-interaction="true" title="Twitter @atoonk" aria-label="Twitter @atoonk" href="https://twitter.com/atoonk" target="_blank" rel="noopener noreferrer">
+        <svg class="icon icon--twitter"><use xlink:href="#icon-twitter"></use></svg>
+    </a>
+</div>
+        </div>
+
+    </div>
+</aside>
+
+
+        <main class="main u-relative ">
+
+
+
+<article class="post u-marginBottom40 u-relative">
+    <header class="post-header u-container u-maxWidth740 u-paddingTop30 u-relative zindex3">
+    <h1 class="post-title u-marginBottom20 u-fontSizeLargest u-md-fontSize36">Building a high performance - Linux Based Traffic generator with DPDK</h1>
+    
+
+    <hr>
+
+    <div class="u-flex post-share">
+        <div class="hh u-flex u-flexCenter u-relative zindex4 u-flex1">
+    <ul class="hh-author u-flex u-flexWrap u-flex0">
+        <li class="hh-author-item u-realtive">
+            <a href="../author/andree/index.html" title="Go to the profile of Andree Toonk" class="u-relative u-block avatar-image img-md">
+                <img
+                    class="u-absolute u-image u-block u-round"
+                    src="../assets/images/avatar.png%3Fv=6949e690f9"
+                    alt="Go to the profile of  Andree Toonk"
+                />
+            </a>
+        </li>
+    </ul>
+
+    <div class="hh-right u-flex1 u-overflowHidden">
+        <div class="hh-author-name u-fontSize15 u-noWrapWithEllipsis"><a href="../author/andree/index.html">Andree Toonk</a></div>
+
+        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
+    <time class="datetime u-textCapitalize" datetime="2020-03-18">18 Mar 2020</time>
+    <span class="bull">&bull;</span>
+    <span class="readingTime" style="cursor:default" title="10 min read">10 min read</span>
+    
+</div>    </div>
+</div>
+        <aside class="post-shasre u-flex0 u-flexCenter u-hide-before-md">
+            <span class="share-label u-textMuted u-fontSizeSmaller">Share:</span>
+            <a href="https://twitter.com/share?text=Building%20a%20high%20performance%E2%80%8A-%E2%80%8ALinux%20Based%20Traffic%20generator%20with%C2%A0DPDK&amp;url=http://dark-shadow-4784.edge.mysocket.io/building-a-high-performance-linux-based-traffic-generator-with-dpdk/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Share on Twitter"
+                class="share-link button button--circle godo-tracking js-share">
+                <svg class="icon"><use xlink:href="#icon-twitter"></use></svg>
+            </a>
+            <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://dark-shadow-4784.edge.mysocket.io/building-a-high-performance-linux-based-traffic-generator-with-dpdk/&amp;title=Building%20a%20high%20performance%E2%80%8A-%E2%80%8ALinux%20Based%20Traffic%20generator%20with%C2%A0DPDK"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Share on Linkedin"
+                class="share-link button button--circle godo-tracking js-share">
+                <svg class="icon"><use xlink:href="#icon-linkedin"></use></svg>
+            </a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u=http://dark-shadow-4784.edge.mysocket.io/building-a-high-performance-linux-based-traffic-generator-with-dpdk/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Share on Facebook"
+                class="share-link button button--circle godo-tracking js-share">
+                <svg class="icon"><use xlink:href="#icon-facebook"></use></svg>
+            </a>
+        </aside>
+    </div>
+</header>
+        <figure class="post-image u-block u-marginAuto u-sizeFullHeight u-sizeFullWidth u-maxWidth1000">
+            <img class="u-block u-marginAuto u-sizeFullWidth simply-zoom"
+                srcset="https://images.unsplash.com/photo-1489976908522-aabacf277f49?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,
+                        https://images.unsplash.com/photo-1489976908522-aabacf277f49?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w,
+                        https://images.unsplash.com/photo-1489976908522-aabacf277f49?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 1000w,
+                        https://images.unsplash.com/photo-1489976908522-aabacf277f49?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 2000w"
+                sizes="(max-width: 400px) 300px,(max-width: 730px) 600px, (max-width: 1600px) 100vw"
+                src="https://images.unsplash.com/photo-1489976908522-aabacf277f49?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+                alt="Building a high performance - Linux Based Traffic generator with DPDK"
+            />
+        </figure>
+
+    <div class="post-wrap u-maxWidth1000 u-relative u-marginAuto">
+        <div id="post-body" class="post-body u-container u-maxWidth740 u-relative"><hr><p>Often in my, now 20 years, networking career, I had to do some form of network performance testing. Use-cases varied, from troubleshooting a customer problem to testing new network hardware, and nowadays more and more Virtual network functions and software-based ‘bumps in the wire’.</p><p>I’ve always enjoyed playing with hardware-based traffic generators. My first experience with for example an IXIA hardware testing goes back to I think 2003, at the <a href="https://www.ams-ix.net/ams" rel="noopener">Amsterdam Internet Exchange</a> where we were testing brand new Foundry 10G cards. These hardware-based testers were super powerful and a great tool to validate new gear, such as router line cards, firewalls, and IPsec gear. However, we don’t always have access to these hardware-based traffic generators, as they tend to be quite expensive or only available in a lab. In this blog, we will look at a software-based traffic generator that anyone can use - based on DPDK. As you’re going through this remember that the scripts and additional info can be found on <a href="https://github.com/atoonk/dpdk_pktgen/" rel="noopener">my GitHub page here</a>.</p><hr><figure class="kg-card kg-image-card"><img src="https://cdn-images-1.medium.com/max/1200/1*L3shetNxtIGOhKt-_0xv5A.png" class="kg-image" alt></figure><p>DPDK, The Data Plane Development Kit, is an Open source software project started by Intel and now managed by the Linux Foundation. It provides a set of data plane libraries and network interface controller polling-mode drivers that are running in userspace. Ok, let’s think about that for a sec, what does that mean? Userspace networking is something you likely increasingly hear and read about. The main driver behind userspace networking (aka Kernel bypass) has to do with the way Linux has built its networking stack; it is built as part of a generic, multi-purpose, multi-user OS. Networking in Linux is powerful and feature-rich, but it’s just one of the many features of Linux, and so; as a result, the networking stack needs to play fair and share its resources with the rest of the kernel and userland programs. The end result is that getting a few (1 to 3) million packets per second through the Linux networking stack is about what you can do on a standard system. That’s not enough to fill up a 10G link at 64 bytes packets, which is the equivalent of 14M packets per second (pps). This is the point where the traditional interrupt-driven (IRQs) way of networking in Linux starts to limit what is needed, and this is where DPDK comes in. With DPDK and userland networking programs, we take away the NIC from the kernel and give it to a userland DPDK program. The DPDK driver is a pull mode driver (PMD), which means that, typically, one core per nic always uses a 100% CPU, it’s in a busy loop always pulling for packets. This means that you will see that core running at 100%, regardless of how many packets are arriving or being sent on that nic. This is obviously a bit of waste, but nowadays, with plenty of cores and the need for high throughput systems, this is often a great trade-off, and best of all, it allows us to get to the 14M pps number on Linux.</p><p>Ok, high performance, we should all move to DPDK then, right?! Well, there’s just one problem… Since we’re now bypassing the kernel, we don’t get to benefit from the rich Linux features such as Netfilter and not even some of what we now think are basic features like a TCP/IP stack. This means you can’t just run your Nginx, Mysql, Bind, etc, socket-based applications with DPDK as all of these rely on the Linux Socket API and the Kernel to work. So although DPDK gives us a lot of speed and performance by bypassing the kernel, you also lose a lot of functionality.</p><p>Now there are quite a few DKDK based applications nowadays, varying from network forwarders such as software-based routers and switches as well as TCP/IP stacks such as F-stack.</p><p>In this blog, we’re going to look at DPDK-pktgen, a DPDK based traffic generator maintained by the DPDK team. I’m going to walk through installing DPDK, setting up SR-IOV, and running pktgen; all of the below was tested on a <a href="https://www.packet.com/" rel="noopener">Packet.com</a> server of type <a href="https://www.packet.com/cloud/servers/x1-small/" rel="noopener">x1.small.x86</a> which has a single Intel X710 10G nic and a 4 core E3–1578L Xeon CPU. I’m using Ubuntu 18.04.4 LTS.</p><h3 id="installing-dpdk-and-pktgen">Installing DPDK and Pktgen</h3><p>First, we need to install the DPKD libraries, tools, and drivers. There are various ways to install DPDK and pktgen; I elected to compile the code from source. There are a few things you need to do; to make it easier, you can download the <a href="https://github.com/atoonk/dpdk_pktgen/blob/master/install-dpdk-pktgen.sh" rel="noopener">same bash script </a>I used to help you with the installation.</p><h3 id="solving-the-single-nic-problem">Solving the single NIC problem</h3><p>One of the challenges with DPDK is that it will take full control of the nic. To use DPDK, you will need to release the nic from the kernel and give it to DPDK. Given we only have one nic, once we give it to DKDK, I’d lose all access (remember there’s no easy way to keep on using SSH, etc., since it relies on the Linux kernel). Typically folks solve this by having a management NIC (for Linux) and one or more NICs for DPDK. But I have only one NIC, so we need to be creative: we’re going to use SR-IOV to achieve the same. SR-IOV allows us to make one NIC appear as multiple PCI slots, so in a way, we’re virtualizing the NIC.</p><p>To use SR-IOV, we need to enable iommu in the kernel (done in the DPDK install script). After that, we can set the number of Virtual Functions (the number of new PCI NIC) like this.</p><pre><code class="language-bash">echo 1 &gt; /sys/class/net/eno1/device/sriov_numvfs
+ip link set eno1 vf 0 spoofchk off
+ip link set eno1 vf 0 trust on</code></pre><p></p><p>dmesg -t will show something like this:</p><pre><code class="language-bash">[Tue Mar 17 19:44:37 2020] i40e 0000:02:00.0: Allocating 1 VFs.
+[Tue Mar 17 19:44:37 2020] iommu: Adding device 0000:03:02.0 to group 1
+[Tue Mar 17 19:44:38 2020] iavf 0000:03:02.0: Multiqueue Enabled: Queue pair count = 4
+[Tue Mar 17 19:44:38 2020] iavf 0000:03:02.0: MAC address: 1a:b5:ea:3e:28:92
+[Tue Mar 17 19:44:38 2020] iavf 0000:03:02.0: GRO is enabled
+[Tue Mar 17 19:44:39 2020] iavf 0000:03:02.0 em1_0: renamed from eth0</code></pre><p>We can now see the new PCI device and nic name:</p><pre><code class="language-bash">root@ewr1-x1:~# lshw -businfo -class network | grep 000:03:02.0
+pci@0000:03:02.0 em1_0 network Illegal Vendor ID</code></pre><p>Next up we will unbind this NIC from the kernel and give it to DPDK to manage:</p><pre><code class="language-bash">/opt/dpdk-20.02/usertools/dpdk-devbind.py -b igb_uio 0000:03:02.0</code></pre><p>We can validate that like this (note em2 is not connected and not used):</p><pre><code class="language-bash">/opt/dpdk-20.02/usertools/dpdk-devbind.py -s
+Network devices using DPDK-compatible driver
+============================================
+0000:03:02.0 'Ethernet Virtual Function 700 Series 154c' drv=igb_uio unused=iavf,vfio-pci,uio_pci_generic
+Network devices using kernel driver
+===================================
+0000:02:00.0 'Ethernet Controller X710 for 10GbE backplane 1581' if=eno1 drv=i40e unused=igb_uio,vfio-pci,uio_pci_generic
+0000:02:00.1 'Ethernet Controller X710 for 10GbE backplane 1581' if=em2 drv=i40e unused=igb_uio,vfio-pci,uio_pci_generic</code></pre><h3 id="testing-setup">Testing setup</h3><p>Now that we’re ready to start testing, I should explain our simple test setup. I’m using two x1-small servers; one is the sender (running dpdk-pktgen), the other is a vanilla Ubuntu machine. What we’re going to test is the ability for the receiver Kernel, sometimes referred to as Device Under Test (DUT), to pick up the packets from the NIC. That’s all; we’re not processing anything, the IP address the packets are sent to isn’t even configured on the DUT, so the kernel will drop the packets asap after picking it up from the NIC.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*4dnNk4hTHqehbtjSq7c5kQ.png" class="kg-image" alt><figcaption>test setup</figcaption></figure><h3 id="single-flow-traffic">Single flow traffic</h3><p>Ok, time to start testing! Let’s run pktgen and generate some packets! My first experiment is to figure out how much I can send in a single flow to the target machine before it starts dropping packets.</p><p>Note that you can find the exact config in the <a href="https://github.com/atoonk/dpdk_pktgen/" rel="noopener">GitHub repo for this blog</a>. The file <a href="https://github.com/atoonk/dpdk_pktgen/blob/master/pktgen.pkt" rel="noopener">pktgen.pkt</a> contains the commands to configure the test setup. Things that I configured were the mac and IP addresses, ports and protocols, and the sending rate. Note that I’m testing from 10.99.204.3 to 10.99.204.8. These are on /31 networks, so I’m setting the destination mac address to that of the default gateway. With the config as defined in <a href="https://github.com/atoonk/dpdk_pktgen/blob/master/pktgen.pkt" rel="noopener">pktgen.pkt</a> I’m sending the same 64 byte packets (5 tuple, UDP 10.99.204.3:1234 &gt; 10.99.204.8:81 ) over and over.</p><p>I’m using the following to start pktgen.</p><pre><code class="language-bash">/opt/pktgen-20.02.0/app/x86_64-native-linuxapp-gcc/pktgen - -T -P -m "2.[0]" -f pktgen.pkt</code></pre><p>After adjusting the sending rate properties on the sender and monitoring with <a href="https://github.com/atoonk/dpdk_pktgen/blob/master/monitorpkts.sh" rel="noopener"><em>./monitorpkts.sh</em></a> on the receiver, we find that a single flow (single queue, single-core) will run clean on this receiver machine up until about 120k pps. If we up the sending rate higher than that, I’m starting to observe packets being dropped on the receiver. That’s a bit lower than expected, and even though it’s one flow, I can see the CPU that is serving that queue having enough idle time left. There must be something else happening…</p><p>The answer has to do with the receive buffer ring on the receiver network card. It was too small for the higher packet rates. After I increased it from 512 to 4096. I can now receive up to 1.4Mpps before seeing drops, not bad for a single flow!</p><pre><code>ethtool -G eno1 rx 4096</code></pre><h3 id="multi-flow-traffic">Multi flow traffic</h3><p>Pktgen also comes with the ability to configure it for ranges. Examples of ranges include source and destination IP addresses as well as source and destination ports. You can find an example in the <a href="https://github.com/atoonk/dpdk_pktgen/blob/master/pktgen-range.pkt" rel="noopener">pktgen-range.pkt file</a>. For most environments, this is a more typical scenario as your server is likely to serve many different flows from many different IP addresses. In fact, the Linux system relies on the existence of many flows to be able to deal with these higher amounts of traffic. The Linux kernel hashes and load-balances these different flows to the available receive queues on the nic. Each queue is then served by a separate Interrupt thread, allowing the kernel to parallelize the work and leverage the multiple cores on the system.</p><p>Below you’ll find a screenshot from when I was running the test with many flows. The receiver terminals can be seen on the left, the sender on the right. The main thing to notice here is that on the receiving node, all available CPU’s are being used, note the <em>ksoftirqd/X</em> processes. Since we are using a wide range of source and destination ports, we’re getting proper load balancing over all cores. With this, I can now achieve 0% lost packets up to about 6Mpps. To get to 14Mpps, 10g line rate @64Bytes packets, I’d need more CPUs.</p><figure class="kg-card kg-image-card"><img src="https://cdn-images-1.medium.com/max/1600/1*H4YbY1b8viqfjoHNi6NPjA.png" class="kg-image" alt></figure><h3 id="imix-test">IMIX test</h3><p>Finally, we’ll run a basic IMIX test, using the dpdk-pktgen pcap feature. Internet Mix or IMIX refers to typical Internet traffic. When measuring equipment performance using an IMIX of packets, the performance is assumed to resemble what can be seen in “real-world” conditions.</p><p>The <a href="https://github.com/atoonk/dpdk_pktgen/blob/master/imix.pcap" rel="noopener">imix pcap file</a> contains 100 packets with the sizes and ratio according to the <a href="https://en.wikipedia.org/wiki/Internet_Mix" rel="noopener">IMIX specs</a>.</p><pre><code>tshark -r imix.pcap -V | grep 'Frame Length'| sort | uniq -c|sort -n
+9 Frame Length: 1514 bytes (12112 bits)
+33 Frame Length: 590 bytes (4720 bits)
+58 Frame Length: 60 bytes (480 bits)</code></pre><p>I need to rewrite the source and destination IP and MAC addresses so that they match my current setup, this can be done like this:</p><pre><code>tcprewrite \
+ - enet-dmac=44:ec:ce:c1:a8:20 \
+ - enet-smac=00:52:44:11:22:33 \
+ - pnat=16.0.0.0/8:10.10.0.0/16,48.0.0.0/8:10.99.204.8/32 \
+ - infile=imix.pcap \
+ - outfile=output.pcap</code></pre><blockquote>For more details also see my notes here : <a href="https://github.com/atoonk/dpdk_pktgen/blob/master/DPDKPktgen.md" rel="noopener">https://github.com/atoonk/dpdk_pktgen/blob/master/DPDKPktgen.md</a></blockquote><p>We then start the packetgen app and give it the pcap</p><pre><code>/opt/pktgen-20.02.0/app/x86_64-native-linuxapp-gcc/pktgen - -T -P -m "2.[0]" -s 0:output.pcap</code></pre><p>I can now see I’m sending and receiving packets at a rate of 3.2M pps at 10Gbs, well below the maximum we saw earlier. This means that the Device Under Test (DUT) is capable of receiving packets at 10Gbs using an IMIX traffic pattern.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*xxb0aQmNeSvhvFfOwTI4nw.png" class="kg-image" alt><figcaption>Result of IMIX test with a PCAP as the source. Receiver (DUT) on the left, sender window on the&nbsp;right.</figcaption></figure><h3 id="conclusion">Conclusion</h3><p>In this article, we looked at getting DPDK up and running, talked a bit about what DPDK is, and used its pktgen traffic generator application. A typical challenge when using DPDK is that you lose the network interface, meaning that the kernel can no longer use it. In this blog, we solved this using SR-IOV, which allowed us to create a second logical interface for DPDK. Using this interface, I was able to generate 14Mpps without issues.</p><p>On the receiving side of this test traffic, we had another Linux machine (no DPDK), and we tested its ability to receive traffic from the NIC (after which the kernel dropped it straight away). We saw how the packets per second number is limited by the rx-buffer, as well as the ability for the CPU cores to pick up the packets (soft interrupts). We saw a single core was able to do about 1,4Mpps. Once we started leveraging more cores, by creating more flows, we started seeing dropped packets at about 6M pps. If we would have had more CPU’s we’d likely be able to do more than that.</p><p>Also note that throughout this blog, I spoke mostly of packets per second and not much in terms of bits per second. The reason for this is that every new packet on the Linux receiver (DUT) creates an interrupt. As a result, the number of interrupts the system can handle is the most critical indicator of how many bits per second the Linux system can handle.</p><p>All in all, pktgen and dpdk require a bit of work to set up, and there is undoubtedly a bit of a learning curve. I hope the scripts and examples in the GitHub repo will help with your testing and remember: with great power comes great responsibility.</p><figure class="kg-card kg-image-card"><img src="https://cdn-images-1.medium.com/max/1600/1*60-YU-v_jMuccCaCqqDw6A.jpeg" class="kg-image" alt></figure></div>
+    </div>
+
+    <footer class="post-footer u-container u-maxWidth740">
+            <div class="post-tags buttonSet u-marginTop30">
+        <a href="../tag/networking/index.html" title="networking" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="networking" data-event-non-interaction="true">networking</a>
+    </div>
+
+        <hr>
+        <div class="prev-next">
+                <div class="u-flex u-relative godo-tracking u-marginBottom30"
+    data-event-category="Article"
+    data-event-action="Previous article"
+    data-event-label="http://dark-shadow-4784.edge.mysocket.io/tcp-bbr-exploring-tcp-congestion-control/"
+    data-event-non-interaction="true">
+
+    <a href="../tcp-bbr-exploring-tcp-congestion-control/index.html" class="prev-next-image-link u-relative u-bgColorGrayLight u-flex0" aria-label="TCP BBR - Exploring TCP congestion control">
+        <img class="u-absolute u-image blur-up lazyload" data-src="https://images.unsplash.com/photo-1534477357488-36c99519f91d?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" alt="TCP BBR - Exploring TCP congestion control"/>
+    </a>
+
+    <div class="prev-next-body u-paddingLeft20 u-flex1">
+        <div class="u-fontSizeSmaller u-lineHeight1 u-textMuted u-marginBottom10">Previous article</div>
+        <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../tcp-bbr-exploring-tcp-congestion-control/index.html" class="u-relative zindex3">TCP BBR - Exploring TCP congestion control</a></h2>
+        <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">One of the oldest protocols and possibly the most used protocol on the Internet today is TCP. You likely send and receive hundreds of thousands</p>
+    </div>
+
+    <a href="../tcp-bbr-exploring-tcp-congestion-control/index.html" aria-label="TCP BBR - Exploring TCP congestion control" class="u-absolute0 zindex2"></a>
+</div>
+                <div class="u-flex u-relative godo-tracking "
+    data-event-category="Article"
+    data-event-action="Next article"
+    data-event-label="http://dark-shadow-4784.edge.mysocket.io/linux-kernel-and-measuring-network-throughput/"
+    data-event-non-interaction="true">
+
+    <a href="../linux-kernel-and-measuring-network-throughput/index.html" class="prev-next-image-link u-relative u-bgColorGrayLight u-flex0" aria-label="Linux Kernel and Measuring network throughput.">
+        <img class="u-absolute u-image blur-up lazyload" data-src="https://images.unsplash.com/photo-1448056975861-28196f26abd6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" alt="Linux Kernel and Measuring network throughput."/>
+    </a>
+
+    <div class="prev-next-body u-paddingLeft20 u-flex1">
+        <div class="u-fontSizeSmaller u-lineHeight1 u-textMuted u-marginBottom10">Next article</div>
+        <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../linux-kernel-and-measuring-network-throughput/index.html" class="u-relative zindex3">Linux Kernel and Measuring network throughput.</a></h2>
+        <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">can Linux route at line-rate between two network interfaces? That’s the question we will try to answer in the next few minutes.</p>
+    </div>
+
+    <a href="../linux-kernel-and-measuring-network-throughput/index.html" aria-label="Linux Kernel and Measuring network throughput." class="u-absolute0 zindex2"></a>
+</div>        </div>
+        <hr>
+    </footer>
+</article>
+
+
+
+<div class="post-related u-bgColorGrayLight">
+    <div class="u-container u-maxWidth1200">
+        <div class="row">
+
+            <div class="col s12 u-marginBottom40 u-textAlignCenter">
+                <h3 class="u-contentTitle u-fontSizeLarger">Related <span class='text-success'>Articles</span></h3>
+            </div>
+
+            <div class="col s12 m6 l4 u-flex">
+                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://dark-shadow-4784.edge.mysocket.io/building-a-global-anycast-service-in-under-a-minute/" data-event-non-interaction="true">
+    <a href="../building-a-global-anycast-service-in-under-a-minute/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
+        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
+            src="https://images.unsplash.com/photo-1527685216219-c7bee79b0089?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            srcset="https://images.unsplash.com/photo-1527685216219-c7bee79b0089?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            data-srcset="https://images.unsplash.com/photo-1527685216219-c7bee79b0089?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1527685216219-c7bee79b0089?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
+            data-sizes="(max-width: 1000px) 400px, 600px"
+            alt="Building a global anycast service in under a minute"
+        />
+    </a>
+
+    <div class="cr-inner u-padding15 u-flexColumnTop">
+        <div class="cr-body">
+                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../building-a-global-anycast-service-in-under-a-minute/index.html">Building a global anycast service in under a minute</a></h2>
+        </div>
+
+        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
+    <time class="datetime u-textCapitalize" datetime="2020-06-21">21 Jun 2020</time>
+    <span class="bull">&bull;</span>
+    <span class="readingTime" style="cursor:default" title="4 min read">4 min read</span>
+    
+</div>    </div>
+
+    <a href="../building-a-global-anycast-service-in-under-a-minute/index.html" class="u-absolute0 zindex3" aria-label="Building a global anycast service in under a minute"></a>
+</div>
+            </div>
+            <div class="col s12 m6 l4 u-flex">
+                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://dark-shadow-4784.edge.mysocket.io/building-an-xdp-express-data-path-based-bgp-peering-router/" data-event-non-interaction="true">
+    <a href="../building-an-xdp-express-data-path-based-bgp-peering-router/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
+        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
+            src="https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            srcset="https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            data-srcset="https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
+            data-sizes="(max-width: 1000px) 400px, 600px"
+            alt="Building an XDP (eXpress Data Path) based BGP peering router"
+        />
+    </a>
+
+    <div class="cr-inner u-padding15 u-flexColumnTop">
+        <div class="cr-body">
+                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../building-an-xdp-express-data-path-based-bgp-peering-router/index.html">Building an XDP (eXpress Data Path) based BGP peering router</a></h2>
+        </div>
+
+        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
+    <time class="datetime u-textCapitalize" datetime="2020-04-19">19 Apr 2020</time>
+    <span class="bull">&bull;</span>
+    <span class="readingTime" style="cursor:default" title="9 min read">9 min read</span>
+    
+</div>    </div>
+
+    <a href="../building-an-xdp-express-data-path-based-bgp-peering-router/index.html" class="u-absolute0 zindex3" aria-label="Building an XDP (eXpress Data Path) based BGP peering router"></a>
+</div>
+            </div>
+            <div class="col s12 m6 l4 u-flex">
+                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://dark-shadow-4784.edge.mysocket.io/kernel-bypass-networking-with-fd-io-and-vpp/" data-event-non-interaction="true">
+    <a href="../kernel-bypass-networking-with-fd-io-and-vpp/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
+        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
+            src="https://images.unsplash.com/photo-1514900417871-7912cae3d726?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            srcset="https://images.unsplash.com/photo-1514900417871-7912cae3d726?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            data-srcset="https://images.unsplash.com/photo-1514900417871-7912cae3d726?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1514900417871-7912cae3d726?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
+            data-sizes="(max-width: 1000px) 400px, 600px"
+            alt="Kernel bypass networking with FD.io and VPP."
+        />
+    </a>
+
+    <div class="cr-inner u-padding15 u-flexColumnTop">
+        <div class="cr-body">
+                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../kernel-bypass-networking-with-fd-io-and-vpp/index.html">Kernel bypass networking with FD.io and VPP.</a></h2>
+        </div>
+
+        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
+    <time class="datetime u-textCapitalize" datetime="2020-04-05">5 Apr 2020</time>
+    <span class="bull">&bull;</span>
+    <span class="readingTime" style="cursor:default" title="6 min read">6 min read</span>
+    
+</div>    </div>
+
+    <a href="../kernel-bypass-networking-with-fd-io-and-vpp/index.html" class="u-absolute0 zindex3" aria-label="Kernel bypass networking with FD.io and VPP."></a>
+</div>
+            </div>
+            <div class="col s12 m6 l4 u-flex">
+                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://dark-shadow-4784.edge.mysocket.io/linux-kernel-and-measuring-network-throughput/" data-event-non-interaction="true">
+    <a href="../linux-kernel-and-measuring-network-throughput/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
+        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
+            src="https://images.unsplash.com/photo-1448056975861-28196f26abd6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            srcset="https://images.unsplash.com/photo-1448056975861-28196f26abd6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            data-srcset="https://images.unsplash.com/photo-1448056975861-28196f26abd6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1448056975861-28196f26abd6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
+            data-sizes="(max-width: 1000px) 400px, 600px"
+            alt="Linux Kernel and Measuring network throughput."
+        />
+    </a>
+
+    <div class="cr-inner u-padding15 u-flexColumnTop">
+        <div class="cr-body">
+                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../linux-kernel-and-measuring-network-throughput/index.html">Linux Kernel and Measuring network throughput.</a></h2>
+        </div>
+
+        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
+    <time class="datetime u-textCapitalize" datetime="2020-03-29">29 Mar 2020</time>
+    <span class="bull">&bull;</span>
+    <span class="readingTime" style="cursor:default" title="6 min read">6 min read</span>
+    
+</div>    </div>
+
+    <a href="../linux-kernel-and-measuring-network-throughput/index.html" class="u-absolute0 zindex3" aria-label="Linux Kernel and Measuring network throughput."></a>
+</div>
+            </div>
+            <div class="col s12 m6 l4 u-flex">
+                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://dark-shadow-4784.edge.mysocket.io/tcp-bbr-exploring-tcp-congestion-control/" data-event-non-interaction="true">
+    <a href="../tcp-bbr-exploring-tcp-congestion-control/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
+        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
+            src="https://images.unsplash.com/photo-1534477357488-36c99519f91d?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            srcset="https://images.unsplash.com/photo-1534477357488-36c99519f91d?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            data-srcset="https://images.unsplash.com/photo-1534477357488-36c99519f91d?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1534477357488-36c99519f91d?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
+            data-sizes="(max-width: 1000px) 400px, 600px"
+            alt="TCP BBR - Exploring TCP congestion control"
+        />
+    </a>
+
+    <div class="cr-inner u-padding15 u-flexColumnTop">
+        <div class="cr-body">
+                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../tcp-bbr-exploring-tcp-congestion-control/index.html">TCP BBR - Exploring TCP congestion control</a></h2>
+        </div>
+
+        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
+    <time class="datetime u-textCapitalize" datetime="2020-02-15">15 Feb 2020</time>
+    <span class="bull">&bull;</span>
+    <span class="readingTime" style="cursor:default" title="7 min read">7 min read</span>
+    
+</div>    </div>
+
+    <a href="../tcp-bbr-exploring-tcp-congestion-control/index.html" class="u-absolute0 zindex3" aria-label="TCP BBR - Exploring TCP congestion control"></a>
+</div>
+            </div>
+            <div class="col s12 m6 l4 u-flex">
+                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://dark-shadow-4784.edge.mysocket.io/building-a-smarter-aws-global-accelerator/" data-event-non-interaction="true">
+    <a href="../building-a-smarter-aws-global-accelerator/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
+        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
+            src="https://images.unsplash.com/photo-1553623095-2b4d2819983f?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            srcset="https://images.unsplash.com/photo-1553623095-2b4d2819983f?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            data-srcset="https://images.unsplash.com/photo-1553623095-2b4d2819983f?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1553623095-2b4d2819983f?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
+            data-sizes="(max-width: 1000px) 400px, 600px"
+            alt="Building A Smarter AWS Global Accelerator"
+        />
+    </a>
+
+    <div class="cr-inner u-padding15 u-flexColumnTop">
+        <div class="cr-body">
+                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../building-a-smarter-aws-global-accelerator/index.html">Building A Smarter AWS Global Accelerator</a></h2>
+        </div>
+
+        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
+    <time class="datetime u-textCapitalize" datetime="2019-12-01">1 Dec 2019</time>
+    <span class="bull">&bull;</span>
+    <span class="readingTime" style="cursor:default" title="7 min read">7 min read</span>
+    
+</div>    </div>
+
+    <a href="../building-a-smarter-aws-global-accelerator/index.html" class="u-absolute0 zindex3" aria-label="Building A Smarter AWS Global Accelerator"></a>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <div id="post-comments" class="post-comments js-comments u-hide u-bgColorGrayLight u-paddingTop30 u-paddingBottom30 u-contentTitle">
+    <div class="u-container u-maxWidth1000 u-card">
+        <div id="disqus_thread"></div>
+    </div>
+</div>
+
+
+    <div class="share-sticky u-textAlignRight is-visible">
+    <div class="share-sticky-wrap buttonSet u-container u-maxWidth1200">
+        <span class="u-textMuted u-fontSize15 u-paddingRight10 u-hide-before-md">Share this article:</span>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=http://dark-shadow-4784.edge.mysocket.io/building-a-high-performance-linux-based-traffic-generator-with-dpdk/"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Share on Facebook"
+            class="godo-tracking button button--s bg-facebook u-textColorWhite js-share"
+            data-event-category="Article"
+            data-event-action="Share"
+            data-event-label="Facebook - Sticky Footer"
+            data-event-non-interaction="true">
+            <svg class="icon"><use xlink:href="#icon-facebook"></use></svg>
+            Share
+        </a>
+        <a href="https://twitter.com/share?text=Building%20a%20high%20performance%E2%80%8A-%E2%80%8ALinux%20Based%20Traffic%20generator%20with%C2%A0DPDK&amp;url=http://dark-shadow-4784.edge.mysocket.io/building-a-high-performance-linux-based-traffic-generator-with-dpdk/"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Share on Twitter"
+            class="godo-tracking button button--s bg-twitter u-textColorWhite js-share"
+            data-event-category="Article"
+            data-event-action="Share"
+            data-event-label="Twitter - Sticky Footer"
+            data-event-non-interaction="true">
+            <svg class="icon"><use xlink:href="#icon-twitter"></use></svg>
+            Tweet
+        </a>
+        <a href="whatsapp://send?text=http://dark-shadow-4784.edge.mysocket.io/building-a-high-performance-linux-based-traffic-generator-with-dpdk/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="godo-tracking button button--s u-textColorWhite bg-whatsapp u-hide-after-lg"
+            data-event-category="Article"
+            data-event-action="Share"
+            data-event-label="Whatsapp - Sticky Footer"
+            data-event-non-interaction="true">
+            <svg class="icon"><use xlink:href="#icon-whatsapp"></use></svg>
+            Send
+        </a>
+    </div>
+</div></main>
+
+        <div class="instagram js-instagram u-hide u-relative u-bgColorGrayLight"></div>
+
+        <footer class="footer">
+    <section class="container">
+        <div class="row">
+            <div class="col s12 m6 l4 u-marginBottom30 u-flexColumnTop">
+                <div class="footer-items u-flexColumnTop u-flex--1">
+                    <h3 class="footer-items-title u-underline u-fontSize22">About Me</h3>
+                    <div class="footer-b u-flex--1">
+                        <p>Thoughts, stories and wild ideas from the world of Infrastructure Engineering.</p>
+                    </div>
+
+                    <div class="js-social-media social-media u-flex">
+    
+    <a class="godo-tracking" data-event-category="Header" data-event-action="Social" data-event-label="Twitter" data-event-non-interaction="true" title="Twitter @atoonk" aria-label="Twitter @atoonk" href="https://twitter.com/atoonk" target="_blank" rel="noopener noreferrer">
+        <svg class="icon icon--twitter"><use xlink:href="#icon-twitter"></use></svg>
+    </a>
+</div>
+                </div>
+            </div>
+
+            <div class="col s12 m6 l4 u-marginBottom30 u-flexColumnTop">
+                <div class="footer-items footer-tags u-flex--1">
+                    <h3 class="footer-items-title u-underline u-fontSize22">Tags</h3>
+                    <div class="buttonSet">
+                        <a href="../tag/networking/index.html" title="networking"
+                            class="u-textCapitalize button button--outline-success">networking</a>
+                        <a href="../tag/terraform/index.html" title="terraform"
+                            class="u-textCapitalize button button--outline-success">terraform</a>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="col s12 u-textAlignCenter">
+                <nav class="footer-menu u-marginBottom30 ">
+                    <ul class="nav" role="menu">
+    <li role="menuitem"><a href="../author/andree/index.html" class="nav-author">Author</a></li>
+</ul>
+                </nav>
+            </div>
+
+
+
+            <div class="col s12 u-paddingTop20 u-textAlignCenter u-fontSizeSmaller">
+                &copy; 2020 Andree&#x27;s Musings..
+            </div>
+        </div>
+    </section>
+</footer>
+    </div>
+
+    <div class="search u-fixed u-flexColumnTop u-flexCenter u-fixed u-absolute0">
+    <div class="js-search-close search-shader u-absolute0 zindex1"></div>
+    <div class="js-search-close button button--circle button--dark search-close zindex3 u-hide-after-lg">
+        <svg class="icon icon--close icon--md"><use xlink:href="#icon-close"></use></svg>
+    </div>
+
+    <div class="search-inner u-relative u-marginAuto zindex2">
+        <div class="search-wrap">
+            <form class="search-form u-sizeFullWidth u-flex u-flexCenter u-fontSizeBase">
+                <svg class="icon icon--search icon--md icon--gray"><use xlink:href="#icon-search"></use></svg>
+                <input id="search-field" class="u-sizeFullWidth input--md" type="text" placeholder="Search..." aria-label="Search box"/>
+            </form>
+            <span class="js-search-message search-message u-block u-hide">No results found</span>
+            <div id="search-results" class="search-results u-marginAuto u-sizeFullWidth"></div>
+        </div>
+        <div class="search-nav-hints u-flex u-flexEnd u-hide-before-lg">
+            <div class="search-nav-hint"><span>↑</span> <span>↓</span> Navigate up/down</div>
+            <div class="search-nav-hint"><span>Enter</span> Go to article</div>
+            <div class="search-nav-hint"><span>/</span> Search new term</div>
+            <div class="search-nav-hint"><span>Esc</span> Close search</div>
+        </div>
+    </div>
+</div>
+
+    
+    <div class="loadingBar"></div>
+
+    <div class="back-to-top js-back-to-top u-hide-before-lg u-pointer u-fixed">
+        <svg class="back-to-top-icon" width="24px" height="69px" viewBox="0 0 24 69"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(2.000000, 2.000000)"><rect fill="currentColor" x="9" y="7" width="2" height="60"></rect><polygon stroke="currentColor" stroke-width="2" points="10 0 20 13 0 13"></polygon></g></g></svg>        <p class="back-to-top-text u-fontSizeBase u-fontWeightMedium">GO TOP</p>
+    </div>
+
+
+    <svg aria-hidden="true" style="position:absolute;width:0;height:0" version="1.1" xmlns="http://www.w3.org/2000/svg" overflow="hidden"><defs><symbol id="icon-sunny" viewBox="0 0 24 24"><title>sunny</title><path d="M12 18.141a.722.722 0 0 0-.722.722v2.166a.722.722 0 0 0 1.444 0v-2.166a.722.722 0 0 0-.722-.722zM12 2.25a.722.722 0 0 0-.722.722v2.166a.722.722 0 0 0 1.444 0V2.972A.722.722 0 0 0 12 2.25zM5.859 12a.722.722 0 0 0-.722-.722H2.971a.722.722 0 0 0 0 1.444h2.166A.722.722 0 0 0 5.859 12zm15.169-.722h-2.166a.722.722 0 0 0 0 1.444h2.166a.722.722 0 0 0 0-1.444zM7.148 16.13a.72.72 0 0 0-.511.211l-1.533 1.533a.72.72 0 0 0 0 1.022.72.72 0 0 0 1.022 0l1.533-1.533a.72.72 0 1 0-.511-1.233zm9.704-8.26a.72.72 0 0 0 .511-.211l1.533-1.533a.72.72 0 0 0 0-1.022.72.72 0 0 0-1.022 0l-1.533 1.533a.72.72 0 0 0 0 1.022.72.72 0 0 0 .511.211zM6.127 5.105a.72.72 0 0 0-1.022 0 .72.72 0 0 0 0 1.022L6.638 7.66a.72.72 0 0 0 1.022 0 .72.72 0 0 0 0-1.022L6.127 5.105zm11.235 11.236a.72.72 0 0 0-1.022 0 .725.725 0 0 0 0 1.022l1.533 1.533a.72.72 0 0 0 1.022 0 .72.72 0 0 0 0-1.022l-1.533-1.533zM12 7.5c-2.48 0-4.5 2.02-4.5 4.5s2.02 4.5 4.5 4.5 4.5-2.02 4.5-4.5-2.02-4.5-4.5-4.5z"/></symbol><symbol id="icon-moon" viewBox="0 0 32 32"><title>moon</title><path d="M25.087 22.137c-.181.006-.363.012-.544.012a11.018 11.018 0 0 1-7.925-3.337c-2.119-2.15-3.281-5.006-3.281-8.05 0-1.731.381-3.406 1.094-4.919.194-.412.581-1.038.85-1.462.119-.181-.031-.419-.244-.381-.375.056-.95.181-1.731.425C8.443 5.969 5 10.544 5 15.937 5 22.6 10.319 28 16.881 28c3.625 0 6.875-1.65 9.056-4.256.375-.45.719-.863 1.025-1.363.113-.188-.044-.419-.256-.381-.531.106-1.069.113-1.619.137z"/></symbol><symbol id="icon-arrow" viewBox="0 0 24 24"><title>arrow</title><path d="M3.984 13.002h12.174l-5.611 5.611L12 20.016 20.016 12 12 3.984l-1.403 1.403 5.561 5.611H3.984v2.004z"/></symbol><symbol id="icon-close" viewBox="0 0 24 24"><title>close</title><path d="M18.984 6.412l-1.397-1.397-5.588 5.588-5.588-5.588-1.397 1.397L10.602 12l-5.588 5.588 1.397 1.397 5.588-5.588 5.588 5.588 1.397-1.397L13.396 12z"/></symbol><symbol id="icon-comments" viewBox="0 0 24 24"><title>comments</title><path d="M20.203 15.028c0-.206.056-.403.155-.572.028-.052.066-.098.098-.145a7.594 7.594 0 0 0 1.294-4.233c.014-4.322-3.633-7.828-8.142-7.828-3.933 0-7.214 2.677-7.983 6.23a7.563 7.563 0 0 0-.173 1.603c0 4.327 3.506 7.927 8.016 7.927.717 0 1.683-.216 2.213-.361s1.055-.338 1.191-.389a1.23 1.23 0 0 1 .909.014l2.658.942s.112.047.183.047a.373.373 0 0 0 .375-.375c0-.047-.023-.127-.023-.127l-.769-2.733z"/><path d="M14.93 18.398c-.169.047-.384.098-.619.15-.492.103-1.12.211-1.594.211-4.509 0-8.016-3.6-8.016-7.927 0-.309.033-.703.07-1.003a6.33 6.33 0 0 1 .108-.6c.047-.211.103-.422.164-.628l-.375.333c-1.537 1.341-2.419 3.253-2.419 5.245 0 1.373.398 2.695 1.163 3.844.108.164.169.291.15.375s-.558 2.906-.558 2.906a.375.375 0 0 0 .127.361c.07.056.155.084.239.084a.331.331 0 0 0 .136-.028l2.63-1.036a.725.725 0 0 1 .267-.052s.113-.009.295.061c.886.347 1.866.563 2.845.563a7.363 7.363 0 0 0 5.63-2.583s.15-.206.323-.45c-.173.061-.37.122-.567.173z"/></symbol><symbol id="icon-star" viewBox="0 0 24 24"><title>star</title><path d="M21.703 9h-6.895l-2.095-6.253c-.103-.305-.389-.497-.712-.497s-.609.192-.712.497L9.194 9H2.252a.752.752 0 0 0-.75.75c0 .042.005.089.014.127.009.164.084.347.314.53l5.667 3.994-2.175 6.323a.752.752 0 0 0 .258.844c.136.098.262.183.422.183.155 0 .337-.08.469-.169l5.531-3.942 5.531 3.942a.876.876 0 0 0 .469.169c.159 0 .286-.08.417-.183a.742.742 0 0 0 .258-.844l-2.175-6.323 5.62-4.031.136-.117c.122-.131.244-.309.244-.502 0-.413-.384-.75-.797-.75z"/></symbol><symbol id="icon-link" viewBox="0 0 24 24"><title>link</title><path d="M13.125 15.989l-.056.005a.778.778 0 0 0-.45.211l-3.028 3.028c-.642.642-1.5.994-2.414.994s-1.772-.352-2.414-.994c-.642-.642-.994-1.5-.994-2.414s.352-1.772.994-2.414l3.216-3.216a3.425 3.425 0 0 1 1.228-.788c.225-.084.464-.141.703-.173a3.38 3.38 0 0 1 .478-.033c.066 0 .131.005.216.009.83.052 1.613.403 2.194.984.361.361.638.802.802 1.28a.737.737 0 0 0 .905.473c.005 0 .009-.005.014-.005s.009 0 .009-.005c.38-.117.6-.516.492-.895-.206-.731-.572-1.345-1.153-1.922a4.935 4.935 0 0 0-2.7-1.373 4.768 4.768 0 0 0-1.148-.052 4.744 4.744 0 0 0-.759.117c-.052.009-.098.023-.15.037a4.882 4.882 0 0 0-2.212 1.275l-3.216 3.216c-.919.933-1.43 2.17-1.43 3.492s.511 2.559 1.439 3.487a4.91 4.91 0 0 0 3.483 1.434 4.898 4.898 0 0 0 3.488-1.439l3.061-3.061c.487-.492.094-1.327-.595-1.261z"/><path d="M20.311 3.689c-.928-.928-2.166-1.439-3.483-1.439s-2.559.511-3.487 1.439l-2.986 2.986a.753.753 0 0 0 .473 1.284.759.759 0 0 0 .595-.216l2.991-2.981c.642-.642 1.5-.994 2.414-.994s1.772.352 2.414.994c.642.642.994 1.5.994 2.414s-.352 1.772-.994 2.414l-3.216 3.216a3.425 3.425 0 0 1-1.228.788 3.255 3.255 0 0 1-.703.173 3.38 3.38 0 0 1-.478.033c-.066 0-.136-.005-.216-.009a3.406 3.406 0 0 1-2.194-.984c-.342-.342-.6-.75-.769-1.195a.748.748 0 0 0-.895-.459.758.758 0 0 0-.53.961c.211.656.567 1.214 1.111 1.758l.009.009a4.935 4.935 0 0 0 3.853 1.425 4.882 4.882 0 0 0 3.117-1.425l3.216-3.216c.928-.928 1.439-2.166 1.439-3.487s-.52-2.559-1.448-3.488z"/></symbol><symbol id="icon-search" viewBox="0 0 24 24"><title>search</title><path d="M20.789 19.697l-5.006-5.053a7.173 7.173 0 0 0-5.607-11.649c-3.966 0-7.177 3.216-7.177 7.177s3.211 7.172 7.177 7.172c1.716 0 3.286-.6 4.523-1.603l4.973 5.02a.768.768 0 0 0 1.088.028.775.775 0 0 0 .028-1.092zm-10.612-3.895c-1.505 0-2.92-.586-3.984-1.65s-1.65-2.48-1.65-3.98c0-1.505.586-2.92 1.65-3.98 1.064-1.064 2.48-1.65 3.984-1.65s2.92.586 3.984 1.65a5.597 5.597 0 0 1 1.65 3.98c0 1.505-.586 2.92-1.65 3.98a5.6 5.6 0 0 1-3.984 1.65z"/></symbol><symbol id="icon-send" viewBox="0 0 24 24"><title>send</title><path d="M20.433 3.042l-17.208 7.5a.394.394 0 0 0 .014.717l4.655 2.63a.75.75 0 0 0 .858-.084l9.178-7.913c.061-.052.206-.15.263-.094.061.061-.033.202-.084.263l-7.941 8.944a.748.748 0 0 0-.075.895l3.042 4.88c.15.295.577.291.712-.009l7.116-17.208a.394.394 0 0 0-.53-.52z"/></symbol><symbol id="icon-heart" viewBox="0 0 24 24"><title>heart</title><path d="M16.5 2.625h-.047c-1.861 0-3.506.984-4.453 2.438-.947-1.453-2.592-2.438-4.453-2.438H7.5a5.3 5.3 0 0 0-5.25 5.297c0 1.734.759 4.195 2.241 6.22C7.313 18 12 21.375 12 21.375s4.688-3.375 7.509-7.233c1.481-2.025 2.241-4.486 2.241-6.22a5.3 5.3 0 0 0-5.25-5.297z"/></symbol><symbol id="icon-rss" viewBox="0 0 24 24"><title>rss</title><path d="M5.62 15.755A2.624 2.624 0 0 0 3 18.371a2.613 2.613 0 0 0 2.62 2.606c1.448 0 2.62-1.167 2.62-2.606s-1.172-2.616-2.62-2.616z"/><path d="M3 9v3.745c2.25 0 4.411.666 6 2.255s2.25 3.745 2.25 6H15C15 14.442 9.562 9 3 9z"/><path d="M3 3v3.745c8.016 0 14.245 6.234 14.245 14.255H21c0-9.923-8.063-18-18-18z"/></symbol><symbol id="icon-arrow-forward" viewBox="0 0 24 24"><title>arrow-forward</title><path d="M13.786 12L7.828 6.047c-.441-.441-.441-1.153 0-1.589s1.153-.436 1.594 0l6.75 6.745c.427.427.436 1.111.033 1.552l-6.778 6.792c-.22.22-.511.328-.797.328s-.577-.108-.797-.328a1.12 1.12 0 0 1 0-1.589L13.786 12z"/></symbol><symbol id="icon-twitter" viewBox="0 0 24 24"><title>twitter</title><path d="M23.063 5.133a9.165 9.165 0 0 1-2.606.717 4.555 4.555 0 0 0 1.997-2.513 9.04 9.04 0 0 1-2.883 1.102 4.54 4.54 0 0 0-7.852 3.103c0 .356.038.703.117 1.036A12.865 12.865 0 0 1 2.48 3.83a4.55 4.55 0 0 0 1.411 6.066 4.442 4.442 0 0 1-2.063-.567v.056a4.542 4.542 0 0 0 3.642 4.453c-.38.103-.783.159-1.195.159-.291 0-.577-.028-.853-.084a4.547 4.547 0 0 0 4.242 3.155 9.098 9.098 0 0 1-6.722 1.879A12.686 12.686 0 0 0 7.889 21c8.358 0 12.923-6.923 12.923-12.928 0-.197-.005-.394-.014-.586a9.228 9.228 0 0 0 2.264-2.353z"/></symbol><symbol id="icon-linkedin" viewBox="0 0 24 24"><title>linkedin</title><path d="M19.556 3H4.537C3.717 3 3 3.591 3 4.402v15.052c0 .816.717 1.542 1.537 1.542h15.014c.825 0 1.444-.731 1.444-1.542V4.402C21 3.591 20.376 3 19.556 3zM8.578 18H6V9.984h2.578V18zm-1.2-9.234h-.019C6.534 8.766 6 8.152 6 7.383 6 6.6 6.548 6 7.392 6s1.359.595 1.378 1.383c0 .769-.534 1.383-1.392 1.383zM18 18h-2.578v-4.383c0-1.05-.375-1.767-1.308-1.767-.713 0-1.134.483-1.322.952-.07.169-.089.398-.089.633v4.566h-2.578V9.985h2.578v1.116c.375-.534.961-1.303 2.325-1.303 1.692 0 2.972 1.116 2.972 3.52v4.683z"/></symbol><symbol id="icon-facebook" viewBox="0 0 24 24"><title>facebook</title><path d="M20.006 3H3.993a.995.995 0 0 0-.994.994v16.013c0 .548.445.994.994.994h8.006v-7.125H9.847v-2.625h2.152V9.31c0-2.325 1.612-3.591 3.689-3.591.994 0 2.063.075 2.311.108v2.428h-1.655c-1.13 0-1.345.534-1.345 1.322v1.673h2.691l-.352 2.625h-2.339V21h5.006a.995.995 0 0 0 .994-.994V3.993a.995.995 0 0 0-.994-.994z"/></symbol><symbol id="icon-github" viewBox="0 0 24 24"><title>github</title><path d="M12 1.5C6.202 1.5 1.5 6.323 1.5 12.267c0 4.758 3.009 8.789 7.181 10.214a.831.831 0 0 0 .178.019c.389 0 .539-.286.539-.534 0-.258-.009-.933-.014-1.833a4.805 4.805 0 0 1-1.059.127c-2.02 0-2.48-1.57-2.48-1.57-.478-1.242-1.167-1.575-1.167-1.575-.914-.642-.005-.661.066-.661h.005c1.055.094 1.608 1.116 1.608 1.116.525.919 1.228 1.177 1.856 1.177.492 0 .938-.159 1.2-.281.094-.694.366-1.167.666-1.439-2.33-.272-4.781-1.195-4.781-5.32 0-1.177.408-2.137 1.078-2.887-.108-.272-.469-1.369.103-2.85 0 0 .075-.023.234-.023.38 0 1.238.145 2.653 1.13a9.85 9.85 0 0 1 2.63-.361 9.877 9.877 0 0 1 2.63.361c1.416-.984 2.273-1.13 2.653-1.13.159 0 .234.023.234.023.572 1.481.211 2.578.103 2.85.67.755 1.078 1.716 1.078 2.887 0 4.134-2.456 5.044-4.795 5.311.375.333.713.989.713 1.992 0 1.439-.014 2.602-.014 2.953 0 .253.145.539.534.539a.921.921 0 0 0 .188-.019c4.177-1.425 7.181-5.461 7.181-10.214 0-5.944-4.702-10.767-10.5-10.767z"/></symbol><symbol id="icon-instagram" viewBox="0 0 24 24"><title>instagram</title><path d="M15.75 4.5c.994 0 1.936.394 2.648 1.102S19.5 7.257 19.5 8.25v7.5c0 .994-.394 1.936-1.102 2.648S16.743 19.5 15.75 19.5h-7.5c-.994 0-1.936-.394-2.648-1.102S4.5 16.743 4.5 15.75v-7.5c0-.994.394-1.936 1.102-2.648S7.257 4.5 8.25 4.5h7.5zm0-1.5h-7.5C5.363 3 3 5.363 3 8.25v7.5C3 18.638 5.363 21 8.25 21h7.5c2.888 0 5.25-2.362 5.25-5.25v-7.5C21 5.363 18.638 3 15.75 3z"/><path d="M16.875 8.25c-.623 0-1.125-.502-1.125-1.125S16.252 6 16.875 6a1.125 1.125 0 0 1 0 2.25zM12 9c1.655 0 3 1.345 3 3s-1.345 3-3 3-3-1.345-3-3 1.345-3 3-3zm0-1.5c-2.484 0-4.5 2.016-4.5 4.5s2.016 4.5 4.5 4.5 4.5-2.016 4.5-4.5-2.016-4.5-4.5-4.5z"/></symbol><symbol id="icon-youtube" viewBox="0 0 24 24"><title>youtube</title><path d="M23.841 6.975c0-2.109-1.552-3.806-3.469-3.806A169.616 169.616 0 0 0 12.422 3h-.844c-2.7 0-5.353.047-7.95.169-1.912 0-3.464 1.706-3.464 3.816A68.603 68.603 0 0 0 0 11.991a71.766 71.766 0 0 0 .159 5.011c0 2.109 1.552 3.82 3.464 3.82 2.728.127 5.527.183 8.372.178 2.85.009 5.639-.047 8.372-.178 1.917 0 3.469-1.711 3.469-3.82.112-1.673.164-3.342.159-5.016a68.815 68.815 0 0 0-.155-5.011zM9.703 16.589V7.378l6.797 4.603-6.797 4.608z"/></symbol><symbol id="icon-whatsapp" viewBox="0 0 24 24"><title>whatsapp</title><path d="M12.19 1.5C6.497 1.5 1.881 6.08 1.881 11.73c0 1.933.541 3.74 1.479 5.282L1.499 22.5l5.708-1.813a10.334 10.334 0 0 0 4.983 1.272c5.694 0 10.31-4.58 10.31-10.23s-4.616-10.23-10.31-10.23zm5.127 14.115c-.243.601-1.339 1.15-1.823 1.175s-.497.375-3.133-.77-4.221-3.93-4.346-4.11-1.021-1.455-.973-2.74c.049-1.285.752-1.891 1.003-2.143s.538-.298.714-.301c.208-.003.342-.006.496-.001s.384-.032.584.499c.2.531.677 1.835.738 1.968s.099.287.005.458c-.094.171-.143.278-.279.426s-.289.33-.412.443c-.137.125-.28.261-.136.528s.64 1.142 1.396 1.863c.971.927 1.809 1.234 2.067 1.374s.413.125.573-.044c.16-.169.686-.738.872-.992s.359-.205.597-.109c.238.096 1.507.776 1.766.916s.431.212.493.323c.062.112.042.634-.2 1.236z"/></symbol><symbol id="icon-map" viewBox="0 0 24 24"><title>map</title><path stroke-linejoin="round" stroke-linecap="round" stroke-miterlimit="4" stroke-width="2" fill="none" d="M21 10c0 7-9 13-9 13s-9-6-9-13c0-4.971 4.029-9 9-9s9 4.029 9 9z"/><path stroke-linejoin="round" stroke-linecap="round" stroke-miterlimit="4" stroke-width="2" fill="none" d="M15 10a3 3 0 1 1-6 0 3 3 0 1 1 6 0z"/></symbol><symbol id="icon-reddit" viewBox="0 0 28 28"><title>reddit</title><path d="M28 13.219A3.105 3.105 0 0 1 26.297 16c.125.484.187.984.187 1.5 0 4.937-5.578 8.937-12.453 8.937-6.859 0-12.437-4-12.437-8.937 0-.5.063-1 .172-1.469A3.135 3.135 0 0 1 0 13.219a3.107 3.107 0 0 1 5.375-2.125c2.109-1.469 4.922-2.422 8.047-2.531L15.235.422a.547.547 0 0 1 .641-.406l5.766 1.266a2.337 2.337 0 0 1 4.422 1.047 2.34 2.34 0 0 1-2.344 2.344 2.334 2.334 0 0 1-2.328-2.328l-5.219-1.156-1.625 7.375c3.141.094 5.984 1.031 8.109 2.5a3.063 3.063 0 0 1 2.234-.953A3.107 3.107 0 0 1 28 13.22zM6.531 16.328a2.338 2.338 0 0 0 2.328 2.344 2.34 2.34 0 0 0 2.344-2.344A2.338 2.338 0 0 0 8.859 14a2.334 2.334 0 0 0-2.328 2.328zm12.656 5.547a.557.557 0 0 0 0-.812.566.566 0 0 0-.797 0c-.938.953-2.953 1.281-4.391 1.281s-3.453-.328-4.391-1.281a.566.566 0 0 0-.797 0 .557.557 0 0 0 0 .812c1.484 1.484 4.344 1.594 5.187 1.594s3.703-.109 5.187-1.594zm-.046-3.203a2.338 2.338 0 0 0 2.328-2.344A2.334 2.334 0 0 0 19.141 14a2.338 2.338 0 0 0-2.344 2.328 2.34 2.34 0 0 0 2.344 2.344z"/></symbol></defs></svg>
+    <script>
+        var siteUrl = 'http://dark-shadow-4784.edge.mysocket.io';
+        var siteSearch = '/assets/scripts/search.js?v=6949e690f9';
+        var sitePrismJs = '/assets/scripts/prismjs.js?v=6949e690f9';
+        var sitePrismJscomponents = '/assets/scripts/components/';
+    </script>
+
+    <script>
+var followSocialMedia = {
+  'linkedin': ['https://www.linkedin.com/in/atoonk/','linkedin'],
+    'github': ['https://github.com/atoonk/','Github'],
+
+  'rss': ["https://atoonk.github.io/rss/index.xml",'RSS'],
+
+};
+</script>
+<script>
+var disqusShortName = 'toonk-io-1';
+</script>
+
+    <script src="../assets/scripts/main.js%3Fv=6949e690f9"></script>
+
+
+    
+
+    <script>
+(function(d, s, id) {
+    if (typeof disqusShortName === 'undefined') return;
+
+    var disqus_config = function () {
+        this.page.url = 'http://dark-shadow-4784.edge.mysocket.io/building-a-high-performance-linux-based-traffic-generator-with-dpdk/';
+        this.page.identifier = 'ghost-5f53d8003680d46e73ec60d6';
+    };
+
+    d.querySelector('.js-comments').classList.remove('u-hide')
+    /*var disqusComments = d.querySelectorAll('.js-comments');
+    disqusComments.forEach(function(item){item.classList.remove('u-hide')});*/
+
+    function loadDisqus() {
+        var currentScroll = d.scrollingElement.scrollTop;
+        var disqusTarget = d.getElementById('disqus_thread');
+
+        if (d.getElementById(id)) return;
+
+        if( disqusTarget && (currentScroll > disqusTarget.getBoundingClientRect().top - 150) ) {
+            var js = d.createElement(s);
+            js.id = id;
+            js.src = 'https://'+disqusShortName+'.disqus.com/embed.js';
+            js.async = true;
+            js.defer = true;
+            js.setAttribute('data-timestamp', +new Date());
+            d.body.appendChild(js);
+
+            window.removeEventListener('scroll', loadDisqus);
+        }
+    }
+
+    window.addEventListener('scroll', loadDisqus);
+
+    document.querySelector('.js-dark-mode').addEventListener('click', function() {
+        if (window.DISQUS) {
+            DISQUS.reset({
+                reload: true,
+                config: disqus_config
+            });
+        }
+    });
+}(document, 'script', 'disqus-js'));
+</script>
+
+</body>
+</html>

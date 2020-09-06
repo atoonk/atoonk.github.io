@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html amp lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Building A Smarter AWS Global Accelerator</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <link rel="icon" href="../../favicon.png" type="image/png" />
+    <link rel="canonical" href="../index.html" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    
+    <meta property="og:site_name" content="Andree&#x27;s Musings." />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Building A Smarter AWS Global Accelerator" />
+    <meta property="og:description" content="In this blog post, we’ll take a look at how we could build our own global accelerator.  I’ve been thinking a lot about Global Accelerator and while it provides a powerful data plane, I think it would benefit from a smarter control plane." />
+    <meta property="og:url" content="http://dark-shadow-4784.edge.mysocket.io/building-a-smarter-aws-global-accelerator/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1553623095-2b4d2819983f?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta property="article:published_time" content="2019-12-01T00:00:00.000Z" />
+    <meta property="article:modified_time" content="2020-09-05T19:06:20.000Z" />
+    <meta property="article:tag" content="networking" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Building A Smarter AWS Global Accelerator" />
+    <meta name="twitter:description" content="In this blog post, we’ll take a look at how we could build our own global accelerator.  I’ve been thinking a lot about Global Accelerator and while it provides a powerful data plane, I think it would benefit from a smarter control plane." />
+    <meta name="twitter:url" content="http://dark-shadow-4784.edge.mysocket.io/building-a-smarter-aws-global-accelerator/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1553623095-2b4d2819983f?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Andree Toonk" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="networking" />
+    <meta name="twitter:site" content="@atoonk" />
+    <meta name="twitter:creator" content="@atoonk" />
+    <meta property="og:image:width" content="2000" />
+    <meta property="og:image:height" content="1333" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Andree&#x27;s Musings.",
+        "url": "http://dark-shadow-4784.edge.mysocket.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "http://dark-shadow-4784.edge.mysocket.io/content/images/2020/09/download-5.png",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Andree Toonk",
+        "url": "http://dark-shadow-4784.edge.mysocket.io/author/andree/",
+        "sameAs": [
+            "http://dark-shadow-4784.edge.mysocket.io/about/",
+            "https://twitter.com/atoonk"
+        ]
+    },
+    "headline": "Building A Smarter AWS Global Accelerator",
+    "url": "http://dark-shadow-4784.edge.mysocket.io/building-a-smarter-aws-global-accelerator/",
+    "datePublished": "2019-12-01T00:00:00.000Z",
+    "dateModified": "2020-09-05T19:06:20.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1553623095-2b4d2819983f?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "width": 2000,
+        "height": 1333
+    },
+    "keywords": "networking",
+    "description": "In this blog post, we’ll take a look at how we could build our own global accelerator.  I’ve been thinking a lot about Global Accelerator and while it provides a powerful data plane, I think it would benefit from a smarter control plane.",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://dark-shadow-4784.edge.mysocket.io/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.31" />
+    <link rel="alternate" type="application/rss+xml" title="Andree&#x27;s Musings." href="../../rss/index.html" />
+
+    <link href="https://fonts.googleapis.com/css?family=Domine|Rubik:400,500,700&display=swap" rel="stylesheet">
+
+
+    <style amp-custom>.u-bgColor{background-color:#161D25}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}[hidden],template{display:none}.kg-bookmark-container,body,figcaption,h1,h2,h3,h4,h5,h6{font-family:Rubik,Whitney SSm A,Whitney SSm B,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif}.article-excerpt{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif}.u-flexCenter{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex}.u-block{display:block}.u-relative{position:relative}.u-overflowHidden{overflow:hidden}.u-fontSizeSmaller{font-size:.875rem}.u-flex1{-webkit-box-flex:1;flex:1 1 auto}.u-absolute{position:absolute}.u-textCenter{text-align:center}.u-marginTop30{margin-top:30px}.u-container{margin-left:auto;margin-right:auto;padding-left:16px;padding-right:16px}*,:after,:before{box-sizing:border-box}body{font-size:1rem;font-style:normal;font-weight:400;letter-spacing:0;line-height:1.5em;text-rendering:optimizeLegibility;-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;-ms-text-size-adjust:100%;text-size-adjust:100%;color:#212529}a{color:#00a562;text-decoration:none;word-break:break-word}a:active,a:hover{outline:0}blockquote{border-left:4px solid #212529;font-size:1.125rem;font-style:italic;margin-left:-5px;margin-right:0;padding-bottom:2px;padding-left:20px}figure{margin:0;padding:0}img{-o-object-fit:cover;object-fit:cover;-o-object-position:center;object-position:center}figcaption{color:#6c757d;display:block;font-size:.875rem;font-style:normal;font-weight:400;margin-top:10px;text-align:center;width:100%}h1,h2,h3,h4,h5,h6{color:#111;font-style:normal;font-weight:700;line-height:1.2;margin:25px 0 0;word-break:break-word}h1{font-size:2rem}h2{font-size:1.75rem}h3{font-size:1.5rem}h4{font-size:1.375rem}h5{font-size:1.25rem}h6{font-size:1.125rem}strong{font-weight:700}p{margin:20px 0 0}hr{box-sizing:content-box;height:0;margin:1rem 0;overflow:visible;border:0;border-top:1px solid rgba(0,0,0,.1)}mark{background-color:transparent;background-image:linear-gradient(180deg,#d7fdd3,#d7fdd3);color:rgba(0,0,0,.8)}code,pre{font-family:Menlo,Courier,monospace;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-ms-hyphens:none;hyphens:none}p code{border-radius:2px;padding:1px 6px}p code,pre{background:#2a3644;color:#e5eff5;font-size:.875rem}pre{overflow-x:auto;margin:0;padding:20px;border:none;line-height:1.6em}pre code{padding:0;background:transparent}svg{width:100%;height:100%}svg:not(:root){overflow:hidden}table{border-collapse:collapse;border-spacing:0;display:inline-block;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;font-size:1rem;line-height:1.5;margin:20px 0 0;max-width:100%;overflow-x:auto;vertical-align:top;white-space:nowrap;width:auto;-webkit-overflow-scrolling:touch}table td,table th{padding:6px 13px;border:1px solid #dfe2e5}table tr:nth-child(2n){background-color:#f6f8fa}table th{letter-spacing:.0125rem;text-transform:uppercase;font-weight:500}.header{position:relative;width:100%;height:50px;line-height:1}.logo-link{color:#fff;font-size:1.5rem;font-weight:500}.social-media a{background:#212529;border-radius:4px;color:#fff;display:inline-block;height:36px;margin:0 2px;padding:8px;vertical-align:middle;width:36px}.social-media svg{fill:#fff;stroke:none}.sidebar{width:280px;background:#fff}.sidebar ul{list-style:none;list-style-image:none;margin:18px 0 20px;padding:0}.sidebar ul li a{padding:6px 20px;font-weight:500;font-size:1rem;display:block}.sidebar .social-media{padding:20px;border-top:1px solid #ddd}.close-sidebar{height:50px;font-size:1.5625rem;line-height:3.125rem;text-align:right;padding-right:20px;color:#fff}.hamburgermenu{background-color:transparent;border:none;padding:0;height:48px;position:relative;-webkit-transition:-webkit-transform .4s;transition:-webkit-transform .4s;transition:transform .4s;transition:transform .4s,-webkit-transform .4s;width:48px;margin-right:-15px}.hamburgermenu span{background-color:#fff;display:block;height:2px;left:14px;margin-top:-1px;position:absolute;top:50%;width:20px}.hamburgermenu span:first-child{-webkit-transform:translateY(-6px);transform:translateY(-6px)}.hamburgermenu span:last-child{-webkit-transform:translateY(6px);transform:translateY(6px)}.main{max-width:500px;margin:0 auto}.article{padding-top:25px}.article-title{margin-top:0}.article-excerpt{margin-bottom:20px;margin-top:15px;color:#6c757d;font-size:1.25rem;line-height:1.4}.article-meta{color:#6c757d;margin:15px 0;font-size:.875rem}.article-body{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif;line-height:1.7em;font-size:1.125rem;padding:20px 1rem}.article-body>*{margin-bottom:28px}.article-body a:not(.kg-bookmark-container){word-break:break-word;text-decoration:underline}.article-body ol,.article-body ul{padding-left:20px}.article-body ol li,.article-body ul li{margin-bottom:5px}.button--tags{border-radius:3px;color:#212529;display:inline-block;font-size:.875rem;font-weight:500;height:37px;line-height:2.1875rem;margin:0 8px 8px 0;padding:0 10px;border:2px solid #212529}.button--tags:before{content:"#"}.share-title{display:block;margin-bottom:8px}amp-social-share.custom-style{background-color:teal;background-image:url(https://raw.githubusercontent.com/google/material-design-icons/master/social/1x_web/ic_share_white_48dp.png);background-repeat:no-repeat;background-position:50%;background-size:contain}amp-social-share.rounded{border-radius:10%;background-size:85%}.related{padding-top:40px;padding-bottom:20px;margin-top:20px;background:#efefef}.related-title{border-bottom:1px solid rgba(0,0,0,.15);padding-bottom:15px;margin-bottom:30px;color:#212529;font-weight:500;font-size:1.25rem}.story-border{border-left:3px solid #cc116e;bottom:0;color:rgba(0,0,0,.2);font-size:2.25rem;font-weight:700;left:0;padding:15px 10px 10px;top:0;-webkit-text-fill-color:transparent;-webkit-text-stroke-width:1.4px;-webkit-text-stroke-color:#888}.story:nth-child(3n) .story-border{border-color:#f59e00}.story:nth-child(3n+2) .story-border{border-color:#26a8ed}.story-link{background-color:#fff;border-bottom:1px solid #e2e0e0;box-shadow:0 1px 7px rgba(0,0,0,.05);min-height:50px;padding:15px 15px 15px 55px}.story-title{color:#212529;line-height:1.2;font-size:1.0625rem;font-weight:500;margin:0}.kg-bookmark-container{display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;flex-direction:column;border:1px solid rgba(0,0,0,.1)}.kg-bookmark-content{padding:20px;-webkit-box-ordinal-group:2;order:1}.kg-bookmark-title{font-weight:500;line-height:1.2;font-size:1.125rem}.kg-bookmark-description{color:#6c757d;line-height:1.4;margin-top:10px;font-size:.875rem}.kg-bookmark-metadata{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;font-size:.875rem;margin-top:10px}.kg-bookmark-icon{margin-right:5px}.kg-bookmark-author:after{content:"•";margin:0 6px}.footer{background-color:#efefef;color:rgba(0,0,0,.44);padding-top:20px;font-size:.9375rem;padding-bottom:45px}</style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
+    <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+
+    
+</head>
+<body class="amp-template">
+    <header class="header u-bgColor u-flexCenter u-container">
+    <div class="u-flex1">
+
+
+
+        <a href="../../index.html" class="logo-link">Andree&#x27;s Musings.</a>
+    </div>
+
+    <button class="hamburgermenu" on="tap:sidenav.open" tabindex="0"><span></span><span></span><span></span></button>
+
+</header>
+
+    <main class="main">
+        
+<article class="article">
+    <header class="article-header u-container">
+        <h1 class="article-title">Building A Smarter AWS Global Accelerator</h1>
+
+        <p class="article-excerpt">In this blog post, we’ll take a look at how we could build our own global accelerator.  I’ve been thinking a lot about Global Accelerator and while it provides a powerful data plane, I think it would benefit from a smarter control plane.</p>
+
+        <hr>
+
+        <div class="article-meta">
+            <span class="author-name">By <a href="../../author/andree/index.html">Andree Toonk</a></span>
+
+            <span class="timestamp">
+                <time class="datetime" datetime="2019-12-01">9 months ago</time>
+            </span>
+
+            
+                <span>in</span>
+                <span class="categories"><a href="../../tag/networking/index.html" title="networking">networking</a></span>
+            
+        </div>
+    </header>
+
+        <figure class="article-image u-block u-marginTop30">
+            <amp-img src="https://images.unsplash.com/photo-1553623095-2b4d2819983f?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" width="600" height="350" layout="responsive" alt="Building A Smarter AWS Global Accelerator"></amp-img>
+        </figure>
+
+    <div class="article-body u-container"> <p>In my last blog post, we looked at Global Accelerator, a global load balancer provided by AWS. I think Global Accelerator is an excellent tool for folks building global applications in AWS as it will help them directing traffic to the right origin locations or servers. This is great for high volume applications, as well as providing improved availability.</p><p>In this blog post, we’ll take a look at how we could build our own global accelerator by building on other previous blog posts (<a href="https://medium.com/@atoonk/building-a-high-available-anycast-application-in-5-minutes-on-packet-198c82eaabc">building anycast applications on packet</a>). I’ve been thinking a lot about Global Accelerator and while it provides a powerful data plane, I think it would benefit from a smarter control plane. A control plane that provides load balancing with more intelligence, by taking into account the capacity, load and round trip time to each origin. In this blog post, we’ll evaluate and demonstrate what that could look like by implementing a <em>Smarter Global Accelerator </em>ourselves.</p><h3 id="typical-architecture"><strong>Typical Architecture</strong></h3><p>Many applications nowadays are delivered using the architecture below. Clients always hit one of the nearest edge nodes (the blue diamonds). Which edge node depends on the way traffic is directed to the edge node, typically either using DNS based load balancing, or straight anycast, this is what AWS Global Accelerator uses.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1200/1*YI0T8iXatDz57M-7eHDvZw.png" class="kg-image" alt width="800" height="600" layout="responsive"></amp-img><figcaption>Typical application delivery architecture</figcaption></figure><p>The edge node then needs to determine what origin server to send the request to (assuming there is no caching or cache misses). This is how your typical CDN works, but also how for example, Google and Facebook deliver their applications. In the case of a simple CDN there could be one or more origin servers. In the case of Facebook, the choice is more which of their ‘core’ or ‘larger’ datacenters to send the request to.</p><p>With AWS Global Accelerator you can configure listeners (the diamond) in a region to send a certain percentage of traffic to an origin group, ‘Endpoint Groups’ in AWS speak. This is a static configuration, which is not ideal. Additionally, if an origin (the green box in the diagram) reaches its capacity, you will need to update the configuration. This is the part we’re going to make smarter.</p><p>In an ideal world, each edge node (the diamond) routes the requests to the closest origin based on the latency between the edge node and the origin. It should also be aware of the total load the origin is under, and how much load the origin can handle. An individual edge node doesn’t know how many other edge nodes there are, and how much each of them is sending each origin. So we need a centralized brain and a feedback loop.</p><h3 id="building-a-closed-loop-system">Building a Closed-loop system</h3><p>To have the system continuously adapt to the changing environment, we need to have access to several operational metrics. We need to know how many requests each edge node (load balancer) is receiving, with that we can infer the total, global, number of incoming requests per second. We also need to know the capacity of each origin since we want to make sure we don’t send more traffic to an origin than it can handle. Finally, we need to know the health and latency between each edge node and each origin. Most of these metrics are dynamic, so we need to continuously publish (or poll) the health information and request per second information.</p><p>Now that we have all the input data, we can feed this into our software. The software essentially a scheduler, solving a constraint-based assignment problem. The output is a list with all edge nodes and a weight assignment per edge node for each origin. A simple example could look like this:</p><pre><code>-Listener 192.0.2.10:443 
+ - Edge node Amsterdam:
+    - Origin EU DC:  90%
+    - Origin US-WEST DC:  0%
+    - Origin US-EAST DC:  10%
+    - Origin Asia DC:  0%
+ - Edge node New York:
+    - Origin EU DC: 0%
+    - Origin US-WEST DC:  0%
+    - Origin US-EAST DC:  100%
+    - Origin Asia DC:  0%</code></pre><p>In the above example for listener <em>192.0.2.10:443</em>, the Amsterdam edge node will send 90% of the requests to the EU origin, while the remaining 10% is directed to the next closest DC, US-EAST. This means this the EU datacenter is at capacity and is offloading traffic to the next closest origin.</p><p>The New York edge node is sending all traffic to the EU-EAST datacenter as there is enough capacity at this point and no need to offload traffic.</p><p>Our closed-loop system will re-calculate and publish the results every few seconds so that we can respond to changes quickly.</p><h3 id="let-s-start-building"><strong>Let’s start building</strong></h3><p>I’m going to re-use much of what we’ve built earlier, in this experiment I’m again using <a href="https://medium.com/@atoonk/building-a-high-available-anycast-application-in-5-minutes-on-packet-198c82eaabc">Packet.net and their BGP anycast support</a> to build the edge nodes. Please see this <a href="https://medium.com/@atoonk/building-a-high-available-anycast-application-in-5-minutes-on-packet-198c82eaabc">blog for details</a>. I’m using Linux LVS as a load balancer for this setup. Each edge node is publishing the needed metrics to <a href="https://prometheus.io/" rel="noopener">prometheus</a>, a time-series database, every 15 seconds. With this, we now have a handful of edge nodes, fully anycasted, and access to all needed metrics per edge node in a centralized system.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1200/1*iXsxBwPZsGxrGXEOVtXiCg.png" class="kg-image" alt width="1092" height="1052" layout="responsive"></amp-img><figcaption>Swagger file, built using Flask-RESTPlus</figcaption></figure><p>The other thing that is needed is a centralized source of truth. For this, I wrote a Flask based REST API. This API allows us to create new load balancers, add origins, etc. We can also ask this same API for all load balancers, its origins and the health and operational metrics.</p><p>The next thing we needed is a script that every few seconds talks to the API to retrieve the latest configuration. With that information, each edge node can update the load balancer configuration, such as create new load balancer listeners and update the origin details such as weight per origin. We now have everything in place and can start testing.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*PbSBDEjF_1mYGVH4snMhTQ.png" class="kg-image" alt width="1004" height="1494" layout="responsive"></amp-img><figcaption>JSON definition for each load balancer</figcaption></figure><h3 id="observations-and-tuning"><strong>Observations and tuning</strong></h3><p>I started testing by generating many get requests to one Listener that has two origins, one <a href="https://www.digitalocean.com/" rel="noopener">digitalocean</a> VM in the US and one in Europe. Since all testing was performed from one location, it was hitting one edge datacenter, that has two edge nodes. Those edge nodes would send the traffic to the closest origin, which is the US origin. Now imagine this origin server was hitting its maximum capacity and I want to protect it from being overloaded and start sending some traffic to the other origin. To do that I set the maximum load number for the US origin to 200 requests per second (also see JSON above).</p><p>Below you’ll see an interesting visualization of this measurement. At t=0 the total traffic load for both origins is 0, no traffic is coming in at all, which also meant that both origins are well below their max capacity. This means that the US load balancers are configured to send all requests to the US origin as they have the lowest latency and are below the max threshold.</p><p>After we generate the traffic, all requests are sent to the US origin to start. As the metrics start coming in the system detects that the total number of incoming requests is exceeding 200, as a result, the load balancer configuration will be updated to start sending traffic to both origin servers, with the intent to not send more than 200 requests per second to the US origin.</p><figure class="kg-card kg-image-card kg-width-wide"><amp-img src="https://cdn-images-1.medium.com/max/2400/1*I_rh2VgUAN2w45QQXnpuzg.png" class="kg-image" alt width="2400" height="677" layout="responsive"></amp-img></figure><h4 id="speed-vs-accuracy-">Speed vs. accuracy.</h4><p>One of the things we want to prevent is big sudden swings in traffic. To achieve that I built in a dampening factor that limits the load shifting (ie. load balancer configuration) change to 2 percent per origin for each 15-second interval. Note; that if you have two origins, this means a 2% change per origin, so 4% swing per 15 secsond cycle. This means it will take a bit longer for the system to respond to major changes but will give us substantially more stability, meaning less oscillation between origins and will allow for the system to stabilize. In my initial version, I had no dampening and the system never stabilized and showed significant unwanted sudden traffic swings.</p><p>The graph shows an interesting side effect of my testing setup. Since I’m testing from the US west coast and start offloading more and more requests to the EU origin, this means that on average, a single curl will take longer due to the increased round trip time. As a result, the total number of requests goes down. Which is fun, because it means the software needs to adapt constantly. Every time we change the origin weights slightly, the total number or requests changes slightly. This causes some oscillation, but it’s also exactly the oscillation a closed-loop system is designed for, and it works well as long as we have a dampening factor. It also shows that in some instances the total number of inbound requests increases if your website (or any app) is responding faster. Though I’m not sure if that’s representative of a real-world scenario. Still, this was a fun side effect that put a bit of extra stress on the software.</p><h3 id="closing-thoughts">Closing thoughts</h3><blockquote>This project was fun as it allowed me to combine several of my interests. One of them is global traffic engineering, ie. how do we get traffic to where we’d like it to be processed. We also go to re-use the lessons learned and experience gained from a few of the previous blog posts, specifically how to build anycasted applications with Packet and a deep-dive into AWS Global Accelerator. I got to improve my Python skills by building a Restful API in Flask and make sure it was properly documented using the OpenAPI spec.</blockquote><blockquote>Finally, building the actual scheduler was a fun challenge, and it took me a while to figure out how to best solve the assignment problem before I was really happy with the outcome. The result is what could be a Smarter Global Accelerator.</blockquote> </div>
+
+        <div class="article-tags u-container u-marginTop30">
+            <span class="share-title">Tags:</span>
+                <a href="../../tag/networking/index.html" title="networking" class="button--tags">networking</a>
+        </div>
+
+    <footer class="share u-container u-marginTop30">
+        <span class="share-title">Share this:</span>
+        <amp-social-share class="rounded"
+        type="email"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="facebook"
+        data-param-app_id="254325784911610"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="twitter"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="linkedin"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="whatsapp"
+        width="36"
+        height="36"></amp-social-share>
+    </footer>
+
+</article>
+
+
+            <div class="related u-container">
+        <div class="related-title">Related Articles</div>
+
+        <div class="story">
+            <a href="../../building-a-global-anycast-service-in-under-a-minute/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">1</span>
+                <h3 class="story-title">Building a global anycast service in under a minute</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../building-an-xdp-express-data-path-based-bgp-peering-router/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">2</span>
+                <h3 class="story-title">Building an XDP (eXpress Data Path) based BGP peering router</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../kernel-bypass-networking-with-fd-io-and-vpp/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">3</span>
+                <h3 class="story-title">Kernel bypass networking with FD.io and VPP.</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../linux-kernel-and-measuring-network-throughput/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">4</span>
+                <h3 class="story-title">Linux Kernel and Measuring network throughput.</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../building-a-high-performance-linux-based-traffic-generator-with-dpdk/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">5</span>
+                <h3 class="story-title">Building a high performance - Linux Based Traffic generator with DPDK</h3>
+            </a>
+        </div>
+
+    </div>
+    </main>
+
+    <amp-sidebar id="sidenav" class="sidebar" layout="nodisplay" side="right">
+    <div class="close-sidebar u-bgColor" role="button" aria-label="close sidebar" on="tap:sidenav.close" tabindex="0">✕</div>
+
+    <ul class="nav" role="menu">
+    <li role="menuitem"><a href="../../index.html" class="nav-home">Home</a></li>
+    <li role="menuitem"><a href="../../contact/index.html" class="nav-contact">Contact</a></li>
+    <li role="menuitem"><a href="../../about/index.html" class="nav-about">About</a></li>
+</ul>
+
+    <div class="social-media">
+
+            <a href="https://twitter.com/atoonk" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 18 18" width="100%" height="100%"><path d="M12.077 2c-1.812 0-3.282 1.582-3.282 3.534 0 .277.03.547.085.806-2.728-.148-5.147-1.555-6.766-3.693-.283.522-.445 1.13-.445 1.777 0 1.226.58 2.308 1.46 2.942-.54-.02-1.05-.178-1.49-.443v.045c0 1.712 1.13 3.14 2.63 3.465-.28.08-.57.124-.87.124-.21 0-.418-.022-.62-.063.418 1.404 1.63 2.426 3.067 2.455-1.125.94-2.54 1.51-4.078 1.51-.267 0-.528-.02-.785-.05 1.46 1 3.185 1.59 5.04 1.59 6.037 0 9.34-5.39 9.34-10.06 0-.153-.005-.306-.01-.457.64-.5 1.197-1.12 1.637-1.83-.59.28-1.22.47-1.885.557.677-.437 1.198-1.13 1.443-1.955-.633.405-1.336.7-2.084.858C13.88 2.43 13.028 2 12.08 2"></path></svg>
+</a>
+
+
+
+
+    </div>
+
+</amp-sidebar>
+
+    <footer class="footer">
+        <section class="u-container copyright u-textCenter">
+            &copy; 2020 <a href="../../index.html">Andree&#x27;s Musings.</a>
+        </section>
+    </footer>
+</body>
+</html>

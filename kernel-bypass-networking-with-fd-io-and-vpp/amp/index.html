@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html amp lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Kernel bypass networking with FD.io and VPP.</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <link rel="icon" href="../../favicon.png" type="image/png" />
+    <link rel="canonical" href="../index.html" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    
+    <meta property="og:site_name" content="Andree&#x27;s Musings." />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Kernel bypass networking with FD.io and VPP." />
+    <meta property="og:description" content="In this blog, we’ll look at VPP, a fast, flexible, and open-source network forwarding plane. I think you will be blown away by the performance numbers." />
+    <meta property="og:url" content="http://dark-shadow-4784.edge.mysocket.io/kernel-bypass-networking-with-fd-io-and-vpp/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1514900417871-7912cae3d726?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta property="article:published_time" content="2020-04-05T18:14:00.000Z" />
+    <meta property="article:modified_time" content="2020-09-05T18:22:07.000Z" />
+    <meta property="article:tag" content="networking" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Kernel bypass networking with FD.io and VPP." />
+    <meta name="twitter:description" content="In this blog, we’ll look at VPP, a fast, flexible, and open-source network forwarding plane. I think you will be blown away by the performance numbers." />
+    <meta name="twitter:url" content="http://dark-shadow-4784.edge.mysocket.io/kernel-bypass-networking-with-fd-io-and-vpp/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1514900417871-7912cae3d726?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Andree Toonk" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="networking" />
+    <meta name="twitter:site" content="@atoonk" />
+    <meta name="twitter:creator" content="@atoonk" />
+    <meta property="og:image:width" content="2000" />
+    <meta property="og:image:height" content="1287" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Andree&#x27;s Musings.",
+        "url": "http://dark-shadow-4784.edge.mysocket.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "http://dark-shadow-4784.edge.mysocket.io/content/images/2020/09/download-5.png",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Andree Toonk",
+        "url": "http://dark-shadow-4784.edge.mysocket.io/author/andree/",
+        "sameAs": [
+            "http://dark-shadow-4784.edge.mysocket.io/about/",
+            "https://twitter.com/atoonk"
+        ]
+    },
+    "headline": "Kernel bypass networking with FD.io and VPP.",
+    "url": "http://dark-shadow-4784.edge.mysocket.io/kernel-bypass-networking-with-fd-io-and-vpp/",
+    "datePublished": "2020-04-05T18:14:00.000Z",
+    "dateModified": "2020-09-05T18:22:07.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1514900417871-7912cae3d726?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "width": 2000,
+        "height": 1287
+    },
+    "keywords": "networking",
+    "description": "In this blog, we’ll look at VPP, a fast, flexible, and open-source network forwarding plane. I think you will be blown away by the performance numbers.",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://dark-shadow-4784.edge.mysocket.io/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.31" />
+    <link rel="alternate" type="application/rss+xml" title="Andree&#x27;s Musings." href="../../rss/index.html" />
+
+    <link href="https://fonts.googleapis.com/css?family=Domine|Rubik:400,500,700&display=swap" rel="stylesheet">
+
+
+    <style amp-custom>.u-bgColor{background-color:#161D25}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}[hidden],template{display:none}.kg-bookmark-container,body,figcaption,h1,h2,h3,h4,h5,h6{font-family:Rubik,Whitney SSm A,Whitney SSm B,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif}.article-excerpt{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif}.u-flexCenter{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex}.u-block{display:block}.u-relative{position:relative}.u-overflowHidden{overflow:hidden}.u-fontSizeSmaller{font-size:.875rem}.u-flex1{-webkit-box-flex:1;flex:1 1 auto}.u-absolute{position:absolute}.u-textCenter{text-align:center}.u-marginTop30{margin-top:30px}.u-container{margin-left:auto;margin-right:auto;padding-left:16px;padding-right:16px}*,:after,:before{box-sizing:border-box}body{font-size:1rem;font-style:normal;font-weight:400;letter-spacing:0;line-height:1.5em;text-rendering:optimizeLegibility;-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;-ms-text-size-adjust:100%;text-size-adjust:100%;color:#212529}a{color:#00a562;text-decoration:none;word-break:break-word}a:active,a:hover{outline:0}blockquote{border-left:4px solid #212529;font-size:1.125rem;font-style:italic;margin-left:-5px;margin-right:0;padding-bottom:2px;padding-left:20px}figure{margin:0;padding:0}img{-o-object-fit:cover;object-fit:cover;-o-object-position:center;object-position:center}figcaption{color:#6c757d;display:block;font-size:.875rem;font-style:normal;font-weight:400;margin-top:10px;text-align:center;width:100%}h1,h2,h3,h4,h5,h6{color:#111;font-style:normal;font-weight:700;line-height:1.2;margin:25px 0 0;word-break:break-word}h1{font-size:2rem}h2{font-size:1.75rem}h3{font-size:1.5rem}h4{font-size:1.375rem}h5{font-size:1.25rem}h6{font-size:1.125rem}strong{font-weight:700}p{margin:20px 0 0}hr{box-sizing:content-box;height:0;margin:1rem 0;overflow:visible;border:0;border-top:1px solid rgba(0,0,0,.1)}mark{background-color:transparent;background-image:linear-gradient(180deg,#d7fdd3,#d7fdd3);color:rgba(0,0,0,.8)}code,pre{font-family:Menlo,Courier,monospace;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-ms-hyphens:none;hyphens:none}p code{border-radius:2px;padding:1px 6px}p code,pre{background:#2a3644;color:#e5eff5;font-size:.875rem}pre{overflow-x:auto;margin:0;padding:20px;border:none;line-height:1.6em}pre code{padding:0;background:transparent}svg{width:100%;height:100%}svg:not(:root){overflow:hidden}table{border-collapse:collapse;border-spacing:0;display:inline-block;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;font-size:1rem;line-height:1.5;margin:20px 0 0;max-width:100%;overflow-x:auto;vertical-align:top;white-space:nowrap;width:auto;-webkit-overflow-scrolling:touch}table td,table th{padding:6px 13px;border:1px solid #dfe2e5}table tr:nth-child(2n){background-color:#f6f8fa}table th{letter-spacing:.0125rem;text-transform:uppercase;font-weight:500}.header{position:relative;width:100%;height:50px;line-height:1}.logo-link{color:#fff;font-size:1.5rem;font-weight:500}.social-media a{background:#212529;border-radius:4px;color:#fff;display:inline-block;height:36px;margin:0 2px;padding:8px;vertical-align:middle;width:36px}.social-media svg{fill:#fff;stroke:none}.sidebar{width:280px;background:#fff}.sidebar ul{list-style:none;list-style-image:none;margin:18px 0 20px;padding:0}.sidebar ul li a{padding:6px 20px;font-weight:500;font-size:1rem;display:block}.sidebar .social-media{padding:20px;border-top:1px solid #ddd}.close-sidebar{height:50px;font-size:1.5625rem;line-height:3.125rem;text-align:right;padding-right:20px;color:#fff}.hamburgermenu{background-color:transparent;border:none;padding:0;height:48px;position:relative;-webkit-transition:-webkit-transform .4s;transition:-webkit-transform .4s;transition:transform .4s;transition:transform .4s,-webkit-transform .4s;width:48px;margin-right:-15px}.hamburgermenu span{background-color:#fff;display:block;height:2px;left:14px;margin-top:-1px;position:absolute;top:50%;width:20px}.hamburgermenu span:first-child{-webkit-transform:translateY(-6px);transform:translateY(-6px)}.hamburgermenu span:last-child{-webkit-transform:translateY(6px);transform:translateY(6px)}.main{max-width:500px;margin:0 auto}.article{padding-top:25px}.article-title{margin-top:0}.article-excerpt{margin-bottom:20px;margin-top:15px;color:#6c757d;font-size:1.25rem;line-height:1.4}.article-meta{color:#6c757d;margin:15px 0;font-size:.875rem}.article-body{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif;line-height:1.7em;font-size:1.125rem;padding:20px 1rem}.article-body>*{margin-bottom:28px}.article-body a:not(.kg-bookmark-container){word-break:break-word;text-decoration:underline}.article-body ol,.article-body ul{padding-left:20px}.article-body ol li,.article-body ul li{margin-bottom:5px}.button--tags{border-radius:3px;color:#212529;display:inline-block;font-size:.875rem;font-weight:500;height:37px;line-height:2.1875rem;margin:0 8px 8px 0;padding:0 10px;border:2px solid #212529}.button--tags:before{content:"#"}.share-title{display:block;margin-bottom:8px}amp-social-share.custom-style{background-color:teal;background-image:url(https://raw.githubusercontent.com/google/material-design-icons/master/social/1x_web/ic_share_white_48dp.png);background-repeat:no-repeat;background-position:50%;background-size:contain}amp-social-share.rounded{border-radius:10%;background-size:85%}.related{padding-top:40px;padding-bottom:20px;margin-top:20px;background:#efefef}.related-title{border-bottom:1px solid rgba(0,0,0,.15);padding-bottom:15px;margin-bottom:30px;color:#212529;font-weight:500;font-size:1.25rem}.story-border{border-left:3px solid #cc116e;bottom:0;color:rgba(0,0,0,.2);font-size:2.25rem;font-weight:700;left:0;padding:15px 10px 10px;top:0;-webkit-text-fill-color:transparent;-webkit-text-stroke-width:1.4px;-webkit-text-stroke-color:#888}.story:nth-child(3n) .story-border{border-color:#f59e00}.story:nth-child(3n+2) .story-border{border-color:#26a8ed}.story-link{background-color:#fff;border-bottom:1px solid #e2e0e0;box-shadow:0 1px 7px rgba(0,0,0,.05);min-height:50px;padding:15px 15px 15px 55px}.story-title{color:#212529;line-height:1.2;font-size:1.0625rem;font-weight:500;margin:0}.kg-bookmark-container{display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;flex-direction:column;border:1px solid rgba(0,0,0,.1)}.kg-bookmark-content{padding:20px;-webkit-box-ordinal-group:2;order:1}.kg-bookmark-title{font-weight:500;line-height:1.2;font-size:1.125rem}.kg-bookmark-description{color:#6c757d;line-height:1.4;margin-top:10px;font-size:.875rem}.kg-bookmark-metadata{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;font-size:.875rem;margin-top:10px}.kg-bookmark-icon{margin-right:5px}.kg-bookmark-author:after{content:"•";margin:0 6px}.footer{background-color:#efefef;color:rgba(0,0,0,.44);padding-top:20px;font-size:.9375rem;padding-bottom:45px}</style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
+    <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+
+    
+</head>
+<body class="amp-template">
+    <header class="header u-bgColor u-flexCenter u-container">
+    <div class="u-flex1">
+
+
+
+        <a href="../../index.html" class="logo-link">Andree&#x27;s Musings.</a>
+    </div>
+
+    <button class="hamburgermenu" on="tap:sidenav.open" tabindex="0"><span></span><span></span><span></span></button>
+
+</header>
+
+    <main class="main">
+        
+<article class="article">
+    <header class="article-header u-container">
+        <h1 class="article-title">Kernel bypass networking with FD.io and VPP.</h1>
+
+        <p class="article-excerpt">In this blog, we’ll look at VPP, a fast, flexible, and open-source network forwarding plane. I think you will be blown away by the performance numbers.</p>
+
+        <hr>
+
+        <div class="article-meta">
+            <span class="author-name">By <a href="../../author/andree/index.html">Andree Toonk</a></span>
+
+            <span class="timestamp">
+                <time class="datetime" datetime="2020-04-05">5 months ago</time>
+            </span>
+
+            
+                <span>in</span>
+                <span class="categories"><a href="../../tag/networking/index.html" title="networking">networking</a></span>
+            
+        </div>
+    </header>
+
+        <figure class="article-image u-block u-marginTop30">
+            <amp-img src="https://images.unsplash.com/photo-1514900417871-7912cae3d726?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" width="600" height="350" layout="responsive" alt="Kernel bypass networking with FD.io and VPP."></amp-img>
+        </figure>
+
+    <div class="article-body u-container"> <p></p><p>Over the last few years, I have experimented with various flavors of userland, kernel-bypass networking. In this article, we’ll take <a href="https://fd.io/" rel="noopener">FD.IO</a> for a spin.</p><p>We will compare the result with the results of my <a href="https://medium.com/@atoonk/linux-kernel-and-measuring-network-throughput-547c3b68c4d2?source=friends_link&amp;sk=b8a74c58f8b7a0d998a8796410b3fb96">last blog</a> in which we looked at how much a vanilla Linux kernel could do in terms of forwarding (routing) packets. We observed that on Linux, to achieve 14Mpps we needed roughly 16 and 26 cores for a unidirectional and bidirectional test. In this article, we’ll look at what we need to accomplish this with FD.io</p><h3 id="userland-networking">Userland networking</h3><p>The principle of Userland networking is that the networking stack is no longer handled by the kernel, but instead by a userland program. The Linux kernel is incredibly feature-rich, but for fast networking, it also requires a lot of cores to deal with all the (soft) interrupts. Several of the userland networking projects rely on DPDK to achieve incredible numbers. One reason why DPDK is so fast is that it doesn’t rely on Interrupts. Instead, it’s a poll mode driver. Meaning it’s continuously spinning at 100% picking up packets from the NIC. A typical server nowadays comes with quite a few CPU cores, and dedicating one or more cores for picking packets of the NIC is, in some cases, entirely worth it. Especially if the server needs to process lots of network traffic.</p><p>So DPDK provides us with the ability to efficiently and extremely fast, send and receive packets. But that’s also it! Since you’re not using the kernel, we now need a program that takes the packets from DPDK and does something with it. Like for example, a virtual switch or router.</p><h3 id="fd-io">FD.IO</h3><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1200/1*xnuX9v2emwe179_6PGIp7g.png" class="kg-image" alt width="400" height="400" layout="responsive"></amp-img></figure><p><a href="https://fd.io/" rel="noopener">FD.IO</a> is an open-source software dataplane developed by Cisco. At the heart of FD.io is something called Vector Packet Processing (VPP).</p><p>The VPP platform is an <a href="https://fd.io/vppproject/vpptech/" rel="noopener">extensible framework </a>that provides switching and routing functionality. VPP is built on a ‘packet processing graph.’ This modular approach means that anyone can ‘plugin’ new graph nodes. This makes extensibility rather simple, and it means that plugins can be customized for specific purposes.</p><p>FD.io can use DPDK as the drivers for the NIC and can then process the packets at a high performant rate that can run on commodity CPU. It’s important to remember that it is not a fully-featured router, ie. it doesn’t really have a control plane; instead, it’s a forwarding engine. Think of it as a router line-card, with the NIC and the DPDK drivers as the ports. VPP allows us to take a packet from one NIC to another, transform it if needed, do table lookups, and send it out again. There are API’s that allow you to manipulate the forwarding tables. Or you can use the CLI to, for example, configure static routes, VLAN, vrf’s etc.</p><h3 id="test-setup">Test setup</h3><p>I’ll use mostly the same test setup as in my previous test. Again using two<a href="https://www.packet.com/cloud/servers/n2-xlarge/" rel="noopener"> n2.xlarge.x86</a> servers from<a href="https://www.packet.com/" rel="noopener"> packet.com</a> and our <a href="https://medium.com/@atoonk/building-a-high-performance-linux-based-traffic-generator-with-dpdk-93bb9904416c?source=friends_link&amp;sk=fb002771094f1f79654ec9a8be5761c7">DPDK traffic generator</a>. The set up is as below.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*bPwcK3XnekCTdwU3HVgeeQ.png" class="kg-image" alt width="1518" height="602" layout="responsive"></amp-img><figcaption>Test setup</figcaption></figure><p>I’m using the VPP code from the FD.io master branch and installed it on a vanilla Ubuntu 18.04 system <a href="https://fd.io/docs/vpp/master/gettingstarted/installing/ubuntu.html" rel="noopener">following these steps</a>.</p><h3 id="test-results-packet-forwarding-using-vpp">Test results — Packet forwarding using VPP</h3><p>Now that we have our test setup ready to go, it’s time to start our testing!<br />To start, I configured VPP with “vppctl” like this, note that I need to set static ARP entries since the packet generator doesn’t respond to ARP.</p><p>set int ip address TenGigabitEthernet19/0/1 10.10.10.2/24<br />set int ip address TenGigabitEthernet19/0/3 10.10.11.2/24<br />set int state TenGigabitEthernet19/0/1 up<br />set int state TenGigabitEthernet19/0/3 up<br />set ip neighbor TenGigabitEthernet19/0/1 10.10.10.3 e4:43:4b:2e:b1:d1<br />set ip neighbor TenGigabitEthernet19/0/3 10.10.11.3 e4:43:4b:2e:b1:d3</p><p>That’s it! Pretty simple right?</p><p>Ok, time to look at the results just like before we did a single flow test, both unidirectional and bidirectional, as well as a 10,000 flow test.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*SOuQiKUviuPLjlOlAlAP8Q.png" class="kg-image" alt width="1414" height="284" layout="responsive"></amp-img><figcaption>VPP forwarding test results</figcaption></figure><p>Those are some remarkable numbers! With a single flow, VPP can process and forward about 8Mpps, not bad. The perhaps more realistic test with 10,000 flows, shows us that it can handle 14Mpps with just two cores. To get to a full bi-directional scenario where both NICs are sending and receiving at line rate (28 Mpps per NIC) we need three cores and three receive queues on the NIC. To achieve this last scenario with Linux, we needed approximately 26 cores. Not bad, not bad at all!</p><figure class="kg-card kg-image-card kg-width-wide kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/2400/1*CnHwc00tX2BSnE5c424zuA.png" class="kg-image" alt width="2400" height="1038" layout="responsive"></amp-img><figcaption>Traffic generator on the left, VPP server on the right. This shows the full line-rate bidirectional test: 14Mpps per NIC, while VPP uses 3 cores.</figcaption></figure><h3 id="test-results-nat-using-vpp">Test results — NAT using VPP</h3><p>In my previous blog we saw that when doing SNAT on Linux with iptables, we got as high as 3Mpps per direction needing about 29 CPUs per direction. This showed us that packet rewriting is significantly more expensive than just forwarding. Let’s take a look at how VPP does nat.</p><p>To enable nat on VPP, I used the following commands:</p><pre><code>nat44 add interface address TenGigabitEthernet19/0/3
+nat addr-port-assignment-alg default
+set interface nat44 in TenGigabitEthernet19/0/1 out TenGigabitEthernet19/0/3 output-feature</code></pre><p>My first test is with one flow only in one direction. With that, I’m able to get 4.3Mpps. That’s’ exactly half of what we saw in the performance test without nat. It’s no surprise this is slower due to the additional work needed. Note that with Linux iptables I was seeing about 1.1Mpps.</p><p>A single flow for nat isn’t super representative of a real-life nat example where you’d be translating many sources. So for the next measurements, I’m using 255 different source IP addresses and 255 destination IP addresses as well as different port numbers; with this setup, the nat code is seeing about 16k sessions. I can now see the numbers go to 3.2Mpps; more flows mean more nat work. Interestingly, this number is exactly the same as I saw with iptables. There is however one big difference, with iptables the system was using about 29 cores. In this test, I’m only using two cores. That’s a low number of workers, and also the reason I’m capped. To remove that cap, I added more cores and validated that the VPP code scales horizontally. Eventually, I need 12 cores to run 14Mpps for a stable experience.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*Rrh8rnpAB-SMMqdpe5pG5w.png" class="kg-image" alt width="1244" height="240" layout="responsive"></amp-img><figcaption>VPP forwarding with NAT test results</figcaption></figure><p>Below is the relevant VPP config to control the number of cores used by VPP. Also, I should note that I <a href="https://www.linuxtopia.org/online_books/linux_kernel/kernel_configuration/re46.html" rel="noopener">isolated the cores</a> I allocated to VPP so that the kernel wouldn’t schedule anything else on it.</p><pre><code>cpu {
+    main-core 1
+    # CPU placement:
+    corelist-workers 3–14
+    # Also added this to grub: isolcpus=3-31,34-63
+}
+dpdk {
+   dev default {
+      # RSS, number of queues
+      num-rx-queues 12
+      num-tx-queues 12
+      num-rx-desc 2048
+      num-tx-desc 2048
+   }
+   dev 0000:19:00.1
+   dev 0000:19:00.3
+}
+plugins {
+   plugin default { enable }
+   plugin dpdk_plugin.so { enable }
+}
+nat {
+   endpoint-dependent
+   translation hash buckets 1048576
+   translation hash memory 268435456
+   user hash buckets 1024
+   max translations per user 10000
+ }</code></pre><h3 id="conclusion">Conclusion</h3><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1200/0*6AoxbyuX5YbpSjeu" class="kg-image" alt="conclusion" width="1200" height="800" layout="responsive"></amp-img><figcaption>Photo by <a href="https://unsplash.com/@nci?utm_source=medium&amp;utm_medium=referral" data-href="https://unsplash.com/@nci?utm_source=medium&amp;utm_medium=referral" class="markup--anchor markup--figure-anchor" rel="photo-creator noopener noopener" target="_blank">National Cancer Institute</a> on <a href="https://unsplash.com?utm_source=medium&amp;utm_medium=referral" data-href="https://unsplash.com?utm_source=medium&amp;utm_medium=referral" class="markup--anchor markup--figure-anchor" rel="photo-source noopener noopener" target="_blank">Unsplash</a></figcaption></figure><p>In this blog, we looked at VPP from the FD.io project as a userland forwarding engine. VPP is one example of a kernel bypass method for processing packets. It works closely with and further augments DPDK.</p><p>We’ve seen that the VPP code is <a href="https://wiki.fd.io/view/VPP/What_is_VPP%3F#Feature_Rich" rel="noopener">feature-rich</a>, especially for a kernel bypass packet forwarder. Most of all, <strong>it’s crazy fast</strong>.</p><p>We need just three cores to have two NICs forward full line-rate (14Mpps) in both directions. Comparing that to the Linux kernel, which needed 26 cores, we see an almost 9x increase in performance. <br />We noticed that the results were even better when using nat. In Linux, I wasn’t able to get any higher than 3.2Mpps for which I needed about 29 cores. With VPP we can do 3.2Mpps with just two cores and get to full line rate nat with 12 cores.</p><p>I think <a href="https://fd.io/" rel="noopener">FD.io</a> is an interesting and exciting project, and I’m a bit surprised it’s not more widely used. One of the reasons is likely that there’s a bit of a learning curve. But if you need high-performance packet forwarding, it’s certainly something to explore! Perhaps this is the start of your VPP project? if so, <a href="https://twitter.com/atoonk" rel="noopener">let me know!</a></p><p><em>Cheers</em><br /><em> -Andree</em></p> </div>
+
+        <div class="article-tags u-container u-marginTop30">
+            <span class="share-title">Tags:</span>
+                <a href="../../tag/networking/index.html" title="networking" class="button--tags">networking</a>
+        </div>
+
+    <footer class="share u-container u-marginTop30">
+        <span class="share-title">Share this:</span>
+        <amp-social-share class="rounded"
+        type="email"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="facebook"
+        data-param-app_id="254325784911610"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="twitter"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="linkedin"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="whatsapp"
+        width="36"
+        height="36"></amp-social-share>
+    </footer>
+
+</article>
+
+
+            <div class="related u-container">
+        <div class="related-title">Related Articles</div>
+
+        <div class="story">
+            <a href="../../building-a-global-anycast-service-in-under-a-minute/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">1</span>
+                <h3 class="story-title">Building a global anycast service in under a minute</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../building-an-xdp-express-data-path-based-bgp-peering-router/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">2</span>
+                <h3 class="story-title">Building an XDP (eXpress Data Path) based BGP peering router</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../linux-kernel-and-measuring-network-throughput/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">3</span>
+                <h3 class="story-title">Linux Kernel and Measuring network throughput.</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../building-a-high-performance-linux-based-traffic-generator-with-dpdk/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">4</span>
+                <h3 class="story-title">Building a high performance - Linux Based Traffic generator with DPDK</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../tcp-bbr-exploring-tcp-congestion-control/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">5</span>
+                <h3 class="story-title">TCP BBR - Exploring TCP congestion control</h3>
+            </a>
+        </div>
+
+    </div>
+    </main>
+
+    <amp-sidebar id="sidenav" class="sidebar" layout="nodisplay" side="right">
+    <div class="close-sidebar u-bgColor" role="button" aria-label="close sidebar" on="tap:sidenav.close" tabindex="0">✕</div>
+
+    <ul class="nav" role="menu">
+    <li role="menuitem"><a href="../../index.html" class="nav-home">Home</a></li>
+    <li role="menuitem"><a href="../../contact/index.html" class="nav-contact">Contact</a></li>
+    <li role="menuitem"><a href="../../about/index.html" class="nav-about">About</a></li>
+</ul>
+
+    <div class="social-media">
+
+            <a href="https://twitter.com/atoonk" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 18 18" width="100%" height="100%"><path d="M12.077 2c-1.812 0-3.282 1.582-3.282 3.534 0 .277.03.547.085.806-2.728-.148-5.147-1.555-6.766-3.693-.283.522-.445 1.13-.445 1.777 0 1.226.58 2.308 1.46 2.942-.54-.02-1.05-.178-1.49-.443v.045c0 1.712 1.13 3.14 2.63 3.465-.28.08-.57.124-.87.124-.21 0-.418-.022-.62-.063.418 1.404 1.63 2.426 3.067 2.455-1.125.94-2.54 1.51-4.078 1.51-.267 0-.528-.02-.785-.05 1.46 1 3.185 1.59 5.04 1.59 6.037 0 9.34-5.39 9.34-10.06 0-.153-.005-.306-.01-.457.64-.5 1.197-1.12 1.637-1.83-.59.28-1.22.47-1.885.557.677-.437 1.198-1.13 1.443-1.955-.633.405-1.336.7-2.084.858C13.88 2.43 13.028 2 12.08 2"></path></svg>
+</a>
+
+
+
+
+    </div>
+
+</amp-sidebar>
+
+    <footer class="footer">
+        <section class="u-container copyright u-textCenter">
+            &copy; 2020 <a href="../../index.html">Andree&#x27;s Musings.</a>
+        </section>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html amp lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Building an XDP (eXpress Data Path) based BGP peering router</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <link rel="icon" href="../favicon.png" type="image/png" />
+    <link rel="canonical" href="index.html" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    
+    <meta property="og:site_name" content="Andree&#x27;s Musings." />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Building an XDP (eXpress Data Path) based BGP peering router" />
+    <meta property="og:description" content="Over the last few years, we’ve seen an increase in projects and initiatives to speed up networking in Linux. Because the Linux kernel is slow when it comes to forwarding packets, folks have been looking at userland or kernel bypass networking. In the last few blog posts, we’ve" />
+    <meta property="og:url" content="http://dark-shadow-4784.edge.mysocket.io/building-an-xdp-express-data-path-based-bgp-peering-router/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta property="article:published_time" content="2020-04-19T00:00:00.000Z" />
+    <meta property="article:modified_time" content="2020-09-05T17:57:35.000Z" />
+    <meta property="article:tag" content="networking" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Building an XDP (eXpress Data Path) based BGP peering router" />
+    <meta name="twitter:description" content="Over the last few years, we’ve seen an increase in projects and initiatives to speed up networking in Linux. Because the Linux kernel is slow when it comes to forwarding packets, folks have been looking at userland or kernel bypass networking. In the last few blog posts, we’ve" />
+    <meta name="twitter:url" content="http://dark-shadow-4784.edge.mysocket.io/building-an-xdp-express-data-path-based-bgp-peering-router/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Andree Toonk" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="networking" />
+    <meta name="twitter:site" content="@atoonk" />
+    <meta name="twitter:creator" content="@atoonk" />
+    <meta property="og:image:width" content="2000" />
+    <meta property="og:image:height" content="1064" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Andree&#x27;s Musings.",
+        "url": "http://dark-shadow-4784.edge.mysocket.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "http://dark-shadow-4784.edge.mysocket.io/content/images/2020/09/download-5.png",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Andree Toonk",
+        "url": "http://dark-shadow-4784.edge.mysocket.io/author/andree/",
+        "sameAs": [
+            "http://dark-shadow-4784.edge.mysocket.io/about/",
+            "https://twitter.com/atoonk"
+        ]
+    },
+    "headline": "Building an XDP (eXpress Data Path) based BGP peering router",
+    "url": "http://dark-shadow-4784.edge.mysocket.io/building-an-xdp-express-data-path-based-bgp-peering-router/",
+    "datePublished": "2020-04-19T00:00:00.000Z",
+    "dateModified": "2020-09-05T17:57:35.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "width": 2000,
+        "height": 1064
+    },
+    "keywords": "networking",
+    "description": "Over the last few years, we’ve seen an increase in projects and initiatives to\nspeed up networking in Linux. Because the Linux kernel is slow when it comes to\nforwarding packets, folks have been looking at userland or kernel bypass\nnetworking. In the last few blog posts, we’ve looked at examples of this, mostly\nleveraging DPDK to speed up networking. The trend here is, let’s just take\nnetworking away from the kernel and process them in userland. Great for speed,\nnot so great for all the Kernel n",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://dark-shadow-4784.edge.mysocket.io/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.31" />
+    <link rel="alternate" type="application/rss+xml" title="Andree&#x27;s Musings." href="../rss/index.html" />
+
+    <link href="https://fonts.googleapis.com/css?family=Domine|Rubik:400,500,700&display=swap" rel="stylesheet">
+
+
+    <style amp-custom>.u-bgColor{background-color:#161D25}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}[hidden],template{display:none}.kg-bookmark-container,body,figcaption,h1,h2,h3,h4,h5,h6{font-family:Rubik,Whitney SSm A,Whitney SSm B,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif}.article-excerpt{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif}.u-flexCenter{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex}.u-block{display:block}.u-relative{position:relative}.u-overflowHidden{overflow:hidden}.u-fontSizeSmaller{font-size:.875rem}.u-flex1{-webkit-box-flex:1;flex:1 1 auto}.u-absolute{position:absolute}.u-textCenter{text-align:center}.u-marginTop30{margin-top:30px}.u-container{margin-left:auto;margin-right:auto;padding-left:16px;padding-right:16px}*,:after,:before{box-sizing:border-box}body{font-size:1rem;font-style:normal;font-weight:400;letter-spacing:0;line-height:1.5em;text-rendering:optimizeLegibility;-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;-ms-text-size-adjust:100%;text-size-adjust:100%;color:#212529}a{color:#00a562;text-decoration:none;word-break:break-word}a:active,a:hover{outline:0}blockquote{border-left:4px solid #212529;font-size:1.125rem;font-style:italic;margin-left:-5px;margin-right:0;padding-bottom:2px;padding-left:20px}figure{margin:0;padding:0}img{-o-object-fit:cover;object-fit:cover;-o-object-position:center;object-position:center}figcaption{color:#6c757d;display:block;font-size:.875rem;font-style:normal;font-weight:400;margin-top:10px;text-align:center;width:100%}h1,h2,h3,h4,h5,h6{color:#111;font-style:normal;font-weight:700;line-height:1.2;margin:25px 0 0;word-break:break-word}h1{font-size:2rem}h2{font-size:1.75rem}h3{font-size:1.5rem}h4{font-size:1.375rem}h5{font-size:1.25rem}h6{font-size:1.125rem}strong{font-weight:700}p{margin:20px 0 0}hr{box-sizing:content-box;height:0;margin:1rem 0;overflow:visible;border:0;border-top:1px solid rgba(0,0,0,.1)}mark{background-color:transparent;background-image:linear-gradient(180deg,#d7fdd3,#d7fdd3);color:rgba(0,0,0,.8)}code,pre{font-family:Menlo,Courier,monospace;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-ms-hyphens:none;hyphens:none}p code{border-radius:2px;padding:1px 6px}p code,pre{background:#2a3644;color:#e5eff5;font-size:.875rem}pre{overflow-x:auto;margin:0;padding:20px;border:none;line-height:1.6em}pre code{padding:0;background:transparent}svg{width:100%;height:100%}svg:not(:root){overflow:hidden}table{border-collapse:collapse;border-spacing:0;display:inline-block;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;font-size:1rem;line-height:1.5;margin:20px 0 0;max-width:100%;overflow-x:auto;vertical-align:top;white-space:nowrap;width:auto;-webkit-overflow-scrolling:touch}table td,table th{padding:6px 13px;border:1px solid #dfe2e5}table tr:nth-child(2n){background-color:#f6f8fa}table th{letter-spacing:.0125rem;text-transform:uppercase;font-weight:500}.header{position:relative;width:100%;height:50px;line-height:1}.logo-link{color:#fff;font-size:1.5rem;font-weight:500}.social-media a{background:#212529;border-radius:4px;color:#fff;display:inline-block;height:36px;margin:0 2px;padding:8px;vertical-align:middle;width:36px}.social-media svg{fill:#fff;stroke:none}.sidebar{width:280px;background:#fff}.sidebar ul{list-style:none;list-style-image:none;margin:18px 0 20px;padding:0}.sidebar ul li a{padding:6px 20px;font-weight:500;font-size:1rem;display:block}.sidebar .social-media{padding:20px;border-top:1px solid #ddd}.close-sidebar{height:50px;font-size:1.5625rem;line-height:3.125rem;text-align:right;padding-right:20px;color:#fff}.hamburgermenu{background-color:transparent;border:none;padding:0;height:48px;position:relative;-webkit-transition:-webkit-transform .4s;transition:-webkit-transform .4s;transition:transform .4s;transition:transform .4s,-webkit-transform .4s;width:48px;margin-right:-15px}.hamburgermenu span{background-color:#fff;display:block;height:2px;left:14px;margin-top:-1px;position:absolute;top:50%;width:20px}.hamburgermenu span:first-child{-webkit-transform:translateY(-6px);transform:translateY(-6px)}.hamburgermenu span:last-child{-webkit-transform:translateY(6px);transform:translateY(6px)}.main{max-width:500px;margin:0 auto}.article{padding-top:25px}.article-title{margin-top:0}.article-excerpt{margin-bottom:20px;margin-top:15px;color:#6c757d;font-size:1.25rem;line-height:1.4}.article-meta{color:#6c757d;margin:15px 0;font-size:.875rem}.article-body{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif;line-height:1.7em;font-size:1.125rem;padding:20px 1rem}.article-body>*{margin-bottom:28px}.article-body a:not(.kg-bookmark-container){word-break:break-word;text-decoration:underline}.article-body ol,.article-body ul{padding-left:20px}.article-body ol li,.article-body ul li{margin-bottom:5px}.button--tags{border-radius:3px;color:#212529;display:inline-block;font-size:.875rem;font-weight:500;height:37px;line-height:2.1875rem;margin:0 8px 8px 0;padding:0 10px;border:2px solid #212529}.button--tags:before{content:"#"}.share-title{display:block;margin-bottom:8px}amp-social-share.custom-style{background-color:teal;background-image:url(https://raw.githubusercontent.com/google/material-design-icons/master/social/1x_web/ic_share_white_48dp.png);background-repeat:no-repeat;background-position:50%;background-size:contain}amp-social-share.rounded{border-radius:10%;background-size:85%}.related{padding-top:40px;padding-bottom:20px;margin-top:20px;background:#efefef}.related-title{border-bottom:1px solid rgba(0,0,0,.15);padding-bottom:15px;margin-bottom:30px;color:#212529;font-weight:500;font-size:1.25rem}.story-border{border-left:3px solid #cc116e;bottom:0;color:rgba(0,0,0,.2);font-size:2.25rem;font-weight:700;left:0;padding:15px 10px 10px;top:0;-webkit-text-fill-color:transparent;-webkit-text-stroke-width:1.4px;-webkit-text-stroke-color:#888}.story:nth-child(3n) .story-border{border-color:#f59e00}.story:nth-child(3n+2) .story-border{border-color:#26a8ed}.story-link{background-color:#fff;border-bottom:1px solid #e2e0e0;box-shadow:0 1px 7px rgba(0,0,0,.05);min-height:50px;padding:15px 15px 15px 55px}.story-title{color:#212529;line-height:1.2;font-size:1.0625rem;font-weight:500;margin:0}.kg-bookmark-container{display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;flex-direction:column;border:1px solid rgba(0,0,0,.1)}.kg-bookmark-content{padding:20px;-webkit-box-ordinal-group:2;order:1}.kg-bookmark-title{font-weight:500;line-height:1.2;font-size:1.125rem}.kg-bookmark-description{color:#6c757d;line-height:1.4;margin-top:10px;font-size:.875rem}.kg-bookmark-metadata{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;font-size:.875rem;margin-top:10px}.kg-bookmark-icon{margin-right:5px}.kg-bookmark-author:after{content:"•";margin:0 6px}.footer{background-color:#efefef;color:rgba(0,0,0,.44);padding-top:20px;font-size:.9375rem;padding-bottom:45px}</style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
+    <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+
+    
+</head>
+<body class="amp-template">
+    <header class="header u-bgColor u-flexCenter u-container">
+    <div class="u-flex1">
+
+
+
+        <a href="../index.html" class="logo-link">Andree&#x27;s Musings.</a>
+    </div>
+
+    <button class="hamburgermenu" on="tap:sidenav.open" tabindex="0"><span></span><span></span><span></span></button>
+
+</header>
+
+    <main class="main">
+        
+<article class="article">
+    <header class="article-header u-container">
+        <h1 class="article-title">Building an XDP (eXpress Data Path) based BGP peering router</h1>
+
+        
+
+        <hr>
+
+        <div class="article-meta">
+            <span class="author-name">By <a href="../author/andree/index.html">Andree Toonk</a></span>
+
+            <span class="timestamp">
+                <time class="datetime" datetime="2020-04-19">5 months ago</time>
+            </span>
+
+            
+                <span>in</span>
+                <span class="categories"><a href="../tag/networking/index.html" title="networking">networking</a></span>
+            
+        </div>
+    </header>
+
+        <figure class="article-image u-block u-marginTop30">
+            <amp-img src="https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" width="600" height="350" layout="responsive" alt="Building an XDP (eXpress Data Path) based BGP peering router"></amp-img>
+        </figure>
+
+    <div class="article-body u-container"> <p>Over the last few years, we’ve seen an increase in projects and initiatives to speed up networking in Linux. Because the Linux kernel is slow when it comes to forwarding packets, folks have been looking at userland or kernel bypass networking. In the last few blog posts, we’ve looked at examples of this, mostly leveraging DPDK to speed up networking. The trend here is, let’s just take networking away from the kernel and process them in userland. Great for speed, not so great for all the Kernel network stack features that now have to be re-implemented in userland.</p><p>The Linux Kernel community has recently come up with an alternative to userland networking, called XDP, Express data path, it tries to strike a balance between the benefits of the kernel and faster packet processing. In this article, we’ll take a look at what it would take to build a Linux router using XDP. We will go over what XDP is, how to build an XDP packet forwarder combined with a BGP router, and of course, look at the performance.</p><h1 id="xdp-express-data-path-">XDP (eXpress Data Path)</h1><p>XDP (eXpress Data Path) is an eBPF based high-performance data path merged in the Linux kernel since version 4.8. Yes, BPF, the same Berkeley packet filter as you’re likely familiar with from tcpdump filters, though that’s now referred to as Classic BPF. Enhanced BPF has gained a lot of popularity over the last few years within the Linux community. BPF allows you to connect to Linux kernel hook points, each time the kernel reaches one of those hook points, it can execute an eBPF program. I’ve heard some people describe eBPF as what Java script was for the web, an easy way to enhance the ’web’, or in this case, the kernel. With BPF you can execute code without having to write kernel modules. XDP, as part of the BPF family, operates early on in the Kernel network code. The idea behind XDP is to add an early hook in the RX path of the kernel and let a user-supplied eBPF program decide the fate of the packet. The hook is placed in the NIC driver just after the interrupt processing and before any memory allocation needed by the network stack itself. So all this happens before an SKB (the most fundamental data structure in the Linux networking code) is allocated. Practically this means this is executed before things like tc and iptables.</p><p>A BPF program is a small virtual machine, perhaps not the typical virtual machines you’re familiar with, but a tiny (RISC register machine) isolated environment. Since it’s running in conjunction with the kernel, there are some protective measures that limit how much code can be executed and what it can do. For example, it can not contain loops (only bounded loops), there are a limited number of eBPF instructions and helper functions. The maximum instruction limit per program is restricted to 4096 BPF instructions, which, by design, means that any program will terminate quickly. For kernel newer than 5.1, this limit was lifted to 1 million BPF instructions.</p><h1 id="when-and-where-is-the-xdp-code-executed">When and Where is the XDP code executed</h1><p>XDP programs can be attached to three different points. The fastest is to have it run on the NIC itself, for that you need a smartnic and is called offload mode. To the best of my knowledge, this is currently only supported on Netronome cards. The next attachment opportunity is essentially in the driver before the kernel allocates an SKB. This is called “native” mode and means you need your driver to support this, luckily <a href="https://github.com/xdp-project/xdp-project/blob/master/areas/drivers/README.org" rel="noopener nofollow">most popular drivers do nowadays</a>.</p><p>Finally, there is SKB or Generic Mode XDP, where the XDP hook is called from <em><em>netif _ receive _ skb()</em></em>, this is after the packet DMA and skb allocation are completed, as a result, you lose most of the performance benefits.</p><p>Assuming you don’t have a smartnic, the best place to run your XDP program is in native mode as you’ll really benefit from the performance gain.</p><h1 id="xdp-actions">XDP actions</h1><p>Now that we know that XDP code is an eBPF C program, and we understand where it can run, now let’s take a look at what you can do with it. Once the program is called, it receives the packet context and from that point on you can read the content, update some counters, potentially modify the packet, and then the program needs to terminate with one of 5 XDP actions:</p><p><strong><strong>XDP_DROP</strong></strong><br />This does exactly what you think it does; it drops the packet and is often used for XDP based firewalls and DDOS mitigation scenarios.<br /><strong><strong>XDP_ABORTED</strong></strong><br />Similar to DROP, but indicates something went wrong when processing. This action is not something a functional program should ever use as a return code.<br /><strong><strong>XDP_PASS</strong></strong><br />This will release the packet and send it up to the kernel network stack for regular processing. This could be the original packet or a modified version of it.<br /><strong><strong>XDP_TX</strong></strong><br />This action results in bouncing the received packet back out the same NIC it arrived on. This is usually combined with modifying the packet contents, like for example, rewriting the IP and Mac address, such as for a one-legged load balancer.<br /><strong><strong>XDP_REDIRECT</strong></strong><br />The redirect action allows a BPF program to redirect the packet somewhere else, either a different CPU or different NIC. We’ll use this function later to build our router. It is also used to implement AF_XDP, a new socket family that solves the highspeed packet acquisition problem often faced by virtual network functions. AF_XDP is, for example, used by IDS’ and now also supported by Open vSwitch.</p><h1 id="building-an-xdp-based-high-performant-router">Building an XDP based high performant router</h1><p>Alright, now that we have a better idea of what XDP is and some of its capabilities, let’s start building! My goal is to build an XDP program that forwards packets at line-rate between two 10G NICs. I also want the program to use the regular Linux routing table. This means I can add static routes using the “ip route” command, but it also means I could use an opensource BGP daemon such as Bird or FRR.</p><p>We’ll jump straight to the code. I’m using the excellent XDP tutorial code to get started.<a href="https://github.com/atoonk/xdp-tutorial/blob/master/packet-solutions/xdp_prog_kern_03.c#L225-L320" rel="noopener nofollow"> I forked it here</a>, but it’s mostly the same code as the original. This is an example called “xdp_router” and uses the <em><em>bpf_fib_lookup()</em></em> function to determine the egress interface for a given packet using the Linux routing table. The program then uses the action <em><em>bpf_redirect_map()</em></em> to send it out to the correct egress interface. <a href="https://github.com/atoonk/xdp-tutorial/blob/master/packet-solutions/xdp_prog_kern_03.c#L225-L335" rel="noopener nofollow">You can see code here</a>. It’s only a hundred lines of code to do all the work.</p><p>After we compile the code (just run make in the parent directory), we load the code using the <em><em>./xdp_loader</em></em> program included in the repo and use the .<em><em>/xdp_prog_user</em></em> program to populate and query the redirect_params maps.</p><pre><code>#pin BPF resources (redirect map) to a persistent filesystem
+mount -t bpf bpf /sys/fs/bpf/
+
+# attach xdp_router code to eno2
+./xdp_loader -d eno2 -F — progsec xdp_router
+
+# attach xdp_router code to eno4
+./xdp_loader -d eno4 -F — progsec xdp_router
+
+# populate redirect_params maps
+./xdp_prog_user -d eno2
+./xdp_prog_user -d eno4</code></pre><h1 id="test-setup">Test setup</h1><p>So far, so good, we’ve built an XDP based packet forwarder! For each packet that comes in on either network interface eno2 or eno4 it does a route lookup and redirects it to the correct egres interface, all in eBPF code. All in a hundred lines of code, Pretty awesome, right?! Now let’s measure the performance to see if it’s worth it. Below is the test setup.</p><figure class="kg-card kg-image-card kg-card-hascaption"><figcaption>test setup</figcaption></figure><p>I’m using <a href="https://medium.com/@atoonk/building-a-high-performance-linux-based-traffic-generator-with-dpdk-93bb9904416c?source=friends_link&amp;sk=fb002771094f1f79654ec9a8be5761c7" rel="noopener">the same traffic generator as before </a>to generate 14Mpps at 64Bytes for each 10G link. Below are the results:</p><figure class="kg-card kg-image-card kg-card-hascaption"><figcaption>XDP forwarding Test results</figcaption></figure><p>The results are amazing! A single flow in one direction can go as high as 4.6 Mpps, using one core. Earlier, we saw the Linux kernel can go as high as 1.4Mpps for one flow using one core.</p><p>14Mpps in one direction between the two NICs require four cores. Our earlier blog showed that the regular kernel would need 16 cores to do this work!</p><figure class="kg-card kg-image-card kg-width-wide kg-card-hascaption"><figcaption>Test result — XDP forwarding using XDP_REDIRECT, 5 cores to forward 29Mpps</figcaption></figure><p>Finally, for the bidirectional 10,000 flow test, forwarding 28Mpps, we need five cores. All tests are significantly faster than forwarding packets using the regular kernel and all that with minor changes to the system.</p><h2 id="just-so-you-know">Just so you know</h2><p>Since all packet forwarding happens in XDP, packets redirected by XDP won’t be visible to IPtables or even tcpdump. Everything happens before packets even reach that layer, and since we’re redirecting the packet, it never moves up higher the stack. So if you need features like ACLs or NAT, you will have to implement that in XDP (take a look at <a href="https://cilium.io/" rel="noopener nofollow">https://cilium.io/</a>).</p><p></p><p><strong>A word on measuring cpu usage.</strong><br />
+To control and measure the number of CPU cores used by XDP, I’m changing the number of queues the NIC can use. I increase the number of queues on my XL710 Intel NIC incrementally until I get a packet loss-free transfer between the two ports on the traffic generator. For example, to get 14Mpps in one direction from port 0 to 1 on the traffic generator through our XDP router, which was forwarding between eno2 and eno4, I used the following settings:</p>
+<pre><code>ethtool -L eno2 combined 4
+ethtool -L eno4 combined 4</code></pre>
+<p>For the 28Mpps testing, I used the following</p>
+<pre><code>ethtool -L eno2 combined 4
+ethtool -L eno4 combined 4</code></pre>
+<blockquote><em><em><strong>A word of caution</strong></em></em><br /><em><em>Interestingly, increasing the number of queues, and thus using more cores, appears to, in some cases, have a negative impact on the efficiency. Ie. I’ve seen scenarios when using 30 queues, where the unidirectional 14mps test with 10,000 flows appear to use almost no CPU (between 1 and 2) while the same test bidirectionally uses up all 30 cores. When restarting this test, I see some inconsistent behavior in terms of CPU usage, so not sure what’s going on, I will need to spend a bit more time on this later.</em></em></blockquote><h1 id="xdp-as-a-peering-router"><strong>XDP as a peering router</strong></h1><p>The tests above show promising results, but one major difference between a simple forwarding test and a real life peering router is the number of routes in the forwarding table. So the questions we need to answer was how the <em><em>bpf_fib_lookup</em></em> function will perform when there are more than just a few routes in the routing table. More concretely, <strong><strong><em><em>could you use Linux with XDP as a full route peering router?</em></em></strong></strong><br />To answer this question, I installed <a href="https://bird.network.cz/" rel="noopener nofollow">bird</a> as a bgp daemon on the XDP router. Bird has a peering session with an <a href="https://github.com/Exa-Networks/exabgp" rel="noopener nofollow">exabgp</a> instance, which I loaded with a full routing table using <a href="https://github.com/t2mune/mrtparse/blob/master/examples/mrt2exabgp.py" rel="noopener nofollow">mrt2exabgp.py</a> and a MRT files from <a href="https://www.ripe.net/analyse/internet-measurements/routing-information-service-ris/ris-raw-data" rel="noopener nofollow">RIPE RIS</a>.<br />Just to be a <em><em>real</em></em> peering router, I also filtered out the RPKI invalid routes using <a href="https://github.com/job/rtrsub" rel="noopener nofollow">rtrsub</a>. The end result is a full routing table with about 800k routes in the Linux FIB.</p><figure class="kg-card kg-image-card kg-width-wide kg-card-hascaption"><figcaption>Test result — XDP router with a ful routing table. 5 cores to forward 28Mpps</figcaption></figure><blockquote>After re-running the performance tests with 800k bgp routes in the FIB, I observed <strong><em>no noticeable decrease in performance</em></strong>.</blockquote><blockquote>This indicates that a larger FIB table has no measurable impact on the XDP helper <em>bpf_fib_lookup</em>(). This is exciting news for those interested in a cheap and fast peering router.</blockquote><h2 id="conclusion-and-closing-thoughts-">Conclusion and closing thoughts.</h2><p>We started the article with a quick introduction to eBPF and XDP. We learned that XDP is a subset of the recent eBPF developments focused specifically on the hooks in the network stack. We went over the different XDP actions and introduced the redirect action, which, together with the bpf_fib_lookup helper allows us to build the XDP router.</p><p>When looking at the performance, we see this we can speed up <a href="https://medium.com/@atoonk/linux-kernel-and-measuring-network-throughput-547c3b68c4d2?source=friends_link&amp;sk=b8a74c58f8b7a0d998a8796410b3fb96">packet forwarding in Linux</a> by roughly five times in terms of CPU efficiency compared to regular kernel forwarding. We observed we needed about five cores to forward 28Mpps bidirectional between two 10G NICs.</p><p>When we compare these results with the results from my last blog,<a href="https://medium.com/swlh/kernel-bypass-networking-with-fd-io-and-vpp-fc3a53a669f9?source=friends_link&amp;sk=ab92fa42f7ffdfb6dca39ae9601f3d3e"> DPDK and VPP</a>, we see that XDP is slightly slower, ie. 3 cores (vpp) vs 5 cores (XDP) for the 28Mpps test. However, the nice part about working with XDP was that I was able to leverage the Linux routing table out of the box, which is a major advantage.</p><p>The exciting part is that this setup integrates natively with Netlink, which allowed us to use Bird, or really any other routing daemon, to populate the FIB. We also saw that the impact of 800K routes in the fib had no measurable impact on the performance.</p><blockquote>The fib_lookup helper function allowed us to build a router and leverage well-known userland routing daemons. I would love to also see a similar helper function for conntrack, or perhaps some other integration with Netfilter. It would make building firewalls and perhaps even NAT a lot easier. Punting the first packet to the kernel, and subsequent packets are handled by XDP.</blockquote><blockquote>Wrapping up, we started with the question can we build a high performant peering router using XDP? The answer is yes! You can build a high performant peering router using just Linux and relying on XDP to accelerate the dataplane. While leveraging the various open-source routing daemons to run your routing protocols. That’s exciting!</blockquote><blockquote>Cheers<br /> -Andree</blockquote> </div>
+
+        <div class="article-tags u-container u-marginTop30">
+            <span class="share-title">Tags:</span>
+                <a href="../tag/networking/index.html" title="networking" class="button--tags">networking</a>
+        </div>
+
+    <footer class="share u-container u-marginTop30">
+        <span class="share-title">Share this:</span>
+        <amp-social-share class="rounded"
+        type="email"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="facebook"
+        data-param-app_id="254325784911610"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="twitter"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="linkedin"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="whatsapp"
+        width="36"
+        height="36"></amp-social-share>
+    </footer>
+
+</article>
+
+
+            <div class="related u-container">
+        <div class="related-title">Related Articles</div>
+
+        <div class="story">
+            <a href="../building-a-global-anycast-service-in-under-a-minute/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">1</span>
+                <h3 class="story-title">Building a global anycast service in under a minute</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../kernel-bypass-networking-with-fd-io-and-vpp/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">2</span>
+                <h3 class="story-title">Kernel bypass networking with FD.io and VPP.</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../linux-kernel-and-measuring-network-throughput/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">3</span>
+                <h3 class="story-title">Linux Kernel and Measuring network throughput.</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../building-a-high-performance-linux-based-traffic-generator-with-dpdk/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">4</span>
+                <h3 class="story-title">Building a high performance - Linux Based Traffic generator with DPDK</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../tcp-bbr-exploring-tcp-congestion-control/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">5</span>
+                <h3 class="story-title">TCP BBR - Exploring TCP congestion control</h3>
+            </a>
+        </div>
+
+    </div>
+    </main>
+
+    <amp-sidebar id="sidenav" class="sidebar" layout="nodisplay" side="right">
+    <div class="close-sidebar u-bgColor" role="button" aria-label="close sidebar" on="tap:sidenav.close" tabindex="0">✕</div>
+
+    <ul class="nav" role="menu">
+    <li role="menuitem"><a href="../index.html" class="nav-home">Home</a></li>
+    <li role="menuitem"><a href="../contact/index.html" class="nav-contact">Contact</a></li>
+    <li role="menuitem"><a href="../about/index.html" class="nav-about">About</a></li>
+</ul>
+
+    <div class="social-media">
+
+            <a href="https://twitter.com/atoonk" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 18 18" width="100%" height="100%"><path d="M12.077 2c-1.812 0-3.282 1.582-3.282 3.534 0 .277.03.547.085.806-2.728-.148-5.147-1.555-6.766-3.693-.283.522-.445 1.13-.445 1.777 0 1.226.58 2.308 1.46 2.942-.54-.02-1.05-.178-1.49-.443v.045c0 1.712 1.13 3.14 2.63 3.465-.28.08-.57.124-.87.124-.21 0-.418-.022-.62-.063.418 1.404 1.63 2.426 3.067 2.455-1.125.94-2.54 1.51-4.078 1.51-.267 0-.528-.02-.785-.05 1.46 1 3.185 1.59 5.04 1.59 6.037 0 9.34-5.39 9.34-10.06 0-.153-.005-.306-.01-.457.64-.5 1.197-1.12 1.637-1.83-.59.28-1.22.47-1.885.557.677-.437 1.198-1.13 1.443-1.955-.633.405-1.336.7-2.084.858C13.88 2.43 13.028 2 12.08 2"></path></svg>
+</a>
+
+
+
+
+    </div>
+
+</amp-sidebar>
+
+    <footer class="footer">
+        <section class="u-container copyright u-textCenter">
+            &copy; 2020 <a href="../index.html">Andree&#x27;s Musings.</a>
+        </section>
+    </footer>
+</body>
+</html>

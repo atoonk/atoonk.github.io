@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html amp lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Building a high available Anycast application in 5 minutes on Packet</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <link rel="icon" href="../../favicon.png" type="image/png" />
+    <link rel="canonical" href="../index.html" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    
+    <meta property="og:site_name" content="Andree&#x27;s Musings." />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Building a high available Anycast application in 5 minutes on Packet" />
+    <meta property="og:description" content="As the demand on our applications and infrastructure grow, it becomes more important to be able to quickly deploy your applications and supporting infrastructure in a safe, fast and scalable way. Luckily the tooling and various cloud providers are catching up and making this a lot easier for us." />
+    <meta property="og:url" content="http://dark-shadow-4784.edge.mysocket.io/building-a-high-available-anycast-application-in-5-minutes-on-packet/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1486411959861-41a3eb8da389?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta property="article:published_time" content="2019-02-24T00:00:00.000Z" />
+    <meta property="article:modified_time" content="2020-09-05T19:20:51.000Z" />
+    <meta property="article:tag" content="networking" />
+    <meta property="article:tag" content="terraform" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Building a high available Anycast application in 5 minutes on Packet" />
+    <meta name="twitter:description" content="As the demand on our applications and infrastructure grow, it becomes more important to be able to quickly deploy your applications and supporting infrastructure in a safe, fast and scalable way. Luckily the tooling and various cloud providers are catching up and making this a lot easier for us." />
+    <meta name="twitter:url" content="http://dark-shadow-4784.edge.mysocket.io/building-a-high-available-anycast-application-in-5-minutes-on-packet/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1486411959861-41a3eb8da389?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Andree Toonk" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="networking, terraform" />
+    <meta name="twitter:site" content="@atoonk" />
+    <meta name="twitter:creator" content="@atoonk" />
+    <meta property="og:image:width" content="2000" />
+    <meta property="og:image:height" content="1333" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Andree&#x27;s Musings.",
+        "url": "http://dark-shadow-4784.edge.mysocket.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "http://dark-shadow-4784.edge.mysocket.io/content/images/2020/09/download-5.png",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Andree Toonk",
+        "url": "http://dark-shadow-4784.edge.mysocket.io/author/andree/",
+        "sameAs": [
+            "http://dark-shadow-4784.edge.mysocket.io/about/",
+            "https://twitter.com/atoonk"
+        ]
+    },
+    "headline": "Building a high available Anycast application in 5 minutes on Packet",
+    "url": "http://dark-shadow-4784.edge.mysocket.io/building-a-high-available-anycast-application-in-5-minutes-on-packet/",
+    "datePublished": "2019-02-24T00:00:00.000Z",
+    "dateModified": "2020-09-05T19:20:51.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1486411959861-41a3eb8da389?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "width": 2000,
+        "height": 1333
+    },
+    "keywords": "networking, terraform",
+    "description": "As the demand on our applications and infrastructure grow, it becomes more important to be able to quickly deploy your applications and supporting infrastructure in a safe, fast and scalable way. Luckily the tooling and various cloud providers are catching up and making this a lot easier for us.",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://dark-shadow-4784.edge.mysocket.io/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.31" />
+    <link rel="alternate" type="application/rss+xml" title="Andree&#x27;s Musings." href="../../rss/index.html" />
+
+    <link href="https://fonts.googleapis.com/css?family=Domine|Rubik:400,500,700&display=swap" rel="stylesheet">
+
+
+    <style amp-custom>.u-bgColor{background-color:#161D25}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}[hidden],template{display:none}.kg-bookmark-container,body,figcaption,h1,h2,h3,h4,h5,h6{font-family:Rubik,Whitney SSm A,Whitney SSm B,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif}.article-excerpt{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif}.u-flexCenter{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex}.u-block{display:block}.u-relative{position:relative}.u-overflowHidden{overflow:hidden}.u-fontSizeSmaller{font-size:.875rem}.u-flex1{-webkit-box-flex:1;flex:1 1 auto}.u-absolute{position:absolute}.u-textCenter{text-align:center}.u-marginTop30{margin-top:30px}.u-container{margin-left:auto;margin-right:auto;padding-left:16px;padding-right:16px}*,:after,:before{box-sizing:border-box}body{font-size:1rem;font-style:normal;font-weight:400;letter-spacing:0;line-height:1.5em;text-rendering:optimizeLegibility;-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;-ms-text-size-adjust:100%;text-size-adjust:100%;color:#212529}a{color:#00a562;text-decoration:none;word-break:break-word}a:active,a:hover{outline:0}blockquote{border-left:4px solid #212529;font-size:1.125rem;font-style:italic;margin-left:-5px;margin-right:0;padding-bottom:2px;padding-left:20px}figure{margin:0;padding:0}img{-o-object-fit:cover;object-fit:cover;-o-object-position:center;object-position:center}figcaption{color:#6c757d;display:block;font-size:.875rem;font-style:normal;font-weight:400;margin-top:10px;text-align:center;width:100%}h1,h2,h3,h4,h5,h6{color:#111;font-style:normal;font-weight:700;line-height:1.2;margin:25px 0 0;word-break:break-word}h1{font-size:2rem}h2{font-size:1.75rem}h3{font-size:1.5rem}h4{font-size:1.375rem}h5{font-size:1.25rem}h6{font-size:1.125rem}strong{font-weight:700}p{margin:20px 0 0}hr{box-sizing:content-box;height:0;margin:1rem 0;overflow:visible;border:0;border-top:1px solid rgba(0,0,0,.1)}mark{background-color:transparent;background-image:linear-gradient(180deg,#d7fdd3,#d7fdd3);color:rgba(0,0,0,.8)}code,pre{font-family:Menlo,Courier,monospace;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-ms-hyphens:none;hyphens:none}p code{border-radius:2px;padding:1px 6px}p code,pre{background:#2a3644;color:#e5eff5;font-size:.875rem}pre{overflow-x:auto;margin:0;padding:20px;border:none;line-height:1.6em}pre code{padding:0;background:transparent}svg{width:100%;height:100%}svg:not(:root){overflow:hidden}table{border-collapse:collapse;border-spacing:0;display:inline-block;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;font-size:1rem;line-height:1.5;margin:20px 0 0;max-width:100%;overflow-x:auto;vertical-align:top;white-space:nowrap;width:auto;-webkit-overflow-scrolling:touch}table td,table th{padding:6px 13px;border:1px solid #dfe2e5}table tr:nth-child(2n){background-color:#f6f8fa}table th{letter-spacing:.0125rem;text-transform:uppercase;font-weight:500}.header{position:relative;width:100%;height:50px;line-height:1}.logo-link{color:#fff;font-size:1.5rem;font-weight:500}.social-media a{background:#212529;border-radius:4px;color:#fff;display:inline-block;height:36px;margin:0 2px;padding:8px;vertical-align:middle;width:36px}.social-media svg{fill:#fff;stroke:none}.sidebar{width:280px;background:#fff}.sidebar ul{list-style:none;list-style-image:none;margin:18px 0 20px;padding:0}.sidebar ul li a{padding:6px 20px;font-weight:500;font-size:1rem;display:block}.sidebar .social-media{padding:20px;border-top:1px solid #ddd}.close-sidebar{height:50px;font-size:1.5625rem;line-height:3.125rem;text-align:right;padding-right:20px;color:#fff}.hamburgermenu{background-color:transparent;border:none;padding:0;height:48px;position:relative;-webkit-transition:-webkit-transform .4s;transition:-webkit-transform .4s;transition:transform .4s;transition:transform .4s,-webkit-transform .4s;width:48px;margin-right:-15px}.hamburgermenu span{background-color:#fff;display:block;height:2px;left:14px;margin-top:-1px;position:absolute;top:50%;width:20px}.hamburgermenu span:first-child{-webkit-transform:translateY(-6px);transform:translateY(-6px)}.hamburgermenu span:last-child{-webkit-transform:translateY(6px);transform:translateY(6px)}.main{max-width:500px;margin:0 auto}.article{padding-top:25px}.article-title{margin-top:0}.article-excerpt{margin-bottom:20px;margin-top:15px;color:#6c757d;font-size:1.25rem;line-height:1.4}.article-meta{color:#6c757d;margin:15px 0;font-size:.875rem}.article-body{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif;line-height:1.7em;font-size:1.125rem;padding:20px 1rem}.article-body>*{margin-bottom:28px}.article-body a:not(.kg-bookmark-container){word-break:break-word;text-decoration:underline}.article-body ol,.article-body ul{padding-left:20px}.article-body ol li,.article-body ul li{margin-bottom:5px}.button--tags{border-radius:3px;color:#212529;display:inline-block;font-size:.875rem;font-weight:500;height:37px;line-height:2.1875rem;margin:0 8px 8px 0;padding:0 10px;border:2px solid #212529}.button--tags:before{content:"#"}.share-title{display:block;margin-bottom:8px}amp-social-share.custom-style{background-color:teal;background-image:url(https://raw.githubusercontent.com/google/material-design-icons/master/social/1x_web/ic_share_white_48dp.png);background-repeat:no-repeat;background-position:50%;background-size:contain}amp-social-share.rounded{border-radius:10%;background-size:85%}.related{padding-top:40px;padding-bottom:20px;margin-top:20px;background:#efefef}.related-title{border-bottom:1px solid rgba(0,0,0,.15);padding-bottom:15px;margin-bottom:30px;color:#212529;font-weight:500;font-size:1.25rem}.story-border{border-left:3px solid #cc116e;bottom:0;color:rgba(0,0,0,.2);font-size:2.25rem;font-weight:700;left:0;padding:15px 10px 10px;top:0;-webkit-text-fill-color:transparent;-webkit-text-stroke-width:1.4px;-webkit-text-stroke-color:#888}.story:nth-child(3n) .story-border{border-color:#f59e00}.story:nth-child(3n+2) .story-border{border-color:#26a8ed}.story-link{background-color:#fff;border-bottom:1px solid #e2e0e0;box-shadow:0 1px 7px rgba(0,0,0,.05);min-height:50px;padding:15px 15px 15px 55px}.story-title{color:#212529;line-height:1.2;font-size:1.0625rem;font-weight:500;margin:0}.kg-bookmark-container{display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;flex-direction:column;border:1px solid rgba(0,0,0,.1)}.kg-bookmark-content{padding:20px;-webkit-box-ordinal-group:2;order:1}.kg-bookmark-title{font-weight:500;line-height:1.2;font-size:1.125rem}.kg-bookmark-description{color:#6c757d;line-height:1.4;margin-top:10px;font-size:.875rem}.kg-bookmark-metadata{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;font-size:.875rem;margin-top:10px}.kg-bookmark-icon{margin-right:5px}.kg-bookmark-author:after{content:"•";margin:0 6px}.footer{background-color:#efefef;color:rgba(0,0,0,.44);padding-top:20px;font-size:.9375rem;padding-bottom:45px}</style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
+    <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+
+    
+</head>
+<body class="amp-template">
+    <header class="header u-bgColor u-flexCenter u-container">
+    <div class="u-flex1">
+
+
+
+        <a href="../../index.html" class="logo-link">Andree&#x27;s Musings.</a>
+    </div>
+
+    <button class="hamburgermenu" on="tap:sidenav.open" tabindex="0"><span></span><span></span><span></span></button>
+
+</header>
+
+    <main class="main">
+        
+<article class="article">
+    <header class="article-header u-container">
+        <h1 class="article-title">Building a high available Anycast application in 5 minutes on Packet</h1>
+
+        <p class="article-excerpt">As the demand on our applications and infrastructure grow, it becomes more important to be able to quickly deploy your applications and supporting infrastructure in a safe, fast and scalable way. Luckily the tooling and various cloud providers are catching up and making this a lot easier for us.</p>
+
+        <hr>
+
+        <div class="article-meta">
+            <span class="author-name">By <a href="../../author/andree/index.html">Andree Toonk</a></span>
+
+            <span class="timestamp">
+                <time class="datetime" datetime="2019-02-24">2 years ago</time>
+            </span>
+
+            
+                <span>in</span>
+                <span class="categories"><a href="../../tag/networking/index.html" title="networking">networking</a></span>
+            
+        </div>
+    </header>
+
+        <figure class="article-image u-block u-marginTop30">
+            <amp-img src="https://images.unsplash.com/photo-1486411959861-41a3eb8da389?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" width="600" height="350" layout="responsive" alt="Building a high available Anycast application in 5 minutes on Packet"></amp-img>
+        </figure>
+
+    <div class="article-body u-container"> <p></p><p>In my <a href="https://medium.com/@atoonk/experimenting-with-stackpath-edge-computing-and-anycast-f335ba86e60d">previous blog,</a> we took a peek at Stackpath’s Workload features with Anycast. In this blog we will take a look at one of my other favorite compute providers: <a href="https://www.packet.com/" rel="noopener">Packet</a> and we will use <a href="https://www.terraform.io/" rel="noopener">Terraform</a> to describe and deploy our infrastructure as code.</p><h4 id="packet"><strong>Packet</strong></h4><p>I have been using Packet for about 1,5 years now for various projects. There are a few things why I like Packet. It all started with their BGP and Anycast support, yup BGP straight to your server! That combined with their powerful bare-metal compute options, great customer success team and excellent Terraform support makes Packet one of my go-to supplier for my pet projects.</p><h3 id="what-are-we-building">What are we building?</h3><p>Alright, let’s dive in! A brief description of what we’re going to build today: We have a small <a href="https://github.com/atoonk/packet_anycast/blob/master/scripts/web.go" rel="noopener">Golang web application</a> that does nothing more than print the machine’s hostname. We want this application to be highly available and deployed to various locations around the world so that our users can access it with low latency. In our case, we are going to deploy this to four Packet datacenters around the globe, with two instances in each datacenter. Each Packet server will have BGP enabled, and we’ll use Anycast for load balancing and high availability.</p><p>Using the Packet Terraform provider we can do all of this in an automated way, allowing me to all this in less than five minutes! Sounds like fun? Alright, let’s dive in.</p><h3 id="terraform">Terraform</h3><p>We could provision our servers using the web portal, but the ability to describe our infrastructure as code using Terraform is a lot easier and allows us to grow and shrink our deployment easily. If you’d like to play with this yourself and follow along: you can find the code for this demo on <a href="https://github.com/atoonk/packet_anycast" rel="noopener">my Github page here.</a> <br />Next up we will take a brief look at the important parts of the Terraform code.</p><p>First off we create a project in Packet, set some BGP parameters for this project (AS number and optionally a password). Next up comes the cool part, we reserve what Packet calls a <code>global IPv4 address</code>. This IP address is the Anycast address that we’ll be using and will be announced to Packet using the Bird BGP daemon from all our servers.</p><pre><code>provider "packet" {
+ auth_token = "${var.packet_api_key}"
+}
+# Create project
+resource "packet_project" "anycast_test" {
+ name = "anycast project"
+ bgp_config {
+ deployment_type = "local"
+ #md5 = "${var.bgp_password}"
+ asn = 65000
+ }
+}
+# Create a Global IPv4 IP to be used for Anycast
+# the Actual Ip is available as: packet_reserved_ip_block.anycast_ip.address
+# We'll pass that along to each compute node, so they can assign it to all nodes and announce it in BGP
+resource "packet_reserved_ip_block" "anycast_ip" {
+ project_id = "${packet_project.anycast_test.id}"
+ type = "global_ipv4"
+ quantity = 1
+}</code></pre><p>Next up we define where we want to deploy our compute nodes to, and how many per datacenter.</p><pre><code>module "compute_sjc" {
+ source = "./modules/compute"
+ project_id = "${packet_project.anycast_test.id}"
+ anycast_ip = "${packet_reserved_ip_block.anycast_ip.address}"
+ operating_system = "ubuntu_18_04"
+ instance_type = "baremetal_0"
+ facility = "sjc1"
+ compute_count = "2"
+}
+module "compute_nrt" {
+ source = "./modules/compute"
+ project_id = "${packet_project.anycast_test.id}"
+ anycast_ip = "${packet_reserved_ip_block.anycast_ip.address}"
+ operating_system = "ubuntu_18_04"
+ instance_type = "baremetal_0"
+ facility = "nrt1"
+ compute_count = "2"
+}
+module "compute_ams" {
+ source = "./modules/compute"
+ project_id = "${packet_project.anycast_test.id}"
+ anycast_ip = "${packet_reserved_ip_block.anycast_ip.address}"
+ operating_system = "ubuntu_18_04"
+ instance_type = "baremetal_0"
+ facility = "ams1"
+ compute_count = "2"
+}
+module "compute_ewr" {
+ source = "./modules/compute"
+ project_id = "${packet_project.anycast_test.id}"
+ anycast_ip = "${packet_reserved_ip_block.anycast_ip.address}"
+ operating_system = "ubuntu_18_04"
+ instance_type = "baremetal_0"
+ facility = "ewr1"
+ compute_count = "2"
+}</code></pre><p>I created a module to define the compute node, with that we can easily create many of them in the various datacenters. In the example above I created two instances in the following locations: San Jose (<code>sjc1</code>), Tokyo (<code>nrt1</code>), Amsterdam (<code>ams1</code>) and New York (<code>ewr1</code>).</p><p>Let’s take a quick look at the compute module:</p><pre><code>variable facility { }
+variable project_id { }
+variable compute_count { }
+variable operating_system { }
+variable instance_type { }
+variable anycast_ip { }
+#variable bgp_password { }
+
+resource "packet_device" "compute-server" {
+ hostname = "${format("compute-%03d", count.index)}.${var.facility}"
+ count = "${var.compute_count}"
+ plan = "${var.instance_type}"
+ facilities = ["${var.facility}"]
+ operating_system = "${var.operating_system}"
+ billing_cycle = "hourly"
+ project_id = "${var.project_id}"
+
+provisioner "local-exec" {
+ command = "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null scripts/create_bird_conf.sh root@${self.access_public_ipv4}:/root/create_bird_conf.sh"
+ }
+
+provisioner "local-exec" {
+ command = "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null scripts/web.go root@${self.access_public_ipv4}:/root/web.go"
+ }
+
+ provisioner "local-exec" {
+ command = "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null scripts/start.sh root@${self.access_public_ipv4}:/root/start.sh"
+ }
+ 
+ provisioner "local-exec" {
+ command = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${self.access_public_ipv4} 'bash /root/start.sh ${var.anycast_ip} &gt; /dev/null 2&gt;&amp;1 '"
+ }
+}
+
+#Enable BGP for the newly creates compute node
+resource "packet_bgp_session" "test" {
+ count = "${var.compute_count}"
+ device_id = "${packet_device.compute-server.*.id[count.index]}"
+ address_family = "ipv4"
+}</code></pre><p>Alright that’s quite a bit of text, luckily most of it is pretty descriptive. The code above creates the compute node we requested at the specified datacenter. You will also see a few <code>local-exec</code> statements; these instruct Terraform to execute a script locally as soon as the instance is created. In this case, I used it to secure copy (scp) some files over and run <code>start.sh</code> on the compute node. Once you have more tasks, it will be easier and cleaner to replace this with an ansible playbook, but this will work just fine for now. <br />The <code><a href="https://github.com/atoonk/packet_anycast/blob/master/scripts/start.sh" rel="noopener">start.sh</a></code> script installs Bird (the BGP daemon), generates the correct Bird BGP config, restarts Bird and starts our Golang web service. Finally, we instruct Terraform to enable BGP on the Packet side for each of our compute nodes.</p><p>And we’re done! With this, we should be able to deploy our infrastructure using the commands below, and within 5 minutes we should have our application deployed globally with an Anycast IP.<br />So enough talking, let’s ask Terraform to build our infrastructure:</p><pre><code class="language-bash">terraform plan
+terraform apply</code></pre><p>While we wait, let’s keep an eye on the Packet portal to see what global IP we’ve been allocated. In my case, it’s 147.75.40.35/32.</p><figure class="kg-card kg-image-card kg-width-wide"><amp-img src="https://cdn-images-1.medium.com/max/2400/0*xM4dk9oTnmmlunnX" class="kg-image" alt width="1600" height="503" layout="responsive"></amp-img></figure><p>Once Terraform is done you’ll see something like this.<br /><code>Apply complete! Resources: 18 added, 0 changed, 0 destroyed.</code></p><p>In this case, the 18 resources include: 1 Project, 1 Global IP, 8 compute nodes and 8 BGP sessions. In my case that took just 5 minutes! That’s amazing, eight new bare-metal machines, fully deployed, BGP running with an Anycast IP and my App deployed to various datacenters around the world, load balanced and all. A few years ago that was almost unthinkable.</p><p>The Packet portal also shows the eight compute instances I requested with the hostnames and unicast IP addresses.</p><figure class="kg-card kg-image-card kg-width-wide"><amp-img src="https://cdn-images-1.medium.com/max/2400/0*ORbtFYiMzQpHATgF" class="kg-image" alt width="1600" height="859" layout="responsive"></amp-img></figure><h3 id="time-to-test">Time to test</h3><p>Alright so now this is all deployed we should be all done! Let’s test our Go web application using my local machine, it should be reachable via <a href="http://147.75.40.35" rel="nofollow noopener noopener">http://147.75.40.35</a> … boom! There it is.</p><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*D33w3GdFu2bto2lZoj7OvQ.png" class="kg-image" alt width="908" height="540" layout="responsive"></amp-img></figure><h3 id="testing-anycast">Testing Anycast</h3><p>Cool, it works! I’m hitting the compute node in San Jose, which is as expected since that is closest to Vancouver, Canada. Next up let’s test from a few locations around the world to make sure Anycast routing works as expected. The screenshot below shows tests from a handful of servers outside the Packet network. Here I’m testing from Palo Alto, New York, Amsterdam, and New York. In all cases, we’re getting routed to the expected closest location, and in all cases, the requests are being load balanced between the two instances in a datacenter.</p><figure class="kg-card kg-image-card kg-width-wide kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/2400/0*G2umtsbNJoDDEVgN" class="kg-image" alt width="1600" height="1012" layout="responsive"></amp-img><figcaption>Curl tests from around the world to test Anycast Load Balancing</figcaption></figure><p>Now let’s say our web application all of a sudden becomes popular in Japan and in order to keep up with demand we need to scale up our resources there. Doubling our capacity in Tokyo is easy. All we do is edit the <code>cluster.tf </code>Terraform file and change the compute count number from 2 to 4.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1200/1*aeIxPrcq0U-TE98XzQw4aA.png" class="kg-image" alt width="784" height="468" layout="responsive"></amp-img><figcaption>Scaling out our capacity in Tokyo to 4 nodes</figcaption></figure><p>Run <code>terraform plan</code> and <code>terraform apply, </code>wait 5 minutes and voila. A few minutes later I indeed see that our clients hitting the Tokyo datacenter are indeed being load balanced over four instances now (<code>compute-000.nrt1 compute-001.nrt1 compute-002.nrt1 compute-003.nrt1</code>), instead of the two previously.</p><h3 id="summary">Summary</h3><p>In this post we looked at deploying our little Golang App to 4 datacenters around the world with two instances per datacenter. We demonstrated how we can scale up deployments and how clients are being routed to the closest datacenter to guarantee low latency and saw requests being load balanced between the instances.</p><p>Even though we used actual bare-metal machines, the experience is mostly the same as deploying VM’s. I used the smallest instance type available to keep cost down. The Tiny But Mighty t1-small that I used is a 4 Core (atom C2550)CPU, 8GB RAM, with SSD storage and 2.5Gbps network connectivity for just $0.07 per hour, great for pet project likes these.<br />Packet provides many different configurations, should you need more powerful hardware, make sure to check out <a href="https://www.packet.com/cloud/servers/" rel="noopener">all options here</a>.</p><p>The power of Terraform really shines for use-cases like this. Kudos to Packet for having excellent Terraform support, it’s pretty cool to do all of the above, including requesting a global Anycast IP using Terraform. The complete deployment takes about 5 minutes, no matter how many datacenters or instances.</p><p>Defining and deploying your applications like we did here, using infrastructure as code and Anycast used to be reserved for the large CDN’s, DNS and major infrastructure providers. Packet now makes it easy for everyone to build high available and low latency infrastructure. Working with Packet has been a great experience and I recommend everyone to give it a spin.</p> </div>
+
+        <div class="article-tags u-container u-marginTop30">
+            <span class="share-title">Tags:</span>
+                <a href="../../tag/networking/index.html" title="networking" class="button--tags">networking</a>
+                <a href="../../tag/terraform/index.html" title="terraform" class="button--tags">terraform</a>
+        </div>
+
+    <footer class="share u-container u-marginTop30">
+        <span class="share-title">Share this:</span>
+        <amp-social-share class="rounded"
+        type="email"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="facebook"
+        data-param-app_id="254325784911610"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="twitter"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="linkedin"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="whatsapp"
+        width="36"
+        height="36"></amp-social-share>
+    </footer>
+
+</article>
+
+
+            <div class="related u-container">
+        <div class="related-title">Related Articles</div>
+
+        <div class="story">
+            <a href="../../building-a-global-anycast-service-in-under-a-minute/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">1</span>
+                <h3 class="story-title">Building a global anycast service in under a minute</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../building-an-xdp-express-data-path-based-bgp-peering-router/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">2</span>
+                <h3 class="story-title">Building an XDP (eXpress Data Path) based BGP peering router</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../kernel-bypass-networking-with-fd-io-and-vpp/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">3</span>
+                <h3 class="story-title">Kernel bypass networking with FD.io and VPP.</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../linux-kernel-and-measuring-network-throughput/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">4</span>
+                <h3 class="story-title">Linux Kernel and Measuring network throughput.</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../building-a-high-performance-linux-based-traffic-generator-with-dpdk/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">5</span>
+                <h3 class="story-title">Building a high performance - Linux Based Traffic generator with DPDK</h3>
+            </a>
+        </div>
+
+    </div>
+    </main>
+
+    <amp-sidebar id="sidenav" class="sidebar" layout="nodisplay" side="right">
+    <div class="close-sidebar u-bgColor" role="button" aria-label="close sidebar" on="tap:sidenav.close" tabindex="0">✕</div>
+
+    <ul class="nav" role="menu">
+    <li role="menuitem"><a href="../../index.html" class="nav-home">Home</a></li>
+    <li role="menuitem"><a href="../../contact/index.html" class="nav-contact">Contact</a></li>
+    <li role="menuitem"><a href="../../about/index.html" class="nav-about">About</a></li>
+</ul>
+
+    <div class="social-media">
+
+            <a href="https://twitter.com/atoonk" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 18 18" width="100%" height="100%"><path d="M12.077 2c-1.812 0-3.282 1.582-3.282 3.534 0 .277.03.547.085.806-2.728-.148-5.147-1.555-6.766-3.693-.283.522-.445 1.13-.445 1.777 0 1.226.58 2.308 1.46 2.942-.54-.02-1.05-.178-1.49-.443v.045c0 1.712 1.13 3.14 2.63 3.465-.28.08-.57.124-.87.124-.21 0-.418-.022-.62-.063.418 1.404 1.63 2.426 3.067 2.455-1.125.94-2.54 1.51-4.078 1.51-.267 0-.528-.02-.785-.05 1.46 1 3.185 1.59 5.04 1.59 6.037 0 9.34-5.39 9.34-10.06 0-.153-.005-.306-.01-.457.64-.5 1.197-1.12 1.637-1.83-.59.28-1.22.47-1.885.557.677-.437 1.198-1.13 1.443-1.955-.633.405-1.336.7-2.084.858C13.88 2.43 13.028 2 12.08 2"></path></svg>
+</a>
+
+
+
+
+    </div>
+
+</amp-sidebar>
+
+    <footer class="footer">
+        <section class="u-container copyright u-textCenter">
+            &copy; 2020 <a href="../../index.html">Andree&#x27;s Musings.</a>
+        </section>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,4 @@
+User-agent: *
+Sitemap: http://dark-shadow-4784.edge.mysocket.io/sitemap.xml
+Disallow: /ghost/
+Disallow: /p/
