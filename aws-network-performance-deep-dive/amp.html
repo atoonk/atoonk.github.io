@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html amp lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>100G networking in AWS, a network performance deep dive</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <link rel="icon" href="../favicon.png" type="image/png" />
+    <link rel="canonical" href="index.html" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    
+    <meta property="og:site_name" content="Andree&#x27;s Musings" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="100G networking in AWS, a network performance deep dive" />
+    <meta property="og:description" content="Loyal readers of my blog will have noticed a theme, I’m interested in the continued move to virtualized network functions, and the need for faster networking options on cloud compute. In this blog, we’ll look at the network performance on the juggernaut of cloud computing, AWS. AWS is" />
+    <meta property="og:url" content="http://toonk.io/aws-network-performance-deep-dive/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta property="article:published_time" content="2020-10-15T19:06:42.000Z" />
+    <meta property="article:modified_time" content="2020-10-16T18:17:15.000Z" />
+    <meta property="article:tag" content="aws" />
+    <meta property="article:tag" content="networking" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="100G networking in AWS, a network performance deep dive" />
+    <meta name="twitter:description" content="Loyal readers of my blog will have noticed a theme, I’m interested in the continued move to virtualized network functions, and the need for faster networking options on cloud compute. In this blog, we’ll look at the network performance on the juggernaut of cloud computing, AWS. AWS is" />
+    <meta name="twitter:url" content="http://toonk.io/aws-network-performance-deep-dive/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Andree Toonk" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="aws, networking" />
+    <meta name="twitter:site" content="@atoonk" />
+    <meta name="twitter:creator" content="@atoonk" />
+    <meta property="og:image:width" content="2000" />
+    <meta property="og:image:height" content="1333" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Andree&#x27;s Musings",
+        "url": "http://toonk.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "http://toonk.io/content/images/2020/09/download-5.png",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Andree Toonk",
+        "image": {
+            "@type": "ImageObject",
+            "url": "http://toonk.io/content/images/2020/09/andreetoonk.png",
+            "width": 360,
+            "height": 360
+        },
+        "url": "http://toonk.io/author/andree/",
+        "sameAs": [
+            "http://toonk.io/about/",
+            "https://twitter.com/atoonk"
+        ]
+    },
+    "headline": "100G networking in AWS, a network performance deep dive",
+    "url": "http://toonk.io/aws-network-performance-deep-dive/",
+    "datePublished": "2020-10-15T19:06:42.000Z",
+    "dateModified": "2020-10-16T18:17:15.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "width": 2000,
+        "height": 1333
+    },
+    "keywords": "aws, networking",
+    "description": "\nLoyal readers of my blog will have noticed a theme, I’m interested in the\ncontinued move to virtualized network functions, and the need for faster\nnetworking options on cloud compute. In this blog, we’ll look at the network\nperformance on the juggernaut of cloud computing, AWS.\n\nAWS is the leader in the cloud computing world, and many companies now run parts\nof their services on AWS. The question we’ll try to answer in this article is:\nhow well suited is AWS’ ec2 for high throughput network fun",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://toonk.io/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.34" />
+    <link rel="alternate" type="application/rss+xml" title="Andree&#x27;s Musings" href="../rss/index.html" />
+
+    <link href="https://fonts.googleapis.com/css?family=Domine|Rubik:400,500,700&display=swap" rel="stylesheet">
+
+
+    <style amp-custom>.u-bgColor{background-color:#161D25}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}[hidden],template{display:none}.kg-bookmark-container,body,figcaption,h1,h2,h3,h4,h5,h6{font-family:Rubik,Whitney SSm A,Whitney SSm B,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif}.article-excerpt{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif}.u-flexCenter{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex}.u-block{display:block}.u-relative{position:relative}.u-overflowHidden{overflow:hidden}.u-fontSizeSmaller{font-size:.875rem}.u-flex1{-webkit-box-flex:1;flex:1 1 auto}.u-absolute{position:absolute}.u-textCenter{text-align:center}.u-marginTop30{margin-top:30px}.u-container{margin-left:auto;margin-right:auto;padding-left:16px;padding-right:16px}*,:after,:before{box-sizing:border-box}body{font-size:1rem;font-style:normal;font-weight:400;letter-spacing:0;line-height:1.5em;text-rendering:optimizeLegibility;-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;-ms-text-size-adjust:100%;text-size-adjust:100%;color:#212529}a{color:#00a562;text-decoration:none;word-break:break-word}a:active,a:hover{outline:0}blockquote{border-left:4px solid #212529;font-size:1.125rem;font-style:italic;margin-left:-5px;margin-right:0;padding-bottom:2px;padding-left:20px}figure{margin:0;padding:0}img{-o-object-fit:cover;object-fit:cover;-o-object-position:center;object-position:center}figcaption{color:#6c757d;display:block;font-size:.875rem;font-style:normal;font-weight:400;margin-top:10px;text-align:center;width:100%}h1,h2,h3,h4,h5,h6{color:#111;font-style:normal;font-weight:700;line-height:1.2;margin:25px 0 0;word-break:break-word}h1{font-size:2rem}h2{font-size:1.75rem}h3{font-size:1.5rem}h4{font-size:1.375rem}h5{font-size:1.25rem}h6{font-size:1.125rem}strong{font-weight:700}p{margin:20px 0 0}hr{box-sizing:content-box;height:0;margin:1rem 0;overflow:visible;border:0;border-top:1px solid rgba(0,0,0,.1)}mark{background-color:transparent;background-image:linear-gradient(180deg,#d7fdd3,#d7fdd3);color:rgba(0,0,0,.8)}code,pre{font-family:Menlo,Courier,monospace;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-ms-hyphens:none;hyphens:none}p code{border-radius:2px;padding:1px 6px}p code,pre{background:#2a3644;color:#e5eff5;font-size:.875rem}pre{overflow-x:auto;margin:0;padding:20px;border:none;line-height:1.6em}pre code{padding:0;background:transparent}svg{width:100%;height:100%}svg:not(:root){overflow:hidden}table{border-collapse:collapse;border-spacing:0;display:inline-block;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;font-size:1rem;line-height:1.5;margin:20px 0 0;max-width:100%;overflow-x:auto;vertical-align:top;white-space:nowrap;width:auto;-webkit-overflow-scrolling:touch}table td,table th{padding:6px 13px;border:1px solid #dfe2e5}table tr:nth-child(2n){background-color:#f6f8fa}table th{letter-spacing:.0125rem;text-transform:uppercase;font-weight:500}.header{position:relative;width:100%;height:50px;line-height:1}.logo-link{color:#fff;font-size:1.5rem;font-weight:500}.social-media a{background:#212529;border-radius:4px;color:#fff;display:inline-block;height:36px;margin:0 2px;padding:8px;vertical-align:middle;width:36px}.social-media svg{fill:#fff;stroke:none}.sidebar{width:280px;background:#fff}.sidebar ul{list-style:none;list-style-image:none;margin:18px 0 20px;padding:0}.sidebar ul li a{padding:6px 20px;font-weight:500;font-size:1rem;display:block}.sidebar .social-media{padding:20px;border-top:1px solid #ddd}.close-sidebar{height:50px;font-size:1.5625rem;line-height:3.125rem;text-align:right;padding-right:20px;color:#fff}.hamburgermenu{background-color:transparent;border:none;padding:0;height:48px;position:relative;-webkit-transition:-webkit-transform .4s;transition:-webkit-transform .4s;transition:transform .4s;transition:transform .4s,-webkit-transform .4s;width:48px;margin-right:-15px}.hamburgermenu span{background-color:#fff;display:block;height:2px;left:14px;margin-top:-1px;position:absolute;top:50%;width:20px}.hamburgermenu span:first-child{-webkit-transform:translateY(-6px);transform:translateY(-6px)}.hamburgermenu span:last-child{-webkit-transform:translateY(6px);transform:translateY(6px)}.main{max-width:500px;margin:0 auto}.article{padding-top:25px}.article-title{margin-top:0}.article-excerpt{margin-bottom:20px;margin-top:15px;color:#6c757d;font-size:1.25rem;line-height:1.4}.article-meta{color:#6c757d;margin:15px 0;font-size:.875rem}.article-body{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif;line-height:1.7em;font-size:1.125rem;padding:20px 1rem}.article-body>*{margin-bottom:28px}.article-body a:not(.kg-bookmark-container){word-break:break-word;text-decoration:underline}.article-body ol,.article-body ul{padding-left:20px}.article-body ol li,.article-body ul li{margin-bottom:5px}.button--tags{border-radius:3px;color:#212529;display:inline-block;font-size:.875rem;font-weight:500;height:37px;line-height:2.1875rem;margin:0 8px 8px 0;padding:0 10px;border:2px solid #212529}.button--tags:before{content:"#"}.share-title{display:block;margin-bottom:8px}amp-social-share.custom-style{background-color:teal;background-image:url(https://raw.githubusercontent.com/google/material-design-icons/master/social/1x_web/ic_share_white_48dp.png);background-repeat:no-repeat;background-position:50%;background-size:contain}amp-social-share.rounded{border-radius:10%;background-size:85%}.related{padding-top:40px;padding-bottom:20px;margin-top:20px;background:#efefef}.related-title{border-bottom:1px solid rgba(0,0,0,.15);padding-bottom:15px;margin-bottom:30px;color:#212529;font-weight:500;font-size:1.25rem}.story-border{border-left:3px solid #cc116e;bottom:0;color:rgba(0,0,0,.2);font-size:2.25rem;font-weight:700;left:0;padding:15px 10px 10px;top:0;-webkit-text-fill-color:transparent;-webkit-text-stroke-width:1.4px;-webkit-text-stroke-color:#888}.story:nth-child(3n) .story-border{border-color:#f59e00}.story:nth-child(3n+2) .story-border{border-color:#26a8ed}.story-link{background-color:#fff;border-bottom:1px solid #e2e0e0;box-shadow:0 1px 7px rgba(0,0,0,.05);min-height:50px;padding:15px 15px 15px 55px}.story-title{color:#212529;line-height:1.2;font-size:1.0625rem;font-weight:500;margin:0}.kg-bookmark-container{display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;flex-direction:column;border:1px solid rgba(0,0,0,.1)}.kg-bookmark-content{padding:20px;-webkit-box-ordinal-group:2;order:1}.kg-bookmark-title{font-weight:500;line-height:1.2;font-size:1.125rem}.kg-bookmark-description{color:#6c757d;line-height:1.4;margin-top:10px;font-size:.875rem}.kg-bookmark-metadata{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;font-size:.875rem;margin-top:10px}.kg-bookmark-icon{margin-right:5px}.kg-bookmark-author:after{content:"•";margin:0 6px}.footer{background-color:#efefef;color:rgba(0,0,0,.44);padding-top:20px;font-size:.9375rem;padding-bottom:45px}</style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
+    <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+
+    <script async custom-element="amp-youtube" src="https://cdn.ampproject.org/v0/amp-youtube-0.1.js"></script>
+</head>
+<body class="amp-template">
+    <header class="header u-bgColor u-flexCenter u-container">
+    <div class="u-flex1">
+
+
+
+        <a href="../index.html" class="logo-link">Andree&#x27;s Musings</a>
+    </div>
+
+    <button class="hamburgermenu" on="tap:sidenav.open" tabindex="0"><span></span><span></span><span></span></button>
+
+</header>
+
+    <main class="main">
+        
+<article class="article">
+    <header class="article-header u-container">
+        <h1 class="article-title">100G networking in AWS, a network performance deep dive</h1>
+
+        
+
+        <hr>
+
+        <div class="article-meta">
+            <span class="author-name">By <a href="../author/andree/index.html">Andree Toonk</a></span>
+
+            <span class="timestamp">
+                <time class="datetime" datetime="2020-10-15">a day ago</time>
+            </span>
+
+            
+                <span>in</span>
+                <span class="categories"><a href="../tag/aws/index.html" title="aws">aws</a></span>
+            
+        </div>
+    </header>
+
+        <figure class="article-image u-block u-marginTop30">
+            <amp-img src="https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" width="600" height="350" layout="responsive" alt="100G networking in AWS, a network performance deep dive"></amp-img>
+        </figure>
+
+    <div class="article-body u-container"> <h3></h3><p>Loyal readers of my blog will have noticed a theme, I’m interested in the continued move to virtualized network functions, and the need for faster networking options on cloud compute. In this blog, we’ll look at the network performance on the juggernaut of cloud computing, AWS.</p><p>AWS is the leader in the cloud computing world, and many companies now run parts of their services on AWS. The question we’ll try to answer in this article is: how well suited is AWS’ ec2 for high throughput network functions.</p><p><em>I’ve decided to experiment with adding a short demo video to this blog. Below you will find a quick demo and summary of this article. Since these videos are new and a bit of an experiment, let me know if you like</em></p><figure class="kg-card kg-embed-card"><amp-youtube width="612" height="344" data-videoid="iwe0gL8VBvA" layout="responsive"></amp-youtube></figure><h3 id="100g-networking">100G networking</h3><p>It’s already been two years since AWS <a href="https://aws.amazon.com/about-aws/whats-new/2018/11/introducing-amazon-ec2-c5n-instances/" rel="noopener">announced the C5n instances</a>, featuring 100 Gbps networking. I’m not aware of any other cloud provider offering 100G instances, so this is pretty unique. Ever since this was released I wondered exactly what, if any, the constraints were. Can I send/receive 100g line rate (144Mpps)? So, before we dig into the details, let’s just check if we can really get to 100Gbs.</p><figure class="kg-card kg-embed-card kg-card-hascaption"><blockquote class="twitter-tweet" data-width="550"><p lang="en" dir="ltr">this is fun :)  97Gbs <a href="https://t.co/6VdkR2Rlr4">pic.twitter.com/6VdkR2Rlr4</a></p>— Andree Toonk, Adelante! (@atoonk) <a href="https://twitter.com/atoonk/status/1266037590492241921?ref_src=twsrc%5Etfw">May 28, 2020</a></blockquote>
+
+<figcaption>100gbs testing.. We’re gonna need a bigger boat..</figcaption></figure><p>There you have it, I was able to get to 100Gbs between 2 instances! That’s exciting. But there are a few caveats. We’ll dig into all of them in this article, with the aim to understand exactly what’s possible, what the various limits are, and how to get to 100g.</p><h3 id="understand-the-limits">Understand the limits</h3><p>Network performance on Linux is typically a function of a few parameters. Most notably, the number of TX/RX queues available on the NIC (network card). The number of CPU cores, ideally at least equal to the number of queues. The pps (packets per second) limit per queue. And finally, in virtual environments like AWS and GCP, potential admin limits on the instance.</p><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1200/0*JUjZ5NOIWUrey-Xm" class="kg-image" alt width="400" height="400" layout="responsive"></amp-img></figure><p>Doing networking in software means that processing a packet (or a batch of them) uses a number of CPU cycles. It’s typically not relevant how many bytes are in a packet. As a result, the best metric to look at is the: pps number (related to our cpu cycle budget). Unfortunately, the pps performance numbers for AWS aren’t published so we’ll have to measure them in this blog. With that, we should have a much better understanding of the network possibilities on AWS, and hopefully, this saves someone else a lot of time (this took me several days of measuring) ;)</p><h3 id="network-queues-per-instance-type">Network queues per instance type</h3><p>The table below shows the number of NIC queues by ec2 (c5n) Instance type.</p><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*P9_cWmValN63fmRXAWqdqg.png" class="kg-image" alt width="1006" height="338" layout="responsive"></amp-img></figure><p><em>In the world of ec2, 16 vCPUs on the C5n 4xl instance means 1 Socket, 8 Cores per socket, 2 Threads per core.</em></p><p>On AWS, an Elastic Network Adapter (ENA) NIC has as many queues as you have vCPUs. Though it stops at 32 queues as you can see with the C5n 9l and C5n 18xl instance.</p><p>Like many things in computing, to make things faster, things are parallelized. We see this clearly when looking at CPU capacity, we’re adding more cores, and programs are written in such a way that can leverage the many cores in parallel (multi-threaded programs).</p><p>Scaling Networking performance on our servers is done largely the same. It’s hard to make things significantly faster, but it is easier to add more ‘workers’, especially if the performance is impacted by our CPU capacity. In the world of NICs, these ‘workers’ are queues. Traffic send and received by a host is load-balanced over the available network queues on the NIC. This load balancing is done by hashing (typically the 5 tuples, protocol, source + destination address, and port number). Something you’re likely familiar with from ECMP.</p><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1200/1*VsV_F3dbhosQXAi9A97mqQ.jpeg" class="kg-image" alt width="800" height="471" layout="responsive"></amp-img></figure><blockquote>So queues on a NIC are like lanes on a highway, the more lanes, the more cars can travel the highway. The more queues, the more packets (flows) can be processed.</blockquote><h3 id="test-one-ena-queue-performance">Test one, ENA queue performance</h3><p>As discussed, the network performance of an instance is a function of the number of available queues and cpu’s. So let’s start with measuring the maximum performance of a single flow (queue) and then scale up and measure the pps performance.</p><p>In this measurement, I used two c5n.18xlarge ec2 instances in the same subnet and the same placement zone. The sender is using <a href="https://toonk.io/building-a-high-performance-linux-based-traffic-generator-with-dpdk/index.html" rel="noopener">DPDK-pktgen</a> (igb_uio). The receiver is a stock ubuntu 20.04 LTS instance, using the ena driver.</p><p>The table below shows the TX and RX performance between the two c5n.18xlarge ec2 instances for one and two flows.</p><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*GVmlTopDSacvRFilauWZag.png" class="kg-image" alt width="1026" height="180" layout="responsive"></amp-img></figure><p>With this, it seems the per queue limit is about 1Mpps. Typically the per queue limit is due to the fact that a single queue (soft IRQ) is served by a single CPU core. Meaning, the per queue performance is limited by how many packets per second a single CPU core can process. So again, what you typically see in virtualized environments is that the number of network queues goes up with the number of cores in the VM. In ec2 this is the same, though it’s maxing out at 32 queues.</p><h3 id="test-two-rx-only-pps-performance">Test two, RX only pps performance</h3><p>Now that we determined that the per queue limit appears to be roughly one million packets per second it’s natural to presume that this number scales up horizontally with the number of cores and queues. For example, the C5n 18xl comes with 32 nic queues and 72 cores, so in theory, we could naively presume that the (RX/TX) performance (given enough flows) should be 32Mpps. Let’s go ahead and validate that.</p><p>The graph below shows the Transmit (TX) performance as measured on a c5n.18xlarge. In each measurement, I gave the packet generator one more queue and vcpu to work with. Starting with one TX queue and one VCPu, incrementing this by one in each measurement until we reached 32 vCPU and 32 queues (max). The results show that the per TX queue performance varied between 1Mpps to 700Kpps. The maximum total TX performance I was able to get however was ~8.5Mpps using 12 TX queues. After that, adding more queues and vCPu’s didn’t matter, or actually degraded the performance. So this indicates that the performance scales horizontally (per queue), but does max out at a certain point (varies per instance type), in this case at 8.5 Mpps</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/0*7ATryTmrHyn_Inaj" class="kg-image" alt width="1200" height="742" layout="responsive"></amp-img><figcaption>c5n.18xlarge per TX queue performance</figcaption></figure><p>In this next measurement, we’ll use two packet generators and one receiver. I’m using two generators, just to make sure the limit we observed earlier isn’t caused by limitations on the packet generator. Each traffic generator is sending many thousands of flows, making sure we leverage all the available queues.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*S8jlTc-v-Krm8BLx1QCGtw.png" class="kg-image" alt width="1004" height="392" layout="responsive"></amp-img><figcaption>RX pps per C5N instance type</figcaption></figure><p>Alright, after a few minutes of reading (and many many hours, well really days.. of measurements on my end), we now have a pretty decent idea of the performance numbers. We know how many queues each of the various c5n instance types have.</p><blockquote><strong>We have seen that the per queue limit is roughly 1Mpps. And with the table above we now see how many packets per second each instance is able to receive (RX)</strong>.</blockquote><h3 id="forwarding-performance">Forwarding performance</h3><p>If we want to use ec2 for virtual network functions, then just receiving traffic isn’t enough. A typical, router or firewall should both receive and send traffic at the same time. So let’s take a look at that.</p><p>For this measurement, I used the following setup. Both the traffic generator and receiver were C5n-18xl instances. The Device Under Test (DUT) was a standard Ubuntu 20.04 LTS instance, using the ena driver. Since the earlier observed pps numbers weren’t too high I determined it’s safe to use the regular Linux kernel to forward packets.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*rK_4B6M-0NF2mrrDmheuFQ.png" class="kg-image" alt width="1204" height="328" layout="responsive"></amp-img><figcaption>test setup</figcaption></figure><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*UUWrmoLH-MXLMsNBdCvJXg.png" class="kg-image" alt width="1184" height="394" layout="responsive"></amp-img><figcaption>pps forwarding performance</figcaption></figure><p>The key takeaway from this measurement is that the TX and RX numbers are similar as we’d seen before for the instance types up to (including) the C5n 4xl. For example, earlier we saw the C5n 4xl could receive up to ~3Mpps. This measurement shows that it can do ~3Mpps simultaneously on RX and TX.</p><p>However, if we look at the C5n 9l, we can see it was able to process RX+ TX about 6.2Mpps. Interestingly, earlier we saw it was also able to receive (rx only) ~6Mpps. So it looks like we hit some kind of aggregate limit. We a similar limit for the C5n 18xl instance.</p><h3 id="in-summary-">In Summary.</h3><p>In this blog, we looked at the various performance characteristics of networking on ec2. We determined that the <strong>performance of a single queue is roughly 1Mpps</strong>. We then saw how the number of queues goes up with the higher end instances up until <strong>32 queues maximum</strong>.</p><p>We then measure the RX performance of the various instances as well as the forwarding (RX + TX aggregate) performance. Depending on the measurement setup (RX, or TX+RX) we see that <strong>for the largest instance types, the pps performance maxes out at roughly 6.6Mpps to 8.3Mpps</strong>. With that, I think that the C5n 9l hits the sweet spot in terms of cost vs performance.</p><h3 id="so-how-about-that-100g-test">So how about that 100G test?</h3><p>Ah yes! So far we talked about pps only. How does that translate that to gigabits per second?<br />Let’s look at the quick table below that shows how the pps number translates to Gbs at various packet sizes.</p><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*sXL3CJJ9M955aa8DvRUVyw.png" class="kg-image" alt width="580" height="254" layout="responsive"></amp-img></figure><p>These are a few examples to get to 10G at various packet sizes. This shows that in order to support line-rate 10G at the smallest packet size, the system will need to be able to do ~14.88 Mpps. The 366 byte packet size is roughly the equivalent average of what you’ll see with an IMIX test, for which the systems needs to be able to process ~3,4Mpps to get to 10G line rate.</p><p>If we look at the same table but then for 100gbps, we see that at the smallest packet size an instance would need to be able to process is over 148Mpps. But using 9k jumbo frames you only need 1.39Mpps.</p><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*WbChAl1uTuUMnP6oHFzRhg.png" class="kg-image" alt width="582" height="252" layout="responsive"></amp-img></figure><p>And so, that’s what you need to do to get to 100G networking in ec2. Use Jumbo frames (supported in ec2, in fact, for the larger instances this was the default). With that and a few parallel flows you’ll be able to get to 100G “easily”!</p><h3 id="a-few-more-limits">A few more limits</h3><p>One more limitation I <a href="https://cloudonaut.io/ec2-network-performance-cheat-sheet/" rel="noopener">read about while researching</a>, but didn’t look into myself. It appears that some of the instances have time-based limits on the performance. This <a href="https://www.bluematador.com/blog/ec2-packets-per-second-guaranteed-throughput-vs-best-effort" rel="noopener">blog</a> calls it Guaranteed vs Best Effort. Basically, you’re allowed to burst for a while, but after a certain amount of time, you’ll get throttled. Finally, there is a per-flow limit of 10Gbs. So if you’re doing things like IPSEC, GRE, VXLAN, etc, note that you will never go any faster than 10g.</p><h3 id="closing-thoughts">Closing thoughts</h3><p>Throughout this blog, I mentioned the word ‘limits’ quite a bit. Which has a bit of a negative connotation. However, it’s important to keep in mind that AWS is a multi-tenant environment and it’s their job to make sure the user experience is still as much as possible as if the instance is dedicated to you. So you can also think of them as ‘guarantees’. AWS will not call them that, but in my experience, the throughput tests have been pretty reproducible with say a +/- 10% measurement margin.</p><p>All in all, it’s pretty cool to be able to do 100G on AWS. As long as you are aware of the various limitations, which unfortunately aren’t documented well. Hopefully, this article helps some of you with that in the future. <br />Finally, could you use AWS to run your virtual firewalls, proxies, VPN gateways, etc? Sure, as long as you’re aware of the performance constraints. And with that design a nice horizontally scalable design, according to AWS best practices. The one thing you really do need to keep an eye on is the (egress) bandwidth pricing, which when you started doing many gigabits per second can really add up.</p><p><em>Cheers</em><br /><em>- Andree</em></p><p><br /></p> </div>
+
+        <div class="article-tags u-container u-marginTop30">
+            <span class="share-title">Tags:</span>
+                <a href="../tag/aws/index.html" title="aws" class="button--tags">aws</a>
+                <a href="../tag/networking/index.html" title="networking" class="button--tags">networking</a>
+        </div>
+
+    <footer class="share u-container u-marginTop30">
+        <span class="share-title">Share this:</span>
+        <amp-social-share class="rounded"
+        type="email"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="facebook"
+        data-param-app_id="254325784911610"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="twitter"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="linkedin"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="whatsapp"
+        width="36"
+        height="36"></amp-social-share>
+    </footer>
+
+</article>
+
+
+            <div class="related u-container">
+        <div class="related-title">Related Articles</div>
+
+        <div class="story">
+            <a href="../building-a-global-anycast-service-in-under-a-minute/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">1</span>
+                <h3 class="story-title">Building a global anycast service in under a minute</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../building-an-xdp-express-data-path-based-bgp-peering-router/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">2</span>
+                <h3 class="story-title">Building an XDP (eXpress Data Path) based BGP peering router</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../kernel-bypass-networking-with-fd-io-and-vpp/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">3</span>
+                <h3 class="story-title">Kernel bypass networking with FD.io and VPP.</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../linux-kernel-and-measuring-network-throughput/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">4</span>
+                <h3 class="story-title">Linux Kernel and Measuring network throughput.</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../building-a-high-performance-linux-based-traffic-generator-with-dpdk/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">5</span>
+                <h3 class="story-title">Building a high performance - Linux Based Traffic generator with DPDK</h3>
+            </a>
+        </div>
+
+    </div>
+    </main>
+
+    <amp-sidebar id="sidenav" class="sidebar" layout="nodisplay" side="right">
+    <div class="close-sidebar u-bgColor" role="button" aria-label="close sidebar" on="tap:sidenav.close" tabindex="0">✕</div>
+
+    <ul class="nav" role="menu">
+    <li role="menuitem"><a href="../index.html" class="nav-home">Home</a></li>
+    <li role="menuitem"><a href="../contact/index.html" class="nav-contact">Contact</a></li>
+    <li role="menuitem"><a href="../about/index.html" class="nav-about">About</a></li>
+</ul>
+
+    <div class="social-media">
+
+            <a href="https://twitter.com/atoonk" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 18 18" width="100%" height="100%"><path d="M12.077 2c-1.812 0-3.282 1.582-3.282 3.534 0 .277.03.547.085.806-2.728-.148-5.147-1.555-6.766-3.693-.283.522-.445 1.13-.445 1.777 0 1.226.58 2.308 1.46 2.942-.54-.02-1.05-.178-1.49-.443v.045c0 1.712 1.13 3.14 2.63 3.465-.28.08-.57.124-.87.124-.21 0-.418-.022-.62-.063.418 1.404 1.63 2.426 3.067 2.455-1.125.94-2.54 1.51-4.078 1.51-.267 0-.528-.02-.785-.05 1.46 1 3.185 1.59 5.04 1.59 6.037 0 9.34-5.39 9.34-10.06 0-.153-.005-.306-.01-.457.64-.5 1.197-1.12 1.637-1.83-.59.28-1.22.47-1.885.557.677-.437 1.198-1.13 1.443-1.955-.633.405-1.336.7-2.084.858C13.88 2.43 13.028 2 12.08 2"></path></svg>
+</a>
+
+
+
+
+    </div>
+
+</amp-sidebar>
+
+    <footer class="footer">
+        <section class="u-container copyright u-textCenter">
+            &copy; 2020 <a href="../index.html">Andree&#x27;s Musings</a>
+        </section>
+    </footer>
+</body>
+</html>
