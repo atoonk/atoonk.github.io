@@ -2,7 +2,7 @@
 <html amp lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Linux Kernel and Measuring network throughput.</title>
+    <title>AWS and their Billions in IPv4 addresses</title>
 
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
@@ -13,23 +13,24 @@
     
     <meta property="og:site_name" content="Andree&#x27;s Musings" />
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="Linux Kernel and Measuring network throughput." />
-    <meta property="og:description" content="can Linux route at line-rate between two network interfaces? That’s the question we will try to answer in the next few minutes." />
-    <meta property="og:url" content="http://toonk.io/linux-kernel-and-measuring-network-throughput/" />
-    <meta property="og:image" content="https://images.unsplash.com/photo-1448056975861-28196f26abd6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
-    <meta property="article:published_time" content="2020-03-29T18:21:00.000Z" />
-    <meta property="article:modified_time" content="2020-09-05T18:35:18.000Z" />
+    <meta property="og:title" content="AWS and their Billions in IPv4 addresses" />
+    <meta property="og:description" content="Earlier this week, I was doing some work on AWS and wanted to know what IP addresses were being used. Luckily for me, AWS publishes this all here https://ip-ranges.amazonaws.com/ip-ranges.json. When you go through this list, you’ll quickly see that AWS has a massive asset" />
+    <meta property="og:url" content="http://toonk.io/aws-and-their-billions-in-ipv4-addresses/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1572288717056-ea97fb77c71e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta property="article:published_time" content="2020-10-20T16:01:11.000Z" />
+    <meta property="article:modified_time" content="2020-10-20T16:01:11.000Z" />
+    <meta property="article:tag" content="aws" />
     <meta property="article:tag" content="networking" />
     
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Linux Kernel and Measuring network throughput." />
-    <meta name="twitter:description" content="can Linux route at line-rate between two network interfaces? That’s the question we will try to answer in the next few minutes." />
-    <meta name="twitter:url" content="http://toonk.io/linux-kernel-and-measuring-network-throughput/" />
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1448056975861-28196f26abd6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta name="twitter:title" content="AWS and their Billions in IPv4 addresses" />
+    <meta name="twitter:description" content="Earlier this week, I was doing some work on AWS and wanted to know what IP addresses were being used. Luckily for me, AWS publishes this all here https://ip-ranges.amazonaws.com/ip-ranges.json. When you go through this list, you’ll quickly see that AWS has a massive asset" />
+    <meta name="twitter:url" content="http://toonk.io/aws-and-their-billions-in-ipv4-addresses/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1572288717056-ea97fb77c71e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Andree Toonk" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="networking" />
+    <meta name="twitter:data2" content="aws, networking" />
     <meta name="twitter:site" content="@atoonk" />
     <meta name="twitter:creator" content="@atoonk" />
     <meta property="og:image:width" content="2000" />
@@ -65,18 +66,18 @@
             "https://twitter.com/atoonk"
         ]
     },
-    "headline": "Linux Kernel and Measuring network throughput.",
-    "url": "http://toonk.io/linux-kernel-and-measuring-network-throughput/",
-    "datePublished": "2020-03-29T18:21:00.000Z",
-    "dateModified": "2020-09-05T18:35:18.000Z",
+    "headline": "AWS and their Billions in IPv4 addresses",
+    "url": "http://toonk.io/aws-and-their-billions-in-ipv4-addresses/",
+    "datePublished": "2020-10-20T16:01:11.000Z",
+    "dateModified": "2020-10-20T16:01:11.000Z",
     "image": {
         "@type": "ImageObject",
-        "url": "https://images.unsplash.com/photo-1448056975861-28196f26abd6?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "url": "https://images.unsplash.com/photo-1572288717056-ea97fb77c71e?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
         "width": 2000,
         "height": 1333
     },
-    "keywords": "networking",
-    "description": "can Linux route at line-rate between two network interfaces? That’s the question we will try to answer in the next few minutes.",
+    "keywords": "aws, networking",
+    "description": "Earlier this week, I was doing some work on AWS and wanted to know what IP\naddresses were being used. Luckily for me, AWS publishes this all here \nhttps://ip-ranges.amazonaws.com/ip-ranges.json. When you go through this list,\nyou’ll quickly see that AWS has a massive asset of IPv4 allocations. Just\ncounting quickly I noticed a lot of big prefixes!\n\n&gt; Ever wondered what all of the AWS network ranges are? You can find them all\nhere:https://t.co/NBaBF6w0la\nThat&#x27;s *a lot* of big prefixes!\n4x /11, 14",
     "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "http://toonk.io/"
@@ -116,9 +117,9 @@
         
 <article class="article">
     <header class="article-header u-container">
-        <h1 class="article-title">Linux Kernel and Measuring network throughput.</h1>
+        <h1 class="article-title">AWS and their Billions in IPv4 addresses</h1>
 
-        <p class="article-excerpt">can Linux route at line-rate between two network interfaces? That’s the question we will try to answer in the next few minutes.</p>
+        
 
         <hr>
 
@@ -126,25 +127,36 @@
             <span class="author-name">By <a href="../author/andree/index.html">Andree Toonk</a></span>
 
             <span class="timestamp">
-                <time class="datetime" datetime="2020-03-29">7 months ago</time>
+                <time class="datetime" datetime="2020-10-20">a few seconds ago</time>
             </span>
 
             
                 <span>in</span>
-                <span class="categories"><a href="../tag/networking/index.html" title="networking">networking</a></span>
+                <span class="categories"><a href="../tag/aws/index.html" title="aws">aws</a></span>
             
         </div>
     </header>
 
         <figure class="article-image u-block u-marginTop30">
-            <amp-img src="https://images.unsplash.com/photo-1448056975861-28196f26abd6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" width="600" height="350" layout="responsive" alt="Linux Kernel and Measuring network throughput."></amp-img>
+            <amp-img src="https://images.unsplash.com/photo-1572288717056-ea97fb77c71e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" width="600" height="350" layout="responsive" alt="AWS and their Billions in IPv4 addresses"></amp-img>
         </figure>
 
-    <div class="article-body u-container"> <p>In <a href="https://medium.com/@atoonk/building-a-high-performance-linux-based-traffic-generator-with-dpdk-93bb9904416c">my last blog</a>, I wrote about how we can use dpdk pktgen for performance testing. Today I spent some time on some baseline testing to see what we can expect out of a vanilla Linux system nowadays when used as a router. Over the last two years I’ve been playing a fair bit with kernel bypass networking and hope to write about it in the near future. The promise of kernel bypass networking is higher performance, to determine how much of performance increase over the Kernel we need to establish a baseline first, we’ll do that in this article.</p><h3 id="test-setup">Test setup</h3><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1200/1*Z2de1wSgOo9UGYqJL5X2Ag.png" class="kg-image" alt width="1192" height="548" layout="responsive"></amp-img><figcaption>n2.large.x86 CPU specs.</figcaption></figure><p>I’m using two <a href="https://www.packet.com/cloud/servers/n2-xlarge/" rel="noopener">n2.xlarge.x86</a> servers from <a href="https://www.packet.com/" rel="noopener">packet.com</a>. With its two Numa nodes, 16cores per socket, 32 cores in total, 64 with hyper-threading, this is a very beefy machine! It also comes with a quad-port Intel x710 NIC, giving us 4 x 10Gbs. Packet allows you to create custom vlans and assign network ports to a vlan. I’ve created two vlans and assigned one NIC to each vlan. The setup looks like below.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*TvT0rHAopTG6cx8v8Ny9TA.png" class="kg-image" alt width="1478" height="638" layout="responsive"></amp-img><figcaption>Test setup</figcaption></figure><p>The Device Under Test (DUT), is a vanilla Ubuntu 19.04 system running a 5.0.0–38-generic kernel. The only minor tune I’ve done is to set the NIC rx ring to 4096. And I enabled ip forwarding ( net.ipv4.ip_forward=1)</p><p>Using the <a href="https://github.com/atoonk/dpdk_pktgen" rel="noopener">traffic generator</a>, I’m sending as many packets possible and observe when packets stop coming back at the same rate, which indicates packet-loss. I record the point that happens as the maximum throughput. I’m also keeping a close eye on the CPU usage, to get a sense of how many CPU cores (hyper threads) are needed to serve the traffic.</p><h3 id="test-1-packet-forwarding-on-linux">Test 1 — packet forwarding on Linux</h3><p>The first test was easy. I’m simply sending packets from 10.10.11.1 to 10.10.12.1 and vice versa, through the DUT (Device under Test), which is routing the packets between the two interfaces eno2 and eno4.<br />Note that that I did both a one directional test (10.10.11.1 &gt; 10.10.12.1) and a bidirectional test (10.10.11.1 &gt; 10.10.12.1 AND 10.10.12.1 &gt; 10.10.11.1). <br />I also tested with just one flow, and with 10,000 flows.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1200/1*moJCGd0xZ8uN0F_dSJrlBg.png" class="kg-image" alt width="584" height="156" layout="responsive"></amp-img><figcaption>Receive Side Scaling (RSS)</figcaption></figure><p>This is important as the NIC is doing something called<a href="https://medium.com/@anubhavchoudhary/introduction-to-receive-side-scaling-rss-7cd97307d220"> Receive Side Scaling (RSS)</a>, which will load balance different flows on to different NIC receive Queues. Each queue is then served by a different core, meaning the system scales horizontally. But, keep in mind, you may still be limited by what a single core can do depending on your traffic patterns.</p><p>Ok, show me the results! Keep in mind that we’re talking mostly about Packets Per Second (PPS) as that is the major indicator of the performance, it’s not super relevant how much data is caried in each packet. In the world of Linux networking, it really comes down to, how many interrrupts per second the system can process.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*qs0jj0QIJRCsGeY-Laf8QA.png" class="kg-image" alt width="1198" height="226" layout="responsive"></amp-img><figcaption>Test results for test 1</figcaption></figure><p>In the results above, you can see that one flow can go as high as 1.4Mpps. At that point, the core serving that queue is maxed out (running 100%), and can not process any more packets and will start dropping. The single flow forwarding performance is good to know for DDOS use-cases or large single flow network streams such as ESP. For services like these, the performance is as good as a single queue / cpu can handle.</p><p>When doing the same test with 10,000 flows, I get to 14 Mpps, full 10g line rate at the smallest possible packet size (64B), yay! At this point I can see all cores doing a fair amount of work. This is expected and is due to the hashing of flows over different queues. Looking at the CPU usage, I estimate that you’d need roughly 16 cores at 100% usage to serve this amount of packets (interrupts).</p><figure class="kg-card kg-image-card kg-width-wide kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/2400/1*orhgjD2BpWHCVxGdutKCPg.png" class="kg-image" alt width="2400" height="1438" layout="responsive"></amp-img><figcaption>14M pps, unidirectional test.</figcaption></figure><p>Interestingly, I wasn’t able to get to full line rate when doing the bidirectional test. Meaning both NICs both sending and receiving simultaneously. Although I am getting reasonably close at 12Mpps (24Mpps total per NIC). When eyeballing the cpu usage and amount of idle left over, I’d expect you’d need roughly 26 cores at 100% usage to do that.</p><h3 id="test-2-introducing-a-simple-stateful-iptables-rule">Test 2 - Introducing a simple stateful iptables rule</h3><p>In this test we’re adding two simple iptables rules to the DUT to see what the impact is. The hypothesis here is that since we’re now going to ask the system to invoke conntrack and do stateful session mapping, we’re starting to execute more code, which could impact the performance and system load. This test will show us the impact of that.</p><p>The Iptables rules added were:</p><pre><code>iptables -I FORWARD -d 10.10.11.1 -m conntrack — ctstate RELATED,ESTABLISHED -j ACCEPT
-iptables -I FORWARD -d 10.10.12.1 -m conntrack — ctstate RELATED,ESTABLISHED -j ACCEPT</code></pre><p></p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*2bA807FtoZwr2K3YgSot9Q.png" class="kg-image" alt width="1192" height="230" layout="responsive"></amp-img><figcaption>Test results for test 2, impact of conntrack</figcaption></figure><p>The results for the single flow performance test look exactly the same, that’s good. The results for the 10,000 flows test, look the same as well when it comes to packet per second. However, we do need a fair amount of extra CPU’s to do the work. Good thing, our test system has plenty. <br />So you can still achieve (close) to full line rate with a simple stateful iptables rule, as long as you have enough cpu’s. Note that in this case, the state table had 10,000 state entries. I didn’t test with more iptables rules.</p><h3 id="test-3-introducing-a-nat-rule">Test 3 - Introducing a NAT rule</h3><p>In this test, we’re starting from scratch as we did in test 1 and I’m adding a simple nat rule which causes all packets going through the DUT to be rewritten to a new source IP. These are the two rules:</p><pre><code>iptables -I POSTROUTING -t nat -d 10.10.12.1 -s 10.10.11.1 -j SNAT — to 10.10.12.2iptables -I POSTROUTING -t nat -d 10.10.11.1 -s 10.10.12.1 -j SNAT — to 10.10.11.2</code></pre><p>The results below are quite different than what we saw earlier.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*zGL9WLmMNQUSItaf0cSmXA.png" class="kg-image" alt width="1192" height="226" layout="responsive"></amp-img><figcaption>Test results for test 3</figcaption></figure><p>The results show that rewriting the packets is quite a bit more expensive than just allowing or dropping a packet. For example, if we look at the unidirectional test with 10,000 flows, we see that we dropped from 14M pps (test 1) to 3.2 Mpps, we also needed 13 cores more to do this!</p><figure class="kg-card kg-image-card kg-width-wide kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*vqQ8Ag_pkW7g19SRCpuhxQ.png" class="kg-image" alt width="1600" height="716" layout="responsive"></amp-img><figcaption>This is what a (unhappy) 64core system looks like when trying to forward and NAT 5.9M pps</figcaption></figure><p>For what it’s worth, i did do a quick measurement with using nftables instead of iptables, but saw no significant changes in NAT performance.</p><h3 id="conclusion">Conclusion</h3><p>One of the questions I had starting this experiment was: <strong>can Linux route at line-rate between two network interfaces?</strong> The answer is yes, we saw 14Mpps (unidirectional), as long as there are sufficient flows, and you have enough cores (~16). The bidirectional test made it to 12Mpps (24Mpps total per NIC) with 26cores at 100%.</p><p>We also saw that with the addition of two stateful Iptables rules, I was still able to get the same throughput, but needed extra CPU to do the work. So at least it scales horizontally.</p><p>Finally, we saw the rather dramatic drop in performance when adding SNAT rules to test. With SNAT the maximum I was able to get out of the system was 5.9Mpps; this was for 20k sessions (10k per direction).</p><p>So yes, you can build a close to line rate router in Linux, as long as you have sufficient cores and don’t do too much packet manipulations. All in all, an interesting test, and now we have a starting benchmark for future (kernel bypass / userland) networking experiments on Linux!</p> </div>
+    <div class="article-body u-container"> <p>Earlier this week, I was doing some work on AWS and wanted to know what IP addresses were being used. Luckily for me, AWS publishes this all here <a href="https://ip-ranges.amazonaws.com/ip-ranges.json" rel="nofollow noopener">https://ip-ranges.amazonaws.com/ip-ranges.json</a>. When you go through this list, you’ll quickly see that AWS has a massive asset of IPv4 allocations. Just counting quickly I noticed a lot of big prefixes!</p><figure class="kg-card kg-embed-card"><blockquote class="twitter-tweet" data-width="550"><p lang="en" dir="ltr">Ever wondered what all of the AWS network ranges are? You can find them all here:<a href="https://t.co/NBaBF6w0la">https://t.co/NBaBF6w0la</a><br />That's *a lot* of big prefixes!<br />4x /11, 14x /12, 30x /13, 78x /14, 184x /15, 278x /16</p>— Andree Toonk, Adelante! (@atoonk) <a href="https://twitter.com/atoonk/status/1316098702260359168?ref_src=twsrc%5Etfw">October 13, 2020</a></blockquote>
+
+</figure><p>However, the IPv4 ranges on that list are just the ranges that are in use and allocated today by AWS. Time to dig a bit deeper.</p><h3 id="ipv4-address-acquisitions-by-aws">IPv4 address acquisitions by AWS</h3><p>Over the years, AWS has acquired a lot of IPv4 address space. Most of this happens without gaining too much attention, but there were a few notable acquisitions that I’ll quickly summarize below.</p><h4 id="2017-mit-selling-8-million-ipv4-addresses-to-aws">2017: MIT selling 8 million IPv4 addresses to AWS</h4><p>In 2017 <a href="https://www.internetsociety.org/blog/2017/05/mit-goes-on-ipv4-selling-spree/" rel="noopener">MIT sold half of its 18.0.0.0/8</a> allocation to AWS. This 18.128.0.0/9 range holds about 8 million IPv4 addresses.</p><h4 id="2018-ge-sells-3-0-0-0-8-to-aws">2018: GE sells 3.0.0.0/8 to AWS</h4><p>In 2018 the IPv4 prefix 3.0.0.0/8 was transferred from GE to AWS. With this, AWS became the proud owner of its first /8! That’s sixteen million new IPv4 addresses to feed us hungry AWS customers. <a href="https://news.ycombinator.com/item?id=18407173" rel="nofollow noopener">https://news.ycombinator.com/item?id=18407173</a></p><h4 id="2019-aws-buys-amprnet-44-192-0-0-10">2019: AWS buys AMPRnet 44.192.0.0/10</h4><p>In 2019 AWS bought a /10 from AMPR.org, the Amateur Radio Digital Communications (ARDC). The IPv4 range 44.0.0.0/8 was an allocation made to the Amateur Radio organization in 1981 and known as the AMPRNet. This sell caused a fair bit of discussion, check out the <a href="https://mailman.nanog.org/pipermail/nanog/2019-July/thread.html#102103" rel="noopener">nanog discussion here.</a></p><p>Just this month, it <a href="http://www.southgatearc.org/news/2020/october/sale-of-amateur-radio-amprnet-tcp-ip-addresses.htm" rel="noopener">became public knowledge</a> AWS paid $108 million for this /10. That’s $25.74 per IP address.</p><p>These are just a few examples. Obviously, AWS has way more IP addresses than the three examples I listed here. The IPv4 transfer market is very active. Check out this website to get a sense of all transfers: <a href="https://account.arin.net/public/transfer-log#NRPM-8.3IPv4" rel="noopener">https://account.arin.net/public/transfer-log</a></p><h3 id="all-aws-ipv4-addresses">All AWS IPv4 addresses</h3><p>Armed with the information above it was clear that not all of the AWS owned ranges were in the <a href="https://ip-ranges.amazonaws.com/ip-ranges.json">JSON</a> that AWS published. For example, parts of the 3.0.0.0/8 range are missing. Likely because some of it is reserved for future use.</p><p>I did a bit of digging and tried to figure out how many IPv4 addresses AWS really owns. A good start is the Json that AWS publishes. I then combined that with all the ARIN, APNIC, and RIPE entries for Amazon I could find. A few examples include:<br /><br /><a href="https://rdap.arin.net/registry/entity/AMAZON-4" rel="nofollow noopener">https://rdap.arin.net/registry/entity/AMAZON-4</a><br /><a href="https://rdap.arin.net/registry/entity/AMAZO-4" rel="nofollow noopener">https://rdap.arin.net/registry/entity/AMAZO-4</a><br /><a href="https://rdap.arin.net/registry/entity/AT-88-Z" rel="nofollow noopener">https://rdap.arin.net/registry/entity/AT-88-Z</a></p><p>Combining all those IPv4 prefixes, removing duplicates and overlaps by aggregating them results in the following list of unique IPv4 address owned by AWS: <a href="https://gist.github.com/atoonk/b749305012ae5b86bacba9b01160df9f#all-prefixes" rel="nofollow noopener">https://gist.github.com/atoonk/b749305012ae5b86bacba9b01160df9f#all-prefixes</a></p><p>The total number of IPv4 addresses in that list is just over 100 Million (100,750,168). That’s <strong>the equivalent of just over six /8’s,</strong> not bad!</p><p>If we break this down by allocation size, we see the following:</p><pre><code>1x /8     =&gt; 16,777,216 IPv4 addresses
+1x /9     =&gt; 8,388,608 IPv4 addresses
+4x /10    =&gt; 16,777,216 IPv4 addresses
+5x /11    =&gt; 10,485,760 IPv4 addresses
+11x /12   =&gt; 11,534,336 IPv4 addresses
+13x /13   =&gt; 6,815,744 IPv4 addresses
+34x /14   =&gt; 8,912,896 IPv4 addresses
+53x /15   =&gt; 6,946,816 IPv4 addresses
+182x /16  =&gt; 11,927,552 IPv4 addresses
+&lt;and more&gt;</code></pre><p>A complete breakdown can be found here: <a href="https://gist.github.com/atoonk/b749305012ae5b86bacba9b01160df9f#breakdown-by-ipv4-prefix-size" rel="nofollow noopener">https://gist.github.com/atoonk/b749305012ae5b86bacba9b01160df9f#breakdown-by-ipv4-prefix-size</a></p><h3 id="putting-a-valuation-on-aws-ipv4-assets">Putting a valuation on AWS’ IPv4 assets</h3><blockquote>Alright.. this is just for fun…</blockquote><p>Since AWS is (one of) the largest buyers of IPv4 addresses, they have spent a significant amount on stacking up their IPv4 resources. It’s impossible, as an outsider, to know how much AWS paid for each deal. However, we can for fun, try to put a dollar number on AWS’ current IPv4 assets.</p><p>The average price for IPv4 addresses has gone up over the years. From ~$10 per IP a few years back to ~$25 per IP <a href="https://auctions.ipv4.global/" rel="noopener">nowadays</a>. <br />Note that these are market prices, so if AWS would suddenly decide to sell its IPv4 addresses and overwhelm the market with supply, prices would drop. But that won’t happen since we’re all still addicted to IPv4 ;)</p><p>Anyway, let’s stick with $25 and do the math just for fun.</p><pre><code>100,750,168 ipv4 addresses x $25 per IP = $2,518,754,200</code></pre><p>Just<strong> over $2.5 billion worth of IPv4 addresses,</strong> not bad! </p><h3 id="peeking-into-the-future">Peeking into the future</h3><p>It’s clear AWS is working hard behind the scenes to make sure we can all continue to build more on AWS. One final question we could look at is: <em>how much buffer does AWS have?</em> ie. how healthy is their IPv4 reserve?</p><p>According to their <a href="https://ip-ranges.amazonaws.com/ip-ranges.json" rel="noopener">published data</a>, they have allocated roughly 53 Million IPv4 addresses to existing AWS services. We found that all their IPv4 addresses combined equates to approximately 100 Million IPv4 addresses. That means they still have ~47 Million IPv4 addresses, or 47% available for future allocations. That’s pretty healthy! And on top of that, I’m sure they’ll continue to source more IPv4 addresses. The IPv4 market is still hot!</p><p></p> </div>
 
         <div class="article-tags u-container u-marginTop30">
             <span class="share-title">Tags:</span>
+                <a href="../tag/aws/index.html" title="aws" class="button--tags">aws</a>
                 <a href="../tag/networking/index.html" title="networking" class="button--tags">networking</a>
         </div>
 
@@ -180,33 +192,33 @@ iptables -I FORWARD -d 10.10.12.1 -m conntrack — ctstate RELATED,ESTABLISHED -
         <div class="related-title">Related Articles</div>
 
         <div class="story">
-            <a href="../aws-and-their-billions-in-ipv4-addresses/amp.html" class="story-link u-block u-relative">
-                <span class="story-border u-flexCenter u-absolute">1</span>
-                <h3 class="story-title">AWS and their Billions in IPv4 addresses</h3>
-            </a>
-        </div>
-        <div class="story">
             <a href="../aws-network-performance-deep-dive/amp.html" class="story-link u-block u-relative">
-                <span class="story-border u-flexCenter u-absolute">2</span>
+                <span class="story-border u-flexCenter u-absolute">1</span>
                 <h3 class="story-title">100G networking in AWS, a network performance deep dive</h3>
             </a>
         </div>
         <div class="story">
             <a href="../building-a-global-anycast-service-in-under-a-minute/amp.html" class="story-link u-block u-relative">
-                <span class="story-border u-flexCenter u-absolute">3</span>
+                <span class="story-border u-flexCenter u-absolute">2</span>
                 <h3 class="story-title">Building a global anycast service in under a minute</h3>
             </a>
         </div>
         <div class="story">
             <a href="../building-an-xdp-express-data-path-based-bgp-peering-router/amp.html" class="story-link u-block u-relative">
-                <span class="story-border u-flexCenter u-absolute">4</span>
+                <span class="story-border u-flexCenter u-absolute">3</span>
                 <h3 class="story-title">Building an XDP (eXpress Data Path) based BGP peering router</h3>
             </a>
         </div>
         <div class="story">
             <a href="../kernel-bypass-networking-with-fd-io-and-vpp/amp.html" class="story-link u-block u-relative">
-                <span class="story-border u-flexCenter u-absolute">5</span>
+                <span class="story-border u-flexCenter u-absolute">4</span>
                 <h3 class="story-title">Kernel bypass networking with FD.io and VPP.</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../linux-kernel-and-measuring-network-throughput/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">5</span>
+                <h3 class="story-title">Linux Kernel and Measuring network throughput.</h3>
             </a>
         </div>
 
