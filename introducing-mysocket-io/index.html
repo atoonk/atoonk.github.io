@@ -12,7 +12,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <title>Linux Kernel and Measuring network throughput.</title>
+    <title>Introducing Mysocket.io</title>
 
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -29,27 +29,28 @@
     
     <meta property="og:site_name" content="Andree&#x27;s Musings" />
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="Linux Kernel and Measuring network throughput." />
-    <meta property="og:description" content="can Linux route at line-rate between two network interfaces? That’s the question we will try to answer in the next few minutes." />
-    <meta property="og:url" content="http://toonk.io/linux-kernel-and-measuring-network-throughput/" />
-    <meta property="og:image" content="https://images.unsplash.com/photo-1448056975861-28196f26abd6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
-    <meta property="article:published_time" content="2020-03-29T18:21:00.000Z" />
-    <meta property="article:modified_time" content="2020-09-05T18:35:18.000Z" />
-    <meta property="article:tag" content="networking" />
+    <meta property="og:title" content="Introducing Mysocket.io" />
+    <meta property="og:description" content="Mysocket is a service that provides users with fast and secure TCP sockets for services that aren’t normally directly reachable from the Internet. Using a simple client, we connect your local services to the Internet." />
+    <meta property="og:url" content="http://toonk.io/introducing-mysocket-io/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1519331582073-283f1a211a3e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta property="article:published_time" content="2020-11-23T03:40:48.000Z" />
+    <meta property="article:modified_time" content="2020-11-23T16:03:30.000Z" />
+    <meta property="article:tag" content="mysocket" />
+    <meta property="article:tag" content="anycast" />
     
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Linux Kernel and Measuring network throughput." />
-    <meta name="twitter:description" content="can Linux route at line-rate between two network interfaces? That’s the question we will try to answer in the next few minutes." />
-    <meta name="twitter:url" content="http://toonk.io/linux-kernel-and-measuring-network-throughput/" />
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1448056975861-28196f26abd6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta name="twitter:title" content="Introducing Mysocket.io" />
+    <meta name="twitter:description" content="Mysocket is a service that provides users with fast and secure TCP sockets for services that aren’t normally directly reachable from the Internet. Using a simple client, we connect your local services to the Internet." />
+    <meta name="twitter:url" content="http://toonk.io/introducing-mysocket-io/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1519331582073-283f1a211a3e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Andree Toonk" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="networking" />
+    <meta name="twitter:data2" content="mysocket, anycast" />
     <meta name="twitter:site" content="@atoonk" />
     <meta name="twitter:creator" content="@atoonk" />
     <meta property="og:image:width" content="2000" />
-    <meta property="og:image:height" content="1333" />
+    <meta property="og:image:height" content="1194" />
     
     <script type="application/ld+json">
 {
@@ -81,18 +82,18 @@
             "https://twitter.com/atoonk"
         ]
     },
-    "headline": "Linux Kernel and Measuring network throughput.",
-    "url": "http://toonk.io/linux-kernel-and-measuring-network-throughput/",
-    "datePublished": "2020-03-29T18:21:00.000Z",
-    "dateModified": "2020-09-05T18:35:18.000Z",
+    "headline": "Introducing Mysocket.io",
+    "url": "http://toonk.io/introducing-mysocket-io/",
+    "datePublished": "2020-11-23T03:40:48.000Z",
+    "dateModified": "2020-11-23T16:03:30.000Z",
     "image": {
         "@type": "ImageObject",
-        "url": "https://images.unsplash.com/photo-1448056975861-28196f26abd6?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "url": "https://images.unsplash.com/photo-1519331582073-283f1a211a3e?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
         "width": 2000,
-        "height": 1333
+        "height": 1194
     },
-    "keywords": "networking",
-    "description": "can Linux route at line-rate between two network interfaces? That’s the question we will try to answer in the next few minutes.",
+    "keywords": "mysocket, anycast",
+    "description": "Mysocket is a service that provides users with fast and secure TCP sockets for services that aren’t normally directly reachable from the Internet. Using a simple client, we connect your local services to the Internet.",
     "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "http://toonk.io/"
@@ -205,8 +206,8 @@
 
 <article class="post u-marginBottom40 u-relative">
     <header class="post-header u-container u-maxWidth740 u-paddingTop30 u-relative zindex3">
-    <h1 class="post-title u-marginBottom20 u-fontSizeLargest u-md-fontSize36">Linux Kernel and Measuring network throughput.</h1>
-    <p class="post-excerpt u-marginBottom30 u-fontSize22 u-textMuted">can Linux route at line-rate between two network interfaces? That’s the question we will try to answer in the next few minutes.</p>
+    <h1 class="post-title u-marginBottom20 u-fontSizeLargest u-md-fontSize36">Introducing Mysocket.io</h1>
+    <p class="post-excerpt u-marginBottom30 u-fontSize22 u-textMuted">Mysocket is a service that provides users with fast and secure TCP sockets for services that aren’t normally directly reachable from the Internet. Using a simple client, we connect your local services to the Internet.</p>
 
     <hr>
 
@@ -228,29 +229,29 @@
         <div class="hh-author-name u-fontSize15 u-noWrapWithEllipsis"><a href="../author/andree/index.html">Andree Toonk</a></div>
 
         <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2020-03-29">29 Mar 2020</time>
+    <time class="datetime u-textCapitalize" datetime="2020-11-23">23 Nov 2020</time>
     <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="6 min read">6 min read</span>
+    <span class="readingTime" style="cursor:default" title="4 min read">4 min read</span>
     
 </div>    </div>
 </div>
         <aside class="post-shasre u-flex0 u-flexCenter u-hide-before-md">
             <span class="share-label u-textMuted u-fontSizeSmaller">Share:</span>
-            <a href="https://twitter.com/share?text=Linux%20Kernel%20and%20Measuring%20network%20throughput.&amp;url=http://toonk.io/linux-kernel-and-measuring-network-throughput/"
+            <a href="https://twitter.com/share?text=Introducing%20Mysocket.io&amp;url=http://toonk.io/introducing-mysocket-io/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Twitter"
                 class="share-link button button--circle godo-tracking js-share">
                 <svg class="icon"><use xlink:href="#icon-twitter"></use></svg>
             </a>
-            <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://toonk.io/linux-kernel-and-measuring-network-throughput/&amp;title=Linux%20Kernel%20and%20Measuring%20network%20throughput."
+            <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://toonk.io/introducing-mysocket-io/&amp;title=Introducing%20Mysocket.io"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Linkedin"
                 class="share-link button button--circle godo-tracking js-share">
                 <svg class="icon"><use xlink:href="#icon-linkedin"></use></svg>
             </a>
-            <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/linux-kernel-and-measuring-network-throughput/"
+            <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/introducing-mysocket-io/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Facebook"
@@ -262,24 +263,42 @@
 </header>
         <figure class="post-image u-block u-marginAuto u-sizeFullHeight u-sizeFullWidth u-maxWidth1000">
             <img class="u-block u-marginAuto u-sizeFullWidth simply-zoom"
-                srcset="https://images.unsplash.com/photo-1448056975861-28196f26abd6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,
-                        https://images.unsplash.com/photo-1448056975861-28196f26abd6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w,
-                        https://images.unsplash.com/photo-1448056975861-28196f26abd6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 1000w,
-                        https://images.unsplash.com/photo-1448056975861-28196f26abd6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 2000w"
+                srcset="https://images.unsplash.com/photo-1519331582073-283f1a211a3e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,
+                        https://images.unsplash.com/photo-1519331582073-283f1a211a3e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w,
+                        https://images.unsplash.com/photo-1519331582073-283f1a211a3e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 1000w,
+                        https://images.unsplash.com/photo-1519331582073-283f1a211a3e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 2000w"
                 sizes="(max-width: 400px) 300px,(max-width: 730px) 600px, (max-width: 1600px) 100vw"
-                src="https://images.unsplash.com/photo-1448056975861-28196f26abd6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-                alt="Linux Kernel and Measuring network throughput."
+                src="https://images.unsplash.com/photo-1519331582073-283f1a211a3e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+                alt="Introducing Mysocket.io"
             />
         </figure>
 
     <div class="post-wrap u-maxWidth1000 u-relative u-marginAuto">
-        <div id="post-body" class="post-body u-container u-maxWidth740 u-relative"><p>In <a href="https://medium.com/@atoonk/building-a-high-performance-linux-based-traffic-generator-with-dpdk-93bb9904416c">my last blog</a>, I wrote about how we can use dpdk pktgen for performance testing. Today I spent some time on some baseline testing to see what we can expect out of a vanilla Linux system nowadays when used as a router. Over the last two years I’ve been playing a fair bit with kernel bypass networking and hope to write about it in the near future. The promise of kernel bypass networking is higher performance, to determine how much of performance increase over the Kernel we need to establish a baseline first, we’ll do that in this article.</p><h3 id="test-setup">Test setup</h3><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1200/1*Z2de1wSgOo9UGYqJL5X2Ag.png" class="kg-image" alt><figcaption>n2.large.x86 CPU&nbsp;specs.</figcaption></figure><p>I’m using two <a href="https://www.packet.com/cloud/servers/n2-xlarge/" rel="noopener">n2.xlarge.x86</a> servers from <a href="https://www.packet.com/" rel="noopener">packet.com</a>. With its two Numa nodes, 16cores per socket, 32 cores in total, 64 with hyper-threading, this is a very beefy machine! It also comes with a quad-port Intel x710 NIC, giving us 4 x 10Gbs. Packet allows you to create custom vlans and assign network ports to a vlan. I’ve created two vlans and assigned one NIC to each vlan. The setup looks like below.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*TvT0rHAopTG6cx8v8Ny9TA.png" class="kg-image" alt><figcaption>Test setup</figcaption></figure><p>The Device Under Test (DUT), is a vanilla Ubuntu 19.04 system running a 5.0.0–38-generic kernel. The only minor tune I’ve done is to set the NIC rx ring to 4096. And I enabled ip forwarding ( net.ipv4.ip_forward=1)</p><p>Using the <a href="https://github.com/atoonk/dpdk_pktgen" rel="noopener">traffic generator</a>, I’m sending as many packets possible and observe when packets stop coming back at the same rate, which indicates packet-loss. I record the point that happens as the maximum throughput. I’m also keeping a close eye on the CPU usage, to get a sense of how many CPU cores (hyper threads) are needed to serve the traffic.</p><h3 id="test-1-packet-forwarding-on-linux">Test 1 — packet forwarding on Linux</h3><p>The first test was easy. I’m simply sending packets from 10.10.11.1 to 10.10.12.1 and vice versa, through the DUT (Device under Test), which is routing the packets between the two interfaces eno2 and eno4.<br>Note that that I did both a one directional test (10.10.11.1 &gt; 10.10.12.1) and a bidirectional test (10.10.11.1 &gt; 10.10.12.1 AND 10.10.12.1 &gt; 10.10.11.1). <br>I also tested with just one flow, and with 10,000 flows.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1200/1*moJCGd0xZ8uN0F_dSJrlBg.png" class="kg-image" alt><figcaption>Receive Side Scaling&nbsp;(RSS)</figcaption></figure><p>This is important as the NIC is doing something called<a href="https://medium.com/@anubhavchoudhary/introduction-to-receive-side-scaling-rss-7cd97307d220"> Receive Side Scaling (RSS)</a>, which will load balance different flows on to different NIC receive Queues. Each queue is then served by a different core, meaning the system scales horizontally. But, keep in mind, you may still be limited by what a single core can do depending on your traffic patterns.</p><p>Ok, show me the results! Keep in mind that we’re talking mostly about Packets Per Second (PPS) as that is the major indicator of the performance, it’s not super relevant how much data is caried in each packet. In the world of Linux networking, it really comes down to, how many interrrupts per second the system can process.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*qs0jj0QIJRCsGeY-Laf8QA.png" class="kg-image" alt><figcaption>Test results for test&nbsp;1</figcaption></figure><p>In the results above, you can see that one flow can go as high as 1.4Mpps. At that point, the core serving that queue is maxed out (running 100%), and can not process any more packets and will start dropping. The single flow forwarding performance is good to know for DDOS use-cases or large single flow network streams such as ESP. For services like these, the performance is as good as a single queue / cpu can handle.</p><p>When doing the same test with 10,000 flows, I get to 14 Mpps, full 10g line rate at the smallest possible packet size (64B), yay! At this point I can see all cores doing a fair amount of work. This is expected and is due to the hashing of flows over different queues. Looking at the CPU usage, I estimate that you’d need roughly 16 cores at 100% usage to serve this amount of packets (interrupts).</p><figure class="kg-card kg-image-card kg-width-wide kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/2400/1*orhgjD2BpWHCVxGdutKCPg.png" class="kg-image" alt><figcaption>14M pps, unidirectional test.</figcaption></figure><p>Interestingly, I wasn’t able to get to full line rate when doing the bidirectional test. Meaning both NICs both sending and receiving simultaneously. Although I am getting reasonably close at 12Mpps (24Mpps total per NIC). When eyeballing the cpu usage and amount of idle left over, I’d expect you’d need roughly 26 cores at 100% usage to do that.</p><h3 id="test-2-introducing-a-simple-stateful-iptables-rule">Test 2 - Introducing a simple stateful iptables rule</h3><p>In this test we’re adding two simple iptables rules to the DUT to see what the impact is. The hypothesis here is that since we’re now going to ask the system to invoke conntrack and do stateful session mapping, we’re starting to execute more code, which could impact the performance and system load. This test will show us the impact of that.</p><p>The Iptables rules added were:</p><pre><code>iptables -I FORWARD -d 10.10.11.1 -m conntrack — ctstate RELATED,ESTABLISHED -j ACCEPT
-iptables -I FORWARD -d 10.10.12.1 -m conntrack — ctstate RELATED,ESTABLISHED -j ACCEPT</code></pre><p></p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*2bA807FtoZwr2K3YgSot9Q.png" class="kg-image" alt><figcaption>Test results for test 2, impact of conntrack</figcaption></figure><p>The results for the single flow performance test look exactly the same, that’s good. The results for the 10,000 flows test, look the same as well when it comes to packet per second. However, we do need a fair amount of extra CPU’s to do the work. Good thing, our test system has plenty. <br>So you can still achieve (close) to full line rate with a simple stateful iptables rule, as long as you have enough cpu’s. Note that in this case, the state table had 10,000 state entries. I didn’t test with more iptables rules.</p><h3 id="test-3-introducing-a-nat-rule">Test 3 - Introducing a NAT rule</h3><p>In this test, we’re starting from scratch as we did in test 1 and I’m adding a simple nat rule which causes all packets going through the DUT to be rewritten to a new source IP. These are the two rules:</p><pre><code>iptables -I POSTROUTING -t nat -d 10.10.12.1 -s 10.10.11.1 -j SNAT — to 10.10.12.2iptables -I POSTROUTING -t nat -d 10.10.11.1 -s 10.10.12.1 -j SNAT — to 10.10.11.2</code></pre><p>The results below are quite different than what we saw earlier.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*zGL9WLmMNQUSItaf0cSmXA.png" class="kg-image" alt><figcaption>Test results for test&nbsp;3</figcaption></figure><p>The results show that rewriting the packets is quite a bit more expensive than just allowing or dropping a packet. For example, if we look at the unidirectional test with 10,000 flows, we see that we dropped from 14M pps (test 1) to 3.2 Mpps, we also needed 13 cores more to do this!</p><figure class="kg-card kg-image-card kg-width-wide kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*vqQ8Ag_pkW7g19SRCpuhxQ.png" class="kg-image" alt><figcaption>This is what a (unhappy) 64core system looks like when trying to forward and NAT 5.9M&nbsp;pps</figcaption></figure><p>For what it’s worth, i did do a quick measurement with using nftables instead of iptables, but saw no significant changes in NAT performance.</p><h3 id="conclusion">Conclusion</h3><p>One of the questions I had starting this experiment was: <strong>can Linux route at line-rate between two network interfaces?</strong> The answer is yes, we saw 14Mpps (unidirectional), as long as there are sufficient flows, and you have enough cores (~16). The bidirectional test made it to 12Mpps (24Mpps total per NIC) with 26cores at 100%.</p><p>We also saw that with the addition of two stateful Iptables rules, I was still able to get the same throughput, but needed extra CPU to do the work. So at least it scales horizontally.</p><p>Finally, we saw the rather dramatic drop in performance when adding SNAT rules to test. With SNAT the maximum I was able to get out of the system was 5.9Mpps; this was for 20k sessions (10k per direction).</p><p>So yes, you can build a close to line rate router in Linux, as long as you have sufficient cores and don’t do too much packet manipulations. All in all, an interesting test, and now we have a starting benchmark for future (kernel bypass / userland) networking experiments on Linux!</p></div>
+        <div id="post-body" class="post-body u-container u-maxWidth740 u-relative"><blockquote>In this blog, I’d like to introduce a new project I’m calling Mysocket.io. Before we dive in, a bit of background.</blockquote><p>Loyal readers know I enjoy building global infrastructure services that need to be able to carry a significant amount of traffic and a large number of requests. Building services like these often require us to solve several challenges. Things to consider include: high availability, scaling, DDoS proofing, monitoring, logging, testing, deployments, user-facing &amp; backend APIs, policy management (user preferences) and distribution, life-cycling, etc. All this while keeping an eye on cost and keeping complexity to a minimum (which really is human, operational cost).</p><p>To experiment with these topics, it’s necessary to have a project to anchor these experiments to. Something I can continuously work on, and while doing so, improve the project as a whole. Now, there are many projects I started over time, but one that I've worked most on recently, and wanted to share with a wider audience, is <a href="https://www.mysocket.io/" rel="noopener"><strong>mysocket.io</strong></a>. A service that provides secure public endpoints for services that are otherwise not publicly reachable.</p><figure class="kg-card kg-image-card"><img src="https://cdn-images-1.medium.com/max/1600/1*43NirbSJ49IN0yPBE5wuAg.png" class="kg-image" alt></figure><p>A typical example case that <a href="https://mysocket.io" rel="noopener">mysocket.io</a> can help with is a web service running on your laptop, which you’d like to make available to a team member or client. Or ssh access to servers behind NAT or a firewall, like a raspberry pi on your home network or ec2 instances behind NAT.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*yF9ppVXSZcwOz5Rlzh39QQ.png" class="kg-image" alt><figcaption>make your localhost app available from&nbsp;anywhere</figcaption></figure><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*E-cZOCwqsH3tOkRjzA-ZJQ.png" class="kg-image" alt><figcaption>Provide SSH access to your home server behind&nbsp;NAT.</figcaption></figure><h2 id="more-details">More details</h2><p>Alright, a good way to share more details and is to do a quick demo! You can see a brief overview in this video, or even better, try it yourself by simply following the four easy steps below.</p><figure class="kg-card kg-embed-card"><iframe width="459" height="344" src="https://www.youtube.com/embed/lEZX_xCTDlo?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></figure><blockquote>If you’re interested or curious, feel free to give it a spin and let me know what worked or didn’t, or even better, how it can be improved. Getting started will take you just one minute. Just follow these simple steps.</blockquote><pre><code class="language-bash">#Install client, using python's package manager (pip)
+pip3 install mysocketctl
+
+#Create account
+mysocketctl account create \
+    --name "your_name" \
+    --email "your_email_address" \
+    --password "a_secure_password" \
+    --sshkey "$(cat ~/.ssh/id_rsa.pub)"
+    
+#login
+mysocketctl login  \
+    --email "your_email_address" \
+    --password "a_secure_password" 
+    
+ 
+#Launch your first global socket ;)
+mysocketctl connect \
+    --port 8000 \
+    --name "my test service"</code></pre><h2 id="architecture-overview">Architecture overview</h2><p>Ok, so how does it work? The process for requesting a “global socket” starts with an API call. You can do this by directly interfacing with <a href="https://api.mysocket.io/" rel="noopener">the RESTful API</a>, or by using the <a href="https://mysocket.readthedocs.io/en/latest/mysocketctl/mysocket.html" rel="noopener">mysocketctl</a> tool. This returns a global mysocket object, which has a name, port number(s), and some other information.</p><p>Users can now use this socket object to create tunnel objects. These tunnels are then used to connect your local service to the global mysocket.io infrastructure. By stitching these two TCP sessions together, we made your local service globally available.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*L4orGfToNQ3fUgjrZC_3Qw.png" class="kg-image" alt><figcaption>Creating a Socket, a Tunnel and connecting to mysocket.io</figcaption></figure><p>The diagram below provides a high-level overview of the service data-plane. On the left, we have the origin service. This could be your laptop, your raspberry pi at home, or even a set of containers in a Kubernetes cluster. The origin service can be behind a very strict firewall or even NAT. All it needs is outbound network access. We can then set up a secure encrypted tunnel to any of the mysocket.io servers around the world.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*ePYWcZbw_jzNriOwCThNFQ.png" class="kg-image" alt="Mysocket.io dataplane"><figcaption>Mysocket.io dataplane</figcaption></figure><h2 id="anycast">Anycast</h2><p>The Mysocket.io services use AWS’ global accelerator. With this, I’m making both the tunnel servers and proxy services anycasted. This solves some of the load balancing and high availability challenges. The mysocket tunnel and proxy servers are located in North America, Europe, and Asia.</p><p>Once the tunnel is established, the connection event is signaled to all other nodes in real-time, ensuring that all edge nodes know where the tunnel for the service is.</p><h2 id="documentation">Documentation</h2><p>One of my goals is to make Mysocket super easy to use. One way to do that is to have good documentation. I invite you to check out our readthedocs.io documentation here <a href="https://mysocket.readthedocs.io/en/latest/" rel="noopener">https://mysocket.readthedocs.io/</a></p><p>It’s divided into two sections:</p><ol><li><a href="https://mysocket.readthedocs.io/en/latest/about/about.html" rel="noopener">General information </a>about mysocket.io and some of the concepts.</li><li>Information and user guides for the <a href="https://mysocket.readthedocs.io/en/latest/mysocketctl/mysocket.html" rel="noopener">mysocketctl command-line tool</a>.</li></ol><p>The documentation itself and mysocketctl tool are both <a href="https://github.com/mysocketio" rel="noopener">opensource</a> so feel free to open pull requests or open issues if you have any questions.</p><p>You may have noticed there’s a <a href="https://mysocket.io" rel="noopener">website</a> as well. I wanted to create a quick landing page, so I decided to play with Wix.com. They make it super easy;  I may have gone overboard a bit ;)  All that was clicked together in just one evening, pretty neat.</p><h2 id="more-to-come">More to come</h2><p>There’s a lot more to tell and plenty more geeky details to dive into. More importantly, we can continue to build on this and make it even better (ping me if you have ideas or suggestions)! <br>So stay tuned. That’s the plan for subsequent Blog posts soon, either in this blog or the <a href="https://www.mysocket.io/blog" rel="noopener">mysocket.io blog</a>.</p><p><em>Cheers,</em><br><em> -Andree</em><br></p></div>
     </div>
 
     <footer class="post-footer u-container u-maxWidth740">
             <div class="post-tags buttonSet u-marginTop30">
-        <a href="../tag/networking/index.html" title="networking" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="networking" data-event-non-interaction="true">networking</a>
+        <a href="../tag/mysocket/index.html" title="mysocket" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="mysocket" data-event-non-interaction="true">mysocket</a><a href="../tag/anycast/index.html" title="anycast" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="anycast" data-event-non-interaction="true">anycast</a>
     </div>
 
         <hr>
@@ -287,39 +306,22 @@ iptables -I FORWARD -d 10.10.12.1 -m conntrack — ctstate RELATED,ESTABLISHED -
                 <div class="u-flex u-relative godo-tracking u-marginBottom30"
     data-event-category="Article"
     data-event-action="Previous article"
-    data-event-label="http://toonk.io/building-a-high-performance-linux-based-traffic-generator-with-dpdk/"
+    data-event-label="http://toonk.io/aws-and-their-billions-in-ipv4-addresses/"
     data-event-non-interaction="true">
 
-    <a href="../building-a-high-performance-linux-based-traffic-generator-with-dpdk/index.html" class="prev-next-image-link u-relative u-bgColorGrayLight u-flex0" aria-label="Building a high performance - Linux Based Traffic generator with DPDK">
-        <img class="u-absolute u-image blur-up lazyload" data-src="https://images.unsplash.com/photo-1489976908522-aabacf277f49?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" alt="Building a high performance - Linux Based Traffic generator with DPDK"/>
+    <a href="../aws-and-their-billions-in-ipv4-addresses/index.html" class="prev-next-image-link u-relative u-bgColorGrayLight u-flex0" aria-label="AWS and their Billions in IPv4 addresses">
+        <img class="u-absolute u-image blur-up lazyload" data-src="https://images.unsplash.com/photo-1572288717056-ea97fb77c71e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" alt="AWS and their Billions in IPv4 addresses"/>
     </a>
 
     <div class="prev-next-body u-paddingLeft20 u-flex1">
         <div class="u-fontSizeSmaller u-lineHeight1 u-textMuted u-marginBottom10">Previous article</div>
-        <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../building-a-high-performance-linux-based-traffic-generator-with-dpdk/index.html" class="u-relative zindex3">Building a high performance - Linux Based Traffic generator with DPDK</a></h2>
-        <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">Often in my, now 20 years, networking career, I had to do some form of network performance testing. Use-cases varied, from troubleshooting a customer problem</p>
+        <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../aws-and-their-billions-in-ipv4-addresses/index.html" class="u-relative zindex3">AWS and their Billions in IPv4 addresses</a></h2>
+        <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">Earlier this week, I was doing some work on AWS and wanted to know what IP addresses were being used. Luckily for me, AWS publishes</p>
     </div>
 
-    <a href="../building-a-high-performance-linux-based-traffic-generator-with-dpdk/index.html" aria-label="Building a high performance - Linux Based Traffic generator with DPDK" class="u-absolute0 zindex2"></a>
+    <a href="../aws-and-their-billions-in-ipv4-addresses/index.html" aria-label="AWS and their Billions in IPv4 addresses" class="u-absolute0 zindex2"></a>
 </div>
-                <div class="u-flex u-relative godo-tracking "
-    data-event-category="Article"
-    data-event-action="Next article"
-    data-event-label="http://toonk.io/kernel-bypass-networking-with-fd-io-and-vpp/"
-    data-event-non-interaction="true">
-
-    <a href="../kernel-bypass-networking-with-fd-io-and-vpp/index.html" class="prev-next-image-link u-relative u-bgColorGrayLight u-flex0" aria-label="Kernel bypass networking with FD.io and VPP.">
-        <img class="u-absolute u-image blur-up lazyload" data-src="https://images.unsplash.com/photo-1514900417871-7912cae3d726?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" alt="Kernel bypass networking with FD.io and VPP."/>
-    </a>
-
-    <div class="prev-next-body u-paddingLeft20 u-flex1">
-        <div class="u-fontSizeSmaller u-lineHeight1 u-textMuted u-marginBottom10">Next article</div>
-        <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../kernel-bypass-networking-with-fd-io-and-vpp/index.html" class="u-relative zindex3">Kernel bypass networking with FD.io and VPP.</a></h2>
-        <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">In this blog, we’ll look at VPP, a fast, flexible, and open-source network forwarding plane. I think you will be blown away by the performance numbers.</p>
-    </div>
-
-    <a href="../kernel-bypass-networking-with-fd-io-and-vpp/index.html" aria-label="Kernel bypass networking with FD.io and VPP." class="u-absolute0 zindex2"></a>
-</div>        </div>
+        </div>
         <hr>
     </footer>
 </article>
@@ -335,165 +337,138 @@ iptables -I FORWARD -d 10.10.12.1 -m conntrack — ctstate RELATED,ESTABLISHED -
             </div>
 
             <div class="col s12 m6 l4 u-flex">
-                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/aws-and-their-billions-in-ipv4-addresses/" data-event-non-interaction="true">
-    <a href="../aws-and-their-billions-in-ipv4-addresses/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
+                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/building-a-global-anycast-service-in-under-a-minute/" data-event-non-interaction="true">
+    <a href="../building-a-global-anycast-service-in-under-a-minute/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
         <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
-            src="https://images.unsplash.com/photo-1572288717056-ea97fb77c71e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            srcset="https://images.unsplash.com/photo-1572288717056-ea97fb77c71e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            data-srcset="https://images.unsplash.com/photo-1572288717056-ea97fb77c71e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1572288717056-ea97fb77c71e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
+            src="https://images.unsplash.com/photo-1527685216219-c7bee79b0089?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            srcset="https://images.unsplash.com/photo-1527685216219-c7bee79b0089?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            data-srcset="https://images.unsplash.com/photo-1527685216219-c7bee79b0089?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1527685216219-c7bee79b0089?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
             data-sizes="(max-width: 1000px) 400px, 600px"
-            alt="AWS and their Billions in IPv4 addresses"
+            alt="Building a global anycast service in under a minute"
         />
     </a>
 
     <div class="cr-inner u-padding15 u-flexColumnTop">
         <div class="cr-body">
-                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../aws-and-their-billions-in-ipv4-addresses/index.html">AWS and their Billions in IPv4 addresses</a></h2>
+                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../building-a-global-anycast-service-in-under-a-minute/index.html">Building a global anycast service in under a minute</a></h2>
         </div>
 
         <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2020-10-20">20 Oct 2020</time>
+    <time class="datetime u-textCapitalize" datetime="2020-06-21">21 Jun 2020</time>
     <span class="bull">&bull;</span>
     <span class="readingTime" style="cursor:default" title="4 min read">4 min read</span>
     
 </div>    </div>
 
-    <a href="../aws-and-their-billions-in-ipv4-addresses/index.html" class="u-absolute0 zindex3" aria-label="AWS and their Billions in IPv4 addresses"></a>
+    <a href="../building-a-global-anycast-service-in-under-a-minute/index.html" class="u-absolute0 zindex3" aria-label="Building a global anycast service in under a minute"></a>
 </div>
             </div>
             <div class="col s12 m6 l4 u-flex">
-                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/aws-network-performance-deep-dive/" data-event-non-interaction="true">
-    <a href="../aws-network-performance-deep-dive/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
+                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/building-a-smarter-aws-global-accelerator/" data-event-non-interaction="true">
+    <a href="../building-a-smarter-aws-global-accelerator/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
         <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
-            src="https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            srcset="https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            data-srcset="https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
+            src="https://images.unsplash.com/photo-1553623095-2b4d2819983f?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            srcset="https://images.unsplash.com/photo-1553623095-2b4d2819983f?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            data-srcset="https://images.unsplash.com/photo-1553623095-2b4d2819983f?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1553623095-2b4d2819983f?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
             data-sizes="(max-width: 1000px) 400px, 600px"
-            alt="100G networking in AWS, a network performance deep dive"
+            alt="Building A Smarter AWS Global Accelerator"
         />
     </a>
 
     <div class="cr-inner u-padding15 u-flexColumnTop">
         <div class="cr-body">
-                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../aws-network-performance-deep-dive/index.html">100G networking in AWS, a network performance deep dive</a></h2>
+                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../building-a-smarter-aws-global-accelerator/index.html">Building A Smarter AWS Global Accelerator</a></h2>
         </div>
 
         <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2020-10-15">15 Oct 2020</time>
-    <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="9 min read">9 min read</span>
-    
-</div>    </div>
-
-    <a href="../aws-network-performance-deep-dive/index.html" class="u-absolute0 zindex3" aria-label="100G networking in AWS, a network performance deep dive"></a>
-</div>
-            </div>
-            <div class="col s12 m6 l4 u-flex">
-                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/building-an-xdp-express-data-path-based-bgp-peering-router/" data-event-non-interaction="true">
-    <a href="../building-an-xdp-express-data-path-based-bgp-peering-router/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
-        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
-            src="https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            srcset="https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            data-srcset="https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
-            data-sizes="(max-width: 1000px) 400px, 600px"
-            alt="Building an XDP (eXpress Data Path) based BGP peering router"
-        />
-    </a>
-
-    <div class="cr-inner u-padding15 u-flexColumnTop">
-        <div class="cr-body">
-                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../building-an-xdp-express-data-path-based-bgp-peering-router/index.html">Building an XDP (eXpress Data Path) based BGP peering router</a></h2>
-        </div>
-
-        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2020-04-19">19 Apr 2020</time>
-    <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="9 min read">9 min read</span>
-    
-</div>    </div>
-
-    <a href="../building-an-xdp-express-data-path-based-bgp-peering-router/index.html" class="u-absolute0 zindex3" aria-label="Building an XDP (eXpress Data Path) based BGP peering router"></a>
-</div>
-            </div>
-            <div class="col s12 m6 l4 u-flex">
-                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/kernel-bypass-networking-with-fd-io-and-vpp/" data-event-non-interaction="true">
-    <a href="../kernel-bypass-networking-with-fd-io-and-vpp/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
-        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
-            src="https://images.unsplash.com/photo-1514900417871-7912cae3d726?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            srcset="https://images.unsplash.com/photo-1514900417871-7912cae3d726?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            data-srcset="https://images.unsplash.com/photo-1514900417871-7912cae3d726?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1514900417871-7912cae3d726?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
-            data-sizes="(max-width: 1000px) 400px, 600px"
-            alt="Kernel bypass networking with FD.io and VPP."
-        />
-    </a>
-
-    <div class="cr-inner u-padding15 u-flexColumnTop">
-        <div class="cr-body">
-                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../kernel-bypass-networking-with-fd-io-and-vpp/index.html">Kernel bypass networking with FD.io and VPP.</a></h2>
-        </div>
-
-        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2020-04-05">5 Apr 2020</time>
-    <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="6 min read">6 min read</span>
-    
-</div>    </div>
-
-    <a href="../kernel-bypass-networking-with-fd-io-and-vpp/index.html" class="u-absolute0 zindex3" aria-label="Kernel bypass networking with FD.io and VPP."></a>
-</div>
-            </div>
-            <div class="col s12 m6 l4 u-flex">
-                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/building-a-high-performance-linux-based-traffic-generator-with-dpdk/" data-event-non-interaction="true">
-    <a href="../building-a-high-performance-linux-based-traffic-generator-with-dpdk/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
-        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
-            src="https://images.unsplash.com/photo-1489976908522-aabacf277f49?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            srcset="https://images.unsplash.com/photo-1489976908522-aabacf277f49?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            data-srcset="https://images.unsplash.com/photo-1489976908522-aabacf277f49?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1489976908522-aabacf277f49?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
-            data-sizes="(max-width: 1000px) 400px, 600px"
-            alt="Building a high performance - Linux Based Traffic generator with DPDK"
-        />
-    </a>
-
-    <div class="cr-inner u-padding15 u-flexColumnTop">
-        <div class="cr-body">
-                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../building-a-high-performance-linux-based-traffic-generator-with-dpdk/index.html">Building a high performance - Linux Based Traffic generator with DPDK</a></h2>
-        </div>
-
-        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2020-03-18">18 Mar 2020</time>
-    <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="10 min read">10 min read</span>
-    
-</div>    </div>
-
-    <a href="../building-a-high-performance-linux-based-traffic-generator-with-dpdk/index.html" class="u-absolute0 zindex3" aria-label="Building a high performance - Linux Based Traffic generator with DPDK"></a>
-</div>
-            </div>
-            <div class="col s12 m6 l4 u-flex">
-                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/tcp-bbr-exploring-tcp-congestion-control/" data-event-non-interaction="true">
-    <a href="../tcp-bbr-exploring-tcp-congestion-control/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
-        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
-            src="https://images.unsplash.com/photo-1534477357488-36c99519f91d?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            srcset="https://images.unsplash.com/photo-1534477357488-36c99519f91d?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            data-srcset="https://images.unsplash.com/photo-1534477357488-36c99519f91d?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1534477357488-36c99519f91d?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
-            data-sizes="(max-width: 1000px) 400px, 600px"
-            alt="TCP BBR - Exploring TCP congestion control"
-        />
-    </a>
-
-    <div class="cr-inner u-padding15 u-flexColumnTop">
-        <div class="cr-body">
-                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../tcp-bbr-exploring-tcp-congestion-control/index.html">TCP BBR - Exploring TCP congestion control</a></h2>
-        </div>
-
-        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2020-02-15">15 Feb 2020</time>
+    <time class="datetime u-textCapitalize" datetime="2019-12-01">1 Dec 2019</time>
     <span class="bull">&bull;</span>
     <span class="readingTime" style="cursor:default" title="7 min read">7 min read</span>
     
 </div>    </div>
 
-    <a href="../tcp-bbr-exploring-tcp-congestion-control/index.html" class="u-absolute0 zindex3" aria-label="TCP BBR - Exploring TCP congestion control"></a>
+    <a href="../building-a-smarter-aws-global-accelerator/index.html" class="u-absolute0 zindex3" aria-label="Building A Smarter AWS Global Accelerator"></a>
+</div>
+            </div>
+            <div class="col s12 m6 l4 u-flex">
+                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/building-a-high-available-anycast-service-using-aws-global-accelerator/" data-event-non-interaction="true">
+    <a href="../building-a-high-available-anycast-service-using-aws-global-accelerator/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
+        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
+            src="https://images.unsplash.com/photo-1544161497-6095fb868d58?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            srcset="https://images.unsplash.com/photo-1544161497-6095fb868d58?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            data-srcset="https://images.unsplash.com/photo-1544161497-6095fb868d58?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1544161497-6095fb868d58?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
+            data-sizes="(max-width: 1000px) 400px, 600px"
+            alt="Building a high available Anycast service using AWS Global Accelerator"
+        />
+    </a>
+
+    <div class="cr-inner u-padding15 u-flexColumnTop">
+        <div class="cr-body">
+                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../building-a-high-available-anycast-service-using-aws-global-accelerator/index.html">Building a high available Anycast service using AWS Global Accelerator</a></h2>
+        </div>
+
+        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
+    <time class="datetime u-textCapitalize" datetime="2019-09-02">2 Sep 2019</time>
+    <span class="bull">&bull;</span>
+    <span class="readingTime" style="cursor:default" title="7 min read">7 min read</span>
+    
+</div>    </div>
+
+    <a href="../building-a-high-available-anycast-service-using-aws-global-accelerator/index.html" class="u-absolute0 zindex3" aria-label="Building a high available Anycast service using AWS Global Accelerator"></a>
+</div>
+            </div>
+            <div class="col s12 m6 l4 u-flex">
+                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/building-a-high-available-anycast-application-in-5-minutes-on-packet/" data-event-non-interaction="true">
+    <a href="../building-a-high-available-anycast-application-in-5-minutes-on-packet/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
+        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
+            src="https://images.unsplash.com/photo-1486411959861-41a3eb8da389?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            srcset="https://images.unsplash.com/photo-1486411959861-41a3eb8da389?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            data-srcset="https://images.unsplash.com/photo-1486411959861-41a3eb8da389?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1486411959861-41a3eb8da389?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
+            data-sizes="(max-width: 1000px) 400px, 600px"
+            alt="Building a high available Anycast application in 5 minutes on Packet"
+        />
+    </a>
+
+    <div class="cr-inner u-padding15 u-flexColumnTop">
+        <div class="cr-body">
+                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../building-a-high-available-anycast-application-in-5-minutes-on-packet/index.html">Building a high available Anycast application in 5 minutes on Packet</a></h2>
+        </div>
+
+        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
+    <time class="datetime u-textCapitalize" datetime="2019-02-24">24 Feb 2019</time>
+    <span class="bull">&bull;</span>
+    <span class="readingTime" style="cursor:default" title="7 min read">7 min read</span>
+    
+</div>    </div>
+
+    <a href="../building-a-high-available-anycast-application-in-5-minutes-on-packet/index.html" class="u-absolute0 zindex3" aria-label="Building a high available Anycast application in 5 minutes on Packet"></a>
+</div>
+            </div>
+            <div class="col s12 m6 l4 u-flex">
+                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/experimenting-with-stackpath-edge-computing-and-anycast/" data-event-non-interaction="true">
+    <a href="../experimenting-with-stackpath-edge-computing-and-anycast/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
+        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
+            src="https://images.unsplash.com/photo-1564425583885-822a00f3e1e6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            srcset="https://images.unsplash.com/photo-1564425583885-822a00f3e1e6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            data-srcset="https://images.unsplash.com/photo-1564425583885-822a00f3e1e6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1564425583885-822a00f3e1e6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
+            data-sizes="(max-width: 1000px) 400px, 600px"
+            alt="Experimenting with StackPath Edge Computing and Anycast"
+        />
+    </a>
+
+    <div class="cr-inner u-padding15 u-flexColumnTop">
+        <div class="cr-body">
+                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../experimenting-with-stackpath-edge-computing-and-anycast/index.html">Experimenting with StackPath Edge Computing and Anycast</a></h2>
+        </div>
+
+        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
+    <time class="datetime u-textCapitalize" datetime="2019-02-11">11 Feb 2019</time>
+    <span class="bull">&bull;</span>
+    <span class="readingTime" style="cursor:default" title="6 min read">6 min read</span>
+    
+</div>    </div>
+
+    <a href="../experimenting-with-stackpath-edge-computing-and-anycast/index.html" class="u-absolute0 zindex3" aria-label="Experimenting with StackPath Edge Computing and Anycast"></a>
 </div>
             </div>
         </div>
@@ -511,7 +486,7 @@ iptables -I FORWARD -d 10.10.12.1 -m conntrack — ctstate RELATED,ESTABLISHED -
     <div class="share-sticky u-textAlignRight is-visible">
     <div class="share-sticky-wrap buttonSet u-container u-maxWidth1200">
         <span class="u-textMuted u-fontSize15 u-paddingRight10 u-hide-before-md">Share this article:</span>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/linux-kernel-and-measuring-network-throughput/"
+        <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/introducing-mysocket-io/"
             target="_blank"
             rel="noopener noreferrer"
             title="Share on Facebook"
@@ -523,7 +498,7 @@ iptables -I FORWARD -d 10.10.12.1 -m conntrack — ctstate RELATED,ESTABLISHED -
             <svg class="icon"><use xlink:href="#icon-facebook"></use></svg>
             Share
         </a>
-        <a href="https://twitter.com/share?text=Linux%20Kernel%20and%20Measuring%20network%20throughput.&amp;url=http://toonk.io/linux-kernel-and-measuring-network-throughput/"
+        <a href="https://twitter.com/share?text=Introducing%20Mysocket.io&amp;url=http://toonk.io/introducing-mysocket-io/"
             target="_blank"
             rel="noopener noreferrer"
             title="Share on Twitter"
@@ -535,7 +510,7 @@ iptables -I FORWARD -d 10.10.12.1 -m conntrack — ctstate RELATED,ESTABLISHED -
             <svg class="icon"><use xlink:href="#icon-twitter"></use></svg>
             Tweet
         </a>
-        <a href="whatsapp://send?text=http://toonk.io/linux-kernel-and-measuring-network-throughput/"
+        <a href="whatsapp://send?text=http://toonk.io/introducing-mysocket-io/"
             target="_blank"
             rel="noopener noreferrer"
             class="godo-tracking button button--s u-textColorWhite bg-whatsapp u-hide-after-lg"
@@ -671,8 +646,8 @@ var disqusShortName = 'toonk-io-1';
     if (typeof disqusShortName === 'undefined') return;
 
     var disqus_config = function () {
-        this.page.url = 'http://toonk.io/linux-kernel-and-measuring-network-throughput/';
-        this.page.identifier = 'ghost-5f53d62b3680d46e73ec60b5';
+        this.page.url = 'http://toonk.io/introducing-mysocket-io/';
+        this.page.identifier = 'ghost-5fbb2ca251a5ff44fb64d8b7';
     };
 
     d.querySelector('.js-comments').classList.remove('u-hide')
