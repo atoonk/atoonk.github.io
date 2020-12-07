@@ -2,7 +2,7 @@
 <html amp lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Experimenting with StackPath Edge Computing and Anycast</title>
+    <title>Easy Multi-region load balancing with Mysocket</title>
 
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
@@ -13,25 +13,24 @@
     
     <meta property="og:site_name" content="Andree&#x27;s Musings" />
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="Experimenting with StackPath Edge Computing and Anycast" />
-    <meta property="og:description" content="I love tinkering with new tech, and since it was a cold and snowy weekend here in Vancouver, I figured I’d explore Edge Containers from Stackpath. Earlier this week I read Stackpath’s blog in which they describe their new service: Introducing containers and virtual machines at the edge" />
-    <meta property="og:url" content="http://toonk.io/experimenting-with-stackpath-edge-computing-and-anycast/" />
-    <meta property="og:image" content="https://images.unsplash.com/photo-1564425583885-822a00f3e1e6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
-    <meta property="article:published_time" content="2019-02-11T00:00:00.000Z" />
-    <meta property="article:modified_time" content="2020-09-05T19:26:55.000Z" />
+    <meta property="og:title" content="Easy Multi-region load balancing with Mysocket" />
+    <meta property="og:description" content="Last week AWS had a major outage in its US-EAST1 region, lasting for most of the day, just before the big black Friday sales! Incidents like this are a great reminder of the importance of multi-region or even multi-cloud deployments for your services. Depending on your “cloud maturity” and your" />
+    <meta property="og:url" content="http://toonk.io/easy-multi-region-load-balancing-with-mysocket/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1544161519-0690a8886606?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDY2fHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta property="article:published_time" content="2020-12-07T00:42:46.000Z" />
+    <meta property="article:modified_time" content="2020-12-07T00:55:21.000Z" />
+    <meta property="article:tag" content="mysocket" />
     <meta property="article:tag" content="terraform" />
-    <meta property="article:tag" content="networking" />
-    <meta property="article:tag" content="anycast" />
     
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Experimenting with StackPath Edge Computing and Anycast" />
-    <meta name="twitter:description" content="I love tinkering with new tech, and since it was a cold and snowy weekend here in Vancouver, I figured I’d explore Edge Containers from Stackpath. Earlier this week I read Stackpath’s blog in which they describe their new service: Introducing containers and virtual machines at the edge" />
-    <meta name="twitter:url" content="http://toonk.io/experimenting-with-stackpath-edge-computing-and-anycast/" />
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1564425583885-822a00f3e1e6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta name="twitter:title" content="Easy Multi-region load balancing with Mysocket" />
+    <meta name="twitter:description" content="Last week AWS had a major outage in its US-EAST1 region, lasting for most of the day, just before the big black Friday sales! Incidents like this are a great reminder of the importance of multi-region or even multi-cloud deployments for your services. Depending on your “cloud maturity” and your" />
+    <meta name="twitter:url" content="http://toonk.io/easy-multi-region-load-balancing-with-mysocket/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1544161519-0690a8886606?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDY2fHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Andree Toonk" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="terraform, networking, anycast" />
+    <meta name="twitter:data2" content="mysocket, terraform" />
     <meta name="twitter:site" content="@atoonk" />
     <meta name="twitter:creator" content="@atoonk" />
     <meta property="og:image:width" content="2000" />
@@ -67,18 +66,18 @@
             "https://twitter.com/atoonk"
         ]
     },
-    "headline": "Experimenting with StackPath Edge Computing and Anycast",
-    "url": "http://toonk.io/experimenting-with-stackpath-edge-computing-and-anycast/",
-    "datePublished": "2019-02-11T00:00:00.000Z",
-    "dateModified": "2020-09-05T19:26:55.000Z",
+    "headline": "Easy Multi-region load balancing with Mysocket",
+    "url": "http://toonk.io/easy-multi-region-load-balancing-with-mysocket/",
+    "datePublished": "2020-12-07T00:42:46.000Z",
+    "dateModified": "2020-12-07T00:55:21.000Z",
     "image": {
         "@type": "ImageObject",
-        "url": "https://images.unsplash.com/photo-1564425583885-822a00f3e1e6?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "url": "https://images.unsplash.com/photo-1544161519-0690a8886606?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwxMTc3M3wwfDF8c2VhcmNofDY2fHx8ZW58MHx8fA&ixlib=rb-1.2.1&q=80&w=2000",
         "width": 2000,
         "height": 1333
     },
-    "keywords": "terraform, networking, anycast",
-    "description": "\n\nI love tinkering with new tech, and since it was a cold and snowy weekend here\nin Vancouver, I figured I’d explore Edge Containers from Stackpath. Earlier this\nweek I read Stackpath’s blog in which they describe their new service: \nIntroducing containers and virtual machines at the edge\n[https://blog.stackpath.com/introducing-containers-and-virtual-machines-at-the-edge]\n\n&gt; Update June 21, 2020: a follow-up article is available here: Building a global\nanycast service in under a minute\n[https://",
+    "keywords": "mysocket, terraform",
+    "description": "Last week AWS had a major outage in its US-EAST1 region, lasting for most of the\nday, just before the big black Friday sales! Incidents like this are a great\nreminder of the importance of multi-region or even multi-cloud deployments for\nyour services.\n\nDepending on your “cloud maturity” and your products’ complexity, you may\nalready be there or just getting started. Either way, in today’s blog, we will\ntake a look at how we can use mysocket’s load balancing features to make\ndeployments over mult",
     "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "http://toonk.io/"
@@ -99,7 +98,7 @@
     <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
     <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
 
-    
+    <script async custom-element="amp-youtube" src="https://cdn.ampproject.org/v0/amp-youtube-0.1.js"></script>
 </head>
 <body class="amp-template">
     <header class="header u-bgColor u-flexCenter u-container">
@@ -118,7 +117,7 @@
         
 <article class="article">
     <header class="article-header u-container">
-        <h1 class="article-title">Experimenting with StackPath Edge Computing and Anycast</h1>
+        <h1 class="article-title">Easy Multi-region load balancing with Mysocket</h1>
 
         
 
@@ -128,35 +127,48 @@
             <span class="author-name">By <a href="../../author/andree/index.html">Andree Toonk</a></span>
 
             <span class="timestamp">
-                <time class="datetime" datetime="2019-02-11">2 years ago</time>
+                <time class="datetime" datetime="2020-12-07">15 minutes ago</time>
             </span>
 
             
                 <span>in</span>
-                <span class="categories"><a href="../../tag/terraform/index.html" title="terraform">terraform</a></span>
+                <span class="categories"><a href="../../tag/mysocket/index.html" title="mysocket">mysocket</a></span>
             
         </div>
     </header>
 
         <figure class="article-image u-block u-marginTop30">
-            <amp-img src="https://images.unsplash.com/photo-1564425583885-822a00f3e1e6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" width="600" height="350" layout="responsive" alt="Experimenting with StackPath Edge Computing and Anycast"></amp-img>
+            <amp-img src="https://images.unsplash.com/photo-1544161519-0690a8886606?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDY2fHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" width="600" height="350" layout="responsive" alt="Easy Multi-region load balancing with Mysocket"></amp-img>
         </figure>
 
-    <div class="article-body u-container"> <p></p><p>I love tinkering with new tech, and since it was a cold and snowy weekend here in Vancouver, I figured I’d explore Edge Containers from Stackpath. Earlier this week I read Stackpath’s blog in which they describe their new service: <a href="https://blog.stackpath.com/introducing-containers-and-virtual-machines-at-the-edge" rel="noopener">Introducing containers and virtual machines at the edge</a></p><blockquote>Update June 21, 2020: a follow-up article is available here: <a href="https://medium.com/swlh/building-a-global-anycast-service-in-under-a-minute-99b0c59c1a4c?source=friends_link&amp;sk=5cbd024efe001ebe2cce422e70ef116f">Building a global anycast service in under a minute</a></blockquote><p>The service offering resonated strongly with me, mostly the ability to deploy your containers or VM’s to many of their locations in one operation, whether that’s an API call or click in the portal. That combined with the fact that Stackpath called out BGP Anycast support in the blog post (for those who know me, I’m a BGP geek), convinced me to give this a spin.</p><h3 id="brand-new-feature"><strong>Brand new Feature</strong></h3><p>So instead of building a snowman, I created an account with stackpath.com. I soon found out their new “Workload” feature is still gated, but within an hour or so Stackpath unlocked this feature for me and it showed up in the Stackpath portal.</p><p><strong><em>Update Feb 12 2019</em></strong><em>: Stackpath advised me that the “Workload” feature is no longer gated and available for all users now.</em></p><h3 id="creating-workloads"><strong>Creating workloads</strong></h3><p>I’ll briefly describe how I created the workload, but also make sure to check out their documentation <a href="https://support.stackpath.com/hc/en-us/articles/360022756051-Getting-Started-With-StackPath-Edge-Computing" rel="noopener">here</a>.<br />I gave my workload a name “stackpath-anycast-fun” and used the following docker image “atoonk/stackpath-fun:latest”, more about that later. Next up I exposed port 80 and defined the compute spec for each container. Also, note that I selected the “Add Anycast IP Address.”</p><figure class="kg-card kg-image-card kg-width-wide"><amp-img src="https://cdn-images-1.medium.com/max/2400/1*vBIbWeOFF8Cp4BShSD_Wjg.png" class="kg-image" alt width="2238" height="1392" layout="responsive"></amp-img></figure><p>Next up I defined what locations I want to deploy the workload to. This is grouped by continent, in my case I used Europe and North America. In each continent, I chose two PoPs: Amsterdam, London, New York, and Los Angeles. So with that my deployment should be live within four datacenters globally, great for my Anycast testing! Finally, I made sure to bring up two instances in each datacenter just so that I can test the load balancing or ECMP routing within a datacenter.</p><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*qKy_k6u3a0-9aTsFYmVbsw.png" class="kg-image" alt width="1600" height="656" layout="responsive"></amp-img></figure><h3 id="pricing"><strong>Pricing</strong></h3><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1200/1*6hyuUOzr7xcNE1YwAkcvNg.png" class="kg-image" alt width="910" height="446" layout="responsive"></amp-img></figure><p>At the end, it nicely showed me the pricing. Since I have a particular interest in Anycast, I looked specifically at pricing for that, which at 14 cents per hour comes to $100 per month. All in all for the month for these eight instances &amp; Anycast the price comes to about $627 per month.</p><h3 id="creating-a-docker-image"><strong>Creating a Docker image</strong></h3><p>Earlier on I defined the Docker image that I wanted to have deployed. Stackpath will pull these images from Dockerhub, in my case I defined <a href="https://cloud.docker.com/repository/docker/atoonk/stackpath-fun/" rel="noopener">atoonk/stackpath-fun:latest</a>. So what does this container do? Basically, it’s a container with Apache + PHP, and a little script that prints the hostname variable using <em>gethostname();.</em> This will allow me to, later on, test what instance I’m hitting by requesting a webpage.</p><h3 id="start-the-workload"><strong>Start the workload</strong></h3><p>Now that we have a Docker image on Dockerhub and the workload is created it’s time to test it. After you create the workload in the Stackpath portal, it takes about 2 minutes or so for all instances to come online. Eventually, it will look like this.</p><figure class="kg-card kg-image-card kg-width-wide"><amp-img src="https://cdn-images-1.medium.com/max/2400/1*eFdoPVGEcnUBKrQOQFRayg.png" class="kg-image" alt width="2300" height="1346" layout="responsive"></amp-img></figure><p>Cool, all my container instances went from Starting to Running. In addition to an external IP for each container, I also have an Anycast IP: 185.85.196.10</p><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*oxXwKP82dGujxchF_wtMTg.png" class="kg-image" alt width="1600" height="273" layout="responsive"></amp-img></figure><h3 id="time-to-test-anycast"><strong>Time to test Anycast</strong></h3><p>I can hit all the containers via their external IP address using my browser. Next up checked to see if the Anycast address worked, and yes it did! The example below shows I’m hitting one of the LAX instances, which is as expected since that’s the closest location from my home in Vancouver. <br />I refreshed my browser a few times and indeed saw it flip between the two Los Angeles instances I created: <code>stackpath-anycast-fun-na1-lax-0</code> and <code>stackpath-anycast-fun-na1-lax-1</code> (note the last digit).</p><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*CvE7aQK43NYBxvrlctG9Xw.png" class="kg-image" alt width="1576" height="852" layout="responsive"></amp-img></figure><h3 id="global-testing"><strong>Global testing</strong></h3><p>Next up it’s time to test from a few more locations to make sure the global Anycast setup works as expected. To test this, I did a curl from some shell servers in Amsterdam, London, New York and Seattle like this:</p><pre><code>time for i in `seq 1 15`; do curl -s 185.85.196.10/server.php | grep stackpath-anycast-fun; done</code></pre><figure class="kg-card kg-image-card kg-width-wide kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/2400/1*9bXqOdJKhlSJnGJTrOXvBA.png" class="kg-image" alt width="2400" height="1657" layout="responsive"></amp-img><figcaption>Curl tests from around the world to test Anycast Load Balancing</figcaption></figure><p>The screenshot above shows the full high availability and load balancing story in one picture.<br />My Amsterdam server is hitting the Amsterdam containers and being load balanced between the containers there. Seattle is routed to Los Angeles as expected, and similarly, the New York client is being served by the two containers in New York (JFK). <br />The one that stands out though is my London shell server. That client is following the Anycast route to New York. That’s odd, especially since I have a cluster deployed in both Amsterdam and London. Also note the last line, showing that to complete this request it took over 2secs, while the client in Amsterdam finished its requests in 200ms.</p><h4 id="the-london-routing-mystery"><strong>The London routing mystery</strong></h4><p>I did a bit of poking to understand why the London server is going to New York, instead of staying local in London. By looking at the routing table, I see the following in London:</p><pre><code>&gt; 185.85.196.0/24 
-*[BGP/170] 3d 13:19:37, MED 38020, localpref 100
- AS path: 3356 209 33438 I, validation-state: unverified
- 
- [BGP/170] 23:46:15, MED 2011, localpref 100
- AS path: 2914 1299 33438 I, validation-state: unverified
- 
- [BGP/170] 2w0d 09:36:24, MED 30, localpref 100
- AS path: 3257 1299 33438 I, validation-state: unverified</code></pre><p>The above indicates this router learns the path to 185.85.196.10 via three ISPs:<code> Level3 (AS3356)</code>, <code>NTT (AS2914)</code> and<code> GTT (AS3257)</code>. The router selected the path via Level3. Level3 then uses the path via <code>Centurylink (AS209)</code> to send it to <code>Stackpath (AS33438)</code>. <br />This shows us that <code>Stackpath (AS33438)</code>, is buying connectivity from Centurylink in the USA. Since Level3 prefers the US path via Centurylink all Level3 customers in Europe are routed to the US, New York in this case. Just announcing Anycast routes out of the US and not scoping them (make sure the announcements stay in the US) will inevitably cause the Anycast routing challenges we see here.</p><p><strong><em>Update Feb 12 2019</em></strong><em>: The Anycast routing issue has now been resolved by the Stackpath network team. Routing from my test client in London is now correctly routed to the container cluster in London.</em></p><h3 id="summary"><strong>Summary</strong></h3><p>In summary, it was pretty easy to get going with Stackpath’s container service. It’s cool to be able to deploy your workloads around the world with just a single click. The icing on the cake for me is the global load balancing with Anycast feature. <br />Anycast used to be a feature used by mostly DNS operators and CDN folks. However over the last two years or so we’ve seen infrastructure providers such as Packet and AWS making this available to their customers directly. With these features, folks can now really deploy their high available services globally without necessarily needing to rely on CDN’s or any DNS tricks (or better, build your own DNS tricks now).</p><p>I think the pricing is a bit steep, but I’m guessing since it’s a new feature with possibly limited supply, this is one way to get to market while ramping up their capacity. The other thing to keep in mind is that folks like Packet and Stackpath are focusing on the Edge. They are deployed in some of the most expensive and most popular datacenters around the world. This will give its customers great low latency connectivity, but space and power are limited in these facilities, possibly pushing up the pricing.</p><p>Going forward I’d love to see some more features around, monitoring, metrics and logging for my containers. <br />Realizing this is early on, my first experience with Stackpath was a joy, it was easy to use, great support (thanks Ben and Sean) and I look forward to what’s next.</p> </div>
+    <div class="article-body u-container"> <p>Last week AWS had a major outage in its US-EAST1 region, lasting for most of the day, just before the big black Friday sales! Incidents like this are a great reminder of the importance of multi-region or even multi-cloud deployments for your services.</p><p>Depending on your “cloud maturity” and your products’ complexity, you may already be there or just getting started. Either way, in today’s blog, we will take a look at how we can use mysocket’s load balancing features to make deployments over multi-region easier.</p><h3 id="a-global-load-balancing-service">A global load balancing service</h3><p>In earlier blogs, we looked mostly at how the mysocket’s tunnel service can help securely connect your resources that may be behind NAT and firewalls to the Internet. In this article, we’ll look at Mysocket’s powerful global load balancing feature.</p><h3 id="three-types-of-load-balancers">Three types of load balancers</h3><p>Mysocket today supports three different types of cloud-native load balancers.</p><p><em>1) Application load balancers, for your HTTP and HTTPS services. </em><br /><em>2) Network load balancer, for your TCP services.</em><br /><em>3) TLS Load balancer, for your TCP services, where we take care of the encryption.</em></p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1455/1*fNEdmbbU-0VCEa_eEbe44A.png" class="kg-image" alt width="1455" height="527" layout="responsive"></amp-img><figcaption>myoscket load balancer types</figcaption></figure><blockquote><em>When deploying Mysocket with your services, you now have a new front door. It just happens to be a front door that is anycasted, and as such has many doorbells around the globe made available to you. As a result, you’re always close to your users.</em></blockquote><h3 id="demo-creating-a-multi-region-service-in-two-minutes-">Demo: Creating a multi-region service in two minutes!</h3><p>Alright, time to get building! In this demo, we’ll continue using the Gif service we built in our last blog. Just like your workloads, I think this is a “critical” service, so we need it to be deployed in multiple regions. The service will need a 100% uptime, which means that even if a region is down, the Gif service will need to be available to our users.</p><figure class="kg-card kg-embed-card"><amp-youtube width="459" height="344" data-videoid="N96ghctEhb4" layout="responsive"></amp-youtube></figure><h3 id="infrastructure-as-code">Infrastructure as code</h3><p>In this example, we’re going to deploy the service on Digital ocean VM’s in two of its regions, New York and Toronto. We’re big fans of infrastructure as code and require our service to be deployed with a simple deploy script. So we’ll use Terraform to spin up the instances and use a cloud-init script to bootstrap the necessary work to install the required software, start the Gif service and connect it to the Mysocket global infrastructure.</p><h3 id="step-1-terraform">Step 1: terraform</h3><p>We’re using terraform to define what type VM’s we’d like, which regions we want them to be deployed in, and how many per region. For this demo we’re using just two VM’s in two regions. But I’m sure, by just looking at the terraform file, you can see how easy it is to deploy many VM’s per region by just changing the ‘count’ number. It’s also easy to add additional regions. So scaling our Gif service for the future will be easy ;)</p><h3 id="step-2-cloud-init">Step 2: cloud-init</h3><p>The VM’s we’re launching are just vanilla Ubuntu machines. So we’ll need to modify them slightly to get our software and our ‘secrets’ on the machine. To do that, we’ll use cloud-init. <br />Cloud-init allows us to define a set of tasks that need to be executed when the VM is created. In our case, we’re asking it to create a user ‘mysocket’, we’re adding the Giphy API key, and mysocket credentials as secrets to the mysocket home directory. Finally, we’re telling it to download and execute a bootstrap script.</p><h3 id="step-3-bootstrapping-and-starting-our-services-">Step 3: bootstrapping and starting our services.</h3><p>Cloud-init’s last step was the start the bootstrap script that it download from <a href="https://gist.githubusercontent.com/atoonk/37ef0062fc1d90d31e2fc87e8f12d674/raw/ee83755af5214260fc9e6ad18849e77b7c8f7781/lb-do.sh" rel="noopener">here</a>. Basically, all it does is install the two python packages (mysocketctl and giphy_client) and download and start two more programs. The first program is our Gif application, which will run on port 8000. The second program is a small python script that makes sure the VM registers and connects to the mysocket.io infrastructure.</p><p>The code to connect to mysocket is <a href="https://github.com/mysocketio/examples/tree/main/2020-12-06-multi-region" rel="noopener">available on github</a>. It’s pretty easy, and I’m sure it’s low friction to get started with, even if you have limited experience. Below are the most important parts:</p><pre><code class="language-python">#These variables were made available as secrets in cloud Init.
+username = os.getenv("email")
+password = os.getenv("password")
+socket_id = os.getenv("socket_id")
+
+#Login to mysocket API and get an token. We can contruct the Auth header using this token.
+token = get_token(username, password)
+authorization_header = {
+   "x-access-token": token["token"],    
+   "accept": "application/json",    
+   "Content-Type": "application/json",}
+   
+# register the service by creating a new tunnel for this VM
+tunnel = new_tunnel(authorization_header, socket_id)
+# setup the tunnel to mysocket and ready to serve traffic!
+ssh_tunnel(port, tunnel["local_port"], ssh_server, ssh_user)</code></pre><blockquote><em>Make sure you take a quick peak at the code, it’s pretty easy to get started with and a good “getting started” example for both terraform and cloud-init.</em></blockquote><p>And with that, we now have four VM’s in two regions. All four VM’s registered with the Mysocket service and are now serving our ‘critical’ Gif app. You can see the demo service yourself here: <a href="https://fluffy-bunny-5697.edge.mysocket.io/" rel="noopener">https://fluffy-bunny-5697.edge.mysocket.io/</a></p><figure class="kg-card kg-image-card"></figure><p>The example below shows how the mysocket load balancing service distributes traffic evenly over all four of the origin servers in New York and Toronto.</p><pre><code class="language-bash">$ for i in {1..20}; do  curl -s \
+ https://fluffy-bunny-5697.edge.mysocket.io/ | grep Server; 
+done | sort | uniq -c
+
+   5 Server: compute-000-nyc1
+   5 Server: compute-000-tor1
+   5 Server: compute-001-nyc1
+   5 Server: compute-001-tor1</code></pre><p></p><p>Horizontally scaling the service is easy; simply change the count number in the terraform file, or add / remove regions. Since the VM’s will call the mysocket api on boot, these new VM’s will automatically become part of the load balancing pool. Pretty neat and easy, right?!</p><h3 id="failover-scenarios">Failover scenarios</h3><p>So what happens when a server or region becomes unavailable? There are a few things that make this as painless as possible for users. First, the origin service can de-register itself; this will allow for the most graceful scenario.</p><p>For less graceful scenarios, mysocket load balancers will, after 60 seconds automatically detect that a tunnel has gone down and take the origin out of the load balancing pool. And even during this 60-second degradation before the tunnel is declared down, our load balancers will use a 10 second connect time out when connecting to origin service and automatically fail back to the remaining origins. So, all in all, failures should be hidden as much as possible from your users.</p><h3 id="wrapping-up">Wrapping up</h3><p>In this blog, we looked at how Mysocket can be used as a global load balancer, for your multi-region load deployments. In our demo, we looked at two Digital ocean regions, but this could also be over multiple AWS regions, or even Multi-cloud, with one cluster in AWS, one in Digital Ocean, and throw in some Google cloud for good measure.</p><p>We saw how Mysocket provides users with a global anycasted ingress point and provides seamless load balancing for your services. Best of all, it only took us 90 seconds to get all of this going! I guess it’s fair to say that Mysocket makes going multi-region and even multi-cloud easier.</p> </div>
 
         <div class="article-tags u-container u-marginTop30">
             <span class="share-title">Tags:</span>
+                <a href="../../tag/mysocket/index.html" title="mysocket" class="button--tags">mysocket</a>
                 <a href="../../tag/terraform/index.html" title="terraform" class="button--tags">terraform</a>
-                <a href="../../tag/networking/index.html" title="networking" class="button--tags">networking</a>
-                <a href="../../tag/anycast/index.html" title="anycast" class="button--tags">anycast</a>
         </div>
 
     <footer class="share u-container u-marginTop30">
@@ -191,9 +203,9 @@
         <div class="related-title">Related Articles</div>
 
         <div class="story">
-            <a href="../../easy-multi-region-load-balancing-with-mysocket/amp.html" class="story-link u-block u-relative">
+            <a href="../../static-dns-names-for-your-sockets-and-a-new-gif-service/amp.html" class="story-link u-block u-relative">
                 <span class="story-border u-flexCenter u-absolute">1</span>
-                <h3 class="story-title">Easy Multi-region load balancing with Mysocket</h3>
+                <h3 class="story-title">Static DNS names for your sockets (and a new gif service)</h3>
             </a>
         </div>
         <div class="story">
@@ -203,21 +215,21 @@
             </a>
         </div>
         <div class="story">
-            <a href="../../aws-and-their-billions-in-ipv4-addresses/amp.html" class="story-link u-block u-relative">
-                <span class="story-border u-flexCenter u-absolute">3</span>
-                <h3 class="story-title">AWS and their Billions in IPv4 addresses</h3>
-            </a>
-        </div>
-        <div class="story">
-            <a href="../../aws-network-performance-deep-dive/amp.html" class="story-link u-block u-relative">
-                <span class="story-border u-flexCenter u-absolute">4</span>
-                <h3 class="story-title">100G networking in AWS, a network performance deep dive</h3>
-            </a>
-        </div>
-        <div class="story">
             <a href="../../building-a-global-anycast-service-in-under-a-minute/amp.html" class="story-link u-block u-relative">
-                <span class="story-border u-flexCenter u-absolute">5</span>
+                <span class="story-border u-flexCenter u-absolute">3</span>
                 <h3 class="story-title">Building a global anycast service in under a minute</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../building-a-high-available-anycast-service-using-aws-global-accelerator/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">4</span>
+                <h3 class="story-title">Building a high available Anycast service using AWS Global Accelerator</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../building-a-high-available-anycast-application-in-5-minutes-on-packet/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">5</span>
+                <h3 class="story-title">Building a high available Anycast application in 5 minutes on Packet</h3>
             </a>
         </div>
 

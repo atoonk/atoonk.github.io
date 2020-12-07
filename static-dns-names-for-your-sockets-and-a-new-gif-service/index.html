@@ -12,7 +12,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <title>Building a global anycast service in under a minute</title>
+    <title>Static DNS names for your sockets (and a new gif service)</title>
 
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -29,28 +29,27 @@
     
     <meta property="og:site_name" content="Andree&#x27;s Musings" />
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="Building a global anycast service in under a minute" />
-    <meta property="og:description" content="This weekend I decided to take another look at Stackpath and their workload edge compute features. This is a relatively new feature, in fact, I wrote about it in Feb 2109 when it was just released. I remember being quite enthusiastic about the potential but also observed some things that" />
-    <meta property="og:url" content="http://toonk.io/building-a-global-anycast-service-in-under-a-minute/" />
-    <meta property="og:image" content="https://images.unsplash.com/photo-1527685216219-c7bee79b0089?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
-    <meta property="article:published_time" content="2020-06-21T05:15:00.000Z" />
-    <meta property="article:modified_time" content="2020-09-26T21:17:25.000Z" />
-    <meta property="article:tag" content="terraform" />
-    <meta property="article:tag" content="anycast" />
+    <meta property="og:title" content="Static DNS names for your sockets (and a new gif service)" />
+    <meta property="og:description" content="In my last blog post, I announced the mysocket.io service and demonstrated how to get started quickly. It’s been great to see people signing up and giving it a spin! Your feedback has been great, motivating, and has helped make the service better already. Most users that gave" />
+    <meta property="og:url" content="http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta property="article:published_time" content="2020-12-01T04:14:11.000Z" />
+    <meta property="article:modified_time" content="2020-12-01T04:16:59.000Z" />
+    <meta property="article:tag" content="mysocket" />
     
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Building a global anycast service in under a minute" />
-    <meta name="twitter:description" content="This weekend I decided to take another look at Stackpath and their workload edge compute features. This is a relatively new feature, in fact, I wrote about it in Feb 2109 when it was just released. I remember being quite enthusiastic about the potential but also observed some things that" />
-    <meta name="twitter:url" content="http://toonk.io/building-a-global-anycast-service-in-under-a-minute/" />
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1527685216219-c7bee79b0089?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta name="twitter:title" content="Static DNS names for your sockets (and a new gif service)" />
+    <meta name="twitter:description" content="In my last blog post, I announced the mysocket.io service and demonstrated how to get started quickly. It’s been great to see people signing up and giving it a spin! Your feedback has been great, motivating, and has helped make the service better already. Most users that gave" />
+    <meta name="twitter:url" content="http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Andree Toonk" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="terraform, anycast" />
+    <meta name="twitter:data2" content="mysocket" />
     <meta name="twitter:site" content="@atoonk" />
     <meta name="twitter:creator" content="@atoonk" />
     <meta property="og:image:width" content="2000" />
-    <meta property="og:image:height" content="1500" />
+    <meta property="og:image:height" content="1326" />
     
     <script type="application/ld+json">
 {
@@ -82,18 +81,18 @@
             "https://twitter.com/atoonk"
         ]
     },
-    "headline": "Building a global anycast service in under a minute",
-    "url": "http://toonk.io/building-a-global-anycast-service-in-under-a-minute/",
-    "datePublished": "2020-06-21T05:15:00.000Z",
-    "dateModified": "2020-09-26T21:17:25.000Z",
+    "headline": "Static DNS names for your sockets (and a new gif service)",
+    "url": "http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/",
+    "datePublished": "2020-12-01T04:14:11.000Z",
+    "dateModified": "2020-12-01T04:16:59.000Z",
     "image": {
         "@type": "ImageObject",
-        "url": "https://images.unsplash.com/photo-1527685216219-c7bee79b0089?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "url": "https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&ixlib=rb-1.2.1&q=80&w=2000",
         "width": 2000,
-        "height": 1500
+        "height": 1326
     },
-    "keywords": "terraform, anycast",
-    "description": "This weekend I decided to take another look at Stackpath and their workload edge\ncompute features. This is a relatively new feature, in fact, I wrote about it\nin\nFeb 2109 when it was just released\n[https://medium.com/@atoonk/experimenting-with-stackpath-edge-computing-and-anycast-f335ba86e60d?source&#x3D;friends_link&amp;sk&#x3D;ab2c1ae803a9f3ed314624f4545edde4]\n. I remember being quite enthusiastic about the potential but also observed some\nthings that were lacking back then. Now, one and a half years later,",
+    "keywords": "mysocket",
+    "description": "In my last blog post, I announced the mysocket.io [https://mysocket.io ]service\nand demonstrated how to get started quickly. It’s been great to see people\nsigning up and giving it a spin! Your feedback has been great, motivating, and\nhas helped make the service better already.\n\nMost users that gave mysocket a try used the mysocketctl connect (aka “quick\nconnect”) feature. This is the easiest way to get started and instantly creates\na global socket, great for quick testing. However, when you’re d",
     "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "http://toonk.io/"
@@ -206,7 +205,7 @@
 
 <article class="post u-marginBottom40 u-relative">
     <header class="post-header u-container u-maxWidth740 u-paddingTop30 u-relative zindex3">
-    <h1 class="post-title u-marginBottom20 u-fontSizeLargest u-md-fontSize36">Building a global anycast service in under a minute</h1>
+    <h1 class="post-title u-marginBottom20 u-fontSizeLargest u-md-fontSize36">Static DNS names for your sockets (and a new gif service)</h1>
     
 
     <hr>
@@ -229,29 +228,29 @@
         <div class="hh-author-name u-fontSize15 u-noWrapWithEllipsis"><a href="../author/andree/index.html">Andree Toonk</a></div>
 
         <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2020-06-21">21 Jun 2020</time>
+    <time class="datetime u-textCapitalize" datetime="2020-12-01">1 Dec 2020</time>
     <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="4 min read">4 min read</span>
+    <span class="readingTime" style="cursor:default" title="5 min read">5 min read</span>
     
 </div>    </div>
 </div>
         <aside class="post-shasre u-flex0 u-flexCenter u-hide-before-md">
             <span class="share-label u-textMuted u-fontSizeSmaller">Share:</span>
-            <a href="https://twitter.com/share?text=Building%20a%20global%20anycast%20service%20in%20under%20a%20minute&amp;url=http://toonk.io/building-a-global-anycast-service-in-under-a-minute/"
+            <a href="https://twitter.com/share?text=Static%20DNS%20names%20for%20your%20sockets%20(and%20a%20new%20gif%20service)&amp;url=http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Twitter"
                 class="share-link button button--circle godo-tracking js-share">
                 <svg class="icon"><use xlink:href="#icon-twitter"></use></svg>
             </a>
-            <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://toonk.io/building-a-global-anycast-service-in-under-a-minute/&amp;title=Building%20a%20global%20anycast%20service%20in%20under%20a%20minute"
+            <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/&amp;title=Static%20DNS%20names%20for%20your%20sockets%20(and%20a%20new%20gif%20service)"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Linkedin"
                 class="share-link button button--circle godo-tracking js-share">
                 <svg class="icon"><use xlink:href="#icon-linkedin"></use></svg>
             </a>
-            <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/building-a-global-anycast-service-in-under-a-minute/"
+            <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Facebook"
@@ -263,94 +262,40 @@
 </header>
         <figure class="post-image u-block u-marginAuto u-sizeFullHeight u-sizeFullWidth u-maxWidth1000">
             <img class="u-block u-marginAuto u-sizeFullWidth simply-zoom"
-                srcset="https://images.unsplash.com/photo-1527685216219-c7bee79b0089?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,
-                        https://images.unsplash.com/photo-1527685216219-c7bee79b0089?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w,
-                        https://images.unsplash.com/photo-1527685216219-c7bee79b0089?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 1000w,
-                        https://images.unsplash.com/photo-1527685216219-c7bee79b0089?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 2000w"
+                srcset="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 300w,
+                        https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 600w,
+                        https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 1000w,
+                        https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 2000w"
                 sizes="(max-width: 400px) 300px,(max-width: 730px) 600px, (max-width: 1600px) 100vw"
-                src="https://images.unsplash.com/photo-1527685216219-c7bee79b0089?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-                alt="Building a global anycast service in under a minute"
+                src="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000"
+                alt="Static DNS names for your sockets (and a new gif service)"
             />
         </figure>
 
     <div class="post-wrap u-maxWidth1000 u-relative u-marginAuto">
-        <div id="post-body" class="post-body u-container u-maxWidth740 u-relative"><p>This weekend I decided to take another look at Stackpath and their workload edge compute features. This is a relatively new feature, in fact, <a href="https://medium.com/@atoonk/experimenting-with-stackpath-edge-computing-and-anycast-f335ba86e60d?source=friends_link&amp;sk=ab2c1ae803a9f3ed314624f4545edde4" rel="noopener">I wrote about it in Feb 2109 when it was just released</a>. I remember being quite enthusiastic about the potential but also observed some things that were lacking back then. Now, one and a half years later, it seems most of those have been resolved, so let’s take a look!</p><blockquote><em><em>I’ve decided to experiment with adding a small demo video to these blogs.</em></em><br><em><em>Below you will find a quick 5min demo of the whole setup. Since these videos are new and a bit of an experiment, let me know if you like it.</em></em></blockquote><figure class="kg-card kg-embed-card kg-card-hascaption"><iframe src="https://cdn.embedly.com/widgets/media.html?src=https%3A%2F%2Fwww.youtube.com%2Fembed%2FoP3_wearfo0%3Ffeature%3Doembed&amp;display_name=YouTube&amp;url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DoP3_wearfo0&amp;image=https%3A%2F%2Fi.ytimg.com%2Fvi%2FoP3_wearfo0%2Fhqdefault.jpg&amp;key=a19fcc184b9711e1b4764040d3dc5c07&amp;type=text%2Fhtml&amp;schema=youtube" allowfullscreen="" frameborder="0" height="480" width="640" title="Building a global anycast service in under a minute" class="s t u kq ai" scrolling="auto" style="box-sizing: inherit; position: absolute; top: 0px; left: 0px; width: 680px; height: 510px;"></iframe><figcaption>Demo: Building a global anycast service in under a minute</figcaption></figure><h1 id="workloads">Workloads</h1><p>Stackpath support two types of workloads (in addition to serverless), VM and container-based deployments. Both can be orchestrated using API’s and Terraform. Terraform is an “Infrastructure as code” tool. You simply specify your intent with Terraform, apply it, and you’re good to go. I’m a big fan of Terraform, so we’ll use that for our test.</p><p>One of the cool things about Stackpath is that they have built-in support for Anycast, for both their VM and Container service. I’m going to use that feature and the Container service to build this highly available, low latency web service. It’s super easy, see for your self <a href="https://github.com/atoonk/stackpath-anycast-terraform" rel="noopener nofollow">on my github here</a>.</p><h1 id="docker-setup">Docker setup</h1><p>Since I’m going to use the container service, we need to create a Docker container to work with. This is my <a href="https://github.com/atoonk/stackpath-anycast-terraform/blob/master/container/Dockerfile" rel="noopener nofollow">Dockerfile</a></p><!--kg-card-begin: markdown--><pre><code>FROM python:3
-WORKDIR /usr/src/app
-COPY ./mywebserver.py .
-EXPOSE 8000
-ENV PYTHONUNBUFFERED 1
-CMD [ “python”, “./mywebserver.py” ]</code></pre>
-<!--kg-card-end: markdown--><p>The <a href="https://github.com/atoonk/stackpath-anycast-terraform/blob/master/container/mywebserver.py" rel="noopener nofollow"><em><em>mywebserver.py</em></em></a> program is a simple web service that prints the hostname environment variable. This will help us determine which node is servicing our request when we start our testing.</p><p>After I built the container, I uploaded it to my <a href="https://hub.docker.com/repository/docker/atoonk/pythonweb" rel="noopener nofollow">Dockerhub</a> repo, so that Stackpath can pull it from there.</p><h1 id="terraform">Terraform</h1><p>Now it’s time to define our infrastructure using terraform. The relevant code can be found on my <a href="https://github.com/atoonk/stackpath-anycast-terraform/blob/master/container/main.tf" rel="noopener nofollow">github here</a>. I’ll highlight a few parts:</p><p>On line 17 we start with defining a new workload, and I’m requesting an Anycast IP for this workload. This means that Stackpath will load balance (ECMP) between all nodes in my workload (which I’m defining later).</p><!--kg-card-begin: markdown--><pre><code>resource “stackpath_compute_workload” “my-anycast-workload” {   
-    name = “my-anycast-workload”
-    slug = “my-anycast-workload”   
-    annotations = {       
-        # request an anycast IP       
-        “anycast.platform.stackpath.net” = “true”   
-    }
-</code></pre>
-<!--kg-card-end: markdown--><p>On line 31, we define the type of workload, in this case, a container. As part of that we’re opening the correct ports, in my case port 8000 for the python service.</p><!--kg-card-begin: markdown--><pre><code>container {   
-    # Name that should be given to the container   
-    name = “app”   
-    port {      
-        name = “web”      
-        port = 8000      
-        protocol = “TCP”      
-        enable_implicit_network_policy = true   
-    }
-</code></pre>
-<!--kg-card-end: markdown--><p>Next up we define the container we’d like to deploy (from Dockerhub)</p><!--kg-card-begin: markdown--><pre><code># image to use for the container
-image = “atoonk/pythonweb:latest”
-</code></pre>
-<!--kg-card-end: markdown--><p>In the resources section we define the container specifications. In my case I’m going with a small spec, of one CPU core and 2G of ram.</p><!--kg-card-begin: markdown--><pre><code>resources {
-   requests = {
-      “cpu” = “1”
-      “memory” = “2Gi”
-   }
-}
-</code></pre>
-<!--kg-card-end: markdown--><p>We now get to the section where we define how many containers we’d like per datacenter and in what datacenters we’d like this service to run.</p><p>In the example below, we’re deploying three containers in each datacenter, with the possibility to grow to four as part of auto-scaling. We’re deploying this in both Seattle and Dallas.</p><!--kg-card-begin: markdown--><pre><code>target {
-    name         = &quot;global&quot;
-    min_replicas = 3
-    max_replicas = 4
-    scale_settings {
-      metrics {
-        metric = &quot;cpu&quot;
-        # Scale up when CPU averages 50%.
-        average_utilization = 50
-      }
-    }
-    # Deploy these instances to Dallas and Seattle
-    deployment_scope = &quot;cityCode&quot;
-    selector {
-      key      = &quot;cityCode&quot;
-      operator = &quot;in&quot;
-      values   = [
-        &quot;DFW&quot;, &quot;SEA&quot;
-      ]
-    }
-  }
-</code></pre>
-<!--kg-card-end: markdown--><h1 id="time-to-bring-up-the-service-">Time to bring up the service.</h1><p>Now that we’ve defined our intent with terrraform, it’s time to bring this up. The proper way to do this is:</p><!--kg-card-begin: markdown--><pre><code>terraform init
-terraform plan
-terraform apply</code></pre>
-<!--kg-card-end: markdown--><blockquote><em><em>After that, you’ll see the containers come up, and our anycasted python service will become available. Since the containers come up rather quickly, you should have all six containers in the two datacenters up and running in under a minute.</em></em></blockquote><h1 id="testing-the-load-balancing-">Testing the load balancing.</h1><p>I’ve deployed the service in both Seattle and Dallas, and since I am based in Vancouver Canada, I expect to hit the Seattle datacenter as that is the closest datacenter for me.</p><!--kg-card-begin: markdown--><pre><code class="language-bash">$ for i in `seq 1 10`; do curl 185.85.196.41:8000 ; done
+        <div id="post-body" class="post-body u-container u-maxWidth740 u-relative"><p>In my last blog post, I announced the <a href="https://mysocket.io ">mysocket.io </a>service and demonstrated how to get started quickly. It’s been great to see people signing up and giving it a spin! Your feedback has been great, motivating, and has helped make the service better already.</p><p>Most users that gave mysocket a try used the <em>mysocketctl connect</em> (aka “quick connect”) feature. This is the easiest way to get started and instantly creates a global socket, great for quick testing. However, when you’re done and exit the program, the “connect” feature cleans up the socket. It’s easy to create new ones, but each time with a different name. Not surprisingly then, that a few users asked the question about sockets with static names.</p><h3 id="static-names-for-your-services">Static names for your services</h3><p>Most residential ISPs give their customers a dynamic IP address (one that changes from time to time) through DHCP. If you have a service you’d like to make available but don’t have a static IP, then this post is for you!</p><p>Perhaps you have a server at home, either a fancy setup, rack-mounted and UPS for emergency power, or perhaps just a modest Raspberry Pi. Either way, you’d like to make this available from the Internet, so you can access it when you’re not at your home network, or perhaps you are home, but your nice cooperate VPN client blocks access to your local network. Or maybe you’d like to make it available to your friend.</p><p>That’s great, but you have two challenges:</p><p>1) the server sits behind NAT, so you can’t simply connect to the server from the Internet.</p><p>2) your ISP gives you dynamic IPs, so every few days/weeks, the IP changes, so it’s hard to keep track of the IP. Ideally, you could use a static name, that no matter your dynamic IP, remains stable.</p><p>So what you’d need is a static DNS name! Good news, that’s the default on the Socket primitive.</p><h2 id="mysocket-primitives">Mysocket primitives</h2><p>Let’s take a more in-depth look at the two main primitives that make up the mysocket service: Sockets and Tunnels</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1455/1*2y4Ngw325mE8T-OPoP5OSw.png" class="kg-image" alt><figcaption>Socket and Tunnel primitives</figcaption></figure><h3 id="a-global-socket">A Global Socket</h3><p>The first primitive we need is a <em>socket</em> object. This object is the public endpoint for your service and can be created like this:</p><pre><code>mysocketctl socket create \
+	--type http \
+	--name "my service at home"</code></pre><p>This, among other things, returns a static DNS name that is yours to use. Think of it as your global public endpoint for your load balancer. In this case, mysocket runs the load balancer, and it’s made highly available through our anycast setup.</p><p>In the example above, we created an HTTP/HTTPS socket. Other options are TCP and TLS sockets. In those cases, the API will return not only a static DNS name for your service but also your own dedicated static TCP port number. A typical use case for a TCP socket is making your ssh service available.</p><h3 id="tunnels">Tunnels</h3><p>The second primitive is a tunnel. A tunnel object represents your origin service and the secure connection between the origin and the mysocket global infrastructure. Let’s look at the example below.</p><pre><code>mysocketctl tunnel create \
+	--socket_id 1fab407c-a49d-4c5e-8287-8b138b7549c0</code></pre><p>When creating the tunnel object, simply pass along the socket_id from the socket you’d like to be connected to.</p><h3 id="putting-it-together">Putting it together</h3><p>In summary, we can create a globally available service by first creating a socket of type HTTP/HTTPS, TCP or TLS. This returns a static name for your service and optionally a unique port number. After that, we create a tunnel that links the origin to the socket.</p><figure class="kg-card kg-image-card"><img src="https://cdn-images-1.medium.com/max/1455/1*6FoxMwJ7gMzk3MvjAvufpw.png" class="kg-image" alt></figure><p>Now that we have created a Socket and Tunnel, it’s time to connect to it, spin up the dataplane, and expose the local service port. We do that using the following command:</p><pre><code>mysocketctl tunnel connect \
+	--port 8000 \
+	--socket_id 1fab407c-a49d-4c5e-8287-8b138b7549c0 \
+	--tunnel_id 3f46a01f-ef5b-4b0c-a1ce-9a294be2be03</code></pre><p>In the example above, we only create one tunnel for the socket, but nothing stops you from creating multiple tunnels (origins) per socket. In that case, mysocket will load balance over all available tunnels.</p><h2 id="demo-time-exposing-a-local-gif-service-to-the-internet">Demo time:<br>exposing a local Gif service to the Internet</h2><p>Alright, time to look at a simple demo and get our hands dirty. For this demo, I developed a small<a href="https://gist.github.com/atoonk/0bfc784feb66ffc03541462fbc945df7#file-gif_service-py" rel="noopener"> proof of concept python web service</a> that shows a random Gif from <a href="https://giphy.com/" rel="noopener">Giphy</a> each time a visitor loads the webpage.</p><p>I’m running this service locally on a VM on my laptop. The goal is to make this service publicly available, and overcoming the two levels of NAT and my ISP that hands out dynamic IP addresses. At the end of this demo, I’m able to share a static DNS name with my users, and you’ll be able to try it!</p><p><strong><em>Watch the video below for a live demo.</em></strong></p><figure class="kg-card kg-embed-card"><iframe width="459" height="344" src="https://www.youtube.com/embed/bZh3vZLCdYM?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></figure><p>First, let’s download the demo python code and start the Gif web service</p><pre><code>wget https://gist.githubusercontent.com/atoonk/0bfc784feb66ffc03541462fbc945df7/raw/812d839f60ea7bfd98a530a3fc549137abe0b329/gif_service.py
 
-my-anycast-workload-global-sea-2
-my-anycast-workload-global-sea-0
-my-anycast-workload-global-sea-2
-my-anycast-workload-global-sea-0
-my-anycast-workload-global-sea-1
-my-anycast-workload-global-sea-1
-my-anycast-workload-global-sea-2
-my-anycast-workload-global-sea-1
-my-anycast-workload-global-sea-2
-my-anycast-workload-global-sea-0</code></pre>
-<!--kg-card-end: markdown--><p>The results above show that I am indeed hitting the Seattle datacenter, and that my requests are being load balanced over the three instances in Seattle, all as expected.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="../content/images/2020/09/image.png" class="kg-image" alt srcset="../content/images/size/w600/2020/09/image.png 600w, ../content/images/size/w1000/2020/09/image.png 1000w, ../content/images/2020/09/image.png 1400w" sizes="(min-width: 720px) 720px"><figcaption>In the portal, I can see the per container logs as well</figcaption></figure><h1 id="in-summary">In Summary</h1><p>Compared to <a href="https://medium.com/@atoonk/experimenting-with-stackpath-edge-computing-and-anycast-f335ba86e60d?source=friends_link&amp;sk=ab2c1ae803a9f3ed314624f4545edde4" rel="noopener">my test last year </a>with Stackpath, there has been a nice amount of progress. It’s great to now be able to do all of this with just a Terraform file. It’s kind of exciting you can bring up a fully anycast service in under a minute with only one command! By changing the replicate number in the Terraform file we can also easily grow and shrink our deployment if needed.<br>In this article we looked at the container service only, but the same is possible with Virtual machines, my github repo has an example for that as well.</p><p><em><em>Finally, don’t forget to check the </em></em><a href="https://youtu.be/oP3_wearfo0" rel="noopener nofollow"><em><em>demo recording </em></em></a><em><em>and let me know if you’d like to see more video content.</em></em></p></div>
+#make sure to update the API key in gif_service.py
+
+python3 ./gif_service.py</code></pre><p>Alright, now we have this service running, but it’s only reachable from my local network. Next up, we create a socket and a tunnel.</p><pre><code>mysocketctl socket create \
+	--name "my local http Gif service" \ 
+	--type http</code></pre><p>Ok, that returns a socket_id and our static DNS name! In my case, the DNS name is: <a href="https://wandering-shape-7752.edge.mysocket.io" rel="noopener">wandering-shape-7752.edge.mysocket.io</a></p><p>Next up, we’ll use the socket_id to create the tunnel object:</p><pre><code>mysocketctl tunnel create \
+	--socket_id 1fab407c-a49d-4c5e-8287-8b138b7549c0</code></pre><p>Cool, now all we need to do is start the tunnel connection.</p><pre><code>mysocketctl tunnel connect \
+	--port 8000 \
+	--socket_id 1fab407c-a49d-4c5e-8287-8b138b7549c0 \
+	--tunnel_id 3f46a01f-ef5b-4b0c-a1ce-9a294be2be03</code></pre><p>This will securely connect the local gif web service listening on port 8000, to the mysocket infrastructure and make it available as <a href="https://wandering-shape-7752.edge.mysocket.io/" rel="noopener">https://wandering-shape-7752.edge.mysocket.io</a></p><h3 id="wrapping-up">Wrapping up</h3><p>In this blog post, we looked at the two main mysocket primitives, <em>Sockets</em>, and <em>Tunnels</em>. We saw how users can create a Socket object and get a static DNS name and possibly even a dedicated TCP port. In the demo, we used the <em>tunnel connect</em> feature to make port 8000 on my local VM available to the Internet. With that, we made the Internet a little bit better by adding <a href="http://wandering-shape-7752.edge.mysocket.io/" rel="noopener">yet another Gif service</a>, that just happens to run on a VM hosted on my laptop.</p><p></p><!--kg-card-begin: html--><img src='https://media.giphy.com/media/aaw0ay7NqrucU/source.gif'>
+<!--kg-card-end: html--></div>
     </div>
 
     <footer class="post-footer u-container u-maxWidth740">
             <div class="post-tags buttonSet u-marginTop30">
-        <a href="../tag/terraform/index.html" title="terraform" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="terraform" data-event-non-interaction="true">terraform</a><a href="../tag/anycast/index.html" title="anycast" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="anycast" data-event-non-interaction="true">anycast</a>
+        <a href="../tag/mysocket/index.html" title="mysocket" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="mysocket" data-event-non-interaction="true">mysocket</a>
     </div>
 
         <hr>
@@ -358,38 +303,38 @@ my-anycast-workload-global-sea-0</code></pre>
                 <div class="u-flex u-relative godo-tracking u-marginBottom30"
     data-event-category="Article"
     data-event-action="Previous article"
-    data-event-label="http://toonk.io/building-an-xdp-express-data-path-based-bgp-peering-router/"
+    data-event-label="http://toonk.io/introducing-mysocket-io/"
     data-event-non-interaction="true">
 
-    <a href="../building-an-xdp-express-data-path-based-bgp-peering-router/index.html" class="prev-next-image-link u-relative u-bgColorGrayLight u-flex0" aria-label="Building an XDP (eXpress Data Path) based BGP peering router">
-        <img class="u-absolute u-image blur-up lazyload" data-src="https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" alt="Building an XDP (eXpress Data Path) based BGP peering router"/>
+    <a href="../introducing-mysocket-io/index.html" class="prev-next-image-link u-relative u-bgColorGrayLight u-flex0" aria-label="Introducing Mysocket.io">
+        <img class="u-absolute u-image blur-up lazyload" data-src="https://images.unsplash.com/photo-1519331582073-283f1a211a3e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" alt="Introducing Mysocket.io"/>
     </a>
 
     <div class="prev-next-body u-paddingLeft20 u-flex1">
         <div class="u-fontSizeSmaller u-lineHeight1 u-textMuted u-marginBottom10">Previous article</div>
-        <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../building-an-xdp-express-data-path-based-bgp-peering-router/index.html" class="u-relative zindex3">Building an XDP (eXpress Data Path) based BGP peering router</a></h2>
-        <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">Over the last few years, we’ve seen an increase in projects and initiatives to speed up networking in Linux. Because the Linux kernel is</p>
+        <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../introducing-mysocket-io/index.html" class="u-relative zindex3">Introducing Mysocket.io</a></h2>
+        <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">Mysocket is a service that provides users with fast and secure TCP sockets for services that aren’t normally directly reachable from the Internet. Using a simple client, we connect your local services to the Internet.</p>
     </div>
 
-    <a href="../building-an-xdp-express-data-path-based-bgp-peering-router/index.html" aria-label="Building an XDP (eXpress Data Path) based BGP peering router" class="u-absolute0 zindex2"></a>
+    <a href="../introducing-mysocket-io/index.html" aria-label="Introducing Mysocket.io" class="u-absolute0 zindex2"></a>
 </div>
                 <div class="u-flex u-relative godo-tracking "
     data-event-category="Article"
     data-event-action="Next article"
-    data-event-label="http://toonk.io/aws-network-performance-deep-dive/"
+    data-event-label="http://toonk.io/easy-multi-region-load-balancing-with-mysocket/"
     data-event-non-interaction="true">
 
-    <a href="../aws-network-performance-deep-dive/index.html" class="prev-next-image-link u-relative u-bgColorGrayLight u-flex0" aria-label="100G networking in AWS, a network performance deep dive">
-        <img class="u-absolute u-image blur-up lazyload" data-src="https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" alt="100G networking in AWS, a network performance deep dive"/>
+    <a href="../easy-multi-region-load-balancing-with-mysocket/index.html" class="prev-next-image-link u-relative u-bgColorGrayLight u-flex0" aria-label="Easy Multi-region load balancing with Mysocket">
+        <img class="u-absolute u-image blur-up lazyload" data-src="https://images.unsplash.com/photo-1544161519-0690a8886606?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDY2fHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" alt="Easy Multi-region load balancing with Mysocket"/>
     </a>
 
     <div class="prev-next-body u-paddingLeft20 u-flex1">
         <div class="u-fontSizeSmaller u-lineHeight1 u-textMuted u-marginBottom10">Next article</div>
-        <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../aws-network-performance-deep-dive/index.html" class="u-relative zindex3">100G networking in AWS, a network performance deep dive</a></h2>
-        <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">Loyal readers of my blog will have noticed a theme, I’m interested in the continued move to virtualized network functions, and the need for</p>
+        <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../easy-multi-region-load-balancing-with-mysocket/index.html" class="u-relative zindex3">Easy Multi-region load balancing with Mysocket</a></h2>
+        <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">Last week AWS had a major outage in its US-EAST1 region, lasting for most of the day, just before the big black Friday sales! Incidents</p>
     </div>
 
-    <a href="../aws-network-performance-deep-dive/index.html" aria-label="100G networking in AWS, a network performance deep dive" class="u-absolute0 zindex2"></a>
+    <a href="../easy-multi-region-load-balancing-with-mysocket/index.html" aria-label="Easy Multi-region load balancing with Mysocket" class="u-absolute0 zindex2"></a>
 </div>        </div>
         <hr>
     </footer>
@@ -459,114 +404,6 @@ my-anycast-workload-global-sea-0</code></pre>
     <a href="../introducing-mysocket-io/index.html" class="u-absolute0 zindex3" aria-label="Introducing Mysocket.io"></a>
 </div>
             </div>
-            <div class="col s12 m6 l4 u-flex">
-                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/building-a-smarter-aws-global-accelerator/" data-event-non-interaction="true">
-    <a href="../building-a-smarter-aws-global-accelerator/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
-        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
-            src="https://images.unsplash.com/photo-1553623095-2b4d2819983f?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            srcset="https://images.unsplash.com/photo-1553623095-2b4d2819983f?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            data-srcset="https://images.unsplash.com/photo-1553623095-2b4d2819983f?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1553623095-2b4d2819983f?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
-            data-sizes="(max-width: 1000px) 400px, 600px"
-            alt="Building A Smarter AWS Global Accelerator"
-        />
-    </a>
-
-    <div class="cr-inner u-padding15 u-flexColumnTop">
-        <div class="cr-body">
-                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../building-a-smarter-aws-global-accelerator/index.html">Building A Smarter AWS Global Accelerator</a></h2>
-        </div>
-
-        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2019-12-01">1 Dec 2019</time>
-    <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="7 min read">7 min read</span>
-    
-</div>    </div>
-
-    <a href="../building-a-smarter-aws-global-accelerator/index.html" class="u-absolute0 zindex3" aria-label="Building A Smarter AWS Global Accelerator"></a>
-</div>
-            </div>
-            <div class="col s12 m6 l4 u-flex">
-                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/building-a-high-available-anycast-service-using-aws-global-accelerator/" data-event-non-interaction="true">
-    <a href="../building-a-high-available-anycast-service-using-aws-global-accelerator/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
-        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
-            src="https://images.unsplash.com/photo-1544161497-6095fb868d58?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            srcset="https://images.unsplash.com/photo-1544161497-6095fb868d58?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            data-srcset="https://images.unsplash.com/photo-1544161497-6095fb868d58?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1544161497-6095fb868d58?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
-            data-sizes="(max-width: 1000px) 400px, 600px"
-            alt="Building a high available Anycast service using AWS Global Accelerator"
-        />
-    </a>
-
-    <div class="cr-inner u-padding15 u-flexColumnTop">
-        <div class="cr-body">
-                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../building-a-high-available-anycast-service-using-aws-global-accelerator/index.html">Building a high available Anycast service using AWS Global Accelerator</a></h2>
-        </div>
-
-        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2019-09-02">2 Sep 2019</time>
-    <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="7 min read">7 min read</span>
-    
-</div>    </div>
-
-    <a href="../building-a-high-available-anycast-service-using-aws-global-accelerator/index.html" class="u-absolute0 zindex3" aria-label="Building a high available Anycast service using AWS Global Accelerator"></a>
-</div>
-            </div>
-            <div class="col s12 m6 l4 u-flex">
-                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/building-a-high-available-anycast-application-in-5-minutes-on-packet/" data-event-non-interaction="true">
-    <a href="../building-a-high-available-anycast-application-in-5-minutes-on-packet/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
-        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
-            src="https://images.unsplash.com/photo-1486411959861-41a3eb8da389?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            srcset="https://images.unsplash.com/photo-1486411959861-41a3eb8da389?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            data-srcset="https://images.unsplash.com/photo-1486411959861-41a3eb8da389?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1486411959861-41a3eb8da389?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
-            data-sizes="(max-width: 1000px) 400px, 600px"
-            alt="Building a high available Anycast application in 5 minutes on Packet"
-        />
-    </a>
-
-    <div class="cr-inner u-padding15 u-flexColumnTop">
-        <div class="cr-body">
-                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../building-a-high-available-anycast-application-in-5-minutes-on-packet/index.html">Building a high available Anycast application in 5 minutes on Packet</a></h2>
-        </div>
-
-        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2019-02-24">24 Feb 2019</time>
-    <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="7 min read">7 min read</span>
-    
-</div>    </div>
-
-    <a href="../building-a-high-available-anycast-application-in-5-minutes-on-packet/index.html" class="u-absolute0 zindex3" aria-label="Building a high available Anycast application in 5 minutes on Packet"></a>
-</div>
-            </div>
-            <div class="col s12 m6 l4 u-flex">
-                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/experimenting-with-stackpath-edge-computing-and-anycast/" data-event-non-interaction="true">
-    <a href="../experimenting-with-stackpath-edge-computing-and-anycast/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
-        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
-            src="https://images.unsplash.com/photo-1564425583885-822a00f3e1e6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            srcset="https://images.unsplash.com/photo-1564425583885-822a00f3e1e6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            data-srcset="https://images.unsplash.com/photo-1564425583885-822a00f3e1e6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1564425583885-822a00f3e1e6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
-            data-sizes="(max-width: 1000px) 400px, 600px"
-            alt="Experimenting with StackPath Edge Computing and Anycast"
-        />
-    </a>
-
-    <div class="cr-inner u-padding15 u-flexColumnTop">
-        <div class="cr-body">
-                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../experimenting-with-stackpath-edge-computing-and-anycast/index.html">Experimenting with StackPath Edge Computing and Anycast</a></h2>
-        </div>
-
-        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2019-02-11">11 Feb 2019</time>
-    <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="6 min read">6 min read</span>
-    
-</div>    </div>
-
-    <a href="../experimenting-with-stackpath-edge-computing-and-anycast/index.html" class="u-absolute0 zindex3" aria-label="Experimenting with StackPath Edge Computing and Anycast"></a>
-</div>
-            </div>
         </div>
     </div>
 </div>
@@ -582,7 +419,7 @@ my-anycast-workload-global-sea-0</code></pre>
     <div class="share-sticky u-textAlignRight is-visible">
     <div class="share-sticky-wrap buttonSet u-container u-maxWidth1200">
         <span class="u-textMuted u-fontSize15 u-paddingRight10 u-hide-before-md">Share this article:</span>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/building-a-global-anycast-service-in-under-a-minute/"
+        <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/"
             target="_blank"
             rel="noopener noreferrer"
             title="Share on Facebook"
@@ -594,7 +431,7 @@ my-anycast-workload-global-sea-0</code></pre>
             <svg class="icon"><use xlink:href="#icon-facebook"></use></svg>
             Share
         </a>
-        <a href="https://twitter.com/share?text=Building%20a%20global%20anycast%20service%20in%20under%20a%20minute&amp;url=http://toonk.io/building-a-global-anycast-service-in-under-a-minute/"
+        <a href="https://twitter.com/share?text=Static%20DNS%20names%20for%20your%20sockets%20(and%20a%20new%20gif%20service)&amp;url=http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/"
             target="_blank"
             rel="noopener noreferrer"
             title="Share on Twitter"
@@ -606,7 +443,7 @@ my-anycast-workload-global-sea-0</code></pre>
             <svg class="icon"><use xlink:href="#icon-twitter"></use></svg>
             Tweet
         </a>
-        <a href="whatsapp://send?text=http://toonk.io/building-a-global-anycast-service-in-under-a-minute/"
+        <a href="whatsapp://send?text=http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/"
             target="_blank"
             rel="noopener noreferrer"
             class="godo-tracking button button--s u-textColorWhite bg-whatsapp u-hide-after-lg"
@@ -742,8 +579,8 @@ var disqusShortName = 'toonk-io-1';
     if (typeof disqusShortName === 'undefined') return;
 
     var disqus_config = function () {
-        this.page.url = 'http://toonk.io/building-a-global-anycast-service-in-under-a-minute/';
-        this.page.identifier = 'ghost-5f531ce73680d46e73ec5fdf';
+        this.page.url = 'http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/';
+        this.page.identifier = 'ghost-5fc5be7c51a5ff44fb64d914';
     };
 
     d.querySelector('.js-comments').classList.remove('u-hide')
