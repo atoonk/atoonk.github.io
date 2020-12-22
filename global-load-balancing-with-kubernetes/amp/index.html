@@ -2,39 +2,38 @@
 <html amp lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Easy Multi-region load balancing with Mysocket.io</title>
+    <title>Global load balancing with Kubernetes</title>
 
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
 
-    <link rel="icon" href="../favicon.png" type="image/png" />
-    <link rel="canonical" href="index.html" />
+    <link rel="icon" href="../../favicon.png" type="image/png" />
+    <link rel="canonical" href="../index.html" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
     
     <meta property="og:site_name" content="Andree&#x27;s Musings" />
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="Easy Multi-region load balancing with Mysocket.io" />
-    <meta property="og:description" content="Last week AWS had a major outage in its US-EAST1 region, lasting for most of the day, just before the big black Friday sales! Incidents like this are a great reminder of the importance of multi-region or even multi-cloud deployments for your services. Depending on your “cloud maturity” and your" />
-    <meta property="og:url" content="http://toonk.io/easy-multi-region-load-balancing-with-mysocket/" />
-    <meta property="og:image" content="https://images.unsplash.com/photo-1544161519-0690a8886606?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDY2fHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
-    <meta property="article:published_time" content="2020-12-07T00:42:46.000Z" />
-    <meta property="article:modified_time" content="2020-12-07T01:51:57.000Z" />
+    <meta property="og:title" content="Global load balancing with Kubernetes" />
+    <meta property="og:description" content="If you’re in the world of cloud infrastructure, then you’ve heard of Kubernetes. Some of you are experts already, while some of us are just learning or getting started. In this blog, we’ll introduce a mysocket controller for Kubernetes and demonstrate how easy it is to use" />
+    <meta property="og:url" content="http://toonk.io/global-load-balancing-with-kubernetes/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta property="article:published_time" content="2020-12-22T06:17:15.000Z" />
+    <meta property="article:modified_time" content="2020-12-22T17:14:58.000Z" />
     <meta property="article:tag" content="mysocket" />
-    <meta property="article:tag" content="terraform" />
     
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Easy Multi-region load balancing with Mysocket.io" />
-    <meta name="twitter:description" content="Last week AWS had a major outage in its US-EAST1 region, lasting for most of the day, just before the big black Friday sales! Incidents like this are a great reminder of the importance of multi-region or even multi-cloud deployments for your services. Depending on your “cloud maturity” and your" />
-    <meta name="twitter:url" content="http://toonk.io/easy-multi-region-load-balancing-with-mysocket/" />
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1544161519-0690a8886606?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDY2fHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta name="twitter:title" content="Global load balancing with Kubernetes" />
+    <meta name="twitter:description" content="If you’re in the world of cloud infrastructure, then you’ve heard of Kubernetes. Some of you are experts already, while some of us are just learning or getting started. In this blog, we’ll introduce a mysocket controller for Kubernetes and demonstrate how easy it is to use" />
+    <meta name="twitter:url" content="http://toonk.io/global-load-balancing-with-kubernetes/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Andree Toonk" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="mysocket, terraform" />
+    <meta name="twitter:data2" content="mysocket" />
     <meta name="twitter:site" content="@atoonk" />
     <meta name="twitter:creator" content="@atoonk" />
     <meta property="og:image:width" content="2000" />
-    <meta property="og:image:height" content="1333" />
+    <meta property="og:image:height" content="1328" />
     
     <script type="application/ld+json">
 {
@@ -66,18 +65,18 @@
             "https://twitter.com/atoonk"
         ]
     },
-    "headline": "Easy Multi-region load balancing with Mysocket.io",
-    "url": "http://toonk.io/easy-multi-region-load-balancing-with-mysocket/",
-    "datePublished": "2020-12-07T00:42:46.000Z",
-    "dateModified": "2020-12-07T01:51:57.000Z",
+    "headline": "Global load balancing with Kubernetes",
+    "url": "http://toonk.io/global-load-balancing-with-kubernetes/",
+    "datePublished": "2020-12-22T06:17:15.000Z",
+    "dateModified": "2020-12-22T17:14:58.000Z",
     "image": {
         "@type": "ImageObject",
-        "url": "https://images.unsplash.com/photo-1544161519-0690a8886606?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwxMTc3M3wwfDF8c2VhcmNofDY2fHx8ZW58MHx8fA&ixlib=rb-1.2.1&q=80&w=2000",
+        "url": "https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&ixlib=rb-1.2.1&q=80&w=2000",
         "width": 2000,
-        "height": 1333
+        "height": 1328
     },
-    "keywords": "mysocket, terraform",
-    "description": "Last week AWS had a major outage in its US-EAST1 region, lasting for most of the\nday, just before the big black Friday sales! Incidents like this are a great\nreminder of the importance of multi-region or even multi-cloud deployments for\nyour services.\n\nDepending on your “cloud maturity” and your products’ complexity, you may\nalready be there or just getting started. Either way, in today’s blog, we will\ntake a look at how we can use mysocket’s load balancing features to make\ndeployments over mult",
+    "keywords": "mysocket",
+    "description": "If you’re in the world of cloud infrastructure, then you’ve heard of Kubernetes.\nSome of you are experts already, while some of us are just learning or getting\nstarted. In this blog, we’ll introduce a mysocket controller for Kubernetes and\ndemonstrate how easy it is to use mysocket.io as your cloud-delivered load\nbalancer for your Kubernetes Services. If you’re a Kubernetes user already, then\nit should just take a minute to get this mysocket controller setup.\n\n&gt; See this video for a demo of the ",
     "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "http://toonk.io/"
@@ -86,7 +85,7 @@
     </script>
 
     <meta name="generator" content="Ghost 3.34" />
-    <link rel="alternate" type="application/rss+xml" title="Andree&#x27;s Musings" href="../rss/index.html" />
+    <link rel="alternate" type="application/rss+xml" title="Andree&#x27;s Musings" href="../../rss/index.html" />
 
     <link href="https://fonts.googleapis.com/css?family=Domine|Rubik:400,500,700&display=swap" rel="stylesheet">
 
@@ -106,7 +105,7 @@
 
 
 
-        <a href="../index.html" class="logo-link">Andree&#x27;s Musings</a>
+        <a href="../../index.html" class="logo-link">Andree&#x27;s Musings</a>
     </div>
 
     <button class="hamburgermenu" on="tap:sidenav.open" tabindex="0"><span></span><span></span><span></span></button>
@@ -117,58 +116,60 @@
         
 <article class="article">
     <header class="article-header u-container">
-        <h1 class="article-title">Easy Multi-region load balancing with Mysocket.io</h1>
+        <h1 class="article-title">Global load balancing with Kubernetes</h1>
 
         
 
         <hr>
 
         <div class="article-meta">
-            <span class="author-name">By <a href="../author/andree/index.html">Andree Toonk</a></span>
+            <span class="author-name">By <a href="../../author/andree/index.html">Andree Toonk</a></span>
 
             <span class="timestamp">
-                <time class="datetime" datetime="2020-12-07">16 days ago</time>
+                <time class="datetime" datetime="2020-12-22">11 hours ago</time>
             </span>
 
             
                 <span>in</span>
-                <span class="categories"><a href="../tag/mysocket/index.html" title="mysocket">mysocket</a></span>
+                <span class="categories"><a href="../../tag/mysocket/index.html" title="mysocket">mysocket</a></span>
             
         </div>
     </header>
 
         <figure class="article-image u-block u-marginTop30">
-            <amp-img src="https://images.unsplash.com/photo-1544161519-0690a8886606?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDY2fHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" width="600" height="350" layout="responsive" alt="Easy Multi-region load balancing with Mysocket.io"></amp-img>
+            <amp-img src="https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" width="600" height="350" layout="responsive" alt="Global load balancing with Kubernetes"></amp-img>
         </figure>
 
-    <div class="article-body u-container"> <p>Last week AWS had a major outage in its US-EAST1 region, lasting for most of the day, just before the big black Friday sales! Incidents like this are a great reminder of the importance of multi-region or even multi-cloud deployments for your services.</p><p>Depending on your “cloud maturity” and your products’ complexity, you may already be there or just getting started. Either way, in today’s blog, we will take a look at how we can use mysocket’s load balancing features to make deployments over multi-region easier.</p><h3 id="a-global-load-balancing-service">A global load balancing service</h3><p>In earlier blogs, we looked mostly at how the mysocket.io tunnel service can help securely connect your resources that may be behind NAT and firewalls to the Internet. In this article, we’ll look at Mysocket’s global load balancing feature.</p><h3 id="three-types-of-load-balancers">Three types of load balancers</h3><p>Mysocket today supports three different types of cloud-native load balancers.</p><p><em>1) Application load balancers, for your HTTP and HTTPS services. </em><br /><em>2) Network load balancer, for your TCP services.</em><br /><em>3) TLS Load balancer, for your TCP services, where we take care of the encryption.</em></p><figure class="kg-card kg-image-card kg-card-hascaption"><figcaption>Load balancer types for mysocket.io </figcaption></figure><blockquote><em>When deploying Mysocket with your services, you now have a new front door. It just happens to be a front door that is anycasted, and as such has many doorbells around the globe made available to you. As a result, you’re always close to your users.</em></blockquote><h3 id="demo-creating-a-multi-region-service-in-two-minutes-">Demo: Creating a multi-region service in two minutes!</h3><p>Alright, time to get building! In this demo, we’ll continue using the Gif service we built in our last blog. Just like your workloads, I think this is a “critical” service, so we need it to be deployed in multiple regions. The service will need a 100% uptime, which means that even if a region is down, the Gif service will need to be available to our users.</p><figure class="kg-card kg-embed-card"><amp-youtube width="459" height="344" data-videoid="N96ghctEhb4" layout="responsive"></amp-youtube></figure><h3 id="infrastructure-as-code">Infrastructure as code</h3><p>In this example, we’re going to deploy the service on Digital ocean VM’s in two of its regions, New York and Toronto. We’re big fans of infrastructure as code and require our service to be deployed with a simple deploy script. So we’ll use Terraform to spin up the instances and use a cloud-init script to bootstrap the necessary work to install the required software, start the Gif service and connect it to the Mysocket global infrastructure.</p><h3 id="step-1-terraform">Step 1: terraform</h3><p>We’re using terraform to define what type VM’s we’d like, which regions we want them to be deployed in, and how many per region. For this demo we’re using just two VM’s in two regions. But I’m sure, by just looking at the terraform file, you can see how easy it is to deploy many VM’s per region by just changing the ‘count’ number. It’s also easy to add additional regions. So scaling our Gif service for the future will be easy ;)</p><h3 id="step-2-cloud-init">Step 2: cloud-init</h3><p>The VM’s we’re launching are just vanilla Ubuntu machines. So we’ll need to modify them slightly to get our software and our ‘secrets’ on the machine. To do that, we’ll use cloud-init. <br />Cloud-init allows us to define a set of tasks that need to be executed when the VM is created. In our case, we’re asking it to create a user ‘mysocket’, we’re adding the Giphy API key, and mysocket credentials as secrets to the mysocket home directory. Finally, we’re telling it to download and execute a bootstrap script.</p><h3 id="step-3-bootstrapping-and-starting-our-services-">Step 3: bootstrapping and starting our services.</h3><p>Cloud-init’s last step was to start the bootstrap script that it download from <a href="https://gist.githubusercontent.com/atoonk/37ef0062fc1d90d31e2fc87e8f12d674/raw/ee83755af5214260fc9e6ad18849e77b7c8f7781/lb-do.sh" rel="noopener">here</a>. Basically, all it does is install the two python packages (mysocketctl and giphy_client) and download and start two more programs. The first program is our Gif application, which will run on port 8000. The second program is a small python script that makes sure the VM registers and connects to the mysocket.io infrastructure.</p><p>The code to connect to mysocket is <a href="https://github.com/mysocketio/examples/tree/main/2020-12-06-multi-region" rel="noopener">available on github</a>. It’s pretty easy, and I’m sure it’s low friction to get started with, even if you have limited experience. Below are the most important parts:</p><pre><code class="language-python">#These variables were made available as secrets in cloud Init.
-username = os.getenv("email")
-password = os.getenv("password")
-socket_id = os.getenv("socket_id")
+    <div class="article-body u-container"> <p>If you’re in the world of cloud infrastructure, then you’ve heard of Kubernetes. Some of you are experts already, while some of us are just learning or getting started. In this blog, we’ll introduce a mysocket controller for Kubernetes and demonstrate how easy it is to use mysocket.io as your cloud-delivered load balancer for your Kubernetes Services. If you’re a Kubernetes user already, then it should just take a minute to get this mysocket controller setup.</p><blockquote><strong>See this video for a demo of the Mysocket.io integration with Kubernetes</strong></blockquote><figure class="kg-card kg-embed-card"><amp-youtube width="267" height="200" data-videoid="tFfLfI1jYi4" layout="fixed"></amp-youtube></figure><h3 id="pods-deployments-and-services">Pods, Deployments, and Services</h3><p>Before we continue, let’s review some of the main Kubernetes building blocks we will be using to make this work.</p><p>A typical workload running in Kubernetes will look something like the diagram below. It typically starts with a <em>deployment</em>, in which you define how many replicas (<em>pods) you’d like</em>.</p><p>Since pods are ephemeral and can scale in and out as needed, the Pod IP addresses will be dynamic. As a result, communicating with the pods in your deployment from other Deployments would require constant service discovery, which may be challenging for certain apps. To solve this, Kubernetes has the concept of a Service. A service acts as a logical network abstraction for all the pods in a workload and is a way to expose an application running on a set of<a href="https://kubernetes.io/docs/concepts/workloads/pods/" rel="noopener"> Pods</a> as a network service.</p><p>In the diagram below the <em>service</em> is reachable via 10.245.253.152 on port 8000. The <em>Service</em> will make sure traffic is distributed over all the healthy endpoints for this service.</p><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1455/1*_0YBbv7_koFiZgcHsbZyNg.png" class="kg-image" alt width="1455" height="876" layout="responsive"></amp-img></figure><h3 id="taking-your-service-global">Taking your Service Global</h3><p>Now that we know how a service makes your workload available within the cluster, it’s time to take your workload global! Kubernetes has a few ways to do this, typically using an ingress service. We’re going to use the architecture as outlined in the diagram below. We’ll use Mysocket.io to create a secure tunnel between our ‘myApp’ Service and the Mysocket cloud. From there on, it will be globally available via its anycasted edge nodes.</p><figure class="kg-card kg-image-card kg-width-wide"><amp-img src="https://cdn-images-1.medium.com/max/2182/1*P7oVKsk2X0xBF53Xbp3Biw.png" class="kg-image" alt width="2182" height="1183" layout="responsive"></amp-img></figure><p>To make this work, we’ll deploy a controller pod that runs the mysocketd container. The Container Image can be found on <a href="https://hub.docker.com/r/mysocket/mysocketd/tags?page=1&amp;ordering=last_updated" rel="noopener">Docker Hub</a>, and the corresponding Dockerfile on our <a href="https://github.com/mysocketio/kubernetes_controller" rel="noopener">github repo here</a>.</p><p>The mysocketd controller does two things:</p><p>1) it subscribes to the Kubernetes API and listens for events related to <em>services</em>. Specifically, it will watch for <em>service</em> events that have the <em>annotation</em> <strong><em>mysocket.io/enabled</em></strong></p><p>If a service has the following <em>annotation</em> mysocket.io/enabled: “true” then the mysocketd app will start a thread for that service.</p><p>2) In the per service thread, using the Mysocket API, a new mysocket.io “Socket” object is created if needed. This will give the “myApp” service a public DNS name and public IP. Next, it will check with the mysocket.io API to see if a tunnel already exists; if not, then a new one is created.</p><p>Finally, the secure tunnel is established, and the “myApp” service is now globally available and benefits from the mysocket.io high-performance infrastructure.</p><h3 id="demo-time-how-to-deploy-mysocketd-to-your-cluster">Demo time. How to Deploy mysocketd to your cluster</h3><p>The easiest way to get started is to download the <a href="https://github.com/mysocketio/kubernetes_controller/blob/main/mysocketd.yaml" rel="noopener">mysocketd workload yaml </a>file from the <a href="https://github.com/mysocketio/kubernetes_controller" rel="noopener">Mysocket Kubernetes controller repository</a>  and update the following three secrets to the ones for your mysocket account (<a href="https://github.com/mysocketio/kubernetes_controller/blob/main/mysocketd.yaml#L14-L16" rel="noopener">line 14,15,16</a>).</p><pre><code>email: &lt;mysocket login email in base64&gt; 
+password: &lt;mysocket password in base64&gt; 
+privatekey: &lt;mysocket private ssh key in base64&gt;</code></pre><p>Then simply apply like this and you’re good to go!</p><pre><code class="language-bash">kubectl apply -f mysocketd.yaml</code></pre><p>Cool, now we have the controller running!</p><h4 id="a-simple-demo-work-load">A simple demo work load</h4><p>Next up, we’d like to make our myApp service available to the Internet by using the mysocket.io service. I’m going to use <a href="https://github.com/mysocketio/examples/blob/main/2020-12-21-kubernetes-integration/demo-deploy.yaml" rel="noopener">this deployment</a> as our demo app. The deployment consists of three pods, with a little python web app, printing its hostname.</p><p>Next up, we’ll build a service (<a href="https://github.com/mysocketio/examples/blob/main/2020-12-21-kubernetes-integration/demo-service.yaml" rel="noopener">see definition here</a>) that acts as an in-cluster load balancer for the demo workload, and we’ll request the Service to be enabled for Mysocket.io.</p><pre><code class="language-bash">$ kubectl apply -f demo-deploy.yaml
 
-#Login to mysocket API and get a token. We can contruct the Auth header using this token.
-token = get_token(username, password)
-authorization_header = {
-   "x-access-token": token["token"],    
-   "accept": "application/json",    
-   "Content-Type": "application/json",}
-   
-# register the service by creating a new tunnel for this VM
-tunnel = new_tunnel(authorization_header, socket_id)
-# setup the tunnel to mysocket and ready to serve traffic!
-ssh_tunnel(port, tunnel["local_port"], ssh_server, ssh_user)</code></pre><blockquote><em>Make sure you take a quick peak at the code, it’s pretty easy to get started with and a good “getting started” example for both terraform and cloud-init.</em></blockquote><p>And with that, we now have four VM’s in two regions. All four VM’s registered with the Mysocket service and are now serving our ‘critical’ Gif app. You can see the demo service yourself here: <a href="https://fluffy-bunny-5697.edge.mysocket.io/" rel="noopener">https://fluffy-bunny-5697.edge.mysocket.io/</a></p><figure class="kg-card kg-image-card"></figure><p>The example below shows how the mysocket load balancing service distributes traffic evenly over all four of the origin servers in New York and Toronto.</p><pre><code class="language-bash">$ for i in {1..20}; do  curl -s \
- https://fluffy-bunny-5697.edge.mysocket.io/ | grep Server; 
-done | sort | uniq -c
+$ kubectl apply -f demo-service.yaml
 
-   5 Server: compute-000-nyc1
-   5 Server: compute-000-tor1
-   5 Server: compute-001-nyc1
-   5 Server: compute-001-tor1</code></pre><p></p><p>Horizontally scaling the service is easy; simply change the count number in the <a href="https://github.com/mysocketio/examples/blob/main/2020-12-06-multi-region/main.tf">terraform file,</a> or add / remove regions. Since the VM’s will call the mysocket api on boot, these new VM’s will automatically become part of the load balancing pool. Pretty neat and easy, right?!</p><h3 id="failover-scenarios">Failover scenarios</h3><p>So what happens when a server or region becomes unavailable? There are a few things that make this as painless as possible for users. First, the origin service can de-register itself; this will allow for the most graceful scenario.</p><p>For less graceful scenarios, mysocket load balancers will, after 60 seconds automatically detect that a tunnel has gone down and take the origin out of the load balancing pool. And even during this 60-second degradation before the tunnel is declared down, our load balancers will use a 10 second connect time out when connecting to origin service and automatically fail back to the remaining origins. So, all in all, failures should be hidden as much as possible from your users.</p><h3 id="wrapping-up">Wrapping up</h3><p>In this blog, we looked at how Mysocket can be used as a global load balancer, for your multi-region load deployments. In our demo, we looked at two Digital ocean regions, but this could also be over multiple AWS regions, or even Multi-cloud, with one cluster in AWS, one in Digital Ocean, and throw in some Google cloud for good measure.</p><p>We saw how Mysocket provides users with a global anycasted ingress point and provides seamless load balancing for your services. Best of all, it only took us 90 seconds to get all of this going! I guess it’s fair to say that Mysocket makes going multi-region and even multi-cloud easier.</p> </div>
+$ kubectl get all -n demo-app
+NAME                            READY   STATUS    RESTARTS   AGE
+pod/demo-app-6896cd4b88-5jzgn   1/1     Running   0          2m22s
+pod/demo-app-6896cd4b88-78ngc   1/1     Running   0          2m22s
+pod/demo-app-6896cd4b88-pzbc7   1/1     Running   0          2m22s
+NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+service/demo-service   ClusterIP   10.245.114.194   &lt;none&gt;        8000/TCP   64s
+NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/demo-app   3/3     3            3           2m22s
+NAME                                  DESIRED   CURRENT   READY   AGE
+replicaset.apps/demo-app-6896cd4b88   3         3         3       2m22s</code></pre><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1455/1*Aw8DFTKHqtz6M77I2lKscQ.png" class="kg-image" alt width="810" height="720" layout="responsive"></amp-img><figcaption><strong><em>Simply set mysocket.io/enabled to “true” and your service will be globally available.</em></strong></figcaption></figure><p>The same can be done for existing services: to do so, just edit your existing Service definition and add the “<strong>mysocket,io/enabled</strong>” <em>annotation, </em>like this:</p><pre><code class="language-yaml">kind: Service
+metadata:
+  annotations:
+    mysocket.io/enabled: "true"</code></pre><p>After applying this change, the mysocketd controller will detect that the service has requested to be connected to the Mysocket global infrastructure. The controller will create the Socket and Tunnels as needed and start the tunnel.</p><p>A quick load balancing test shows that requests to our global mysocket endpoint are now being load-balanced over the three endpoints.</p><pre><code class="language-bash">$ for i in {1..60}; do  curl -s \ 
+  https://blue-snowflake-1578.edge.mysocket.io/ &amp; ;done | sort | uniq -c | sort -n  
+  
+  19 Server: demo-app-6896cd4b88-pzbc7  
+  20 Server: demo-app-6896cd4b88-5jzgn  
+  21 Server: demo-app-6896cd4b88-78ngc  
+  60</code></pre><p>Just like that, in a few seconds, your workload is globally available. Pretty neat he!? Make sure to watch the <a href="https://www.youtube.com/watch?v=tFfLfI1jYi4" rel="noopener nofollow">video recording of this demo</a> as well.</p><h3 id="wrapping-up">Wrapping up</h3><p>In this article, we looked at how we can easily connect Kubernetes Services to Mysocket.io. We saw that it was easy to use. All that is needed is to: 1) start the Mysocketd controller, and: 2) add the mysocket annotation to your Services. By doing so, we are giving the Kubernetes service a publicly reachable IP address, a TLS cert, and it instantly benefits from the mysocket.io Anycast infrastructure. Pretty powerful and easy to use.</p><p>I should add that this <a href="https://github.com/mysocketio/kubernetes_controller" rel="noopener">Mysocket Controller for Kubernetes</a> is for now just a starting point, ie. an MVP integration with Kubernetes. There are ways to improve this, both in terms of user-friendliness and high availability (i.e. more than one pod). The code for this Kubernetes integration is open source, and we’d be happy to accept improvements. Mostly it serves as an example of what’s possible and how we can continue to build on the Mysocket services.</p><p>Last but certainly not least, I’d like to thanks <a href="https://github.com/tresni" rel="noopener">Brian</a> for his code to improve the various mysocketctl client libraries. Also, a big thanks to <a href="https://github.com/btoonk" rel="noopener">Bas Toonk</a> (yes, my brother) for his help with this MVP. Most of this was his work, thanks buddy!</p><p>Finally, I hope this sparked your imagination, and you’ll all give it a whirl, and let me know your experience.</p><p><br /></p><p><br /></p><p><br /></p> </div>
 
         <div class="article-tags u-container u-marginTop30">
             <span class="share-title">Tags:</span>
-                <a href="../tag/mysocket/index.html" title="mysocket" class="button--tags">mysocket</a>
-                <a href="../tag/terraform/index.html" title="terraform" class="button--tags">terraform</a>
+                <a href="../../tag/mysocket/index.html" title="mysocket" class="button--tags">mysocket</a>
         </div>
 
     <footer class="share u-container u-marginTop30">
@@ -203,33 +204,21 @@ done | sort | uniq -c
         <div class="related-title">Related Articles</div>
 
         <div class="story">
-            <a href="../global-load-balancing-with-kubernetes/amp.html" class="story-link u-block u-relative">
+            <a href="../../easy-multi-region-load-balancing-with-mysocket/amp.html" class="story-link u-block u-relative">
                 <span class="story-border u-flexCenter u-absolute">1</span>
-                <h3 class="story-title">Global load balancing with Kubernetes</h3>
+                <h3 class="story-title">Easy Multi-region load balancing with Mysocket.io</h3>
             </a>
         </div>
         <div class="story">
-            <a href="../static-dns-names-for-your-sockets-and-a-new-gif-service/amp.html" class="story-link u-block u-relative">
+            <a href="../../static-dns-names-for-your-sockets-and-a-new-gif-service/amp.html" class="story-link u-block u-relative">
                 <span class="story-border u-flexCenter u-absolute">2</span>
                 <h3 class="story-title">Static DNS names for your mysocket.io services (and a new gif service)</h3>
             </a>
         </div>
         <div class="story">
-            <a href="../introducing-mysocket-io/amp.html" class="story-link u-block u-relative">
+            <a href="../../introducing-mysocket-io/amp.html" class="story-link u-block u-relative">
                 <span class="story-border u-flexCenter u-absolute">3</span>
                 <h3 class="story-title">Introducing Mysocket.io</h3>
-            </a>
-        </div>
-        <div class="story">
-            <a href="../building-a-global-anycast-service-in-under-a-minute/amp.html" class="story-link u-block u-relative">
-                <span class="story-border u-flexCenter u-absolute">4</span>
-                <h3 class="story-title">Building a global anycast service in under a minute</h3>
-            </a>
-        </div>
-        <div class="story">
-            <a href="../building-a-high-available-anycast-service-using-aws-global-accelerator/amp.html" class="story-link u-block u-relative">
-                <span class="story-border u-flexCenter u-absolute">5</span>
-                <h3 class="story-title">Building a high available Anycast service using AWS Global Accelerator</h3>
             </a>
         </div>
 
@@ -240,9 +229,9 @@ done | sort | uniq -c
     <div class="close-sidebar u-bgColor" role="button" aria-label="close sidebar" on="tap:sidenav.close" tabindex="0">✕</div>
 
     <ul class="nav" role="menu">
-    <li role="menuitem"><a href="../index.html" class="nav-home">Home</a></li>
-    <li role="menuitem"><a href="../contact/index.html" class="nav-contact">Contact</a></li>
-    <li role="menuitem"><a href="../about/index.html" class="nav-about">About</a></li>
+    <li role="menuitem"><a href="../../index.html" class="nav-home">Home</a></li>
+    <li role="menuitem"><a href="../../contact/index.html" class="nav-contact">Contact</a></li>
+    <li role="menuitem"><a href="../../about/index.html" class="nav-about">About</a></li>
 </ul>
 
     <div class="social-media">
@@ -259,7 +248,7 @@ done | sort | uniq -c
 
     <footer class="footer">
         <section class="u-container copyright u-textCenter">
-            &copy; 2020 <a href="../index.html">Andree&#x27;s Musings</a>
+            &copy; 2020 <a href="../../index.html">Andree&#x27;s Musings</a>
         </section>
     </footer>
 </body>
