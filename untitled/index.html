@@ -12,7 +12,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <title>Static DNS names for your mysocket.io services (and a new gif service)</title>
+    <title>Global load balancing with Kubernetes</title>
 
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -29,19 +29,19 @@
     
     <meta property="og:site_name" content="Andree&#x27;s Musings" />
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="Static DNS names for your mysocket.io services (and a new gif service)" />
-    <meta property="og:description" content="In my last blog post, I announced the mysocket.io service and demonstrated how to get started quickly. It’s been great to see people signing up and giving it a spin! Your feedback has been great, motivating, and has helped make the service better already. Most users that gave" />
-    <meta property="og:url" content="http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/" />
-    <meta property="og:image" content="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
-    <meta property="article:published_time" content="2020-12-01T04:14:11.000Z" />
-    <meta property="article:modified_time" content="2020-12-07T00:58:41.000Z" />
+    <meta property="og:title" content="Global load balancing with Kubernetes" />
+    <meta property="og:description" content="If you’re in the world of cloud infrastructure, then you’ve heard of Kubernetes. Some of you are experts already, while some of us are just learning or getting started. In this blog, we’ll introduce a mysocket controller for Kubernetes and demonstrate how easy it is to use" />
+    <meta property="og:url" content="http://toonk.io/untitled/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta property="article:published_time" content="2020-12-22T06:17:15.000Z" />
+    <meta property="article:modified_time" content="2020-12-22T16:54:47.000Z" />
     <meta property="article:tag" content="mysocket" />
     
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Static DNS names for your mysocket.io services (and a new gif service)" />
-    <meta name="twitter:description" content="In my last blog post, I announced the mysocket.io service and demonstrated how to get started quickly. It’s been great to see people signing up and giving it a spin! Your feedback has been great, motivating, and has helped make the service better already. Most users that gave" />
-    <meta name="twitter:url" content="http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/" />
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta name="twitter:title" content="Global load balancing with Kubernetes" />
+    <meta name="twitter:description" content="If you’re in the world of cloud infrastructure, then you’ve heard of Kubernetes. Some of you are experts already, while some of us are just learning or getting started. In this blog, we’ll introduce a mysocket controller for Kubernetes and demonstrate how easy it is to use" />
+    <meta name="twitter:url" content="http://toonk.io/untitled/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Andree Toonk" />
     <meta name="twitter:label2" content="Filed under" />
@@ -49,7 +49,7 @@
     <meta name="twitter:site" content="@atoonk" />
     <meta name="twitter:creator" content="@atoonk" />
     <meta property="og:image:width" content="2000" />
-    <meta property="og:image:height" content="1326" />
+    <meta property="og:image:height" content="1328" />
     
     <script type="application/ld+json">
 {
@@ -81,18 +81,18 @@
             "https://twitter.com/atoonk"
         ]
     },
-    "headline": "Static DNS names for your mysocket.io services (and a new gif service)",
-    "url": "http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/",
-    "datePublished": "2020-12-01T04:14:11.000Z",
-    "dateModified": "2020-12-07T00:58:41.000Z",
+    "headline": "Global load balancing with Kubernetes",
+    "url": "http://toonk.io/untitled/",
+    "datePublished": "2020-12-22T06:17:15.000Z",
+    "dateModified": "2020-12-22T16:54:47.000Z",
     "image": {
         "@type": "ImageObject",
-        "url": "https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&ixlib=rb-1.2.1&q=80&w=2000",
+        "url": "https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&ixlib=rb-1.2.1&q=80&w=2000",
         "width": 2000,
-        "height": 1326
+        "height": 1328
     },
     "keywords": "mysocket",
-    "description": "In my last blog post, I announced the mysocket.io [https://mysocket.io ]service\nand demonstrated how to get started quickly. It’s been great to see people\nsigning up and giving it a spin! Your feedback has been great, motivating, and\nhas helped make the service better already.\n\nMost users that gave mysocket a try used the mysocketctl connect (aka “quick\nconnect”) feature. This is the easiest way to get started and instantly creates\na global socket, great for quick testing. However, when you’re d",
+    "description": "If you’re in the world of cloud infrastructure, then you’ve heard of Kubernetes.\nSome of you are experts already, while some of us are just learning or getting\nstarted. In this blog, we’ll introduce a mysocket controller for Kubernetes and\ndemonstrate how easy it is to use mysocket.io as your cloud-delivered load\nbalancer for your Kubernetes Services. If you’re a Kubernetes user already, then\nit should just take a minute to get this mysocket controller setup.\n\n&gt; See this video for a demo of the ",
     "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "http://toonk.io/"
@@ -205,7 +205,7 @@
 
 <article class="post u-marginBottom40 u-relative">
     <header class="post-header u-container u-maxWidth740 u-paddingTop30 u-relative zindex3">
-    <h1 class="post-title u-marginBottom20 u-fontSizeLargest u-md-fontSize36">Static DNS names for your mysocket.io services (and a new gif service)</h1>
+    <h1 class="post-title u-marginBottom20 u-fontSizeLargest u-md-fontSize36">Global load balancing with Kubernetes</h1>
     
 
     <hr>
@@ -228,7 +228,7 @@
         <div class="hh-author-name u-fontSize15 u-noWrapWithEllipsis"><a href="../author/andree/index.html">Andree Toonk</a></div>
 
         <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2020-12-01">1 Dec 2020</time>
+    <time class="datetime u-textCapitalize" datetime="2020-12-22">22 Dec 2020</time>
     <span class="bull">&bull;</span>
     <span class="readingTime" style="cursor:default" title="5 min read">5 min read</span>
     
@@ -236,21 +236,21 @@
 </div>
         <aside class="post-shasre u-flex0 u-flexCenter u-hide-before-md">
             <span class="share-label u-textMuted u-fontSizeSmaller">Share:</span>
-            <a href="https://twitter.com/share?text=Static%20DNS%20names%20for%20your%20mysocket.io%20services%20(and%20a%20new%20gif%20service)&amp;url=http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/"
+            <a href="https://twitter.com/share?text=Global%20load%20balancing%20with%20Kubernetes&amp;url=http://toonk.io/untitled/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Twitter"
                 class="share-link button button--circle godo-tracking js-share">
                 <svg class="icon"><use xlink:href="#icon-twitter"></use></svg>
             </a>
-            <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/&amp;title=Static%20DNS%20names%20for%20your%20mysocket.io%20services%20(and%20a%20new%20gif%20service)"
+            <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://toonk.io/untitled/&amp;title=Global%20load%20balancing%20with%20Kubernetes"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Linkedin"
                 class="share-link button button--circle godo-tracking js-share">
                 <svg class="icon"><use xlink:href="#icon-linkedin"></use></svg>
             </a>
-            <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/"
+            <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/untitled/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Facebook"
@@ -262,35 +262,43 @@
 </header>
         <figure class="post-image u-block u-marginAuto u-sizeFullHeight u-sizeFullWidth u-maxWidth1000">
             <img class="u-block u-marginAuto u-sizeFullWidth simply-zoom"
-                srcset="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 300w,
-                        https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 600w,
-                        https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 1000w,
-                        https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 2000w"
+                srcset="https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 300w,
+                        https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 600w,
+                        https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 1000w,
+                        https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 2000w"
                 sizes="(max-width: 400px) 300px,(max-width: 730px) 600px, (max-width: 1600px) 100vw"
-                src="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000"
-                alt="Static DNS names for your mysocket.io services (and a new gif service)"
+                src="https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000"
+                alt="Global load balancing with Kubernetes"
             />
         </figure>
 
     <div class="post-wrap u-maxWidth1000 u-relative u-marginAuto">
-        <div id="post-body" class="post-body u-container u-maxWidth740 u-relative"><p>In my last blog post, I announced the <a href="https://mysocket.io ">mysocket.io </a>service and demonstrated how to get started quickly. It’s been great to see people signing up and giving it a spin! Your feedback has been great, motivating, and has helped make the service better already.</p><p>Most users that gave mysocket a try used the <em>mysocketctl connect</em> (aka “quick connect”) feature. This is the easiest way to get started and instantly creates a global socket, great for quick testing. However, when you’re done and exit the program, the “connect” feature cleans up the socket. It’s easy to create new ones, but each time with a different name. Not surprisingly then, that a few users asked the question about sockets with static names.</p><h3 id="static-names-for-your-services">Static names for your services</h3><p>Most residential ISPs give their customers a dynamic IP address (one that changes from time to time) through DHCP. If you have a service you’d like to make available but don’t have a static IP, then this post is for you!</p><p>Perhaps you have a server at home, either a fancy setup, rack-mounted and UPS for emergency power, or perhaps just a modest Raspberry Pi. Either way, you’d like to make this available from the Internet, so you can access it when you’re not at your home network, or perhaps you are home, but your nice cooperate VPN client blocks access to your local network. Or maybe you’d like to make it available to your friend.</p><p>That’s great, but you have two challenges:</p><p>1) the server sits behind NAT, so you can’t simply connect to the server from the Internet.</p><p>2) your ISP gives you dynamic IPs, so every few days/weeks, the IP changes, so it’s hard to keep track of the IP. Ideally, you could use a static name, that no matter your dynamic IP, remains stable.</p><p>So what you’d need is a static DNS name! Good news, that’s the default on the Socket primitive.</p><h2 id="mysocket-primitives">Mysocket primitives</h2><p>Let’s take a more in-depth look at the two main primitives that make up the mysocket service: Sockets and Tunnels</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1455/1*2y4Ngw325mE8T-OPoP5OSw.png" class="kg-image" alt><figcaption>Socket and Tunnel primitives</figcaption></figure><h3 id="a-global-socket">A Global Socket</h3><p>The first primitive we need is a <em>socket</em> object. This object is the public endpoint for your service and can be created like this:</p><pre><code>mysocketctl socket create \
-	--type http \
-	--name "my service at home"</code></pre><p>This, among other things, returns a static DNS name that is yours to use. Think of it as your global public endpoint for your load balancer. In this case, mysocket runs the load balancer, and it’s made highly available through our anycast setup.</p><p>In the example above, we created an HTTP/HTTPS socket. Other options are TCP and TLS sockets. In those cases, the API will return not only a static DNS name for your service but also your own dedicated static TCP port number. A typical use case for a TCP socket is making your ssh service available.</p><h3 id="tunnels">Tunnels</h3><p>The second primitive is a tunnel. A tunnel object represents your origin service and the secure connection between the origin and the mysocket global infrastructure. Let’s look at the example below.</p><pre><code>mysocketctl tunnel create \
-	--socket_id 1fab407c-a49d-4c5e-8287-8b138b7549c0</code></pre><p>When creating the tunnel object, simply pass along the socket_id from the socket you’d like to be connected to.</p><h3 id="putting-it-together">Putting it together</h3><p>In summary, we can create a globally available service by first creating a socket of type HTTP/HTTPS, TCP or TLS. This returns a static name for your service and optionally a unique port number. After that, we create a tunnel that links the origin to the socket.</p><figure class="kg-card kg-image-card"><img src="https://cdn-images-1.medium.com/max/1455/1*6FoxMwJ7gMzk3MvjAvufpw.png" class="kg-image" alt></figure><p>Now that we have created a Socket and Tunnel, it’s time to connect to it, spin up the dataplane, and expose the local service port. We do that using the following command:</p><pre><code>mysocketctl tunnel connect \
-	--port 8000 \
-	--socket_id 1fab407c-a49d-4c5e-8287-8b138b7549c0 \
-	--tunnel_id 3f46a01f-ef5b-4b0c-a1ce-9a294be2be03</code></pre><p>In the example above, we only create one tunnel for the socket, but nothing stops you from creating multiple tunnels (origins) per socket. In that case, mysocket will load balance over all available tunnels.</p><h2 id="demo-time-exposing-a-local-gif-service-to-the-internet">Demo time:<br>exposing a local Gif service to the Internet</h2><p>Alright, time to look at a simple demo and get our hands dirty. For this demo, I developed a small<a href="https://gist.github.com/atoonk/0bfc784feb66ffc03541462fbc945df7#file-gif_service-py" rel="noopener"> proof of concept python web service</a> that shows a random Gif from <a href="https://giphy.com/" rel="noopener">Giphy</a> each time a visitor loads the webpage.</p><p>I’m running this service locally on a VM on my laptop. The goal is to make this service publicly available, and overcoming the two levels of NAT and my ISP that hands out dynamic IP addresses. At the end of this demo, I’m able to share a static DNS name with my users, and you’ll be able to try it!</p><p><strong><em>Watch the video below for a live demo.</em></strong></p><figure class="kg-card kg-embed-card"><iframe width="459" height="344" src="https://www.youtube.com/embed/bZh3vZLCdYM?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></figure><p>First, let’s download the demo python code and start the Gif web service</p><pre><code>wget https://gist.githubusercontent.com/atoonk/0bfc784feb66ffc03541462fbc945df7/raw/812d839f60ea7bfd98a530a3fc549137abe0b329/gif_service.py
+        <div id="post-body" class="post-body u-container u-maxWidth740 u-relative"><p>If you’re in the world of cloud infrastructure, then you’ve heard of Kubernetes. Some of you are experts already, while some of us are just learning or getting started. In this blog, we’ll introduce a mysocket controller for Kubernetes and demonstrate how easy it is to use mysocket.io as your cloud-delivered load balancer for your Kubernetes Services. If you’re a Kubernetes user already, then it should just take a minute to get this mysocket controller setup.</p><blockquote><strong>See this video for a demo of the Mysocket.io integration with Kubernetes</strong></blockquote><figure class="kg-card kg-embed-card"><iframe width="267" height="200" src="https://www.youtube.com/embed/tFfLfI1jYi4?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></figure><h3 id="pods-deployments-and-services">Pods, Deployments, and Services</h3><p>Before we continue, let’s review some of the main Kubernetes building blocks we will be using to make this work.</p><p>A typical workload running in Kubernetes will look something like the diagram below. It typically starts with a <em>deployment</em>, in which you define how many replicas (<em>pods) you’d like</em>.</p><p>Since pods are ephemeral and can scale in and out as needed, the Pod IP addresses will be dynamic. As a result, communicating with the pods in your deployment from other Deployments would require constant service discovery, which may be challenging for certain apps. To solve this, Kubernetes has the concept of a Service. A service acts as a logical network abstraction for all the pods in a workload and is a way to expose an application running on a set of<a href="https://kubernetes.io/docs/concepts/workloads/pods/" rel="noopener"> Pods</a> as a network service.</p><p>In the diagram below the <em>service</em> is reachable via 10.245.253.152 on port 8000. The <em>Service</em> will make sure traffic is distributed over all the healthy endpoints for this service.</p><figure class="kg-card kg-image-card"><img src="https://cdn-images-1.medium.com/max/1455/1*_0YBbv7_koFiZgcHsbZyNg.png" class="kg-image" alt></figure><h3 id="taking-your-service-global">Taking your Service Global</h3><p>Now that we know how a service makes your workload available within the cluster, it’s time to take your workload global! Kubernetes has a few ways to do this, typically using an ingress service. We’re going to use the architecture as outlined in the diagram below. We’ll use Mysocket.io to create a secure tunnel between our ‘myApp’ Service and the Mysocket cloud. From there on, it will be globally available via its anycasted edge nodes.</p><figure class="kg-card kg-image-card kg-width-wide"><img src="https://cdn-images-1.medium.com/max/2182/1*P7oVKsk2X0xBF53Xbp3Biw.png" class="kg-image" alt></figure><p>To make this work, we’ll deploy a controller pod that runs the mysocketd container. The Container Image can be found on <a href="https://hub.docker.com/r/mysocket/mysocketd/tags?page=1&amp;ordering=last_updated" rel="noopener">Docker Hub</a>, and the corresponding Dockerfile on our <a href="https://github.com/mysocketio/kubernetes_controller" rel="noopener">github repo here</a>.</p><p>The mysocketd controller does two things:</p><p>1) it subscribes to the Kubernetes API and listens for events related to <em>services</em>. Specifically, it will watch for <em>service</em> events that have the <em>annotation</em> <strong><em>mysocket.io/enabled</em></strong></p><p>If a service has the following <em>annotation</em> mysocket.io/enabled: “true” then the mysocketd app will start a thread for that service.</p><p>2) In the per service thread, using the Mysocket API, a new mysocket.io “Socket” object is created if needed. This will give the “myApp” service a public DNS name and public IP. Next, it will check with the mysocket.io API to see if a tunnel already exists; if not, then a new one is created.</p><p>Finally, the secure tunnel is established, and the “myApp” service is now globally available and benefits from the mysocket.io high-performance infrastructure.</p><h3 id="demo-time-how-to-deploy-mysocketd-to-your-cluster">Demo time. How to Deploy mysocketd to your cluster</h3><p>The easiest way to get started is to download the <a href="https://github.com/mysocketio/kubernetes_controller/blob/main/mysocketd.yaml" rel="noopener">mysocketd workload yaml </a>file from the <a href="https://github.com/mysocketio/kubernetes_controller" rel="noopener">Mysocket Kubernetes controller repository</a>  and update the following three secrets to the ones for your mysocket account (<a href="https://github.com/mysocketio/kubernetes_controller/blob/main/mysocketd.yaml#L14-L16" rel="noopener">line 14,15,16</a>).</p><pre><code>email: &lt;mysocket login email in base64&gt; 
+password: &lt;mysocket password in base64&gt; 
+privatekey: &lt;mysocket private ssh key in base64&gt;</code></pre><p>Then simply apply like this and you’re good to go!</p><pre><code class="language-bash">kubectl apply -f mysocketd.yaml</code></pre><p>Cool, now we have the controller running!</p><h4 id="a-simple-demo-work-load">A simple demo work load</h4><p>Next up, we’d like to make our myApp service available to the Internet by using the mysocket.io service. I’m going to use <a href="https://github.com/mysocketio/examples/blob/main/2020-12-21-kubernetes-integration/demo-deploy.yaml" rel="noopener">this deployment</a> as our demo app. The deployment consists of three pods, with a little python web app, printing its hostname.</p><p>Next up, we’ll build a service (<a href="https://github.com/mysocketio/examples/blob/main/2020-12-21-kubernetes-integration/demo-service.yaml" rel="noopener">see definition here</a>) that acts as an in-cluster load balancer for the demo workload, and we’ll request the Service to be enabled for Mysocket.io.</p><pre><code class="language-bash">$ kubectl apply -f demo-deploy.yaml
 
-#make sure to update the API key in gif_service.py
+$ kubectl apply -f demo-service.yaml
 
-python3 ./gif_service.py</code></pre><p>Alright, now we have this service running, but it’s only reachable from my local network. Next up, we create a socket and a tunnel.</p><pre><code>mysocketctl socket create \
-	--name "my local http Gif service" \ 
-	--type http</code></pre><p>Ok, that returns a socket_id and our static DNS name! In my case, the DNS name is: <a href="https://wandering-shape-7752.edge.mysocket.io" rel="noopener">wandering-shape-7752.edge.mysocket.io</a></p><p>Next up, we’ll use the socket_id to create the tunnel object:</p><pre><code>mysocketctl tunnel create \
-	--socket_id 1fab407c-a49d-4c5e-8287-8b138b7549c0</code></pre><p>Cool, now all we need to do is start the tunnel connection.</p><pre><code>mysocketctl tunnel connect \
-	--port 8000 \
-	--socket_id 1fab407c-a49d-4c5e-8287-8b138b7549c0 \
-	--tunnel_id 3f46a01f-ef5b-4b0c-a1ce-9a294be2be03</code></pre><p>This will securely connect the local gif web service listening on port 8000, to the mysocket infrastructure and make it available as <a href="https://wandering-shape-7752.edge.mysocket.io/" rel="noopener">https://wandering-shape-7752.edge.mysocket.io</a></p><h3 id="wrapping-up">Wrapping up</h3><p>In this blog post, we looked at the two main mysocket primitives, <em>Sockets</em>, and <em>Tunnels</em>. We saw how users can create a Socket object and get a static DNS name and possibly even a dedicated TCP port. In the demo, we used the <em>tunnel connect</em> feature to make port 8000 on my local VM available to the Internet. With that, we made the Internet a little bit better by adding <a href="http://wandering-shape-7752.edge.mysocket.io/" rel="noopener">yet another Gif service</a>, that just happens to run on a VM hosted on my laptop.</p><p></p><!--kg-card-begin: html--><img src='https://media.giphy.com/media/aaw0ay7NqrucU/source.gif'>
-<!--kg-card-end: html--></div>
+$ kubectl get all -n demo-app
+NAME                            READY   STATUS    RESTARTS   AGE
+pod/demo-app-6896cd4b88-5jzgn   1/1     Running   0          2m22s
+pod/demo-app-6896cd4b88-78ngc   1/1     Running   0          2m22s
+pod/demo-app-6896cd4b88-pzbc7   1/1     Running   0          2m22s
+NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+service/demo-service   ClusterIP   10.245.114.194   &lt;none&gt;        8000/TCP   64s
+NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/demo-app   3/3     3            3           2m22s
+NAME                                  DESIRED   CURRENT   READY   AGE
+replicaset.apps/demo-app-6896cd4b88   3         3         3       2m22s</code></pre><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1455/1*Aw8DFTKHqtz6M77I2lKscQ.png" class="kg-image" alt><figcaption><strong><em>Simply set mysocket.io/enabled to “true” and your service will be globally available.</em></strong></figcaption></figure><p>The same can be done for existing services: to do so, just edit your existing Service definition and add the “<strong>mysocket,io/enabled</strong>” <em>annotation, </em>like this:</p><pre><code class="language-yaml">kind: Service
+metadata:
+  annotations:
+    mysocket.io/enabled: "true"</code></pre><p>After applying this change, the mysocketd controller will detect that the service has requested to be connected to the Mysocket global infrastructure. The controller will create the Socket and Tunnels as needed and start the tunnel.</p><p>A quick load balancing test shows that requests to our global mysocket endpoint are now being load-balanced over the three endpoints.</p><pre><code class="language-bash">$ for i in {1..60}; do  curl -s \ 
+  https://blue-snowflake-1578.edge.mysocket.io/ &amp; ;done | sort | uniq -c | sort -n  
+  
+  19 Server: demo-app-6896cd4b88-pzbc7  
+  20 Server: demo-app-6896cd4b88-5jzgn  
+  21 Server: demo-app-6896cd4b88-78ngc  
+  60</code></pre><p>Just like that, in a few seconds, your workload is globally available. Pretty neat he!? Make sure to watch the <a href="https://www.youtube.com/watch?v=tFfLfI1jYi4" rel="noopener nofollow">video recording of this demo</a> as well.</p><h3 id="wrapping-up">Wrapping up</h3><p>In this article, we looked at how we can easily connect Kubernetes Services to Mysocket.io. We saw that it was easy to use. All that is needed is to: 1) start the Mysocketd controller, and: 2) add the mysocket annotation to your Services. By doing so, we are giving the Kubernetes service a publicly reachable IP address, a TLS cert, and it instantly benefits from the mysocket.io Anycast infrastructure. Pretty powerful and easy to use.</p><p>I should add that this <a href="https://github.com/mysocketio/kubernetes_controller" rel="noopener">Mysocket Controller for Kubernetes</a> is for now just a starting point, ie. an MVP integration with Kubernetes. There are ways to improve this, both in terms of user-friendliness and high availability (i.e. more than one pod). The code for this Kubernetes integration is open source, and we’d be happy to accept improvements. Mostly it serves as an example of what’s possible and how we can continue to build on the Mysocket services.</p><p>Last but certainly not least, I’d like to thanks <a href="https://github.com/tresni" rel="noopener">Brian</a> for his code to improve the various mysocketctl client libraries. Also, a big thanks to <a href="https://github.com/btoonk" rel="noopener">Bas Toonk</a> (yes, my brother) for his help with this MVP. Most of this was his work, thanks buddy!</p><p>Finally, I hope this sparked your imagination, and you’ll all give it a whirl, and let me know your experience.</p><p><br></p><p><br></p><p><br></p></div>
     </div>
 
     <footer class="post-footer u-container u-maxWidth740">
@@ -303,24 +311,6 @@ python3 ./gif_service.py</code></pre><p>Alright, now we have this service runnin
                 <div class="u-flex u-relative godo-tracking u-marginBottom30"
     data-event-category="Article"
     data-event-action="Previous article"
-    data-event-label="http://toonk.io/introducing-mysocket-io/"
-    data-event-non-interaction="true">
-
-    <a href="../introducing-mysocket-io/index.html" class="prev-next-image-link u-relative u-bgColorGrayLight u-flex0" aria-label="Introducing Mysocket.io">
-        <img class="u-absolute u-image blur-up lazyload" data-src="https://images.unsplash.com/photo-1519331582073-283f1a211a3e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" alt="Introducing Mysocket.io"/>
-    </a>
-
-    <div class="prev-next-body u-paddingLeft20 u-flex1">
-        <div class="u-fontSizeSmaller u-lineHeight1 u-textMuted u-marginBottom10">Previous article</div>
-        <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../introducing-mysocket-io/index.html" class="u-relative zindex3">Introducing Mysocket.io</a></h2>
-        <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">Mysocket is a service that provides users with fast and secure TCP sockets for services that aren’t normally directly reachable from the Internet. Using a simple client, we connect your local services to the Internet.</p>
-    </div>
-
-    <a href="../introducing-mysocket-io/index.html" aria-label="Introducing Mysocket.io" class="u-absolute0 zindex2"></a>
-</div>
-                <div class="u-flex u-relative godo-tracking "
-    data-event-category="Article"
-    data-event-action="Next article"
     data-event-label="http://toonk.io/easy-multi-region-load-balancing-with-mysocket/"
     data-event-non-interaction="true">
 
@@ -329,13 +319,14 @@ python3 ./gif_service.py</code></pre><p>Alright, now we have this service runnin
     </a>
 
     <div class="prev-next-body u-paddingLeft20 u-flex1">
-        <div class="u-fontSizeSmaller u-lineHeight1 u-textMuted u-marginBottom10">Next article</div>
+        <div class="u-fontSizeSmaller u-lineHeight1 u-textMuted u-marginBottom10">Previous article</div>
         <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../easy-multi-region-load-balancing-with-mysocket/index.html" class="u-relative zindex3">Easy Multi-region load balancing with Mysocket.io</a></h2>
         <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">Last week AWS had a major outage in its US-EAST1 region, lasting for most of the day, just before the big black Friday sales! Incidents</p>
     </div>
 
     <a href="../easy-multi-region-load-balancing-with-mysocket/index.html" aria-label="Easy Multi-region load balancing with Mysocket.io" class="u-absolute0 zindex2"></a>
-</div>        </div>
+</div>
+        </div>
         <hr>
     </footer>
 </article>
@@ -350,33 +341,6 @@ python3 ./gif_service.py</code></pre><p>Alright, now we have this service runnin
                 <h3 class="u-contentTitle u-fontSizeLarger">Related <span class='text-success'>Articles</span></h3>
             </div>
 
-            <div class="col s12 m6 l4 u-flex">
-                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/untitled/" data-event-non-interaction="true">
-    <a href="../untitled/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
-        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
-            src="https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000"
-            srcset="https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000"
-            data-srcset="https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 300w,https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 600w"
-            data-sizes="(max-width: 1000px) 400px, 600px"
-            alt="Global load balancing with Kubernetes"
-        />
-    </a>
-
-    <div class="cr-inner u-padding15 u-flexColumnTop">
-        <div class="cr-body">
-                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../untitled/index.html">Global load balancing with Kubernetes</a></h2>
-        </div>
-
-        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2020-12-22">22 Dec 2020</time>
-    <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="5 min read">5 min read</span>
-    
-</div>    </div>
-
-    <a href="../untitled/index.html" class="u-absolute0 zindex3" aria-label="Global load balancing with Kubernetes"></a>
-</div>
-            </div>
             <div class="col s12 m6 l4 u-flex">
                 <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/easy-multi-region-load-balancing-with-mysocket/" data-event-non-interaction="true">
     <a href="../easy-multi-region-load-balancing-with-mysocket/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
@@ -402,6 +366,33 @@ python3 ./gif_service.py</code></pre><p>Alright, now we have this service runnin
 </div>    </div>
 
     <a href="../easy-multi-region-load-balancing-with-mysocket/index.html" class="u-absolute0 zindex3" aria-label="Easy Multi-region load balancing with Mysocket.io"></a>
+</div>
+            </div>
+            <div class="col s12 m6 l4 u-flex">
+                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/" data-event-non-interaction="true">
+    <a href="../static-dns-names-for-your-sockets-and-a-new-gif-service/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
+        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
+            src="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000"
+            srcset="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000"
+            data-srcset="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 300w,https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 600w"
+            data-sizes="(max-width: 1000px) 400px, 600px"
+            alt="Static DNS names for your mysocket.io services (and a new gif service)"
+        />
+    </a>
+
+    <div class="cr-inner u-padding15 u-flexColumnTop">
+        <div class="cr-body">
+                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../static-dns-names-for-your-sockets-and-a-new-gif-service/index.html">Static DNS names for your mysocket.io services (and a new gif service)</a></h2>
+        </div>
+
+        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
+    <time class="datetime u-textCapitalize" datetime="2020-12-01">1 Dec 2020</time>
+    <span class="bull">&bull;</span>
+    <span class="readingTime" style="cursor:default" title="5 min read">5 min read</span>
+    
+</div>    </div>
+
+    <a href="../static-dns-names-for-your-sockets-and-a-new-gif-service/index.html" class="u-absolute0 zindex3" aria-label="Static DNS names for your mysocket.io services (and a new gif service)"></a>
 </div>
             </div>
             <div class="col s12 m6 l4 u-flex">
@@ -446,7 +437,7 @@ python3 ./gif_service.py</code></pre><p>Alright, now we have this service runnin
     <div class="share-sticky u-textAlignRight is-visible">
     <div class="share-sticky-wrap buttonSet u-container u-maxWidth1200">
         <span class="u-textMuted u-fontSize15 u-paddingRight10 u-hide-before-md">Share this article:</span>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/"
+        <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/untitled/"
             target="_blank"
             rel="noopener noreferrer"
             title="Share on Facebook"
@@ -458,7 +449,7 @@ python3 ./gif_service.py</code></pre><p>Alright, now we have this service runnin
             <svg class="icon"><use xlink:href="#icon-facebook"></use></svg>
             Share
         </a>
-        <a href="https://twitter.com/share?text=Static%20DNS%20names%20for%20your%20mysocket.io%20services%20(and%20a%20new%20gif%20service)&amp;url=http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/"
+        <a href="https://twitter.com/share?text=Global%20load%20balancing%20with%20Kubernetes&amp;url=http://toonk.io/untitled/"
             target="_blank"
             rel="noopener noreferrer"
             title="Share on Twitter"
@@ -470,7 +461,7 @@ python3 ./gif_service.py</code></pre><p>Alright, now we have this service runnin
             <svg class="icon"><use xlink:href="#icon-twitter"></use></svg>
             Tweet
         </a>
-        <a href="whatsapp://send?text=http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/"
+        <a href="whatsapp://send?text=http://toonk.io/untitled/"
             target="_blank"
             rel="noopener noreferrer"
             class="godo-tracking button button--s u-textColorWhite bg-whatsapp u-hide-after-lg"
@@ -606,8 +597,8 @@ var disqusShortName = 'toonk-io-1';
     if (typeof disqusShortName === 'undefined') return;
 
     var disqus_config = function () {
-        this.page.url = 'http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/';
-        this.page.identifier = 'ghost-5fc5be7c51a5ff44fb64d914';
+        this.page.url = 'http://toonk.io/untitled/';
+        this.page.identifier = 'ghost-5fe18d6451a5ff44fb64d99a';
     };
 
     d.querySelector('.js-comments').classList.remove('u-hide')

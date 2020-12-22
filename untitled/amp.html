@@ -2,7 +2,7 @@
 <html amp lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Introducing Mysocket.io</title>
+    <title>Global load balancing with Kubernetes</title>
 
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
@@ -13,28 +13,27 @@
     
     <meta property="og:site_name" content="Andree&#x27;s Musings" />
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="Introducing Mysocket.io" />
-    <meta property="og:description" content="Mysocket is a service that provides users with fast and secure TCP sockets for services that aren’t normally directly reachable from the Internet. Using a simple client, we connect your local services to the Internet." />
-    <meta property="og:url" content="http://toonk.io/introducing-mysocket-io/" />
-    <meta property="og:image" content="https://images.unsplash.com/photo-1519331582073-283f1a211a3e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
-    <meta property="article:published_time" content="2020-11-23T03:40:48.000Z" />
-    <meta property="article:modified_time" content="2020-11-23T16:03:30.000Z" />
+    <meta property="og:title" content="Global load balancing with Kubernetes" />
+    <meta property="og:description" content="If you’re in the world of cloud infrastructure, then you’ve heard of Kubernetes. Some of you are experts already, while some of us are just learning or getting started. In this blog, we’ll introduce a mysocket controller for Kubernetes and demonstrate how easy it is to use" />
+    <meta property="og:url" content="http://toonk.io/untitled/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta property="article:published_time" content="2020-12-22T06:17:15.000Z" />
+    <meta property="article:modified_time" content="2020-12-22T16:54:47.000Z" />
     <meta property="article:tag" content="mysocket" />
-    <meta property="article:tag" content="anycast" />
     
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Introducing Mysocket.io" />
-    <meta name="twitter:description" content="Mysocket is a service that provides users with fast and secure TCP sockets for services that aren’t normally directly reachable from the Internet. Using a simple client, we connect your local services to the Internet." />
-    <meta name="twitter:url" content="http://toonk.io/introducing-mysocket-io/" />
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1519331582073-283f1a211a3e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta name="twitter:title" content="Global load balancing with Kubernetes" />
+    <meta name="twitter:description" content="If you’re in the world of cloud infrastructure, then you’ve heard of Kubernetes. Some of you are experts already, while some of us are just learning or getting started. In this blog, we’ll introduce a mysocket controller for Kubernetes and demonstrate how easy it is to use" />
+    <meta name="twitter:url" content="http://toonk.io/untitled/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Andree Toonk" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="mysocket, anycast" />
+    <meta name="twitter:data2" content="mysocket" />
     <meta name="twitter:site" content="@atoonk" />
     <meta name="twitter:creator" content="@atoonk" />
     <meta property="og:image:width" content="2000" />
-    <meta property="og:image:height" content="1194" />
+    <meta property="og:image:height" content="1328" />
     
     <script type="application/ld+json">
 {
@@ -66,18 +65,18 @@
             "https://twitter.com/atoonk"
         ]
     },
-    "headline": "Introducing Mysocket.io",
-    "url": "http://toonk.io/introducing-mysocket-io/",
-    "datePublished": "2020-11-23T03:40:48.000Z",
-    "dateModified": "2020-11-23T16:03:30.000Z",
+    "headline": "Global load balancing with Kubernetes",
+    "url": "http://toonk.io/untitled/",
+    "datePublished": "2020-12-22T06:17:15.000Z",
+    "dateModified": "2020-12-22T16:54:47.000Z",
     "image": {
         "@type": "ImageObject",
-        "url": "https://images.unsplash.com/photo-1519331582073-283f1a211a3e?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "url": "https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&ixlib=rb-1.2.1&q=80&w=2000",
         "width": 2000,
-        "height": 1194
+        "height": 1328
     },
-    "keywords": "mysocket, anycast",
-    "description": "Mysocket is a service that provides users with fast and secure TCP sockets for services that aren’t normally directly reachable from the Internet. Using a simple client, we connect your local services to the Internet.",
+    "keywords": "mysocket",
+    "description": "If you’re in the world of cloud infrastructure, then you’ve heard of Kubernetes.\nSome of you are experts already, while some of us are just learning or getting\nstarted. In this blog, we’ll introduce a mysocket controller for Kubernetes and\ndemonstrate how easy it is to use mysocket.io as your cloud-delivered load\nbalancer for your Kubernetes Services. If you’re a Kubernetes user already, then\nit should just take a minute to get this mysocket controller setup.\n\n&gt; See this video for a demo of the ",
     "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "http://toonk.io/"
@@ -117,9 +116,9 @@
         
 <article class="article">
     <header class="article-header u-container">
-        <h1 class="article-title">Introducing Mysocket.io</h1>
+        <h1 class="article-title">Global load balancing with Kubernetes</h1>
 
-        <p class="article-excerpt">Mysocket is a service that provides users with fast and secure TCP sockets for services that aren’t normally directly reachable from the Internet. Using a simple client, we connect your local services to the Internet.</p>
+        
 
         <hr>
 
@@ -127,7 +126,7 @@
             <span class="author-name">By <a href="../author/andree/index.html">Andree Toonk</a></span>
 
             <span class="timestamp">
-                <time class="datetime" datetime="2020-11-23">a month ago</time>
+                <time class="datetime" datetime="2020-12-22">11 hours ago</time>
             </span>
 
             
@@ -138,34 +137,39 @@
     </header>
 
         <figure class="article-image u-block u-marginTop30">
-            <amp-img src="https://images.unsplash.com/photo-1519331582073-283f1a211a3e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" width="600" height="350" layout="responsive" alt="Introducing Mysocket.io"></amp-img>
+            <amp-img src="https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" width="600" height="350" layout="responsive" alt="Global load balancing with Kubernetes"></amp-img>
         </figure>
 
-    <div class="article-body u-container"> <blockquote>In this blog, I’d like to introduce a new project I’m calling Mysocket.io. Before we dive in, a bit of background.</blockquote><p>Loyal readers know I enjoy building global infrastructure services that need to be able to carry a significant amount of traffic and a large number of requests. Building services like these often require us to solve several challenges. Things to consider include: high availability, scaling, DDoS proofing, monitoring, logging, testing, deployments, user-facing &amp; backend APIs, policy management (user preferences) and distribution, life-cycling, etc. All this while keeping an eye on cost and keeping complexity to a minimum (which really is human, operational cost).</p><p>To experiment with these topics, it’s necessary to have a project to anchor these experiments to. Something I can continuously work on, and while doing so, improve the project as a whole. Now, there are many projects I started over time, but one that I've worked most on recently, and wanted to share with a wider audience, is <a href="https://www.mysocket.io/" rel="noopener"><strong>mysocket.io</strong></a>. A service that provides secure public endpoints for services that are otherwise not publicly reachable.</p><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*43NirbSJ49IN0yPBE5wuAg.png" class="kg-image" alt width="728" height="112" layout="responsive"></amp-img></figure><p>A typical example case that <a href="https://mysocket.io" rel="noopener">mysocket.io</a> can help with is a web service running on your laptop, which you’d like to make available to a team member or client. Or ssh access to servers behind NAT or a firewall, like a raspberry pi on your home network or ec2 instances behind NAT.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*yF9ppVXSZcwOz5Rlzh39QQ.png" class="kg-image" alt width="1600" height="434" layout="responsive"></amp-img><figcaption>make your localhost app available from anywhere</figcaption></figure><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*E-cZOCwqsH3tOkRjzA-ZJQ.png" class="kg-image" alt width="1600" height="425" layout="responsive"></amp-img><figcaption>Provide SSH access to your home server behind NAT.</figcaption></figure><h2 id="more-details">More details</h2><p>Alright, a good way to share more details and is to do a quick demo! You can see a brief overview in this video, or even better, try it yourself by simply following the four easy steps below.</p><figure class="kg-card kg-embed-card"><amp-youtube width="459" height="344" data-videoid="lEZX_xCTDlo" layout="responsive"></amp-youtube></figure><blockquote>If you’re interested or curious, feel free to give it a spin and let me know what worked or didn’t, or even better, how it can be improved. Getting started will take you just one minute. Just follow these simple steps.</blockquote><pre><code class="language-bash">#Install client, using python's package manager (pip)
-pip3 install mysocketctl
+    <div class="article-body u-container"> <p>If you’re in the world of cloud infrastructure, then you’ve heard of Kubernetes. Some of you are experts already, while some of us are just learning or getting started. In this blog, we’ll introduce a mysocket controller for Kubernetes and demonstrate how easy it is to use mysocket.io as your cloud-delivered load balancer for your Kubernetes Services. If you’re a Kubernetes user already, then it should just take a minute to get this mysocket controller setup.</p><blockquote><strong>See this video for a demo of the Mysocket.io integration with Kubernetes</strong></blockquote><figure class="kg-card kg-embed-card"><amp-youtube width="267" height="200" data-videoid="tFfLfI1jYi4" layout="fixed"></amp-youtube></figure><h3 id="pods-deployments-and-services">Pods, Deployments, and Services</h3><p>Before we continue, let’s review some of the main Kubernetes building blocks we will be using to make this work.</p><p>A typical workload running in Kubernetes will look something like the diagram below. It typically starts with a <em>deployment</em>, in which you define how many replicas (<em>pods) you’d like</em>.</p><p>Since pods are ephemeral and can scale in and out as needed, the Pod IP addresses will be dynamic. As a result, communicating with the pods in your deployment from other Deployments would require constant service discovery, which may be challenging for certain apps. To solve this, Kubernetes has the concept of a Service. A service acts as a logical network abstraction for all the pods in a workload and is a way to expose an application running on a set of<a href="https://kubernetes.io/docs/concepts/workloads/pods/" rel="noopener"> Pods</a> as a network service.</p><p>In the diagram below the <em>service</em> is reachable via 10.245.253.152 on port 8000. The <em>Service</em> will make sure traffic is distributed over all the healthy endpoints for this service.</p><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1455/1*_0YBbv7_koFiZgcHsbZyNg.png" class="kg-image" alt width="1455" height="876" layout="responsive"></amp-img></figure><h3 id="taking-your-service-global">Taking your Service Global</h3><p>Now that we know how a service makes your workload available within the cluster, it’s time to take your workload global! Kubernetes has a few ways to do this, typically using an ingress service. We’re going to use the architecture as outlined in the diagram below. We’ll use Mysocket.io to create a secure tunnel between our ‘myApp’ Service and the Mysocket cloud. From there on, it will be globally available via its anycasted edge nodes.</p><figure class="kg-card kg-image-card kg-width-wide"><amp-img src="https://cdn-images-1.medium.com/max/2182/1*P7oVKsk2X0xBF53Xbp3Biw.png" class="kg-image" alt width="2182" height="1183" layout="responsive"></amp-img></figure><p>To make this work, we’ll deploy a controller pod that runs the mysocketd container. The Container Image can be found on <a href="https://hub.docker.com/r/mysocket/mysocketd/tags?page=1&amp;ordering=last_updated" rel="noopener">Docker Hub</a>, and the corresponding Dockerfile on our <a href="https://github.com/mysocketio/kubernetes_controller" rel="noopener">github repo here</a>.</p><p>The mysocketd controller does two things:</p><p>1) it subscribes to the Kubernetes API and listens for events related to <em>services</em>. Specifically, it will watch for <em>service</em> events that have the <em>annotation</em> <strong><em>mysocket.io/enabled</em></strong></p><p>If a service has the following <em>annotation</em> mysocket.io/enabled: “true” then the mysocketd app will start a thread for that service.</p><p>2) In the per service thread, using the Mysocket API, a new mysocket.io “Socket” object is created if needed. This will give the “myApp” service a public DNS name and public IP. Next, it will check with the mysocket.io API to see if a tunnel already exists; if not, then a new one is created.</p><p>Finally, the secure tunnel is established, and the “myApp” service is now globally available and benefits from the mysocket.io high-performance infrastructure.</p><h3 id="demo-time-how-to-deploy-mysocketd-to-your-cluster">Demo time. How to Deploy mysocketd to your cluster</h3><p>The easiest way to get started is to download the <a href="https://github.com/mysocketio/kubernetes_controller/blob/main/mysocketd.yaml" rel="noopener">mysocketd workload yaml </a>file from the <a href="https://github.com/mysocketio/kubernetes_controller" rel="noopener">Mysocket Kubernetes controller repository</a>  and update the following three secrets to the ones for your mysocket account (<a href="https://github.com/mysocketio/kubernetes_controller/blob/main/mysocketd.yaml#L14-L16" rel="noopener">line 14,15,16</a>).</p><pre><code>email: &lt;mysocket login email in base64&gt; 
+password: &lt;mysocket password in base64&gt; 
+privatekey: &lt;mysocket private ssh key in base64&gt;</code></pre><p>Then simply apply like this and you’re good to go!</p><pre><code class="language-bash">kubectl apply -f mysocketd.yaml</code></pre><p>Cool, now we have the controller running!</p><h4 id="a-simple-demo-work-load">A simple demo work load</h4><p>Next up, we’d like to make our myApp service available to the Internet by using the mysocket.io service. I’m going to use <a href="https://github.com/mysocketio/examples/blob/main/2020-12-21-kubernetes-integration/demo-deploy.yaml" rel="noopener">this deployment</a> as our demo app. The deployment consists of three pods, with a little python web app, printing its hostname.</p><p>Next up, we’ll build a service (<a href="https://github.com/mysocketio/examples/blob/main/2020-12-21-kubernetes-integration/demo-service.yaml" rel="noopener">see definition here</a>) that acts as an in-cluster load balancer for the demo workload, and we’ll request the Service to be enabled for Mysocket.io.</p><pre><code class="language-bash">$ kubectl apply -f demo-deploy.yaml
 
-#Create account
-mysocketctl account create \
-    --name "your_name" \
-    --email "your_email_address" \
-    --password "a_secure_password" \
-    --sshkey "$(cat ~/.ssh/id_rsa.pub)"
-    
-#login
-mysocketctl login  \
-    --email "your_email_address" \
-    --password "a_secure_password" 
-    
- 
-#Launch your first global socket ;)
-mysocketctl connect \
-    --port 8000 \
-    --name "my test service"</code></pre><h2 id="architecture-overview">Architecture overview</h2><p>Ok, so how does it work? The process for requesting a “global socket” starts with an API call. You can do this by directly interfacing with <a href="https://api.mysocket.io/" rel="noopener">the RESTful API</a>, or by using the <a href="https://mysocket.readthedocs.io/en/latest/mysocketctl/mysocket.html" rel="noopener">mysocketctl</a> tool. This returns a global mysocket object, which has a name, port number(s), and some other information.</p><p>Users can now use this socket object to create tunnel objects. These tunnels are then used to connect your local service to the global mysocket.io infrastructure. By stitching these two TCP sessions together, we made your local service globally available.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*L4orGfToNQ3fUgjrZC_3Qw.png" class="kg-image" alt width="1600" height="1173" layout="responsive"></amp-img><figcaption>Creating a Socket, a Tunnel and connecting to mysocket.io</figcaption></figure><p>The diagram below provides a high-level overview of the service data-plane. On the left, we have the origin service. This could be your laptop, your raspberry pi at home, or even a set of containers in a Kubernetes cluster. The origin service can be behind a very strict firewall or even NAT. All it needs is outbound network access. We can then set up a secure encrypted tunnel to any of the mysocket.io servers around the world.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*ePYWcZbw_jzNriOwCThNFQ.png" class="kg-image" alt="Mysocket.io dataplane" width="1482" height="862" layout="responsive"></amp-img><figcaption>Mysocket.io dataplane</figcaption></figure><h2 id="anycast">Anycast</h2><p>The Mysocket.io services use AWS’ global accelerator. With this, I’m making both the tunnel servers and proxy services anycasted. This solves some of the load balancing and high availability challenges. The mysocket tunnel and proxy servers are located in North America, Europe, and Asia.</p><p>Once the tunnel is established, the connection event is signaled to all other nodes in real-time, ensuring that all edge nodes know where the tunnel for the service is.</p><h2 id="documentation">Documentation</h2><p>One of my goals is to make Mysocket super easy to use. One way to do that is to have good documentation. I invite you to check out our readthedocs.io documentation here <a href="https://mysocket.readthedocs.io/en/latest/" rel="noopener">https://mysocket.readthedocs.io/</a></p><p>It’s divided into two sections:</p><ol><li><a href="https://mysocket.readthedocs.io/en/latest/about/about.html" rel="noopener">General information </a>about mysocket.io and some of the concepts.</li><li>Information and user guides for the <a href="https://mysocket.readthedocs.io/en/latest/mysocketctl/mysocket.html" rel="noopener">mysocketctl command-line tool</a>.</li></ol><p>The documentation itself and mysocketctl tool are both <a href="https://github.com/mysocketio" rel="noopener">opensource</a> so feel free to open pull requests or open issues if you have any questions.</p><p>You may have noticed there’s a <a href="https://mysocket.io" rel="noopener">website</a> as well. I wanted to create a quick landing page, so I decided to play with Wix.com. They make it super easy;  I may have gone overboard a bit ;)  All that was clicked together in just one evening, pretty neat.</p><h2 id="more-to-come">More to come</h2><p>There’s a lot more to tell and plenty more geeky details to dive into. More importantly, we can continue to build on this and make it even better (ping me if you have ideas or suggestions)! <br />So stay tuned. That’s the plan for subsequent Blog posts soon, either in this blog or the <a href="https://www.mysocket.io/blog" rel="noopener">mysocket.io blog</a>.</p><p><em>Cheers,</em><br /><em> -Andree</em><br /></p> </div>
+$ kubectl apply -f demo-service.yaml
+
+$ kubectl get all -n demo-app
+NAME                            READY   STATUS    RESTARTS   AGE
+pod/demo-app-6896cd4b88-5jzgn   1/1     Running   0          2m22s
+pod/demo-app-6896cd4b88-78ngc   1/1     Running   0          2m22s
+pod/demo-app-6896cd4b88-pzbc7   1/1     Running   0          2m22s
+NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+service/demo-service   ClusterIP   10.245.114.194   &lt;none&gt;        8000/TCP   64s
+NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/demo-app   3/3     3            3           2m22s
+NAME                                  DESIRED   CURRENT   READY   AGE
+replicaset.apps/demo-app-6896cd4b88   3         3         3       2m22s</code></pre><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1455/1*Aw8DFTKHqtz6M77I2lKscQ.png" class="kg-image" alt width="810" height="720" layout="responsive"></amp-img><figcaption><strong><em>Simply set mysocket.io/enabled to “true” and your service will be globally available.</em></strong></figcaption></figure><p>The same can be done for existing services: to do so, just edit your existing Service definition and add the “<strong>mysocket,io/enabled</strong>” <em>annotation, </em>like this:</p><pre><code class="language-yaml">kind: Service
+metadata:
+  annotations:
+    mysocket.io/enabled: "true"</code></pre><p>After applying this change, the mysocketd controller will detect that the service has requested to be connected to the Mysocket global infrastructure. The controller will create the Socket and Tunnels as needed and start the tunnel.</p><p>A quick load balancing test shows that requests to our global mysocket endpoint are now being load-balanced over the three endpoints.</p><pre><code class="language-bash">$ for i in {1..60}; do  curl -s \ 
+  https://blue-snowflake-1578.edge.mysocket.io/ &amp; ;done | sort | uniq -c | sort -n  
+  
+  19 Server: demo-app-6896cd4b88-pzbc7  
+  20 Server: demo-app-6896cd4b88-5jzgn  
+  21 Server: demo-app-6896cd4b88-78ngc  
+  60</code></pre><p>Just like that, in a few seconds, your workload is globally available. Pretty neat he!? Make sure to watch the <a href="https://www.youtube.com/watch?v=tFfLfI1jYi4" rel="noopener nofollow">video recording of this demo</a> as well.</p><h3 id="wrapping-up">Wrapping up</h3><p>In this article, we looked at how we can easily connect Kubernetes Services to Mysocket.io. We saw that it was easy to use. All that is needed is to: 1) start the Mysocketd controller, and: 2) add the mysocket annotation to your Services. By doing so, we are giving the Kubernetes service a publicly reachable IP address, a TLS cert, and it instantly benefits from the mysocket.io Anycast infrastructure. Pretty powerful and easy to use.</p><p>I should add that this <a href="https://github.com/mysocketio/kubernetes_controller" rel="noopener">Mysocket Controller for Kubernetes</a> is for now just a starting point, ie. an MVP integration with Kubernetes. There are ways to improve this, both in terms of user-friendliness and high availability (i.e. more than one pod). The code for this Kubernetes integration is open source, and we’d be happy to accept improvements. Mostly it serves as an example of what’s possible and how we can continue to build on the Mysocket services.</p><p>Last but certainly not least, I’d like to thanks <a href="https://github.com/tresni" rel="noopener">Brian</a> for his code to improve the various mysocketctl client libraries. Also, a big thanks to <a href="https://github.com/btoonk" rel="noopener">Bas Toonk</a> (yes, my brother) for his help with this MVP. Most of this was his work, thanks buddy!</p><p>Finally, I hope this sparked your imagination, and you’ll all give it a whirl, and let me know your experience.</p><p><br /></p><p><br /></p><p><br /></p> </div>
 
         <div class="article-tags u-container u-marginTop30">
             <span class="share-title">Tags:</span>
                 <a href="../tag/mysocket/index.html" title="mysocket" class="button--tags">mysocket</a>
-                <a href="../tag/anycast/index.html" title="anycast" class="button--tags">anycast</a>
         </div>
 
     <footer class="share u-container u-marginTop30">
@@ -200,33 +204,21 @@ mysocketctl connect \
         <div class="related-title">Related Articles</div>
 
         <div class="story">
-            <a href="../untitled/amp.html" class="story-link u-block u-relative">
-                <span class="story-border u-flexCenter u-absolute">1</span>
-                <h3 class="story-title">Global load balancing with Kubernetes</h3>
-            </a>
-        </div>
-        <div class="story">
             <a href="../easy-multi-region-load-balancing-with-mysocket/amp.html" class="story-link u-block u-relative">
-                <span class="story-border u-flexCenter u-absolute">2</span>
+                <span class="story-border u-flexCenter u-absolute">1</span>
                 <h3 class="story-title">Easy Multi-region load balancing with Mysocket.io</h3>
             </a>
         </div>
         <div class="story">
             <a href="../static-dns-names-for-your-sockets-and-a-new-gif-service/amp.html" class="story-link u-block u-relative">
-                <span class="story-border u-flexCenter u-absolute">3</span>
+                <span class="story-border u-flexCenter u-absolute">2</span>
                 <h3 class="story-title">Static DNS names for your mysocket.io services (and a new gif service)</h3>
             </a>
         </div>
         <div class="story">
-            <a href="../building-a-global-anycast-service-in-under-a-minute/amp.html" class="story-link u-block u-relative">
-                <span class="story-border u-flexCenter u-absolute">4</span>
-                <h3 class="story-title">Building a global anycast service in under a minute</h3>
-            </a>
-        </div>
-        <div class="story">
-            <a href="../building-a-smarter-aws-global-accelerator/amp.html" class="story-link u-block u-relative">
-                <span class="story-border u-flexCenter u-absolute">5</span>
-                <h3 class="story-title">Building A Smarter AWS Global Accelerator</h3>
+            <a href="../introducing-mysocket-io/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">3</span>
+                <h3 class="story-title">Introducing Mysocket.io</h3>
             </a>
         </div>
 
