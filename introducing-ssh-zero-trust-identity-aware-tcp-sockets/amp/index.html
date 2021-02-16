@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html amp lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Introducing SSH zero trust, Identity aware TCP sockets</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <link rel="icon" href="../../favicon.png" type="image/png" />
+    <link rel="canonical" href="../index.html" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    
+    <meta property="og:site_name" content="Andree&#x27;s Musings" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Introducing SSH zero trust, Identity aware TCP sockets" />
+    <meta property="og:description" content="In this article, we’ll look at Mysocket’s zero-trust cloud-delivered, authenticating firewall. Allowing you to replace your trusted IP ranges with trusted identities.Last month we introduced our first zero trust features by introducing the concept of Identity Aware Sockets. It’s been great to see folks giving this" />
+    <meta property="og:url" content="http://toonk.io/introducing-ssh-zero-trust-identity-aware-tcp-sockets/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1578223003535-35db3073ada7?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDg4fHx2YW5jb3V2ZXIlMjBwZW9wbGV8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta property="article:published_time" content="2021-02-16T18:57:54.000Z" />
+    <meta property="article:modified_time" content="2021-02-16T18:57:54.000Z" />
+    <meta property="article:tag" content="mysocket" />
+    <meta property="article:tag" content="networking" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Introducing SSH zero trust, Identity aware TCP sockets" />
+    <meta name="twitter:description" content="In this article, we’ll look at Mysocket’s zero-trust cloud-delivered, authenticating firewall. Allowing you to replace your trusted IP ranges with trusted identities.Last month we introduced our first zero trust features by introducing the concept of Identity Aware Sockets. It’s been great to see folks giving this" />
+    <meta name="twitter:url" content="http://toonk.io/introducing-ssh-zero-trust-identity-aware-tcp-sockets/" />
+    <meta name="twitter:image" content="http://toonk.io/content/images/2021/02/Screen-Shot-2021-02-15-at-12.38.34-PM.png" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Andree Toonk" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="mysocket, networking" />
+    <meta name="twitter:site" content="@atoonk" />
+    <meta name="twitter:creator" content="@atoonk" />
+    <meta property="og:image:width" content="2000" />
+    <meta property="og:image:height" content="1333" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Andree&#x27;s Musings",
+        "url": "http://toonk.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "http://toonk.io/content/images/2020/09/download-5.png",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Andree Toonk",
+        "image": {
+            "@type": "ImageObject",
+            "url": "http://toonk.io/content/images/2020/09/andreetoonk.png",
+            "width": 360,
+            "height": 360
+        },
+        "url": "http://toonk.io/author/andree/",
+        "sameAs": [
+            "http://toonk.io/about/",
+            "https://twitter.com/atoonk"
+        ]
+    },
+    "headline": "Introducing SSH zero trust, Identity aware TCP sockets",
+    "url": "http://toonk.io/introducing-ssh-zero-trust-identity-aware-tcp-sockets/",
+    "datePublished": "2021-02-16T18:57:54.000Z",
+    "dateModified": "2021-02-16T18:57:54.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1578223003535-35db3073ada7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwxMTc3M3wwfDF8c2VhcmNofDg4fHx2YW5jb3V2ZXIlMjBwZW9wbGV8ZW58MHx8fA&ixlib=rb-1.2.1&q=80&w=2000",
+        "width": 2000,
+        "height": 1333
+    },
+    "keywords": "mysocket, networking",
+    "description": "&gt; In this article, we’ll look at Mysocket’s zero-trust cloud-delivered,\nauthenticating firewall. Allowing you to replace your trusted IP ranges with\ntrusted identities.\nLast month we introduced our first zero trust features by introducing the\nconcept of Identity Aware Sockets. It’s been great to see folks giving this a\nspin and start using it as a remote access alternative for the traditional VPN.\n\nMost services out there today are HTTP based, typically served over HTTPS.\nHowever, there are a fe",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://toonk.io/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.34" />
+    <link rel="alternate" type="application/rss+xml" title="Andree&#x27;s Musings" href="../../rss/index.html" />
+
+    <link href="https://fonts.googleapis.com/css?family=Domine|Rubik:400,500,700&display=swap" rel="stylesheet">
+
+
+    <style amp-custom>.u-bgColor{background-color:#161D25}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}[hidden],template{display:none}.kg-bookmark-container,body,figcaption,h1,h2,h3,h4,h5,h6{font-family:Rubik,Whitney SSm A,Whitney SSm B,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif}.article-excerpt{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif}.u-flexCenter{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex}.u-block{display:block}.u-relative{position:relative}.u-overflowHidden{overflow:hidden}.u-fontSizeSmaller{font-size:.875rem}.u-flex1{-webkit-box-flex:1;flex:1 1 auto}.u-absolute{position:absolute}.u-textCenter{text-align:center}.u-marginTop30{margin-top:30px}.u-container{margin-left:auto;margin-right:auto;padding-left:16px;padding-right:16px}*,:after,:before{box-sizing:border-box}body{font-size:1rem;font-style:normal;font-weight:400;letter-spacing:0;line-height:1.5em;text-rendering:optimizeLegibility;-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;-ms-text-size-adjust:100%;text-size-adjust:100%;color:#212529}a{color:#00a562;text-decoration:none;word-break:break-word}a:active,a:hover{outline:0}blockquote{border-left:4px solid #212529;font-size:1.125rem;font-style:italic;margin-left:-5px;margin-right:0;padding-bottom:2px;padding-left:20px}figure{margin:0;padding:0}img{-o-object-fit:cover;object-fit:cover;-o-object-position:center;object-position:center}figcaption{color:#6c757d;display:block;font-size:.875rem;font-style:normal;font-weight:400;margin-top:10px;text-align:center;width:100%}h1,h2,h3,h4,h5,h6{color:#111;font-style:normal;font-weight:700;line-height:1.2;margin:25px 0 0;word-break:break-word}h1{font-size:2rem}h2{font-size:1.75rem}h3{font-size:1.5rem}h4{font-size:1.375rem}h5{font-size:1.25rem}h6{font-size:1.125rem}strong{font-weight:700}p{margin:20px 0 0}hr{box-sizing:content-box;height:0;margin:1rem 0;overflow:visible;border:0;border-top:1px solid rgba(0,0,0,.1)}mark{background-color:transparent;background-image:linear-gradient(180deg,#d7fdd3,#d7fdd3);color:rgba(0,0,0,.8)}code,pre{font-family:Menlo,Courier,monospace;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-ms-hyphens:none;hyphens:none}p code{border-radius:2px;padding:1px 6px}p code,pre{background:#2a3644;color:#e5eff5;font-size:.875rem}pre{overflow-x:auto;margin:0;padding:20px;border:none;line-height:1.6em}pre code{padding:0;background:transparent}svg{width:100%;height:100%}svg:not(:root){overflow:hidden}table{border-collapse:collapse;border-spacing:0;display:inline-block;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;font-size:1rem;line-height:1.5;margin:20px 0 0;max-width:100%;overflow-x:auto;vertical-align:top;white-space:nowrap;width:auto;-webkit-overflow-scrolling:touch}table td,table th{padding:6px 13px;border:1px solid #dfe2e5}table tr:nth-child(2n){background-color:#f6f8fa}table th{letter-spacing:.0125rem;text-transform:uppercase;font-weight:500}.header{position:relative;width:100%;height:50px;line-height:1}.logo-link{color:#fff;font-size:1.5rem;font-weight:500}.social-media a{background:#212529;border-radius:4px;color:#fff;display:inline-block;height:36px;margin:0 2px;padding:8px;vertical-align:middle;width:36px}.social-media svg{fill:#fff;stroke:none}.sidebar{width:280px;background:#fff}.sidebar ul{list-style:none;list-style-image:none;margin:18px 0 20px;padding:0}.sidebar ul li a{padding:6px 20px;font-weight:500;font-size:1rem;display:block}.sidebar .social-media{padding:20px;border-top:1px solid #ddd}.close-sidebar{height:50px;font-size:1.5625rem;line-height:3.125rem;text-align:right;padding-right:20px;color:#fff}.hamburgermenu{background-color:transparent;border:none;padding:0;height:48px;position:relative;-webkit-transition:-webkit-transform .4s;transition:-webkit-transform .4s;transition:transform .4s;transition:transform .4s,-webkit-transform .4s;width:48px;margin-right:-15px}.hamburgermenu span{background-color:#fff;display:block;height:2px;left:14px;margin-top:-1px;position:absolute;top:50%;width:20px}.hamburgermenu span:first-child{-webkit-transform:translateY(-6px);transform:translateY(-6px)}.hamburgermenu span:last-child{-webkit-transform:translateY(6px);transform:translateY(6px)}.main{max-width:500px;margin:0 auto}.article{padding-top:25px}.article-title{margin-top:0}.article-excerpt{margin-bottom:20px;margin-top:15px;color:#6c757d;font-size:1.25rem;line-height:1.4}.article-meta{color:#6c757d;margin:15px 0;font-size:.875rem}.article-body{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif;line-height:1.7em;font-size:1.125rem;padding:20px 1rem}.article-body>*{margin-bottom:28px}.article-body a:not(.kg-bookmark-container){word-break:break-word;text-decoration:underline}.article-body ol,.article-body ul{padding-left:20px}.article-body ol li,.article-body ul li{margin-bottom:5px}.button--tags{border-radius:3px;color:#212529;display:inline-block;font-size:.875rem;font-weight:500;height:37px;line-height:2.1875rem;margin:0 8px 8px 0;padding:0 10px;border:2px solid #212529}.button--tags:before{content:"#"}.share-title{display:block;margin-bottom:8px}amp-social-share.custom-style{background-color:teal;background-image:url(https://raw.githubusercontent.com/google/material-design-icons/master/social/1x_web/ic_share_white_48dp.png);background-repeat:no-repeat;background-position:50%;background-size:contain}amp-social-share.rounded{border-radius:10%;background-size:85%}.related{padding-top:40px;padding-bottom:20px;margin-top:20px;background:#efefef}.related-title{border-bottom:1px solid rgba(0,0,0,.15);padding-bottom:15px;margin-bottom:30px;color:#212529;font-weight:500;font-size:1.25rem}.story-border{border-left:3px solid #cc116e;bottom:0;color:rgba(0,0,0,.2);font-size:2.25rem;font-weight:700;left:0;padding:15px 10px 10px;top:0;-webkit-text-fill-color:transparent;-webkit-text-stroke-width:1.4px;-webkit-text-stroke-color:#888}.story:nth-child(3n) .story-border{border-color:#f59e00}.story:nth-child(3n+2) .story-border{border-color:#26a8ed}.story-link{background-color:#fff;border-bottom:1px solid #e2e0e0;box-shadow:0 1px 7px rgba(0,0,0,.05);min-height:50px;padding:15px 15px 15px 55px}.story-title{color:#212529;line-height:1.2;font-size:1.0625rem;font-weight:500;margin:0}.kg-bookmark-container{display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;flex-direction:column;border:1px solid rgba(0,0,0,.1)}.kg-bookmark-content{padding:20px;-webkit-box-ordinal-group:2;order:1}.kg-bookmark-title{font-weight:500;line-height:1.2;font-size:1.125rem}.kg-bookmark-description{color:#6c757d;line-height:1.4;margin-top:10px;font-size:.875rem}.kg-bookmark-metadata{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;font-size:.875rem;margin-top:10px}.kg-bookmark-icon{margin-right:5px}.kg-bookmark-author:after{content:"•";margin:0 6px}.footer{background-color:#efefef;color:rgba(0,0,0,.44);padding-top:20px;font-size:.9375rem;padding-bottom:45px}</style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
+    <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+
+    <script async custom-element="amp-iframe" src="https://cdn.ampproject.org/v0/amp-iframe-0.1.js"></script>
+</head>
+<body class="amp-template">
+    <header class="header u-bgColor u-flexCenter u-container">
+    <div class="u-flex1">
+
+
+
+        <a href="../../index.html" class="logo-link">Andree&#x27;s Musings</a>
+    </div>
+
+    <button class="hamburgermenu" on="tap:sidenav.open" tabindex="0"><span></span><span></span><span></span></button>
+
+</header>
+
+    <main class="main">
+        
+<article class="article">
+    <header class="article-header u-container">
+        <h1 class="article-title">Introducing SSH zero trust, Identity aware TCP sockets</h1>
+
+        
+
+        <hr>
+
+        <div class="article-meta">
+            <span class="author-name">By <a href="../../author/andree/index.html">Andree Toonk</a></span>
+
+            <span class="timestamp">
+                <time class="datetime" datetime="2021-02-16">a minute ago</time>
+            </span>
+
+            
+                <span>in</span>
+                <span class="categories"><a href="../../tag/mysocket/index.html" title="mysocket">mysocket</a></span>
+            
+        </div>
+    </header>
+
+        <figure class="article-image u-block u-marginTop30">
+            <amp-img src="https://images.unsplash.com/photo-1578223003535-35db3073ada7?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDg4fHx2YW5jb3V2ZXIlMjBwZW9wbGV8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" width="600" height="350" layout="responsive" alt="Introducing SSH zero trust, Identity aware TCP sockets"></amp-img>
+        </figure>
+
+    <div class="article-body u-container"> <blockquote><em><em>In this article, we’ll look at Mysocket’s zero-trust <strong><strong><em>cloud-delivered, authenticating firewall. </em></strong></strong><em>Allowing</em><strong><strong><em> </em></strong></strong>you<strong><strong><em> to replace your trusted IP ranges with trusted identities.</em></strong></strong></em></em></blockquote><figure class="kg-card kg-embed-card"><amp-iframe src="https://cdn.embedly.com/widgets/media.html?src=https%3A%2F%2Fwww.youtube.com%2Fembed%2FAJ_4iHfoakY%3Ffeature%3Doembed&amp;display_name=YouTube&amp;url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DAJ_4iHfoakY&amp;image=https%3A%2F%2Fi.ytimg.com%2Fvi%2FAJ_4iHfoakY%2Fhqdefault.jpg&amp;key=a19fcc184b9711e1b4764040d3dc5c07&amp;type=text%2Fhtml&amp;schema=youtube" allowfullscreen frameborder="0" height="480" width="640" title="Mysocket Demo - Introducing SSH zero trust, Identity aware TCP sockets" class="by fo fl kr w" sandbox="allow-scripts allow-same-origin" layout="responsive"></amp-iframe></figure><p>Last month we introduced our first zero trust features by introducing the concept of <em><em>Identity Aware Sockets</em></em>. It’s been great to see folks giving this a spin and start using it as a remote access alternative for the traditional VPN.</p><p>Most services out there today are HTTP based, typically served over HTTPS. However, there are a few other commonly used services that are not HTTP based and, as a result, up until today, didn’t benefit from our identity-aware sockets. In this article, we’ll introduce Zero trust support for non-HTTP based service, with the introduction Identity aware TCP sockets. Specifically, we’ll look at providing zero trust services for SSH as an example.</p><h1 id="determining-the-user-s-identity-authentication-and-authorization">Determining the user’s identity, authentication, and authorization</h1><p>Turning your mysocket services into an identity-aware socket is as simple as adding the — cloud_authentication flag to mysocketctl when creating the service. While doing so, you have the ability to add a list of email domains and/or a list of email addresses. Now each time a user tries to access your service, a browser will pop up asking the user to authenticate. Once authentication is finished, we know the user’s identity, and if that identity matches the list of authorized users, only then will the user be let through.</p><figure class="kg-card kg-image-card kg-card-hascaption"><figcaption>Creating an Identity-aware TCP socket</figcaption></figure><p>If you think about what is happening here, you’ll realize that what we have here is a <strong><strong><em><em>per session, authenticating firewall</em></em></strong></strong>. Only after the user is authenticated and authorized do we allow the network traffic through. Notice that this is much more advanced than your traditional firewall; now, <strong><strong>every network flow has an identity</strong></strong>. That’s powerful!</p><p>This flow of redirecting users to authenticate and then back to the service was do-able because it’s done in the browser and largely built of HTTP session management. Now we’d like to extend this with non-HTTP services, so we’ll need to find an alternative for the HTTP session part.<br />The solution for this comes with the help of Mutual TLS (MTLS). MTLS forces the client to authenticate itself when talking to the server. This is achieved by presenting a signed client certificate to the server.</p><h1 id="identity-aware-tcp-sockets">Identity aware TCP sockets</h1><p>With the introduction of identity-aware TCP sockets, the mysocket edge proxies act as an authenticating firewall. Since we are relying on client TLS certificates, all traffic is securely tunneled over a TLS connection.</p><p>As you can see in the flow below, there are a few actions to take before the user can get through. To make this a seamless experience for the users of your service, we’ve extended the mysocketctl command-line tool with the required functionality that kicks of the authentication flow. It starts the authentication process; after that, it requests a client certificate (your ticket in), and then it sets up the TLS tunnel for you. After that, users can send traffic over this authenticated and encrypted tunnel. In its simplest form, it will look something like this:</p><pre><code class="language-bash">echo "hello" | mysocketctl client tls \ 
+    --host muddy-pond-7106.edge.mysocket.io</code></pre><p>In the example above, we’re sending the string hello, to the service served by muddy-pond-7106.edge.mysocket.io.</p><figure class="kg-card kg-image-card kg-card-hascaption"><figcaption>Traffic flow</figcaption></figure><p>Before the string “hello” arrives at the service protected by mysocket, the mysocketctl client will take care of the authentication flow, requests the TLS client certificate, and sends whatever comes in over stdin to the mysocket edge services.</p><h1 id="ssh-zero-trust">SSH zero trust</h1><p>Now that we understand the high-level flow let’s look at a more practical example. In this example, we have a server for which I’d like to make the SSH service available to only a subset of users. The ssh is on a private network such as your corporate network, your home network, or even in a private VPC or just firewalled off from the Internet.</p><p>First, we’ll provision the service using mysocketctl on the server-side and set up the tunnel.</p><pre><code class="language-bash">mysocketctl connect \  
+	--name 'remote access for my ssh server' \ 
+    --cloudauth \  
+    --allowed_email_addresses'contractor@gmail.com,john@example.com' \ 
+    --allowed_email_domains 'mycorp.com' \ 
+    --port 22 --host localhost \ 
+    --type tls</code></pre><p>In this example, I'm creating a mysocket service of type TLS, and we enable cloud authentication. This will force the user to present a valid client TLS certificate. The certificate can only ever be handed out to users that authenticate with a mycorp.com email address or using the specific email addresses contractor@gmail.com or john@example.com.<br />The same command will also set up a secure tunnel to the closest mysocket tunnel servers and expose the ssh service running on port 22.</p><figure class="kg-card kg-image-card"></figure><p>The result is that this SSH service is now accessible to allowed users only, as crimson-thunder-8434.edge.mysocket.io:38676<br />Only inbound traffic with a valid client TLS ticket will be let through. Valid TLS client certificates will only ever be issued to users with a mycorp.com domain or the two contractor email addresses we specified.</p><h2 id="setting-up-an-ssh-session">Setting up an SSH session</h2><p>Ok, time to test this and connect to this ssh service. Remember that we need a valid TLS client certificate. These are issued only with a valid token, and the token is only handed out to authorized users. To make all of this easier, we’ve extended the mysocketctl tool to take care of this workflow. The example below shows how we use the ssh ProxyCommand to make that easier for us, like this.</p><pre><code class="language-bash">ssh ubuntu@crimson-thunder-8434.edge.mysocket.io \ 
+	-o 'ProxyCommand=mysocketctl client tls --host %h'</code></pre><p>This will tell ssh to send all ssh traffic through this <em><em>mysocketctl client </em></em>command. This will start the authentication process, fetch the TLS client certificate for us, set up the TLS tunnel to the mysocket edge server, and transport the ssh traffic through this authenticated tunnel. The user can now log in to the ssh server using whatever method you’re used to.</p><p>With this, we’ve made our private ssh server accessible from the Internet, while the <strong><strong><em><em>authenticating mysocket firewall</em></em></strong></strong> is only allowing in session from client identities we approved beforehand. No VPN needed. Pretty cool, right?</p><h1 id="mysocket-ssh-certificate-authorities-">Mysocket SSH Certificate authorities.</h1><figure class="kg-card kg-image-card"></figure><p>SSH is quite similar to TLS in terms of workflow. It too supports authenticating users using signed certificates.</p><p>So we decided to expand on this functionality. In addition to an API endpoint that is responsible for signing TLS certificates, we also created one for signing SSH keys.</p><p>If we build on the example above, the user can now, in addition to requesting a TLS client certificate, also request a signed SSH certificate. Our SSH certificate signing service will only sign the signing request if the user is authenticated and authorized, using the same logic as before.</p><h2 id="setting-up-the-server">Setting up the server</h2><p>In order to use this, we’ll need to make a few minor changes to the SSH server. The configuration changes below are needed to enable authentication using CA keys.</p><pre><code class="language-bash">echo "TrustedUserCAKeys /etc/ssh/ca.pub" &gt;&gt;/etc/ssh/sshd_config
+
+echo "AuthorizedPrincipalsFile %h/.ssh/authorized_principals" &gt;&gt;/etc/ssh/sshd_config
+
+echo "mysocket_ssh_signed" &gt; /home/ubuntu/.ssh/authorized_principals</code></pre><p>Finally, also make sure to get the Public key for the CA (<em><em>mysocketctl socket show)</em></em> and copy it into the ca.pub file (<code>/etc/ssh/ca.pub)</code></p><p>Now the server is configured to work with and allow authentication based on signed SSH keys from the mysocket certificate authority. Note that all signed certificates will have two principles, the email address of the authenticated user, as well as ‘<em><em>mysocket_ssh_signed</em></em>’. In the example configuration above, we told the server to map users with the principle ‘<em><em>mysocket_ssh_signed</em></em>’ to the local user ubuntu.</p><p>Now we’re ready to connect, but instead of making the ssh command even longer, I’m going to add the following to my ssh config file ~/.ssh/config</p><pre><code>Host *.edge.mysocket.io
+    ProxyCommand bash -c 'mysocketctl client ssh-keysign --host %h; ssh -tt -o IdentitiesOnly=yes -i ~/.ssh/%h %r@%h.mysocket-dummy &gt;&amp;2 &lt;&amp;1'
+
+Host *.mysocket-dummy
+    ProxyCommand mysocketctl client tls --host %h</code></pre><p>The above will make sure that for all ssh sessions to *.edge.mysocket.io we start the authentication flow, fetch a TLS client certificate, and set up the TLS tunnel. We’ll also submit an SSH key signing request, which will result in a short-lived signed SSH certificate that will be used for authenticating the SSH user.</p><p>Now the user can just SSH like this, and the whole workflow will kick-off.</p><pre><code class="language-bash">ssh ubuntu@crimson-thunder-8434.edge.mysocket.io</code></pre><p>For those interested, the ssh certificate will end up in your ~/.ssh/ directory and will look like this.</p><pre><code>$ ssh-keygen -Lf ~/.ssh/nameless-thunder-8896.edge.mysocket.io-cert.pub
+/Users/andreetoonk/.ssh/nameless-thunder-8896.edge.mysocket.io-cert.pub:
+        Type: ecdsa-sha2-nistp256-cert-v01@openssh.com user certificate
+        Public key: ECDSA-CERT SHA256:0u6TICEhrISMCk7fbwBi629In9VWHaDG1IfnXoxjwlg
+        Signing CA: ECDSA SHA256:MEdE6L0TUS0ZZPp1EAlI6RZGzO81A429lG7+gxWOonQ (using ecdsa-sha2-nistp256)
+        Key ID: "atoonk@gmail.com"
+        Serial: 5248869306421956178
+        Valid: from 2021-02-13T12:15:20 to 2021-02-13T12:25:20
+        Principals:
+                atoonk@gmail.com
+                mysocket_ssh_signed
+        Critical Options: (none)
+        Extensions:
+                permit-X11-forwarding
+                permit-agent-forwarding
+                permit-port-forwarding
+                permit-pty
+                permit-user-rc</code></pre><p>With this, users can SSH to the same server as before, but the cool thing is that the server won’t need to know any traditional known credentials for its users. Things like passwords or a public key entry in the authorized_keys file belong to the past. Instead, with the help of <em><em>mysocketctl</em></em>, the user will present a short-lived signed ssh certificate, which the server will trust.</p><p>With this, we achieved true Single Sign-on (SSO) for your SSH servers. Since the certificates are short-lived, five minutes in the past(to allow for time drift) to five minutes in the future, we can be sure that for each log-in the authentication and authorization flow was successful.</p><h1 id="give-it-a-try-yourself-using-my-ssh-server">Give it a try yourself using my SSH server</h1><p>If you’re curious about what it looks like for the user and want to give it a try? I have a test VM running on 165.232.143.236, it has firewall rules to prevent SSH traffic from the Internet, but using <em><em>mysocket</em></em>, anyone with a gmail.com account can access it. I encourage you to give it a spin, it will take you less than a minute to set up, just copy-paste the one-time setup config.</p><h2 id="onetime-setup">Onetime setup</h2><p>If you’re using a Mac laptop as your client, you’ll need the mysockectl tool which will request the short-lived certs and will setup up the TLS tunnel. To install the client just copy-paste the below (for Mac only, see download.edge.mysocket.io for other platforms).</p><pre><code class="language-bash">curl -o mysocketctl https://download.edge.mysocket.io/darwin_amd64/mysocketctl 
+
+chmod +x ./mysocketctl
+sudo mv ./mysocketctl /usr/local/bin/</code></pre><p></p><p>To make it easy to use we’ll add the following to our ssh client config file. This is a one-time setup and will make sure the ssh traffic to *.edge.mysocket.io is sent through the mysocketctl client tool.</p><pre><code class="language-bash">cat &lt;&lt;EOF &gt;&gt; ~/.ssh/config
+Host *.edge.mysocket.io
+ ProxyCommand bash -c ‘mysocketctl client ssh-keysign --host %h; ssh -tt -o IdentitiesOnly=yes -i ~/.ssh/%h %r@%h.mysocket-dummy &gt;&amp;2 &lt;&amp;1’
+Host *.mysocket-dummy
+ ProxyCommand mysocketctl client tls --host %h
+EOF</code></pre><p>Now you should be able to ssh to my test server using</p><pre><code class="language-bash">ssh testuser@frosty-feather-1130.edge.mysocket.io</code></pre><p>When the browser pops up, make sure to use the “log in with Google” option, as this socket has been configured to only allow identities that have a Gmail.com email address.</p><h1 id="wrapping-up">Wrapping up</h1><p>In this post, we showed how we continued to build on our previous work with “identity-aware<em><em> sockets</em></em>”. We Introduced support for identity-aware TCP sockets, by leveraging TLS tunnels and Mutual TLS for authentication.</p><blockquote><em><em>I like to think of this as a <strong><strong><em>cloud-delivered, authenticating firewall.</em></strong></strong> With this, we can make your services available to the Internet on a very granular basis, and make sure that <strong><strong><em>each flow has an identity attached to it</em></strong></strong>. Ie, we know exactly, on a per TCP flow basis, what identity (user) is using this flow. That’s a really powerful feature when compared to a traditional firewall, where we had to allow SSH traffic from certain network ranges that were implicitly trusted. What we can now do with these identity-aware sockets is rewrite these firewall rules and <strong><strong><em>replace the trusted IP ranges with trusted identities.</em></strong></strong> This is incredibly powerful for those that need strict compliance, and need to answer things like, who (not an IP, but an identity) connected to what when.</em></em></blockquote><p>We looked at how this can be used to provide zero trust remote access to your SSH servers. And how it can be further extended by using the new SSH key signing service.</p><p>That’s it for now, I hope you found this interesting and useful. As always, if you have any questions or feedback, feel free to reach out.</p><p><a href="https://www.youtube.com/playlist?list=PLSqlOpN6fPZ1myn5we6UcOx4ll9oteG_8" rel="noopener nofollow">Hungry for more? check out all our demo’s on Youtube here</a></p> </div>
+
+        <div class="article-tags u-container u-marginTop30">
+            <span class="share-title">Tags:</span>
+                <a href="../../tag/mysocket/index.html" title="mysocket" class="button--tags">mysocket</a>
+                <a href="../../tag/networking/index.html" title="networking" class="button--tags">networking</a>
+        </div>
+
+    <footer class="share u-container u-marginTop30">
+        <span class="share-title">Share this:</span>
+        <amp-social-share class="rounded"
+        type="email"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="facebook"
+        data-param-app_id="254325784911610"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="twitter"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="linkedin"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="whatsapp"
+        width="36"
+        height="36"></amp-social-share>
+    </footer>
+
+</article>
+
+
+            <div class="related u-container">
+        <div class="related-title">Related Articles</div>
+
+        <div class="story">
+            <a href="../../introducing-identity-aware-sockets-enabling-zero-trust-access-for-your-private-services/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">1</span>
+                <h3 class="story-title">Introducing Identity Aware Sockets: Enabling Zero Trust access for your Private services</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../global-load-balancing-with-kubernetes/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">2</span>
+                <h3 class="story-title">Global load balancing with Kubernetes and Mysocket.io</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../easy-multi-region-load-balancing-with-mysocket/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">3</span>
+                <h3 class="story-title">Easy Multi-region load balancing with Mysocket.io</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../static-dns-names-for-your-sockets-and-a-new-gif-service/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">4</span>
+                <h3 class="story-title">Static DNS names for your mysocket.io services (and a new gif service)</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../introducing-mysocket-io/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">5</span>
+                <h3 class="story-title">Introducing Mysocket.io</h3>
+            </a>
+        </div>
+
+    </div>
+    </main>
+
+    <amp-sidebar id="sidenav" class="sidebar" layout="nodisplay" side="right">
+    <div class="close-sidebar u-bgColor" role="button" aria-label="close sidebar" on="tap:sidenav.close" tabindex="0">✕</div>
+
+    <ul class="nav" role="menu">
+    <li role="menuitem"><a href="../../index.html" class="nav-home">Home</a></li>
+    <li role="menuitem"><a href="../../contact/index.html" class="nav-contact">Contact</a></li>
+    <li role="menuitem"><a href="../../about/index.html" class="nav-about">About</a></li>
+</ul>
+
+    <div class="social-media">
+
+            <a href="https://twitter.com/atoonk" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 18 18" width="100%" height="100%"><path d="M12.077 2c-1.812 0-3.282 1.582-3.282 3.534 0 .277.03.547.085.806-2.728-.148-5.147-1.555-6.766-3.693-.283.522-.445 1.13-.445 1.777 0 1.226.58 2.308 1.46 2.942-.54-.02-1.05-.178-1.49-.443v.045c0 1.712 1.13 3.14 2.63 3.465-.28.08-.57.124-.87.124-.21 0-.418-.022-.62-.063.418 1.404 1.63 2.426 3.067 2.455-1.125.94-2.54 1.51-4.078 1.51-.267 0-.528-.02-.785-.05 1.46 1 3.185 1.59 5.04 1.59 6.037 0 9.34-5.39 9.34-10.06 0-.153-.005-.306-.01-.457.64-.5 1.197-1.12 1.637-1.83-.59.28-1.22.47-1.885.557.677-.437 1.198-1.13 1.443-1.955-.633.405-1.336.7-2.084.858C13.88 2.43 13.028 2 12.08 2"></path></svg>
+</a>
+
+
+
+
+    </div>
+
+</amp-sidebar>
+
+    <footer class="footer">
+        <section class="u-container copyright u-textCenter">
+            &copy; 2021 <a href="../../index.html">Andree&#x27;s Musings</a>
+        </section>
+    </footer>
+</body>
+</html>
