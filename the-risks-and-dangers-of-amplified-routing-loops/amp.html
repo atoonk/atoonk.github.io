@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html amp lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>The Risks and Dangers of Amplified Routing Loops.</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <link rel="icon" href="../favicon.png" type="image/png" />
+    <link rel="canonical" href="index.html" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    
+    <meta property="og:site_name" content="Andree&#x27;s Musings" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="The Risks and Dangers of Amplified Routing Loops." />
+    <meta property="og:description" content="This article will take a closer look at network loops and how they can be abused as part of DDoS attacks. Loop vulnerabilities combined with existing reflection-based attacks can create a traffic amplification factor of over a thousand. In this article, we’ll see how an attacker will only need" />
+    <meta property="og:url" content="http://toonk.io/the-risks-and-dangers-of-amplified-routing-loops/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1522108203058-a1bb3c62f172?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDI2fHx2YW5jb3V2ZXIlMjBsb29wfGVufDB8fHx8MTYxODE2ODkyNA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta property="article:published_time" content="2021-04-11T19:43:17.000Z" />
+    <meta property="article:modified_time" content="2021-04-11T19:43:17.000Z" />
+    <meta property="article:tag" content="networking" />
+    <meta property="article:tag" content="ddos" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="The Risks and Dangers of Amplified Routing Loops." />
+    <meta name="twitter:description" content="This article will take a closer look at network loops and how they can be abused as part of DDoS attacks. Loop vulnerabilities combined with existing reflection-based attacks can create a traffic amplification factor of over a thousand. In this article, we’ll see how an attacker will only need" />
+    <meta name="twitter:url" content="http://toonk.io/the-risks-and-dangers-of-amplified-routing-loops/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1522108203058-a1bb3c62f172?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDI2fHx2YW5jb3V2ZXIlMjBsb29wfGVufDB8fHx8MTYxODE2ODkyNA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Andree Toonk" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="networking, ddos" />
+    <meta name="twitter:site" content="@atoonk" />
+    <meta name="twitter:creator" content="@atoonk" />
+    <meta property="og:image:width" content="2000" />
+    <meta property="og:image:height" content="1333" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Andree&#x27;s Musings",
+        "url": "http://toonk.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "http://toonk.io/content/images/2020/09/download-5.png",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Andree Toonk",
+        "image": {
+            "@type": "ImageObject",
+            "url": "http://toonk.io/content/images/2020/09/andreetoonk.png",
+            "width": 360,
+            "height": 360
+        },
+        "url": "http://toonk.io/author/andree/",
+        "sameAs": [
+            "http://toonk.io/about/",
+            "https://twitter.com/atoonk"
+        ]
+    },
+    "headline": "The Risks and Dangers of Amplified Routing Loops.",
+    "url": "http://toonk.io/the-risks-and-dangers-of-amplified-routing-loops/",
+    "datePublished": "2021-04-11T19:43:17.000Z",
+    "dateModified": "2021-04-11T19:43:17.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1522108203058-a1bb3c62f172?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDI2fHx2YW5jb3V2ZXIlMjBsb29wfGVufDB8fHx8MTYxODE2ODkyNA&ixlib=rb-1.2.1&q=80&w=2000",
+        "width": 2000,
+        "height": 1333
+    },
+    "keywords": "networking, ddos",
+    "description": "This article will take a closer look at network loops and how they can be abused\nas part of DDoS attacks. Loop vulnerabilities combined with existing\nreflection-based attacks can create a traffic amplification factor of over a\nthousand. In this article, we’ll see how an attacker will only need 50mb/s to\nfill up a 100gb/s link.\n\nThis blog is also a call of action for all network engineers to clean up those\nlingering network loops as they aren’t just bad hygiene but a significant\noperational DDoS ",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://toonk.io/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.34" />
+    <link rel="alternate" type="application/rss+xml" title="Andree&#x27;s Musings" href="../rss/index.html" />
+
+    <link href="https://fonts.googleapis.com/css?family=Domine|Rubik:400,500,700&display=swap" rel="stylesheet">
+
+
+    <style amp-custom>.u-bgColor{background-color:#161D25}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}[hidden],template{display:none}.kg-bookmark-container,body,figcaption,h1,h2,h3,h4,h5,h6{font-family:Rubik,Whitney SSm A,Whitney SSm B,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif}.article-excerpt{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif}.u-flexCenter{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex}.u-block{display:block}.u-relative{position:relative}.u-overflowHidden{overflow:hidden}.u-fontSizeSmaller{font-size:.875rem}.u-flex1{-webkit-box-flex:1;flex:1 1 auto}.u-absolute{position:absolute}.u-textCenter{text-align:center}.u-marginTop30{margin-top:30px}.u-container{margin-left:auto;margin-right:auto;padding-left:16px;padding-right:16px}*,:after,:before{box-sizing:border-box}body{font-size:1rem;font-style:normal;font-weight:400;letter-spacing:0;line-height:1.5em;text-rendering:optimizeLegibility;-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;-ms-text-size-adjust:100%;text-size-adjust:100%;color:#212529}a{color:#00a562;text-decoration:none;word-break:break-word}a:active,a:hover{outline:0}blockquote{border-left:4px solid #212529;font-size:1.125rem;font-style:italic;margin-left:-5px;margin-right:0;padding-bottom:2px;padding-left:20px}figure{margin:0;padding:0}img{-o-object-fit:cover;object-fit:cover;-o-object-position:center;object-position:center}figcaption{color:#6c757d;display:block;font-size:.875rem;font-style:normal;font-weight:400;margin-top:10px;text-align:center;width:100%}h1,h2,h3,h4,h5,h6{color:#111;font-style:normal;font-weight:700;line-height:1.2;margin:25px 0 0;word-break:break-word}h1{font-size:2rem}h2{font-size:1.75rem}h3{font-size:1.5rem}h4{font-size:1.375rem}h5{font-size:1.25rem}h6{font-size:1.125rem}strong{font-weight:700}p{margin:20px 0 0}hr{box-sizing:content-box;height:0;margin:1rem 0;overflow:visible;border:0;border-top:1px solid rgba(0,0,0,.1)}mark{background-color:transparent;background-image:linear-gradient(180deg,#d7fdd3,#d7fdd3);color:rgba(0,0,0,.8)}code,pre{font-family:Menlo,Courier,monospace;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-ms-hyphens:none;hyphens:none}p code{border-radius:2px;padding:1px 6px}p code,pre{background:#2a3644;color:#e5eff5;font-size:.875rem}pre{overflow-x:auto;margin:0;padding:20px;border:none;line-height:1.6em}pre code{padding:0;background:transparent}svg{width:100%;height:100%}svg:not(:root){overflow:hidden}table{border-collapse:collapse;border-spacing:0;display:inline-block;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;font-size:1rem;line-height:1.5;margin:20px 0 0;max-width:100%;overflow-x:auto;vertical-align:top;white-space:nowrap;width:auto;-webkit-overflow-scrolling:touch}table td,table th{padding:6px 13px;border:1px solid #dfe2e5}table tr:nth-child(2n){background-color:#f6f8fa}table th{letter-spacing:.0125rem;text-transform:uppercase;font-weight:500}.header{position:relative;width:100%;height:50px;line-height:1}.logo-link{color:#fff;font-size:1.5rem;font-weight:500}.social-media a{background:#212529;border-radius:4px;color:#fff;display:inline-block;height:36px;margin:0 2px;padding:8px;vertical-align:middle;width:36px}.social-media svg{fill:#fff;stroke:none}.sidebar{width:280px;background:#fff}.sidebar ul{list-style:none;list-style-image:none;margin:18px 0 20px;padding:0}.sidebar ul li a{padding:6px 20px;font-weight:500;font-size:1rem;display:block}.sidebar .social-media{padding:20px;border-top:1px solid #ddd}.close-sidebar{height:50px;font-size:1.5625rem;line-height:3.125rem;text-align:right;padding-right:20px;color:#fff}.hamburgermenu{background-color:transparent;border:none;padding:0;height:48px;position:relative;-webkit-transition:-webkit-transform .4s;transition:-webkit-transform .4s;transition:transform .4s;transition:transform .4s,-webkit-transform .4s;width:48px;margin-right:-15px}.hamburgermenu span{background-color:#fff;display:block;height:2px;left:14px;margin-top:-1px;position:absolute;top:50%;width:20px}.hamburgermenu span:first-child{-webkit-transform:translateY(-6px);transform:translateY(-6px)}.hamburgermenu span:last-child{-webkit-transform:translateY(6px);transform:translateY(6px)}.main{max-width:500px;margin:0 auto}.article{padding-top:25px}.article-title{margin-top:0}.article-excerpt{margin-bottom:20px;margin-top:15px;color:#6c757d;font-size:1.25rem;line-height:1.4}.article-meta{color:#6c757d;margin:15px 0;font-size:.875rem}.article-body{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif;line-height:1.7em;font-size:1.125rem;padding:20px 1rem}.article-body>*{margin-bottom:28px}.article-body a:not(.kg-bookmark-container){word-break:break-word;text-decoration:underline}.article-body ol,.article-body ul{padding-left:20px}.article-body ol li,.article-body ul li{margin-bottom:5px}.button--tags{border-radius:3px;color:#212529;display:inline-block;font-size:.875rem;font-weight:500;height:37px;line-height:2.1875rem;margin:0 8px 8px 0;padding:0 10px;border:2px solid #212529}.button--tags:before{content:"#"}.share-title{display:block;margin-bottom:8px}amp-social-share.custom-style{background-color:teal;background-image:url(https://raw.githubusercontent.com/google/material-design-icons/master/social/1x_web/ic_share_white_48dp.png);background-repeat:no-repeat;background-position:50%;background-size:contain}amp-social-share.rounded{border-radius:10%;background-size:85%}.related{padding-top:40px;padding-bottom:20px;margin-top:20px;background:#efefef}.related-title{border-bottom:1px solid rgba(0,0,0,.15);padding-bottom:15px;margin-bottom:30px;color:#212529;font-weight:500;font-size:1.25rem}.story-border{border-left:3px solid #cc116e;bottom:0;color:rgba(0,0,0,.2);font-size:2.25rem;font-weight:700;left:0;padding:15px 10px 10px;top:0;-webkit-text-fill-color:transparent;-webkit-text-stroke-width:1.4px;-webkit-text-stroke-color:#888}.story:nth-child(3n) .story-border{border-color:#f59e00}.story:nth-child(3n+2) .story-border{border-color:#26a8ed}.story-link{background-color:#fff;border-bottom:1px solid #e2e0e0;box-shadow:0 1px 7px rgba(0,0,0,.05);min-height:50px;padding:15px 15px 15px 55px}.story-title{color:#212529;line-height:1.2;font-size:1.0625rem;font-weight:500;margin:0}.kg-bookmark-container{display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;flex-direction:column;border:1px solid rgba(0,0,0,.1)}.kg-bookmark-content{padding:20px;-webkit-box-ordinal-group:2;order:1}.kg-bookmark-title{font-weight:500;line-height:1.2;font-size:1.125rem}.kg-bookmark-description{color:#6c757d;line-height:1.4;margin-top:10px;font-size:.875rem}.kg-bookmark-metadata{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;font-size:.875rem;margin-top:10px}.kg-bookmark-icon{margin-right:5px}.kg-bookmark-author:after{content:"•";margin:0 6px}.footer{background-color:#efefef;color:rgba(0,0,0,.44);padding-top:20px;font-size:.9375rem;padding-bottom:45px}</style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
+    <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+
+    
+</head>
+<body class="amp-template">
+    <header class="header u-bgColor u-flexCenter u-container">
+    <div class="u-flex1">
+
+
+
+        <a href="../index.html" class="logo-link">Andree&#x27;s Musings</a>
+    </div>
+
+    <button class="hamburgermenu" on="tap:sidenav.open" tabindex="0"><span></span><span></span><span></span></button>
+
+</header>
+
+    <main class="main">
+        
+<article class="article">
+    <header class="article-header u-container">
+        <h1 class="article-title">The Risks and Dangers of Amplified Routing Loops.</h1>
+
+        
+
+        <hr>
+
+        <div class="article-meta">
+            <span class="author-name">By <a href="../author/andree/index.html">Andree Toonk</a></span>
+
+            <span class="timestamp">
+                <time class="datetime" datetime="2021-04-11">a minute ago</time>
+            </span>
+
+            
+                <span>in</span>
+                <span class="categories"><a href="../tag/networking/index.html" title="networking">networking</a></span>
+            
+        </div>
+    </header>
+
+        <figure class="article-image u-block u-marginTop30">
+            <amp-img src="https://images.unsplash.com/photo-1522108203058-a1bb3c62f172?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDI2fHx2YW5jb3V2ZXIlMjBsb29wfGVufDB8fHx8MTYxODE2ODkyNA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" width="600" height="350" layout="responsive" alt="The Risks and Dangers of Amplified Routing Loops."></amp-img>
+        </figure>
+
+    <div class="article-body u-container"> <p>This article will take a closer look at network loops and how they can be abused as part of DDoS attacks. Loop vulnerabilities combined with existing reflection-based attacks can create a traffic amplification factor of over a thousand. In this article, we’ll see how an attacker will only need 50mb/s to fill up a 100gb/s link.</p><p>This blog is also a call of action for all network engineers to clean up those lingering network loops as they aren’t just bad hygiene but a significant operational DDoS risk.</p><h3 id="network-loops">Network Loops</h3><p>All network engineers are familiar with network loops. A network loop causes an individual packet to bounce around in a network while consuming valuable network resources (bandwidth and PPS). There are various reasons IP networks can have loops, typically caused by configuration mistakes. The only real “protection” against network loops is the Time To Live (TTL) check. However, the Time To Live check is less of protection against loops, and more protection against them looping forever.</p><p>The Time to Live (TTL) refers to the amount of time or “hops” that a packet is set to exist inside a network before being discarded by a router. The TTL is an 8-bit field in the IP header, and so it has a maximum value of 255. The typical TTL value on most operating systems is 64, which should work fine in most cases.</p><p>Most network engineers know loops are bad hygiene. I think it’s much less understood (or thought about) what the operational risk of a loop is. In my experience, most loops are for IP addresses that aren’t actually in use (otherwise, it would be an outage), so typically, solving this ends up on the backburner.</p><h4 id="a-simple-loop-example">A Simple Loop example</h4><p>Let’s look at a simple example. The diagram below shows two routers; imagine those being your core or edge routers in your datacenter. For whatever reason, they both believe 192.0.2.0/24 is reachable via the other router. As a result, packets for that destination will bounce between the two routers. Depending on the TTL value, the bandwidth used for that one packet will be:</p><pre><code>packet size in bytes x 8 x TTL.</code></pre><p>Meaning for a 512 byte packet and a TTL of 60, the amount bandwidth used is 245Kbs. In other words, the 512 byte packet turned into 307,20 bytes (60x) before it was discarded. You could think of this number 60 as the amplification factor.</p><h3 id="but-but-network-loops-are-rare">But.. but.. Network loops are rare</h3><p>That depends on your definition of rare. The good folks at <a href="https://radar.qrator.net/" rel="noopener">Qrator</a> monitor for loops on the Internet. According to the Qrator measurements, there are roughly twenty million unique loops (measured as unique router pairs).</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*s0AUKUQoHReU1s53r4AGaw.png" class="kg-image" alt width="1600" height="1199" layout="responsive"></amp-img><figcaption>source: Qrator Radar. Number of routing loops globally</figcaption></figure><h3 id="combining-loops-and-common-amplification-attacks-">Combining loops and common Amplification attacks.</h3><p>Now that we’ve covered the risk of loops and their potential &gt; 100x (the TLL) amplification factor, this may remind you of the traditional DDoS attacks.</p><p>The record high DDOS attacks you read about in the news are now hitting hundreds of Gigabits per second and peaking into the Terabits. All these large volume metric attacks are mostly the same type of attack and are commonly known as amplification or reflection attacks.</p><p>They rely on an attacker sending a small packet with a spoofed source IP, which is then reflected and amplified to the attack target. The reflectors/amplifiers are typically some kind of open UDP service that takes a small request and yields a large answer. Typical examples are DNS, NTP, SSDP, and LDAP. The large attacks you read about in the news typically combine a few of these services.</p><p>By now, it may be clear what the danger of combining these two types of scenarios can be. Let’s look at an example. A typical DNS amplification query could be something like this, and RRSIG query for irs.gov</p><pre><code>dig -t RRSIG irs.gov @8.8.8.8</code></pre><p>This query is 64 bytes on the wire. The resulting answer is large and needs to be sent in two packets; the first packet is 1500 bytes, the second packet 944 bytes. So in total, we have an amplification factor of (1500+944)/64 = 38.</p><pre><code>IP (tos 0x0, ttl 64, id 32810, offset 0, flags [none], 
+proto UDP (17), length 64)
+    192.168.0.30.57327 &gt; 8.8.8.8.53: 42548+ [1au] RRSIG? irs.gov. (36)
+
+IP (tos 0x0, ttl 123, id 15817, offset 0, flags [+], 
+proto UDP (17), length 1500)
+    8.8.8.8.53 &gt; 192.168.0.30.57327: 42548 8/0/1 irs.gov. RRSIG, irs.gov. 
+    RRSIG, irs.gov. RRSIG, irs.gov. RRSIG, irs.gov. RRSIG[|domain]
+    
+IP (tos 0x0, ttl 123, id 15817, offset 1448, flags [none], 
+proto UDP (17), length 944)
+    8.8.8.8 &gt; 192.168.0.30: ip-proto-17</code></pre><p><em>Note: There are many different types of amplification attacks. This is just a modest and straightforward DNS example. Also, note that common open reflectors, such as Public DNS resolvers typically have smart mechanisms to limit suspicious traffic to reduce the negative impact these services could have.</em></p><p>The tcpdump output above shows that when the answer arrives back from Google’s DNS service, the TTL value is 123; this is higher than most other public DNS resolvers (most appear to default to 64).</p><p>If we combine this attack with the ‘loop’ factor we looked at previously (determined by the TTL value), we have the total amplification factor.</p><h3 id="adding-up-the-numbers">Adding up the numbers</h3><p>Ok, so let’s continue to work on the DNS amplification example. The amplification number of 38 and a TTL of 123, would result in a total amplification number of :</p><pre><code>38 * (123 / 2) = 2,337</code></pre><p><em>Note that I’m dividing the TTL number by two so that we get a per receive (RX) and transmit(tx) number.</em></p><p>For now, let’s use 2,337 as a reasonable total amplification number. What kind of traffic would an attacker need to generate 10G or 100G of traffic? One would need just about 5Mbs/s to saturate a 10g link and say ~50Mbs to saturate a 100Gbs link! These numbers are low enough to generate from a simple home connection. Now imagine what an attacker with bad intentions and access to a larger botnet could do…</p><h3 id="let-s-double-check-this-with-a-demo">Let’s double-check this with a Demo</h3><p>To make sure this is indeed all possible and the math adds up, I decided to build a lab to reproduce the scenario we looked at above.</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1600/1*8CuFLCPtV9POhazPmjx2Dw.png" class="kg-image" alt width="1600" height="617" layout="responsive"></amp-img><figcaption>Sequence of events</figcaption></figure><p>The lab contains four devices:</p><ol><li>An <strong>attacker:</strong> initiating a DNS-based reflection attack. The (spoofed) source IP is set to 192.0.2.53</li><li>A <strong>DNS resolver:</strong> receiving the DNS queries (with a spoofed source IP) and replying with an answer that is 38 times larger than the original question. The IP TTL value in the DNS answer is 123.</li><li>A <strong>router pair </strong>(rtr1 — rtr2): Both routers have a route for 192.0.2.0/24 pointing to each other. As a result, the DNS answer with a destination IP of 192.0.2.53 will bounce back and forth between the two routers until the TTL expires.</li></ol><figure class="kg-card kg-image-card kg-width-wide"><amp-img src="https://cdn-images-1.medium.com/max/2400/1*rBJV8ku4B8Zk93WK0S_8mw.png" class="kg-image" alt width="2400" height="1109" layout="responsive"></amp-img></figure><p>In the screenshot above, we see the attacker on the top left sending queries at a rate of 5.9Mbs. On the bottom left, we see the DNS resolver receiving traffic at 5.9Mbs from the client and answering the queries at a rate of ~173mbs. The IP packets with the DNS responses have a TTL of 123.</p><p>We see the router pair on the right-hand side: rtr1 on the top right and rtr2 on the bottom right. As you can see, both devices are sending and receiving at 10Gb/s. So, in this case, we observe how the client (attacker) turned 6mb/s into 10Gb/s.</p><h3 id="wrapping-up">Wrapping up</h3><p>In this blog, we looked at the danger of network loops. I hope it’s clear that loops aren’t just a hygiene or cosmetic issue but instead expose a significant vulnerability that should be cleaned up ASAP.</p><p>We saw that loops are by no means rare and that there are millions of router pairs with network loops. In fact, according to Qrator data, over 30% of all Autonomous Systems (ASns), including many of the big cloud providers, have networks with loops in them.</p><p>We observed that an attacker can easily saturate a 10G link with 85Mbs (at a TTL of 240) without any UDP amplification. Or if combined with a typical UDP amplification attack, 6Mbs of seed traffic will result in 10G on a looped path, or 60Mb/s could potentially fill up a 100Gbs path!</p><h4 id="not-all-loops-are-the-same">Not all loops are the same</h4><p>Most loops happen between two adjacent routers; quite a few of those appear to occur between an ISP’s router and the customer router. I have also seen loops happen involving up to eight hops (routers) spanning various metro areas while looping between Europe and the US. These transatlantic loops are expensive and hard to scale up quickly. As a result, loops on links like these will have a more significant impact.</p><h4 id="call-to-action">Call to Action</h4><p>I hope this article convinced you to check your network for loops and make sure you won’t be affected by attacks like these. Consider signing up for the free <a href="https://radar.qrator.net/" rel="noopener">Qrator</a> service, and you’ll get alerted when new loops (or other issues) are detected in your network.</p> </div>
+
+        <div class="article-tags u-container u-marginTop30">
+            <span class="share-title">Tags:</span>
+                <a href="../tag/networking/index.html" title="networking" class="button--tags">networking</a>
+                <a href="../tag/ddos/index.html" title="ddos" class="button--tags">ddos</a>
+        </div>
+
+    <footer class="share u-container u-marginTop30">
+        <span class="share-title">Share this:</span>
+        <amp-social-share class="rounded"
+        type="email"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="facebook"
+        data-param-app_id="254325784911610"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="twitter"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="linkedin"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="whatsapp"
+        width="36"
+        height="36"></amp-social-share>
+    </footer>
+
+</article>
+
+
+            <div class="related u-container">
+        <div class="related-title">Related Articles</div>
+
+        <div class="story">
+            <a href="../introducing-ssh-zero-trust-identity-aware-tcp-sockets/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">1</span>
+                <h3 class="story-title">Introducing SSH zero trust, Identity aware TCP sockets</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../aws-and-their-billions-in-ipv4-addresses/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">2</span>
+                <h3 class="story-title">AWS and their Billions in IPv4 addresses</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../aws-network-performance-deep-dive/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">3</span>
+                <h3 class="story-title">100G networking in AWS, a network performance deep dive</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../building-an-xdp-express-data-path-based-bgp-peering-router/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">4</span>
+                <h3 class="story-title">Building an XDP (eXpress Data Path) based BGP peering router</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../kernel-bypass-networking-with-fd-io-and-vpp/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">5</span>
+                <h3 class="story-title">Kernel bypass networking with FD.io and VPP.</h3>
+            </a>
+        </div>
+
+    </div>
+    </main>
+
+    <amp-sidebar id="sidenav" class="sidebar" layout="nodisplay" side="right">
+    <div class="close-sidebar u-bgColor" role="button" aria-label="close sidebar" on="tap:sidenav.close" tabindex="0">✕</div>
+
+    <ul class="nav" role="menu">
+    <li role="menuitem"><a href="../index.html" class="nav-home">Home</a></li>
+    <li role="menuitem"><a href="../contact/index.html" class="nav-contact">Contact</a></li>
+    <li role="menuitem"><a href="../about/index.html" class="nav-about">About</a></li>
+</ul>
+
+    <div class="social-media">
+
+            <a href="https://twitter.com/atoonk" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 18 18" width="100%" height="100%"><path d="M12.077 2c-1.812 0-3.282 1.582-3.282 3.534 0 .277.03.547.085.806-2.728-.148-5.147-1.555-6.766-3.693-.283.522-.445 1.13-.445 1.777 0 1.226.58 2.308 1.46 2.942-.54-.02-1.05-.178-1.49-.443v.045c0 1.712 1.13 3.14 2.63 3.465-.28.08-.57.124-.87.124-.21 0-.418-.022-.62-.063.418 1.404 1.63 2.426 3.067 2.455-1.125.94-2.54 1.51-4.078 1.51-.267 0-.528-.02-.785-.05 1.46 1 3.185 1.59 5.04 1.59 6.037 0 9.34-5.39 9.34-10.06 0-.153-.005-.306-.01-.457.64-.5 1.197-1.12 1.637-1.83-.59.28-1.22.47-1.885.557.677-.437 1.198-1.13 1.443-1.955-.633.405-1.336.7-2.084.858C13.88 2.43 13.028 2 12.08 2"></path></svg>
+</a>
+
+
+
+
+    </div>
+
+</amp-sidebar>
+
+    <footer class="footer">
+        <section class="u-container copyright u-textCenter">
+            &copy; 2021 <a href="../index.html">Andree&#x27;s Musings</a>
+        </section>
+    </footer>
+</body>
+</html>
