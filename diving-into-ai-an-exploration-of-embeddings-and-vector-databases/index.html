@@ -12,7 +12,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <title>IPv4 for sale - WIDE and APNIC selling 43.0.0.0/8</title>
+    <title>Diving into AI: An Exploration of Embeddings and Vector Databases</title>
 
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,35 +22,31 @@
 
     <link rel="stylesheet" type="text/css" href="../assets/styles/main.css%3Fv=88d9aac0af.css"/>
 
+    <meta name="description" content="So in today’s blog, I’m sharing some learnings on one of these building blocks, called embeddings. Why embeddings? Well, originally, I planned to learn more about Vector databases, but I quickly learned that in order to understand these better, I should start with vectors and embeddings." />
     <link rel="icon" href="../favicon.png" type="image/png" />
     <link rel="canonical" href="index.html" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
-    <link rel="amphtml" href="amp.html" />
+    <link rel="amphtml" href="amp/index.html" />
     
     <meta property="og:site_name" content="Andree&#x27;s Musings" />
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="IPv4 for sale - WIDE and APNIC selling 43.0.0.0/8" />
-    <meta property="og:description" content="In this article, we&#x27;ll look at the recent sale of the IPv4 range 43.0.0.0/8 by The Asia Pacific Internet Development Trust (APIDT). We&#x27;ll look at who bought what and for how much?" />
-    <meta property="og:url" content="http://toonk.io/ipv4-sale-wide-and-apnic-selling-43-8/" />
-    <meta property="og:image" content="https://images.unsplash.com/photo-1557409518-691ebcd96038?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDEzfHx0b2t5b3xlbnwwfHx8fDE2MzQwOTM3Mzc&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
-    <meta property="article:published_time" content="2021-10-13T03:03:18.000Z" />
-    <meta property="article:modified_time" content="2022-05-23T16:55:27.000Z" />
-    <meta property="article:tag" content="ipv4" />
-    <meta property="article:tag" content="aws" />
-    
+    <meta property="og:title" content="Diving into AI: An Exploration of Embeddings and Vector Databases" />
+    <meta property="og:description" content="Join me on my journey into AI and learning about embeddings, vectors and vector databases" />
+    <meta property="og:url" content="http://toonk.io/diving-into-ai-an-exploration-of-embeddings-and-vector-databases/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDE2fHx2YW5jb3V2ZXIlMjBhaXxlbnwwfHx8fDE2ODI5MTQwNTE&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta property="article:published_time" content="2023-05-01T04:09:12.000Z" />
+    <meta property="article:modified_time" content="2023-05-01T04:27:55.000Z" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="IPv4 for sale - WIDE and APNIC selling 43.0.0.0/8" />
-    <meta name="twitter:description" content="In this article, we&#x27;ll look at the recent sale of the IPv4 range 43.0.0.0/8 by The Asia Pacific Internet Development Trust (APIDT). We&#x27;ll look at who bought what and for how much?" />
-    <meta name="twitter:url" content="http://toonk.io/ipv4-sale-wide-and-apnic-selling-43-8/" />
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1557409518-691ebcd96038?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDEzfHx0b2t5b3xlbnwwfHx8fDE2MzQwOTM3Mzc&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta name="twitter:title" content="Diving into AI: An Exploration of Embeddings and Vector Databases" />
+    <meta name="twitter:description" content="Join me on my journey into AI and learning about embeddings, vectors and vector databases" />
+    <meta name="twitter:url" content="http://toonk.io/diving-into-ai-an-exploration-of-embeddings-and-vector-databases/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDE2fHx2YW5jb3V2ZXIlMjBhaXxlbnwwfHx8fDE2ODI5MTQwNTE&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Andree Toonk" />
-    <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="ipv4, aws" />
     <meta name="twitter:site" content="@atoonk" />
     <meta name="twitter:creator" content="@atoonk" />
     <meta property="og:image:width" content="2000" />
-    <meta property="og:image:height" content="1333" />
+    <meta property="og:image:height" content="1326" />
     
     <script type="application/ld+json">
 {
@@ -82,18 +78,17 @@
             "https://twitter.com/atoonk"
         ]
     },
-    "headline": "IPv4 for sale - WIDE and APNIC selling 43.0.0.0/8",
-    "url": "http://toonk.io/ipv4-sale-wide-and-apnic-selling-43-8/",
-    "datePublished": "2021-10-13T03:03:18.000Z",
-    "dateModified": "2022-05-23T16:55:27.000Z",
+    "headline": "Diving into AI: An Exploration of Embeddings and Vector Databases",
+    "url": "http://toonk.io/diving-into-ai-an-exploration-of-embeddings-and-vector-databases/",
+    "datePublished": "2023-05-01T04:09:12.000Z",
+    "dateModified": "2023-05-01T04:27:55.000Z",
     "image": {
         "@type": "ImageObject",
-        "url": "https://images.unsplash.com/photo-1557409518-691ebcd96038?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDEzfHx0b2t5b3xlbnwwfHx8fDE2MzQwOTM3Mzc&ixlib=rb-1.2.1&q=80&w=2000",
+        "url": "https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDE2fHx2YW5jb3V2ZXIlMjBhaXxlbnwwfHx8fDE2ODI5MTQwNTE&ixlib=rb-4.0.3&q=80&w=2000",
         "width": 2000,
-        "height": 1333
+        "height": 1326
     },
-    "keywords": "ipv4, aws",
-    "description": "In this article, we&#x27;ll look at the recent sale of the IPv4 range 43.0.0.0/8 by The Asia Pacific Internet Development Trust (APIDT). We&#x27;ll look at who bought what and for how much?",
+    "description": "Join me on my journey into AI and learning about embeddings, vectors and vector databases",
     "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "http://toonk.io/"
@@ -206,8 +201,8 @@
 
 <article class="post u-marginBottom40 u-relative">
     <header class="post-header u-container u-maxWidth740 u-paddingTop30 u-relative zindex3">
-    <h1 class="post-title u-marginBottom20 u-fontSizeLargest u-md-fontSize36">IPv4 for sale - WIDE and APNIC selling 43.0.0.0/8</h1>
-    <p class="post-excerpt u-marginBottom30 u-fontSize22 u-textMuted">In this article, we&#x27;ll look at the recent sale of the IPv4 range 43.0.0.0/8 by The Asia Pacific Internet Development Trust (APIDT). We&#x27;ll look at who bought what and for how much?</p>
+    <h1 class="post-title u-marginBottom20 u-fontSizeLargest u-md-fontSize36">Diving into AI: An Exploration of Embeddings and Vector Databases</h1>
+    <p class="post-excerpt u-marginBottom30 u-fontSize22 u-textMuted">Join me on my journey into AI and learning about embeddings, vectors and vector databases</p>
 
     <hr>
 
@@ -229,29 +224,29 @@
         <div class="hh-author-name u-fontSize15 u-noWrapWithEllipsis"><a href="../author/andree/index.html">Andree Toonk</a></div>
 
         <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2021-10-13">13 Oct 2021</time>
+    <time class="datetime u-textCapitalize" datetime="2023-05-01">1 May 2023</time>
     <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="5 min read">5 min read</span>
+    <span class="readingTime" style="cursor:default" title="6 min read">6 min read</span>
     
 </div>    </div>
 </div>
         <aside class="post-shasre u-flex0 u-flexCenter u-hide-before-md">
             <span class="share-label u-textMuted u-fontSizeSmaller">Share:</span>
-            <a href="https://twitter.com/share?text=IPv4%20for%20sale%20-%20WIDE%20and%20APNIC%20selling%C2%A043.0.0.0%2F8&amp;url=http://toonk.io/ipv4-sale-wide-and-apnic-selling-43-8/"
+            <a href="https://twitter.com/share?text=Diving%20into%20AI%3A%20An%20Exploration%20of%20Embeddings%20and%20Vector%20Databases&amp;url=http://toonk.io/diving-into-ai-an-exploration-of-embeddings-and-vector-databases/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Twitter"
                 class="share-link button button--circle godo-tracking js-share">
                 <svg class="icon"><use xlink:href="#icon-twitter"></use></svg>
             </a>
-            <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://toonk.io/ipv4-sale-wide-and-apnic-selling-43-8/&amp;title=IPv4%20for%20sale%20-%20WIDE%20and%20APNIC%20selling%C2%A043.0.0.0%2F8"
+            <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://toonk.io/diving-into-ai-an-exploration-of-embeddings-and-vector-databases/&amp;title=Diving%20into%20AI%3A%20An%20Exploration%20of%20Embeddings%20and%20Vector%20Databases"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Linkedin"
                 class="share-link button button--circle godo-tracking js-share">
                 <svg class="icon"><use xlink:href="#icon-linkedin"></use></svg>
             </a>
-            <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/ipv4-sale-wide-and-apnic-selling-43-8/"
+            <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/diving-into-ai-an-exploration-of-embeddings-and-vector-databases/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Facebook"
@@ -263,198 +258,136 @@
 </header>
         <figure class="post-image u-block u-marginAuto u-sizeFullHeight u-sizeFullWidth u-maxWidth1000">
             <img class="u-block u-marginAuto u-sizeFullWidth simply-zoom"
-                srcset="https://images.unsplash.com/photo-1557409518-691ebcd96038?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDEzfHx0b2t5b3xlbnwwfHx8fDE2MzQwOTM3Mzc&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 300w,
-                        https://images.unsplash.com/photo-1557409518-691ebcd96038?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDEzfHx0b2t5b3xlbnwwfHx8fDE2MzQwOTM3Mzc&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 600w,
-                        https://images.unsplash.com/photo-1557409518-691ebcd96038?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDEzfHx0b2t5b3xlbnwwfHx8fDE2MzQwOTM3Mzc&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 1000w,
-                        https://images.unsplash.com/photo-1557409518-691ebcd96038?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDEzfHx0b2t5b3xlbnwwfHx8fDE2MzQwOTM3Mzc&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 2000w"
+                srcset="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDE2fHx2YW5jb3V2ZXIlMjBhaXxlbnwwfHx8fDE2ODI5MTQwNTE&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000 300w,
+                        https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDE2fHx2YW5jb3V2ZXIlMjBhaXxlbnwwfHx8fDE2ODI5MTQwNTE&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000 600w,
+                        https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDE2fHx2YW5jb3V2ZXIlMjBhaXxlbnwwfHx8fDE2ODI5MTQwNTE&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000 1000w,
+                        https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDE2fHx2YW5jb3V2ZXIlMjBhaXxlbnwwfHx8fDE2ODI5MTQwNTE&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000 2000w"
                 sizes="(max-width: 400px) 300px,(max-width: 730px) 600px, (max-width: 1600px) 100vw"
-                src="https://images.unsplash.com/photo-1557409518-691ebcd96038?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDEzfHx0b2t5b3xlbnwwfHx8fDE2MzQwOTM3Mzc&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000"
-                alt="IPv4 for sale - WIDE and APNIC selling 43.0.0.0/8"
+                src="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDE2fHx2YW5jb3V2ZXIlMjBhaXxlbnwwfHx8fDE2ODI5MTQwNTE&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000"
+                alt="Diving into AI: An Exploration of Embeddings and Vector Databases"
             />
         </figure>
 
     <div class="post-wrap u-maxWidth1000 u-relative u-marginAuto">
-        <div id="post-body" class="post-body u-container u-maxWidth740 u-relative"><!--kg-card-begin: html--><div style="background-color: #68C2F9; padding-top: 5px;
-  padding-right: 20px;
-  padding-bottom: 5px;
-  padding-left: 20px;
-            border-radius: 25px;">
-    <sup>&#9432;</sup> 
-       <strong>May 23 2022, article updates.</strong> <br> 
-    I've made two updates to this blog. <br>
-    The <a href="index.html#update-heading1">first update:</a> adds information about the prefixes that hadn't been sold yet when this article was first published. As well as the move of some of the prefixes from AWS to the Chinese operators of AWS (SINET and NWCD)<br>
-    The <a href="index.html#update-heading2">Second update:</a> describes the exact amount APIDT made with the sale of this address space. APIDT recently filed its annual report, which outlines the exact amount. 
-</div><!--kg-card-end: html--><p><br>In one of my <a href="https://toonk.io/aws-and-their-billions-in-ipv4-addresses/index.html">recent blog posts</a>, we looked at the ~two billion dollars worth of IPv4 assets AWS has collected over the last few years. One of the lessons from that story is that the IPv4 market is still very much alive and that folks are still happy to sell IPv4 resources and cloud providers are willing to pay big money to grow their business.</p><p>It’s always interesting to trace where all the sold IPv4 networks came from and who owned them previously. I’ve seen all kinds of entities sell their IPv4 resources. Examples include local police departments, libraries, car manufactures, and even large telecom hardware vendors. So I’m not sure if there’s a real pattern, other than those folks that received a large allocation decades ago and no longer need it, so it’s better to sell it.</p><p>One of the recent large transfers that caught my attention was the sale of (the majority of) the 43.0.0.0/8 IPv4 space. Since it’s such a large range and the story behind it is a bit unique, let’s take a closer look.</p><h3 id="the-asia-pacific-internet-development-trust-apidt-">The Asia Pacific Internet Development Trust (APIDT)</h3><p>In March of last year (2020), APNIC and the Japanese WIDE project announced the establishment of the Asia Pacific Internet Development Trust (APIDT). The announcement on <a href="https://blog.apnic.net/2020/03/25/announcing-the-asia-pacific-internet-development-trust-apidt/" rel="noopener">the APNIC blog </a>reads:</p><blockquote>APIDT was created in line with the wishes of the Founder of the <a href="http://www.wide.ad.jp/" rel="noreferrer noopener noopener">WIDE Project</a>, Professor Jun Murai of Keio University, following his decision on the future use of IPv4 address space in the 43/8 block, <a href="https://blog.apnic.net/2020/03/25/announcement-regarding-ipv4-address-block-43-8/" rel="noreferrer noopener noopener">announced today</a>.</blockquote><p>The article then explains the purpose of the <a href="https://www.apidt.org/" rel="noopener">Trust</a>.</p><blockquote>The Trust will use the proceeds of the sale of the address space to create a fund to benefit Internet development in the Asia Pacific region. This will include funding technical skills development and capacity building, improvements to critical Internet infrastructure, supporting research and development, and improving the community’s capability to build an open, global, stable and secure Internet.</blockquote><p>So APIDT, a joint initiative of the WIDE Project and APNIC, is a newly created Trust that will be funded by selling the unallocated (87.5%) portion of 43.0.0.0/8. The proceeds of the sale will be used in support of Internet development in the APNIC region.</p><h3 id="selling-the-43-8-addresses-space">Selling the 43/8 addresses space</h3><p>APIDT has recently completed the sale of the IPv4 address holdings in three separate stages via a sale by tender process. The IPv4 blocks sold in each stage were as follows:</p><p>Stage 1 offered the 43.0.0.0/9 block, subdivided into eight /12 blocks.<br>Stage 2 offered the 43.128.0.0/10 block, subdivided into sixteen /14 blocks.<br>Stage 3 offered the 43.192.0.0/11 block, subdivided into thirty-two /16 blocks.</p><p>The whole process took a while, the results of stage 1 and stage 2 were publicly visible in the RIR database last year (2020). For whatever reason, stage 3 took quite a bit longer and is still not fully public.</p><h3 id="so-who-bought-all-the-ipv4-addresses">So who bought all the IPv4 addresses?</h3><p>The lucky winners and, likely, big spenders are perhaps not surprisingly some of the major cloud providers.</p><h4 id="stage-1-43-0-0-0-9-block-subdivided-into-eight-12-blocks">Stage 1 - 43.0.0.0/9 block, subdivided into eight /12 blocks</h4><p>The big winner of the first stage of the tender was Alibaba. They now own all of the eight /12 blocks. These have now been allocated as two /10 to Alibaba, 43.0.0.0/10 and 43.64.0.0/10.</p><h4 id="stage-2-43-128-0-0-10-block-subdivided-into-sixteen-14-blocks">Stage 2 — 43.128.0.0/10 block, subdivided into sixteen /14 blocks</h4><p>Again a winner takes all result here. The winner of stage two is the other major cloud player in the Asia Pacific region: Tencent Cloud Computing.</p><p>The sixteen /14 blocks are now allocated to Tencent as one large /10 allocation: 43.128.0.0/10</p><h4 id="stage-3-43-192-0-0-11-block-subdivided-into-thirty-two-16-blocks">Stage 3 — 43.192.0.0/11 block, subdivided into thirty-two /16 blocks</h4><p>This one took a while but as of June 21st, 2021 we can see that just over 50% of this block, 43.192.0.0/12,  has been allocated.</p><p>The first half, 43.192.0.0/12 goes to.. surprise surprise, AWS</p><p>The final two /16’s in this block are going to<br>43.222.0.0/16 NEC Corporation<br>43.223.0.0/16 LINE Corporation</p><!--kg-card-begin: html--><h3 id="update-heading1">Update: May 23, 2022</h3><!--kg-card-end: html--><p>All of 43.192.0.0/11, with the exception of 43.222.0.0/16 (NEC Corporation) and 43.223.0.0/16 (LINE Corporation) has been allocated to AWS.<br><br>Interestingly there already was some movement around the first few /16 blocks. These used to be allocated to AWS. However, double-checking this today again, I noticed that some of these are now registered to companies that go by the name of "Sinnet Technology" and "Ningxia West Cloud Data". After some more digging, it turns out that these are the companies that operate AWS in China</p><p>From the AWS website: <a href="https://www.amazonaws.cn/en/about-aws/china/faqs/">https://www.amazonaws.cn/en/about-aws/china/faqs/</a> <br><em>Beijing Sinnet Technology Co., Ltd.("Sinnet") operates and provides services from the Amazon Web Services China (Beijing) Region, and Ningxia Western Cloud Data Technology Co., Ltd. (“NWCD”) operates and provides services from the Amazon Web Services China (Ningxia) Region, each in full compliance with Chinese regulations.</em></p><p>For a full list of what IPv4 block was sold to whom, also see this Google Sheet:<br><a href="https://docs.google.com/spreadsheets/d/13Kzg8pIJKiIV33WsRwEjvVD9myhDiAFZvOlZ1eGyW4s/edit?usp=sharing" rel="nofollow noopener">https://docs.google.com/spreadsheets/d/13Kzg8pIJKiIV33WsRwEjvVD9myhDiAFZvOlZ1eGyW4s/edit?usp=sharing</a></p><h3 id="how-much-money-was-made">How much money was made?</h3><p>That question is hard to answer as the dollar figures for the winning bids have not been made public (as far as I know). However, we can make an estimate based on the known market prices.</p><p>There’s limited public information on what price IPv4 addresses are sold for. Typically the per IP address depends on the size of the IP ranges that are being sold. One public benchmark is the <a href="https://toonk.io/aws-and-their-billions-in-ipv4-addresses/index.html" rel="noopener">transaction between AMPR.org and AWS</a> in 2019. In that transaction, AWS paid $108 Million for 44.192.0.0/10. That’s $25.74 per IP address.</p><p>A more recent public source is the <a href="https://ipv4marketgroup.com/ipv4-pricing/" rel="nofollow noopener noopener">ipv4marketgroup</a> website. According to them, the per IP price for IPv4 blocks of size of /17 or larger (/16, /15, etc) currently range between $38 to $40 USD per IP. The graph below shows how prices have steadily increased over the years.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/0*Znt2CImBSvT1WrQJ.jpg" class="kg-image" alt><figcaption>source: <a href="https://ipv4marketgroup.com/ipv4-pricing/" data-href="https://ipv4marketgroup.com/ipv4-pricing/" class="markup--anchor markup--figure-anchor" rel="nofollow noopener" target="_blank">https://ipv4marketgroup.com/ipv4-pricing/</a></figcaption></figure><p><br>APIDT sold off the equivalent of 14,680,064 IPv4 addresses. So if we estimate the price at say $38 per IP, the total value of the sold IP addresses would be around $558  Million. While on the higher end, at $40 per IP the value would be $587 Million. <br>At a more conservative price of $34 per IP, the combined value would still be $499 Million (USD).</p><!--kg-card-begin: html--><h3 id="update-heading2">Update: May 23, 2022</h3><!--kg-card-end: html--><p>As of February 2022, APIDT has filed its first financial report to the Australian charities regulator, <a href="https://acncpubfilesprodstorage.blob.core.windows.net/public/4d2f7b23-e29f-ea11-a812-000d3ad1f29c-0ee7510b-a6c6-4a58-a421-0a5ba8bf6f6d-Financial%20Report-77e363ba-4698-ec11-b400-00224892dbd9-Asia_Pacific_Internet_Development_Trust_-_2021_Financial_Report_(AUD).pdf">here</a> (see page 20)</p><p>This annual financial report shows that the total amount raised with the sale of  the IP addresses was: US$440,716,493. This means that the per IP address price was almost exactly $30 (USD) </p><h3 id="wrapping-up">Wrapping up</h3><p>The sale of the 43/8 block shows the IPv4 market is still alive and thriving. We observe the market continues to find new resources to sell. In the example of APIDT, we now know that the funds made available for the Trust as a result of the sale was 440 million (US) dollars. I’d say that’s a very healthy fund for the purpose of supporting Internet development in the Asia Pacific region.</p></div>
+        <div id="post-body" class="post-body u-container u-maxWidth740 u-relative"><p>With the help of ChatGTP, AI has officially changed everything we do. It’s only been a few months since chatGPT was released, and like many, I’ve been exploring how to best use it. I used it as a coding buddy, to brainstorm, to help with writing, etc.</p><p>The potential of this new technology blows me away. But as a technology enthusiast, I’d love to understand better how it works, or at least better understand some of the common terms and underlying technology. I keep hearing about Large Language Models (LLMs), vector databases, training, models, etc. I’d love to learn more about it, and what better way to just dive in, get my hands dirty and experiment with it?</p><p>So in today’s blog, I’m sharing some learnings on one of these building blocks, called embeddings. Why embeddings? Well, originally, I planned to learn more about Vector databases, but I quickly learned that in order to understand these better, I should start with vectors and embeddings.</p><h3 id="what-is-an-embedding">What is an embedding</h3><p>This is the definition from the <a href="https://platform.openai.com/docs/guides/embeddings" rel="noopener">OpenAI website</a></p><blockquote><em>An embedding is a vector (list) of floating point numbers. The </em><a href="https://platform.openai.com/docs/guides/embeddings/which-distance-function-should-i-use" rel="noopener"><em>distance</em></a><em> between two vectors measures their relatedness. Small distances suggest high relatedness, and large distances suggest low relatedness.</em></blockquote><p>Hhm, ok, but what does that really mean? Imagine you have a word, say hamburger. In order to use this in an LLM (large language model) like GPT, the LLM needs to know what it means. To do that, we can turn the word hamburger into an embedding. An embedding is essentially a (set of) numerical representations of a word, indicating its meaning. We call this the Vector.</p><p>With embeddings, we can now represent the words as vectors:</p><ul><li>dog: [0.2, -0.1, 0.5, …]</li><li>cat: [0.1, -0.3, 0.4, …]</li><li>fish: [-0.3, 0.6, -0.1, …]</li></ul><p>Notice that it’s a representation of the meaning (semantics) of the word. For example, the word embeddings for “dog” and “puppy” would be close together in the vector space because they share a similar meaning and often appear in similar contexts. In contrast, the embeddings for “dog” and “car” would be farther apart because their meanings and contexts are quite different.</p><p>It is this “Word embeddings” technology that enables semantic search, which goes beyond simple keyword matching to understand the meaning and context behind a query. “Semantic” refers to the similarity in meaning between words or phrases.</p><p>For example, traditional string matching would fail to connect the “<em>searching for something to eat</em>” query with the sentence “<em>the mouse is looking for food.</em>” However, with semantic search powered by word embeddings, a search engine recognizes that both phrases share a similar meaning, and it would successfully find the sentence.</p><p>Ok, great. Now that we somewhat understand how this works, how does it really work?</p><h3 id="turning-words-or-sentences-into-embeddings">Turning words or sentences into embeddings</h3><p>A word or sentence can be turned into an embedding (a vector representation) using the OpenAI API. To get an embedding, send your text string to the <a href="https://platform.openai.com/docs/api-reference/embeddings" rel="noopener">embeddings API endpoint</a> along with a choice of embedding model ID (e.g., text-embedding-ada-002). The response will contain an embedding you can extract, save, and use.</p><p>In my case, I’m using the Python API. Using this API, you can simply use the code below to turn the word hamburger into an embedding.</p><pre><code class="language-python">from openai.embeddings_utils import get_embedding
+hamburger_embedding = get_embedding("hamburger", engine='text-embedding-ada-002')
+
+# will look like something like [-0.01317964494228363, -0.001876765862107277, …</code></pre><p>If you have a text document, you would turn all the words or sentences from that document into embeddings. Once you’ve done that, you essentially have a semantic representation of the document as a series of vectors. These vectors capture the meaning and context of the individual words or sentences.</p><h3 id="finding-similarities">Finding Similarities</h3><p>Once you have embeddings for words or sentences, you can use them to find semantic similarities. A common approach to measuring the similarity between two embeddings is by calculating how close the vectors are to each other.</p><p>Calculating the distance between vectors is done by calculating the cosine similarity; if you’re really interested, you can read about that here. <a href="https://en.wikipedia.org/wiki/Cosine_similarity" rel="noopener">https://en.wikipedia.org/wiki/Cosine_similarity</a></p><p>Luckily the Python module that OpenAI ships has an implementation of this c<em>osine_similarity,</em> and you can simply use it like this:</p><pre><code class="language-python">import openai
+from openai.embeddings_utils import get_embedding, cosine_similarity
+openai.api_key = "&lt;YOUR OPENAI API KEY HERE&gt;"
+embedding1 = get_embedding("the kids are in the house",engine='text-embedding-ada-002')
+embedding2 = get_embedding("the children are home",engine="text-embedding-ada-002")
+cosine_similarity(embedding1, embedding2)</code></pre><p>Which prints: <em>0.9387390865828703</em>, meaning they’re very close.</p><h3 id="a-real-life-example">A real-life example</h3><p>Below is a slightly longer example. It reads the document called words.csv, which looks like this:</p><pre><code class="language-csv">text
+"red"
+"potatoes"
+"soda"
+"cheese"
+"water"
+"blue"
+"crispy"
+"hamburger"
+"coffee"
+"green"
+"milk"
+"la croix"
+"yellow"
+"chocolate"
+"french fries"
+"latte"
+"cake"
+"brown"
+"cheeseburger"
+"espresso"
+"cheesecake"
+"black"
+"mocha"
+"fizzy"
+"carbon"
+"banana"
+"sunshine"
+"orange carrot"
+"sun"
+"hay"
+"cookies"
+"fish"</code></pre><p>Calculates the embeddings and adds it all to a Panda data frame. Next, it will take a search term (hotdog) and calculates what words are closest to the word hotdog.<br></p><pre><code class="language-python">import openai
+import pandas as pd
+import numpy as np
+from openai.embeddings_utils import get_embedding, cosine_similarity
+
+openai.api_key = "&lt;YOUR OPENAI API KEY HERE&gt;"
+
+# read the data
+df = pd.read_csv('words.csv')
+
+# Lamda to add embedding column
+df['embedding'] = df['text'].apply(lambda x: get_embedding(x, engine='text-embedding-ada-002'))
+# Safe it to a csv file, for caching later. So we dont need to call the API all the time
+# You'd store this in a vector database
+df.to_csv('word_embeddings.csv')
+df = pd.read_csv('word_embeddings.csv')
+
+# Convert the string representation of the embedding to a numpy array
+# neeeded since we wrote it to a csv file
+df['embedding'] = df['embedding'].apply(eval).apply(np.array)
+
+# Hotdog is not in the CSV. Let calculate the embedding for it
+search_term = "hotdog"
+search_term_vector = get_embedding(search_term, engine="text-embedding-ada-002")
+
+# now we can calculate the similarity between the search term and all the words in the CSV 
+df["similarities"] = df['embedding'].apply(lambda x: cosine_similarity(x, search_term_vector))
+# print the top 5 most similar words
+print(df.sort_values("similarities", ascending=False).head(5))</code></pre><p></p><p>The code above prints this:</p><pre><code>Unnamed: 0          text                                          embedding  similarities
+7            7     hamburger  [-0.01317964494228363, -0.001876765862107277, ...      0.913613
+18          18  cheeseburger  [-0.01824556663632393, 0.00504859397187829, 0....      0.886365
+14          14  french fries  [0.0014257068978622556, -0.016548126935958862,...      0.853839
+3            3        cheese  [-0.0032112577464431524, -0.0088559715077281, ...      0.838909
+13          13     chocolate  [0.0015315973432734609, -0.012976923026144505,...      0.830742</code></pre><p>Pretty neat, right?! It calculated that a hotdog is most similar to a hamburger, cheeseburger, and fries!</p><p>Let’s do one more thing! In the example below, we add the embeddings for milk and coffee together, just like a simple math addition.</p><p>We then again calculate what this new embedding is most similar to (hint, what do you call a drink that adds coffee to milk?).</p><pre><code class="language-python"># Let's make a copy of the data frame we created earlier, so we can compare the embeddings of two words
+food_df = df.copy()
+milk_vector = food_df['embedding'][10]
+coffee_vector = food_df['embedding'][8]
+
+# lets add the two vectors together
+milk_coffee_vector = milk_vector + coffee_vector
+
+# now calculate the similarity between the combined vector and all the words in the CSV
+food_df["similarities"] = food_df['embedding'].apply(lambda x: cosine_similarity(x, milk_coffee_vector))
+
+print(food_df.sort_values("similarities", ascending=False).head(5))</code></pre><p>The result is this</p><pre><code>Unnamed: 0 text embedding similarities
+8 8 coffee [-0.0007212135824374855, -0.01943901740014553,… 0.959562
+10 10 milk [0.0009238893981091678, -0.019352708011865616,… 0.959562
+15 15 latte [-0.015634406358003616, -0.003936054650694132,… 0.905960
+19 19 espresso [-0.02250547707080841, -0.012807613238692284, … 0.898178
+22 22 mocha [-0.012473775073885918, -0.026152553036808968,… 0.889710</code></pre><p>Ha! Yes, it’s obviously similar to coffee and milk, as that’s what we started with, but next up, we see a latte! That’s pretty cool, right? Coffee + Milk = Late 😀</p><h3 id="vector-database">Vector database</h3><p>Now that we’ve seen how embeddings work and how they can be used to find semantic similarities, let’s talk about vector databases. In our example, we saw that calculating the embeddings was done using an API call to the OpenAI API. This can be slow and will cost you credits. That’s why, in the example code, we saved the calculated embeddings to a CSV file for caching purposes.</p><p>While this approach works for small-scale experiments, it may not be practical for large amounts of data or production environments where performance and scalability are important. This is where vector databases come in.</p><p>There are a few popular ones; a well-known one is Pinecone, but even <a href="https://innerjoin.bit.io/vector-similarity-search-in-postgres-with-bit-io-and-pgvector-c58ac34f408b" rel="noopener">Postgres</a> can be used as a vector database. These vector databases are specifically designed for storing, managing, and efficiently searching through large amounts of embeddings. They are optimized for high-dimensional vector data and can handle operations such as nearest neighbor search, which is crucial for finding the most similar items to a given query.</p><h3 id="wrap-up">Wrap up</h3><p>In this exploration of the technology behind LLMs and AI, I delved into some of the foundational building blocks that power these advanced systems; specifically, we looked at embeddings and vectors. My initial curiosity about vector databases and their potential applications for my own data led me to first understand the underlying principles and the importance of vectors. It’s pretty cool to see how easy it was to get going, thanks to the existing API’s and libraries.</p><p>Perhaps in another weekend adventure, I’ll look further into the next logical topic: vector databases. I’d also love to explore Langchain, a fascinating framework for developing applications powered by language models.</p><p>That’s it for now; thanks for reading!</p><p>Cheers<br> Andree</p></div>
     </div>
 
     <footer class="post-footer u-container u-maxWidth740">
-            <div class="post-tags buttonSet u-marginTop30">
-        <a href="../tag/ipv4/index.html" title="ipv4" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="ipv4" data-event-non-interaction="true">ipv4</a><a href="../tag/aws/index.html" title="aws" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="aws" data-event-non-interaction="true">aws</a>
-    </div>
-
+        
         <hr>
         <div class="prev-next">
                 <div class="u-flex u-relative godo-tracking u-marginBottom30"
     data-event-category="Article"
     data-event-action="Previous article"
-    data-event-label="http://toonk.io/the-risks-and-dangers-of-amplified-routing-loops/"
+    data-event-label="http://toonk.io/ipv4-sale-wide-and-apnic-selling-43-8/"
     data-event-non-interaction="true">
 
-    <a href="../the-risks-and-dangers-of-amplified-routing-loops/index.html" class="prev-next-image-link u-relative u-bgColorGrayLight u-flex0" aria-label="The Risks and Dangers of Amplified Routing Loops.">
-        <img class="u-absolute u-image blur-up lazyload" data-src="https://images.unsplash.com/photo-1612908088475-da9ef8be72f6?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDV8fGNhbmFkYSUyMHBsYWNlfGVufDB8fHx8MTYxODM2OTIzMQ&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" alt="The Risks and Dangers of Amplified Routing Loops."/>
+    <a href="../ipv4-sale-wide-and-apnic-selling-43-8/index.html" class="prev-next-image-link u-relative u-bgColorGrayLight u-flex0" aria-label="IPv4 for sale - WIDE and APNIC selling 43.0.0.0/8">
+        <img class="u-absolute u-image blur-up lazyload" data-src="https://images.unsplash.com/photo-1557409518-691ebcd96038?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDEzfHx0b2t5b3xlbnwwfHx8fDE2MzQwOTM3Mzc&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" alt="IPv4 for sale - WIDE and APNIC selling 43.0.0.0/8"/>
     </a>
 
     <div class="prev-next-body u-paddingLeft20 u-flex1">
         <div class="u-fontSizeSmaller u-lineHeight1 u-textMuted u-marginBottom10">Previous article</div>
-        <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../the-risks-and-dangers-of-amplified-routing-loops/index.html" class="u-relative zindex3">The Risks and Dangers of Amplified Routing Loops.</a></h2>
-        <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">In this article will take a closer look at network loops and how they can be abused as part of DDoS attacks.</p>
+        <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../ipv4-sale-wide-and-apnic-selling-43-8/index.html" class="u-relative zindex3">IPv4 for sale - WIDE and APNIC selling 43.0.0.0/8</a></h2>
+        <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">In this article, we'll look at the recent sale of the IPv4 range 43.0.0.0/8 by The Asia Pacific Internet Development Trust (APIDT). We'll look at who bought what and for how much?</p>
     </div>
 
-    <a href="../the-risks-and-dangers-of-amplified-routing-loops/index.html" aria-label="The Risks and Dangers of Amplified Routing Loops." class="u-absolute0 zindex2"></a>
+    <a href="../ipv4-sale-wide-and-apnic-selling-43-8/index.html" aria-label="IPv4 for sale - WIDE and APNIC selling 43.0.0.0/8" class="u-absolute0 zindex2"></a>
 </div>
-                <div class="u-flex u-relative godo-tracking "
-    data-event-category="Article"
-    data-event-action="Next article"
-    data-event-label="http://toonk.io/diving-into-ai-an-exploration-of-embeddings-and-vector-databases/"
-    data-event-non-interaction="true">
-
-    <a href="../diving-into-ai-an-exploration-of-embeddings-and-vector-databases/index.html" class="prev-next-image-link u-relative u-bgColorGrayLight u-flex0" aria-label="Diving into AI: An Exploration of Embeddings and Vector Databases">
-        <img class="u-absolute u-image blur-up lazyload" data-src="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDE2fHx2YW5jb3V2ZXIlMjBhaXxlbnwwfHx8fDE2ODI5MTQwNTE&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000" alt="Diving into AI: An Exploration of Embeddings and Vector Databases"/>
-    </a>
-
-    <div class="prev-next-body u-paddingLeft20 u-flex1">
-        <div class="u-fontSizeSmaller u-lineHeight1 u-textMuted u-marginBottom10">Next article</div>
-        <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../diving-into-ai-an-exploration-of-embeddings-and-vector-databases/index.html" class="u-relative zindex3">Diving into AI: An Exploration of Embeddings and Vector Databases</a></h2>
-        <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">Join me on my journey into AI and learning about embeddings, vectors and vector databases</p>
-    </div>
-
-    <a href="../diving-into-ai-an-exploration-of-embeddings-and-vector-databases/index.html" aria-label="Diving into AI: An Exploration of Embeddings and Vector Databases" class="u-absolute0 zindex2"></a>
-</div>        </div>
+        </div>
         <hr>
     </footer>
 </article>
 
-
-
-<div class="post-related u-bgColorGrayLight">
-    <div class="u-container u-maxWidth1200">
-        <div class="row">
-
-            <div class="col s12 u-marginBottom40 u-textAlignCenter">
-                <h3 class="u-contentTitle u-fontSizeLarger">Related <span class='text-success'>Articles</span></h3>
-            </div>
-
-            <div class="col s12 m6 l4 u-flex">
-                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/aws-and-their-billions-in-ipv4-addresses/" data-event-non-interaction="true">
-    <a href="../aws-and-their-billions-in-ipv4-addresses/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
-        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
-            src="https://images.unsplash.com/photo-1572288717056-ea97fb77c71e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            srcset="https://images.unsplash.com/photo-1572288717056-ea97fb77c71e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            data-srcset="https://images.unsplash.com/photo-1572288717056-ea97fb77c71e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1572288717056-ea97fb77c71e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
-            data-sizes="(max-width: 1000px) 400px, 600px"
-            alt="AWS and their Billions in IPv4 addresses"
-        />
-    </a>
-
-    <div class="cr-inner u-padding15 u-flexColumnTop">
-        <div class="cr-body">
-                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../aws-and-their-billions-in-ipv4-addresses/index.html">AWS and their Billions in IPv4 addresses</a></h2>
-        </div>
-
-        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2020-10-20">20 Oct 2020</time>
-    <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="4 min read">4 min read</span>
-    
-</div>    </div>
-
-    <a href="../aws-and-their-billions-in-ipv4-addresses/index.html" class="u-absolute0 zindex3" aria-label="AWS and their Billions in IPv4 addresses"></a>
-</div>
-            </div>
-            <div class="col s12 m6 l4 u-flex">
-                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/aws-network-performance-deep-dive/" data-event-non-interaction="true">
-    <a href="../aws-network-performance-deep-dive/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
-        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
-            src="https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            srcset="https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            data-srcset="https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
-            data-sizes="(max-width: 1000px) 400px, 600px"
-            alt="100G networking in AWS, a network performance deep dive"
-        />
-    </a>
-
-    <div class="cr-inner u-padding15 u-flexColumnTop">
-        <div class="cr-body">
-                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../aws-network-performance-deep-dive/index.html">100G networking in AWS, a network performance deep dive</a></h2>
-        </div>
-
-        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2020-10-15">15 Oct 2020</time>
-    <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="9 min read">9 min read</span>
-    
-</div>    </div>
-
-    <a href="../aws-network-performance-deep-dive/index.html" class="u-absolute0 zindex3" aria-label="100G networking in AWS, a network performance deep dive"></a>
-</div>
-            </div>
-            <div class="col s12 m6 l4 u-flex">
-                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/building-a-smarter-aws-global-accelerator/" data-event-non-interaction="true">
-    <a href="../building-a-smarter-aws-global-accelerator/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
-        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
-            src="https://images.unsplash.com/photo-1553623095-2b4d2819983f?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            srcset="https://images.unsplash.com/photo-1553623095-2b4d2819983f?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            data-srcset="https://images.unsplash.com/photo-1553623095-2b4d2819983f?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1553623095-2b4d2819983f?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
-            data-sizes="(max-width: 1000px) 400px, 600px"
-            alt="Building A Smarter AWS Global Accelerator"
-        />
-    </a>
-
-    <div class="cr-inner u-padding15 u-flexColumnTop">
-        <div class="cr-body">
-                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../building-a-smarter-aws-global-accelerator/index.html">Building A Smarter AWS Global Accelerator</a></h2>
-        </div>
-
-        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2019-12-01">1 Dec 2019</time>
-    <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="7 min read">7 min read</span>
-    
-</div>    </div>
-
-    <a href="../building-a-smarter-aws-global-accelerator/index.html" class="u-absolute0 zindex3" aria-label="Building A Smarter AWS Global Accelerator"></a>
-</div>
-            </div>
-            <div class="col s12 m6 l4 u-flex">
-                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/building-a-high-available-anycast-service-using-aws-global-accelerator/" data-event-non-interaction="true">
-    <a href="../building-a-high-available-anycast-service-using-aws-global-accelerator/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
-        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
-            src="https://images.unsplash.com/photo-1544161497-6095fb868d58?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            srcset="https://images.unsplash.com/photo-1544161497-6095fb868d58?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-            data-srcset="https://images.unsplash.com/photo-1544161497-6095fb868d58?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1544161497-6095fb868d58?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
-            data-sizes="(max-width: 1000px) 400px, 600px"
-            alt="Building a high available Anycast service using AWS Global Accelerator"
-        />
-    </a>
-
-    <div class="cr-inner u-padding15 u-flexColumnTop">
-        <div class="cr-body">
-                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../building-a-high-available-anycast-service-using-aws-global-accelerator/index.html">Building a high available Anycast service using AWS Global Accelerator</a></h2>
-        </div>
-
-        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2019-09-02">2 Sep 2019</time>
-    <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="7 min read">7 min read</span>
-    
-</div>    </div>
-
-    <a href="../building-a-high-available-anycast-service-using-aws-global-accelerator/index.html" class="u-absolute0 zindex3" aria-label="Building a high available Anycast service using AWS Global Accelerator"></a>
-</div>
-            </div>
-        </div>
-    </div>
-</div>
 
 
     <div id="post-comments" class="post-comments js-comments u-hide u-bgColorGrayLight u-paddingTop30 u-paddingBottom30 u-contentTitle">
@@ -467,7 +400,7 @@
     <div class="share-sticky u-textAlignRight is-visible">
     <div class="share-sticky-wrap buttonSet u-container u-maxWidth1200">
         <span class="u-textMuted u-fontSize15 u-paddingRight10 u-hide-before-md">Share this article:</span>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/ipv4-sale-wide-and-apnic-selling-43-8/"
+        <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/diving-into-ai-an-exploration-of-embeddings-and-vector-databases/"
             target="_blank"
             rel="noopener noreferrer"
             title="Share on Facebook"
@@ -479,7 +412,7 @@
             <svg class="icon"><use xlink:href="#icon-facebook"></use></svg>
             Share
         </a>
-        <a href="https://twitter.com/share?text=IPv4%20for%20sale%20-%20WIDE%20and%20APNIC%20selling%C2%A043.0.0.0%2F8&amp;url=http://toonk.io/ipv4-sale-wide-and-apnic-selling-43-8/"
+        <a href="https://twitter.com/share?text=Diving%20into%20AI%3A%20An%20Exploration%20of%20Embeddings%20and%20Vector%20Databases&amp;url=http://toonk.io/diving-into-ai-an-exploration-of-embeddings-and-vector-databases/"
             target="_blank"
             rel="noopener noreferrer"
             title="Share on Twitter"
@@ -491,7 +424,7 @@
             <svg class="icon"><use xlink:href="#icon-twitter"></use></svg>
             Tweet
         </a>
-        <a href="whatsapp://send?text=http://toonk.io/ipv4-sale-wide-and-apnic-selling-43-8/"
+        <a href="whatsapp://send?text=http://toonk.io/diving-into-ai-an-exploration-of-embeddings-and-vector-databases/"
             target="_blank"
             rel="noopener noreferrer"
             class="godo-tracking button button--s u-textColorWhite bg-whatsapp u-hide-after-lg"
@@ -631,8 +564,8 @@ var disqusShortName = 'toonk-io-1';
     if (typeof disqusShortName === 'undefined') return;
 
     var disqus_config = function () {
-        this.page.url = 'http://toonk.io/ipv4-sale-wide-and-apnic-selling-43-8/';
-        this.page.identifier = 'ghost-616649d716a05e598c2a5cd1';
+        this.page.url = 'http://toonk.io/diving-into-ai-an-exploration-of-embeddings-and-vector-databases/';
+        this.page.identifier = 'ghost-644f3afaa1d93a29d0c07f1c';
     };
 
     d.querySelector('.js-comments').classList.remove('u-hide')

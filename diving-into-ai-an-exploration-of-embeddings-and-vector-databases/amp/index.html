@@ -2,34 +2,31 @@
 <html amp lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Static DNS names for your mysocket.io services (and a new gif service)</title>
+    <title>Diving into AI: An Exploration of Embeddings and Vector Databases</title>
 
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
 
+    <meta name="description" content="So in today’s blog, I’m sharing some learnings on one of these building blocks, called embeddings. Why embeddings? Well, originally, I planned to learn more about Vector databases, but I quickly learned that in order to understand these better, I should start with vectors and embeddings." />
     <link rel="icon" href="../../favicon.png" type="image/png" />
     <link rel="canonical" href="../index.html" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
     
     <meta property="og:site_name" content="Andree&#x27;s Musings" />
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="Static DNS names for your mysocket.io services (and a new gif service)" />
-    <meta property="og:description" content="In my last blog post, I announced the mysocket.io service and demonstrated how to get started quickly. It’s been great to see people signing up and giving it a spin! Your feedback has been great, motivating, and has helped make the service better already. Most users that gave" />
-    <meta property="og:url" content="http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/" />
-    <meta property="og:image" content="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
-    <meta property="article:published_time" content="2020-12-01T04:14:11.000Z" />
-    <meta property="article:modified_time" content="2020-12-07T00:58:41.000Z" />
-    <meta property="article:tag" content="mysocket" />
-    
+    <meta property="og:title" content="Diving into AI: An Exploration of Embeddings and Vector Databases" />
+    <meta property="og:description" content="Join me on my journey into AI and learning about embeddings, vectors and vector databases" />
+    <meta property="og:url" content="http://toonk.io/diving-into-ai-an-exploration-of-embeddings-and-vector-databases/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDE2fHx2YW5jb3V2ZXIlMjBhaXxlbnwwfHx8fDE2ODI5MTQwNTE&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta property="article:published_time" content="2023-05-01T04:09:12.000Z" />
+    <meta property="article:modified_time" content="2023-05-01T04:27:55.000Z" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Static DNS names for your mysocket.io services (and a new gif service)" />
-    <meta name="twitter:description" content="In my last blog post, I announced the mysocket.io service and demonstrated how to get started quickly. It’s been great to see people signing up and giving it a spin! Your feedback has been great, motivating, and has helped make the service better already. Most users that gave" />
-    <meta name="twitter:url" content="http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/" />
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta name="twitter:title" content="Diving into AI: An Exploration of Embeddings and Vector Databases" />
+    <meta name="twitter:description" content="Join me on my journey into AI and learning about embeddings, vectors and vector databases" />
+    <meta name="twitter:url" content="http://toonk.io/diving-into-ai-an-exploration-of-embeddings-and-vector-databases/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDE2fHx2YW5jb3V2ZXIlMjBhaXxlbnwwfHx8fDE2ODI5MTQwNTE&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Andree Toonk" />
-    <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="mysocket" />
     <meta name="twitter:site" content="@atoonk" />
     <meta name="twitter:creator" content="@atoonk" />
     <meta property="og:image:width" content="2000" />
@@ -65,18 +62,17 @@
             "https://twitter.com/atoonk"
         ]
     },
-    "headline": "Static DNS names for your mysocket.io services (and a new gif service)",
-    "url": "http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/",
-    "datePublished": "2020-12-01T04:14:11.000Z",
-    "dateModified": "2020-12-07T00:58:41.000Z",
+    "headline": "Diving into AI: An Exploration of Embeddings and Vector Databases",
+    "url": "http://toonk.io/diving-into-ai-an-exploration-of-embeddings-and-vector-databases/",
+    "datePublished": "2023-05-01T04:09:12.000Z",
+    "dateModified": "2023-05-01T04:27:55.000Z",
     "image": {
         "@type": "ImageObject",
-        "url": "https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&ixlib=rb-1.2.1&q=80&w=2000",
+        "url": "https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDE2fHx2YW5jb3V2ZXIlMjBhaXxlbnwwfHx8fDE2ODI5MTQwNTE&ixlib=rb-4.0.3&q=80&w=2000",
         "width": 2000,
         "height": 1326
     },
-    "keywords": "mysocket",
-    "description": "In my last blog post, I announced the mysocket.io [https://mysocket.io ]service\nand demonstrated how to get started quickly. It’s been great to see people\nsigning up and giving it a spin! Your feedback has been great, motivating, and\nhas helped make the service better already.\n\nMost users that gave mysocket a try used the mysocketctl connect (aka “quick\nconnect”) feature. This is the easiest way to get started and instantly creates\na global socket, great for quick testing. However, when you’re d",
+    "description": "Join me on my journey into AI and learning about embeddings, vectors and vector databases",
     "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "http://toonk.io/"
@@ -97,8 +93,7 @@
     <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
     <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
 
-    <script async custom-element="amp-anim" src="https://cdn.ampproject.org/v0/amp-anim-0.1.js"></script>
-<script async custom-element="amp-youtube" src="https://cdn.ampproject.org/v0/amp-youtube-0.1.js"></script>
+    
 </head>
 <body class="amp-template">
     <header class="header u-bgColor u-flexCenter u-container">
@@ -117,9 +112,9 @@
         
 <article class="article">
     <header class="article-header u-container">
-        <h1 class="article-title">Static DNS names for your mysocket.io services (and a new gif service)</h1>
+        <h1 class="article-title">Diving into AI: An Exploration of Embeddings and Vector Databases</h1>
 
-        
+        <p class="article-excerpt">Join me on my journey into AI and learning about embeddings, vectors and vector databases</p>
 
         <hr>
 
@@ -127,43 +122,108 @@
             <span class="author-name">By <a href="../../author/andree/index.html">Andree Toonk</a></span>
 
             <span class="timestamp">
-                <time class="datetime" datetime="2020-12-01">2 years ago</time>
+                <time class="datetime" datetime="2023-05-01">21 minutes ago</time>
             </span>
 
-            
-                <span>in</span>
-                <span class="categories"><a href="../../tag/mysocket/index.html" title="mysocket">mysocket</a></span>
             
         </div>
     </header>
 
         <figure class="article-image u-block u-marginTop30">
-            <amp-img src="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" width="600" height="350" layout="responsive" alt="Static DNS names for your mysocket.io services (and a new gif service)"></amp-img>
+            <amp-img src="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDE2fHx2YW5jb3V2ZXIlMjBhaXxlbnwwfHx8fDE2ODI5MTQwNTE&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000" width="600" height="350" layout="responsive" alt="Diving into AI: An Exploration of Embeddings and Vector Databases"></amp-img>
         </figure>
 
-    <div class="article-body u-container"> <p>In my last blog post, I announced the <a href="https://mysocket.io ">mysocket.io </a>service and demonstrated how to get started quickly. It’s been great to see people signing up and giving it a spin! Your feedback has been great, motivating, and has helped make the service better already.</p><p>Most users that gave mysocket a try used the <em>mysocketctl connect</em> (aka “quick connect”) feature. This is the easiest way to get started and instantly creates a global socket, great for quick testing. However, when you’re done and exit the program, the “connect” feature cleans up the socket. It’s easy to create new ones, but each time with a different name. Not surprisingly then, that a few users asked the question about sockets with static names.</p><h3 id="static-names-for-your-services">Static names for your services</h3><p>Most residential ISPs give their customers a dynamic IP address (one that changes from time to time) through DHCP. If you have a service you’d like to make available but don’t have a static IP, then this post is for you!</p><p>Perhaps you have a server at home, either a fancy setup, rack-mounted and UPS for emergency power, or perhaps just a modest Raspberry Pi. Either way, you’d like to make this available from the Internet, so you can access it when you’re not at your home network, or perhaps you are home, but your nice cooperate VPN client blocks access to your local network. Or maybe you’d like to make it available to your friend.</p><p>That’s great, but you have two challenges:</p><p>1) the server sits behind NAT, so you can’t simply connect to the server from the Internet.</p><p>2) your ISP gives you dynamic IPs, so every few days/weeks, the IP changes, so it’s hard to keep track of the IP. Ideally, you could use a static name, that no matter your dynamic IP, remains stable.</p><p>So what you’d need is a static DNS name! Good news, that’s the default on the Socket primitive.</p><h2 id="mysocket-primitives">Mysocket primitives</h2><p>Let’s take a more in-depth look at the two main primitives that make up the mysocket service: Sockets and Tunnels</p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1455/1*2y4Ngw325mE8T-OPoP5OSw.png" class="kg-image" alt width="1455" height="579" layout="responsive"></amp-img><figcaption>Socket and Tunnel primitives</figcaption></figure><h3 id="a-global-socket">A Global Socket</h3><p>The first primitive we need is a <em>socket</em> object. This object is the public endpoint for your service and can be created like this:</p><pre><code>mysocketctl socket create \
-	--type http \
-	--name "my service at home"</code></pre><p>This, among other things, returns a static DNS name that is yours to use. Think of it as your global public endpoint for your load balancer. In this case, mysocket runs the load balancer, and it’s made highly available through our anycast setup.</p><p>In the example above, we created an HTTP/HTTPS socket. Other options are TCP and TLS sockets. In those cases, the API will return not only a static DNS name for your service but also your own dedicated static TCP port number. A typical use case for a TCP socket is making your ssh service available.</p><h3 id="tunnels">Tunnels</h3><p>The second primitive is a tunnel. A tunnel object represents your origin service and the secure connection between the origin and the mysocket global infrastructure. Let’s look at the example below.</p><pre><code>mysocketctl tunnel create \
-	--socket_id 1fab407c-a49d-4c5e-8287-8b138b7549c0</code></pre><p>When creating the tunnel object, simply pass along the socket_id from the socket you’d like to be connected to.</p><h3 id="putting-it-together">Putting it together</h3><p>In summary, we can create a globally available service by first creating a socket of type HTTP/HTTPS, TCP or TLS. This returns a static name for your service and optionally a unique port number. After that, we create a tunnel that links the origin to the socket.</p><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1455/1*6FoxMwJ7gMzk3MvjAvufpw.png" class="kg-image" alt width="1455" height="402" layout="responsive"></amp-img></figure><p>Now that we have created a Socket and Tunnel, it’s time to connect to it, spin up the dataplane, and expose the local service port. We do that using the following command:</p><pre><code>mysocketctl tunnel connect \
-	--port 8000 \
-	--socket_id 1fab407c-a49d-4c5e-8287-8b138b7549c0 \
-	--tunnel_id 3f46a01f-ef5b-4b0c-a1ce-9a294be2be03</code></pre><p>In the example above, we only create one tunnel for the socket, but nothing stops you from creating multiple tunnels (origins) per socket. In that case, mysocket will load balance over all available tunnels.</p><h2 id="demo-time-exposing-a-local-gif-service-to-the-internet">Demo time:<br />exposing a local Gif service to the Internet</h2><p>Alright, time to look at a simple demo and get our hands dirty. For this demo, I developed a small<a href="https://gist.github.com/atoonk/0bfc784feb66ffc03541462fbc945df7#file-gif_service-py" rel="noopener"> proof of concept python web service</a> that shows a random Gif from <a href="https://giphy.com/" rel="noopener">Giphy</a> each time a visitor loads the webpage.</p><p>I’m running this service locally on a VM on my laptop. The goal is to make this service publicly available, and overcoming the two levels of NAT and my ISP that hands out dynamic IP addresses. At the end of this demo, I’m able to share a static DNS name with my users, and you’ll be able to try it!</p><p><strong><em>Watch the video below for a live demo.</em></strong></p><figure class="kg-card kg-embed-card"><amp-youtube width="459" height="344" data-videoid="bZh3vZLCdYM" layout="responsive"></amp-youtube></figure><p>First, let’s download the demo python code and start the Gif web service</p><pre><code>wget https://gist.githubusercontent.com/atoonk/0bfc784feb66ffc03541462fbc945df7/raw/812d839f60ea7bfd98a530a3fc549137abe0b329/gif_service.py
+    <div class="article-body u-container"> <p>With the help of ChatGTP, AI has officially changed everything we do. It’s only been a few months since chatGPT was released, and like many, I’ve been exploring how to best use it. I used it as a coding buddy, to brainstorm, to help with writing, etc.</p><p>The potential of this new technology blows me away. But as a technology enthusiast, I’d love to understand better how it works, or at least better understand some of the common terms and underlying technology. I keep hearing about Large Language Models (LLMs), vector databases, training, models, etc. I’d love to learn more about it, and what better way to just dive in, get my hands dirty and experiment with it?</p><p>So in today’s blog, I’m sharing some learnings on one of these building blocks, called embeddings. Why embeddings? Well, originally, I planned to learn more about Vector databases, but I quickly learned that in order to understand these better, I should start with vectors and embeddings.</p><h3 id="what-is-an-embedding">What is an embedding</h3><p>This is the definition from the <a href="https://platform.openai.com/docs/guides/embeddings" rel="noopener">OpenAI website</a></p><blockquote><em>An embedding is a vector (list) of floating point numbers. The </em><a href="https://platform.openai.com/docs/guides/embeddings/which-distance-function-should-i-use" rel="noopener"><em>distance</em></a><em> between two vectors measures their relatedness. Small distances suggest high relatedness, and large distances suggest low relatedness.</em></blockquote><p>Hhm, ok, but what does that really mean? Imagine you have a word, say hamburger. In order to use this in an LLM (large language model) like GPT, the LLM needs to know what it means. To do that, we can turn the word hamburger into an embedding. An embedding is essentially a (set of) numerical representations of a word, indicating its meaning. We call this the Vector.</p><p>With embeddings, we can now represent the words as vectors:</p><ul><li>dog: [0.2, -0.1, 0.5, …]</li><li>cat: [0.1, -0.3, 0.4, …]</li><li>fish: [-0.3, 0.6, -0.1, …]</li></ul><p>Notice that it’s a representation of the meaning (semantics) of the word. For example, the word embeddings for “dog” and “puppy” would be close together in the vector space because they share a similar meaning and often appear in similar contexts. In contrast, the embeddings for “dog” and “car” would be farther apart because their meanings and contexts are quite different.</p><p>It is this “Word embeddings” technology that enables semantic search, which goes beyond simple keyword matching to understand the meaning and context behind a query. “Semantic” refers to the similarity in meaning between words or phrases.</p><p>For example, traditional string matching would fail to connect the “<em>searching for something to eat</em>” query with the sentence “<em>the mouse is looking for food.</em>” However, with semantic search powered by word embeddings, a search engine recognizes that both phrases share a similar meaning, and it would successfully find the sentence.</p><p>Ok, great. Now that we somewhat understand how this works, how does it really work?</p><h3 id="turning-words-or-sentences-into-embeddings">Turning words or sentences into embeddings</h3><p>A word or sentence can be turned into an embedding (a vector representation) using the OpenAI API. To get an embedding, send your text string to the <a href="https://platform.openai.com/docs/api-reference/embeddings" rel="noopener">embeddings API endpoint</a> along with a choice of embedding model ID (e.g., text-embedding-ada-002). The response will contain an embedding you can extract, save, and use.</p><p>In my case, I’m using the Python API. Using this API, you can simply use the code below to turn the word hamburger into an embedding.</p><pre><code class="language-python">from openai.embeddings_utils import get_embedding
+hamburger_embedding = get_embedding("hamburger", engine='text-embedding-ada-002')
 
-#make sure to update the API key in gif_service.py
+# will look like something like [-0.01317964494228363, -0.001876765862107277, …</code></pre><p>If you have a text document, you would turn all the words or sentences from that document into embeddings. Once you’ve done that, you essentially have a semantic representation of the document as a series of vectors. These vectors capture the meaning and context of the individual words or sentences.</p><h3 id="finding-similarities">Finding Similarities</h3><p>Once you have embeddings for words or sentences, you can use them to find semantic similarities. A common approach to measuring the similarity between two embeddings is by calculating how close the vectors are to each other.</p><p>Calculating the distance between vectors is done by calculating the cosine similarity; if you’re really interested, you can read about that here. <a href="https://en.wikipedia.org/wiki/Cosine_similarity" rel="noopener">https://en.wikipedia.org/wiki/Cosine_similarity</a></p><p>Luckily the Python module that OpenAI ships has an implementation of this c<em>osine_similarity,</em> and you can simply use it like this:</p><pre><code class="language-python">import openai
+from openai.embeddings_utils import get_embedding, cosine_similarity
+openai.api_key = "&lt;YOUR OPENAI API KEY HERE&gt;"
+embedding1 = get_embedding("the kids are in the house",engine='text-embedding-ada-002')
+embedding2 = get_embedding("the children are home",engine="text-embedding-ada-002")
+cosine_similarity(embedding1, embedding2)</code></pre><p>Which prints: <em>0.9387390865828703</em>, meaning they’re very close.</p><h3 id="a-real-life-example">A real-life example</h3><p>Below is a slightly longer example. It reads the document called words.csv, which looks like this:</p><pre><code class="language-csv">text
+"red"
+"potatoes"
+"soda"
+"cheese"
+"water"
+"blue"
+"crispy"
+"hamburger"
+"coffee"
+"green"
+"milk"
+"la croix"
+"yellow"
+"chocolate"
+"french fries"
+"latte"
+"cake"
+"brown"
+"cheeseburger"
+"espresso"
+"cheesecake"
+"black"
+"mocha"
+"fizzy"
+"carbon"
+"banana"
+"sunshine"
+"orange carrot"
+"sun"
+"hay"
+"cookies"
+"fish"</code></pre><p>Calculates the embeddings and adds it all to a Panda data frame. Next, it will take a search term (hotdog) and calculates what words are closest to the word hotdog.<br /></p><pre><code class="language-python">import openai
+import pandas as pd
+import numpy as np
+from openai.embeddings_utils import get_embedding, cosine_similarity
 
-python3 ./gif_service.py</code></pre><p>Alright, now we have this service running, but it’s only reachable from my local network. Next up, we create a socket and a tunnel.</p><pre><code>mysocketctl socket create \
-	--name "my local http Gif service" \ 
-	--type http</code></pre><p>Ok, that returns a socket_id and our static DNS name! In my case, the DNS name is: <a href="https://wandering-shape-7752.edge.mysocket.io" rel="noopener">wandering-shape-7752.edge.mysocket.io</a></p><p>Next up, we’ll use the socket_id to create the tunnel object:</p><pre><code>mysocketctl tunnel create \
-	--socket_id 1fab407c-a49d-4c5e-8287-8b138b7549c0</code></pre><p>Cool, now all we need to do is start the tunnel connection.</p><pre><code>mysocketctl tunnel connect \
-	--port 8000 \
-	--socket_id 1fab407c-a49d-4c5e-8287-8b138b7549c0 \
-	--tunnel_id 3f46a01f-ef5b-4b0c-a1ce-9a294be2be03</code></pre><p>This will securely connect the local gif web service listening on port 8000, to the mysocket infrastructure and make it available as <a href="https://wandering-shape-7752.edge.mysocket.io/" rel="noopener">https://wandering-shape-7752.edge.mysocket.io</a></p><h3 id="wrapping-up">Wrapping up</h3><p>In this blog post, we looked at the two main mysocket primitives, <em>Sockets</em>, and <em>Tunnels</em>. We saw how users can create a Socket object and get a static DNS name and possibly even a dedicated TCP port. In the demo, we used the <em>tunnel connect</em> feature to make port 8000 on my local VM available to the Internet. With that, we made the Internet a little bit better by adding <a href="http://wandering-shape-7752.edge.mysocket.io/" rel="noopener">yet another Gif service</a>, that just happens to run on a VM hosted on my laptop.</p><p></p><amp-anim src="https://media.giphy.com/media/aaw0ay7NqrucU/source.gif" width="600" height="338" layout="responsive"></amp-anim>
- </div>
+openai.api_key = "&lt;YOUR OPENAI API KEY HERE&gt;"
 
-        <div class="article-tags u-container u-marginTop30">
-            <span class="share-title">Tags:</span>
-                <a href="../../tag/mysocket/index.html" title="mysocket" class="button--tags">mysocket</a>
-        </div>
+# read the data
+df = pd.read_csv('words.csv')
+
+# Lamda to add embedding column
+df['embedding'] = df['text'].apply(lambda x: get_embedding(x, engine='text-embedding-ada-002'))
+# Safe it to a csv file, for caching later. So we dont need to call the API all the time
+# You'd store this in a vector database
+df.to_csv('word_embeddings.csv')
+df = pd.read_csv('word_embeddings.csv')
+
+# Convert the string representation of the embedding to a numpy array
+# neeeded since we wrote it to a csv file
+df['embedding'] = df['embedding'].apply(eval).apply(np.array)
+
+# Hotdog is not in the CSV. Let calculate the embedding for it
+search_term = "hotdog"
+search_term_vector = get_embedding(search_term, engine="text-embedding-ada-002")
+
+# now we can calculate the similarity between the search term and all the words in the CSV 
+df["similarities"] = df['embedding'].apply(lambda x: cosine_similarity(x, search_term_vector))
+# print the top 5 most similar words
+print(df.sort_values("similarities", ascending=False).head(5))</code></pre><p></p><p>The code above prints this:</p><pre><code>Unnamed: 0          text                                          embedding  similarities
+7            7     hamburger  [-0.01317964494228363, -0.001876765862107277, ...      0.913613
+18          18  cheeseburger  [-0.01824556663632393, 0.00504859397187829, 0....      0.886365
+14          14  french fries  [0.0014257068978622556, -0.016548126935958862,...      0.853839
+3            3        cheese  [-0.0032112577464431524, -0.0088559715077281, ...      0.838909
+13          13     chocolate  [0.0015315973432734609, -0.012976923026144505,...      0.830742</code></pre><p>Pretty neat, right?! It calculated that a hotdog is most similar to a hamburger, cheeseburger, and fries!</p><p>Let’s do one more thing! In the example below, we add the embeddings for milk and coffee together, just like a simple math addition.</p><p>We then again calculate what this new embedding is most similar to (hint, what do you call a drink that adds coffee to milk?).</p><pre><code class="language-python"># Let's make a copy of the data frame we created earlier, so we can compare the embeddings of two words
+food_df = df.copy()
+milk_vector = food_df['embedding'][10]
+coffee_vector = food_df['embedding'][8]
+
+# lets add the two vectors together
+milk_coffee_vector = milk_vector + coffee_vector
+
+# now calculate the similarity between the combined vector and all the words in the CSV
+food_df["similarities"] = food_df['embedding'].apply(lambda x: cosine_similarity(x, milk_coffee_vector))
+
+print(food_df.sort_values("similarities", ascending=False).head(5))</code></pre><p>The result is this</p><pre><code>Unnamed: 0 text embedding similarities
+8 8 coffee [-0.0007212135824374855, -0.01943901740014553,… 0.959562
+10 10 milk [0.0009238893981091678, -0.019352708011865616,… 0.959562
+15 15 latte [-0.015634406358003616, -0.003936054650694132,… 0.905960
+19 19 espresso [-0.02250547707080841, -0.012807613238692284, … 0.898178
+22 22 mocha [-0.012473775073885918, -0.026152553036808968,… 0.889710</code></pre><p>Ha! Yes, it’s obviously similar to coffee and milk, as that’s what we started with, but next up, we see a latte! That’s pretty cool, right? Coffee + Milk = Late 😀</p><h3 id="vector-database">Vector database</h3><p>Now that we’ve seen how embeddings work and how they can be used to find semantic similarities, let’s talk about vector databases. In our example, we saw that calculating the embeddings was done using an API call to the OpenAI API. This can be slow and will cost you credits. That’s why, in the example code, we saved the calculated embeddings to a CSV file for caching purposes.</p><p>While this approach works for small-scale experiments, it may not be practical for large amounts of data or production environments where performance and scalability are important. This is where vector databases come in.</p><p>There are a few popular ones; a well-known one is Pinecone, but even <a href="https://innerjoin.bit.io/vector-similarity-search-in-postgres-with-bit-io-and-pgvector-c58ac34f408b" rel="noopener">Postgres</a> can be used as a vector database. These vector databases are specifically designed for storing, managing, and efficiently searching through large amounts of embeddings. They are optimized for high-dimensional vector data and can handle operations such as nearest neighbor search, which is crucial for finding the most similar items to a given query.</p><h3 id="wrap-up">Wrap up</h3><p>In this exploration of the technology behind LLMs and AI, I delved into some of the foundational building blocks that power these advanced systems; specifically, we looked at embeddings and vectors. My initial curiosity about vector databases and their potential applications for my own data led me to first understand the underlying principles and the importance of vectors. It’s pretty cool to see how easy it was to get going, thanks to the existing API’s and libraries.</p><p>Perhaps in another weekend adventure, I’ll look further into the next logical topic: vector databases. I’d also love to explore Langchain, a fascinating framework for developing applications powered by language models.</p><p>That’s it for now; thanks for reading!</p><p>Cheers<br /> Andree</p> </div>
+
 
     <footer class="share u-container u-marginTop30">
         <span class="share-title">Share this:</span>
@@ -193,42 +253,7 @@ python3 ./gif_service.py</code></pre><p>Alright, now we have this service runnin
 </article>
 
 
-            <div class="related u-container">
-        <div class="related-title">Related Articles</div>
-
-        <div class="story">
-            <a href="../../introducing-ssh-zero-trust-identity-aware-tcp-sockets/amp.html" class="story-link u-block u-relative">
-                <span class="story-border u-flexCenter u-absolute">1</span>
-                <h3 class="story-title">Introducing SSH zero trust, Identity aware TCP sockets</h3>
-            </a>
-        </div>
-        <div class="story">
-            <a href="../../introducing-identity-aware-sockets-enabling-zero-trust-access-for-your-private-services/amp.html" class="story-link u-block u-relative">
-                <span class="story-border u-flexCenter u-absolute">2</span>
-                <h3 class="story-title">Introducing Identity Aware Sockets: Enabling Zero Trust access for your Private services</h3>
-            </a>
-        </div>
-        <div class="story">
-            <a href="../../global-load-balancing-with-kubernetes/amp.html" class="story-link u-block u-relative">
-                <span class="story-border u-flexCenter u-absolute">3</span>
-                <h3 class="story-title">Global load balancing with Kubernetes and Mysocket.io</h3>
-            </a>
-        </div>
-        <div class="story">
-            <a href="../../easy-multi-region-load-balancing-with-mysocket/amp.html" class="story-link u-block u-relative">
-                <span class="story-border u-flexCenter u-absolute">4</span>
-                <h3 class="story-title">Easy Multi-region load balancing with Mysocket.io</h3>
-            </a>
-        </div>
-        <div class="story">
-            <a href="../../introducing-mysocket-io/amp.html" class="story-link u-block u-relative">
-                <span class="story-border u-flexCenter u-absolute">5</span>
-                <h3 class="story-title">Introducing Mysocket.io</h3>
-            </a>
-        </div>
-
-    </div>
-    </main>
+            </main>
 
     <amp-sidebar id="sidenav" class="sidebar" layout="nodisplay" side="right">
     <div class="close-sidebar u-bgColor" role="button" aria-label="close sidebar" on="tap:sidenav.close" tabindex="0">✕</div>
