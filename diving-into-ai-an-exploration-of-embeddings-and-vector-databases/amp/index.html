@@ -20,6 +20,8 @@
     <meta property="og:image" content="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDE2fHx2YW5jb3V2ZXIlMjBhaXxlbnwwfHx8fDE2ODI5MTQwNTE&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000" />
     <meta property="article:published_time" content="2023-05-01T04:09:12.000Z" />
     <meta property="article:modified_time" content="2023-05-01T04:27:55.000Z" />
+    <meta property="article:tag" content="ai" />
+    
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Diving into AI: An Exploration of Embeddings and Vector Databases" />
     <meta name="twitter:description" content="Join me on my journey into AI and learning about embeddings, vectors and vector databases" />
@@ -27,6 +29,8 @@
     <meta name="twitter:image" content="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDE2fHx2YW5jb3V2ZXIlMjBhaXxlbnwwfHx8fDE2ODI5MTQwNTE&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Andree Toonk" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="ai" />
     <meta name="twitter:site" content="@atoonk" />
     <meta name="twitter:creator" content="@atoonk" />
     <meta property="og:image:width" content="2000" />
@@ -72,6 +76,7 @@
         "width": 2000,
         "height": 1326
     },
+    "keywords": "ai",
     "description": "Join me on my journey into AI and learning about embeddings, vectors and vector databases",
     "mainEntityOfPage": {
         "@type": "WebPage",
@@ -122,9 +127,12 @@
             <span class="author-name">By <a href="../../author/andree/index.html">Andree Toonk</a></span>
 
             <span class="timestamp">
-                <time class="datetime" datetime="2023-05-01">21 minutes ago</time>
+                <time class="datetime" datetime="2023-05-01">22 minutes ago</time>
             </span>
 
+            
+                <span>in</span>
+                <span class="categories"><a href="../../tag/ai/index.html" title="ai">ai</a></span>
             
         </div>
     </header>
@@ -224,6 +232,10 @@ print(food_df.sort_values("similarities", ascending=False).head(5))</code></pre>
 19 19 espresso [-0.02250547707080841, -0.012807613238692284, … 0.898178
 22 22 mocha [-0.012473775073885918, -0.026152553036808968,… 0.889710</code></pre><p>Ha! Yes, it’s obviously similar to coffee and milk, as that’s what we started with, but next up, we see a latte! That’s pretty cool, right? Coffee + Milk = Late 😀</p><h3 id="vector-database">Vector database</h3><p>Now that we’ve seen how embeddings work and how they can be used to find semantic similarities, let’s talk about vector databases. In our example, we saw that calculating the embeddings was done using an API call to the OpenAI API. This can be slow and will cost you credits. That’s why, in the example code, we saved the calculated embeddings to a CSV file for caching purposes.</p><p>While this approach works for small-scale experiments, it may not be practical for large amounts of data or production environments where performance and scalability are important. This is where vector databases come in.</p><p>There are a few popular ones; a well-known one is Pinecone, but even <a href="https://innerjoin.bit.io/vector-similarity-search-in-postgres-with-bit-io-and-pgvector-c58ac34f408b" rel="noopener">Postgres</a> can be used as a vector database. These vector databases are specifically designed for storing, managing, and efficiently searching through large amounts of embeddings. They are optimized for high-dimensional vector data and can handle operations such as nearest neighbor search, which is crucial for finding the most similar items to a given query.</p><h3 id="wrap-up">Wrap up</h3><p>In this exploration of the technology behind LLMs and AI, I delved into some of the foundational building blocks that power these advanced systems; specifically, we looked at embeddings and vectors. My initial curiosity about vector databases and their potential applications for my own data led me to first understand the underlying principles and the importance of vectors. It’s pretty cool to see how easy it was to get going, thanks to the existing API’s and libraries.</p><p>Perhaps in another weekend adventure, I’ll look further into the next logical topic: vector databases. I’d also love to explore Langchain, a fascinating framework for developing applications powered by language models.</p><p>That’s it for now; thanks for reading!</p><p>Cheers<br /> Andree</p> </div>
 
+        <div class="article-tags u-container u-marginTop30">
+            <span class="share-title">Tags:</span>
+                <a href="../../tag/ai/index.html" title="ai" class="button--tags">ai</a>
+        </div>
 
     <footer class="share u-container u-marginTop30">
         <span class="share-title">Share this:</span>
@@ -253,7 +265,12 @@ print(food_df.sort_values("similarities", ascending=False).head(5))</code></pre>
 </article>
 
 
-            </main>
+            <div class="related u-container">
+        <div class="related-title">Related Articles</div>
+
+
+    </div>
+    </main>
 
     <amp-sidebar id="sidenav" class="sidebar" layout="nodisplay" side="right">
     <div class="close-sidebar u-bgColor" role="button" aria-label="close sidebar" on="tap:sidenav.close" tabindex="0">✕</div>
