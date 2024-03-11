@@ -12,7 +12,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <title>100G networking in AWS, a network performance deep dive</title>
+    <title>High-Speed Packet Transmission in Go: From net.Dial to AF_XDP</title>
 
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -29,28 +29,28 @@
     
     <meta property="og:site_name" content="Andree&#x27;s Musings" />
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="100G networking in AWS, a network performance deep dive" />
-    <meta property="og:description" content="Loyal readers of my blog will have noticed a theme, I’m interested in the continued move to virtualized network functions, and the need for faster networking options on cloud compute. In this blog, we’ll look at the network performance on the juggernaut of cloud computing, AWS. AWS is" />
-    <meta property="og:url" content="http://toonk.io/aws-network-performance-deep-dive/" />
-    <meta property="og:image" content="https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
-    <meta property="article:published_time" content="2020-10-15T19:06:42.000Z" />
-    <meta property="article:modified_time" content="2020-10-16T19:57:33.000Z" />
-    <meta property="article:tag" content="aws" />
+    <meta property="og:title" content="High-Speed Packet Transmission in Go: From net.Dial to AF_XDP" />
+    <meta property="og:description" content="Pushing limits in Go: from net.Dial to syscalls, AF_PACKET, and lightning-fast AF_XDP. Benchmarking packet sending performance.." />
+    <meta property="og:url" content="http://toonk.io/sending-network-packets-in-go/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1559510980-7246660a93d3?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI3fHx2YW5jb3V2ZXJ8ZW58MHx8fHwxNzEwMTMzMDkyfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta property="article:published_time" content="2024-03-11T05:00:24.000Z" />
+    <meta property="article:modified_time" content="2024-03-11T05:22:44.000Z" />
+    <meta property="article:tag" content="Go" />
     <meta property="article:tag" content="networking" />
     
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="100G networking in AWS, a network performance deep dive" />
-    <meta name="twitter:description" content="Loyal readers of my blog will have noticed a theme, I’m interested in the continued move to virtualized network functions, and the need for faster networking options on cloud compute. In this blog, we’ll look at the network performance on the juggernaut of cloud computing, AWS. AWS is" />
-    <meta name="twitter:url" content="http://toonk.io/aws-network-performance-deep-dive/" />
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta name="twitter:title" content="High-Speed Packet Transmission in Go: From net.Dial to AF_XDP" />
+    <meta name="twitter:description" content="Pushing limits in Go: from net.Dial to syscalls, AF_PACKET, and lightning-fast AF_XDP. Benchmarking packet sending performance.." />
+    <meta name="twitter:url" content="http://toonk.io/sending-network-packets-in-go/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1559510980-7246660a93d3?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI3fHx2YW5jb3V2ZXJ8ZW58MHx8fHwxNzEwMTMzMDkyfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Andree Toonk" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="aws, networking" />
+    <meta name="twitter:data2" content="Go, networking" />
     <meta name="twitter:site" content="@atoonk" />
     <meta name="twitter:creator" content="@atoonk" />
     <meta property="og:image:width" content="2000" />
-    <meta property="og:image:height" content="1333" />
+    <meta property="og:image:height" content="1321" />
     
     <script type="application/ld+json">
 {
@@ -82,18 +82,18 @@
             "https://twitter.com/atoonk"
         ]
     },
-    "headline": "100G networking in AWS, a network performance deep dive",
-    "url": "http://toonk.io/aws-network-performance-deep-dive/",
-    "datePublished": "2020-10-15T19:06:42.000Z",
-    "dateModified": "2020-10-16T19:57:33.000Z",
+    "headline": "High-Speed Packet Transmission in Go: From net.Dial to AF_XDP",
+    "url": "http://toonk.io/sending-network-packets-in-go/",
+    "datePublished": "2024-03-11T05:00:24.000Z",
+    "dateModified": "2024-03-11T05:22:44.000Z",
     "image": {
         "@type": "ImageObject",
-        "url": "https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "url": "https://images.unsplash.com/photo-1559510980-7246660a93d3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDI3fHx2YW5jb3V2ZXJ8ZW58MHx8fHwxNzEwMTMzMDkyfDA&ixlib=rb-4.0.3&q=80&w=2000",
         "width": 2000,
-        "height": 1333
+        "height": 1321
     },
-    "keywords": "aws, networking",
-    "description": "\nLoyal readers of my blog will have noticed a theme, I’m interested in the\ncontinued move to virtualized network functions, and the need for faster\nnetworking options on cloud compute. In this blog, we’ll look at the network\nperformance on the juggernaut of cloud computing, AWS.\n\nAWS is the leader in the cloud computing world, and many companies now run parts\nof their services on AWS. The question we’ll try to answer in this article is:\nhow well suited is AWS’ ec2 for high throughput network fun",
+    "keywords": "Go, networking",
+    "description": "Pushing limits in Go: from net.Dial to syscalls, AF_PACKET, and lightning-fast AF_XDP. Benchmarking packet sending performance..",
     "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "http://toonk.io/"
@@ -206,8 +206,8 @@
 
 <article class="post u-marginBottom40 u-relative">
     <header class="post-header u-container u-maxWidth740 u-paddingTop30 u-relative zindex3">
-    <h1 class="post-title u-marginBottom20 u-fontSizeLargest u-md-fontSize36">100G networking in AWS, a network performance deep dive</h1>
-    
+    <h1 class="post-title u-marginBottom20 u-fontSizeLargest u-md-fontSize36">High-Speed Packet Transmission in Go: From net.Dial to AF_XDP</h1>
+    <p class="post-excerpt u-marginBottom30 u-fontSize22 u-textMuted">Pushing limits in Go: from net.Dial to syscalls, AF_PACKET, and lightning-fast AF_XDP. Benchmarking packet sending performance..</p>
 
     <hr>
 
@@ -229,29 +229,29 @@
         <div class="hh-author-name u-fontSize15 u-noWrapWithEllipsis"><a href="../author/andree/index.html">Andree Toonk</a></div>
 
         <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2020-10-15">15 Oct 2020</time>
+    <time class="datetime u-textCapitalize" datetime="2024-03-11">11 Mar 2024</time>
     <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="9 min read">9 min read</span>
+    <span class="readingTime" style="cursor:default" title="10 min read">10 min read</span>
     
 </div>    </div>
 </div>
         <aside class="post-shasre u-flex0 u-flexCenter u-hide-before-md">
             <span class="share-label u-textMuted u-fontSizeSmaller">Share:</span>
-            <a href="https://twitter.com/share?text=100G%20networking%20in%20AWS%2C%20a%20network%20performance%20deep%C2%A0dive&amp;url=http://toonk.io/aws-network-performance-deep-dive/"
+            <a href="https://twitter.com/share?text=High-Speed%20Packet%20Transmission%20in%20Go%3A%20From%20net.Dial%20to%20AF_XDP&amp;url=http://toonk.io/sending-network-packets-in-go/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Twitter"
                 class="share-link button button--circle godo-tracking js-share">
                 <svg class="icon"><use xlink:href="#icon-twitter"></use></svg>
             </a>
-            <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://toonk.io/aws-network-performance-deep-dive/&amp;title=100G%20networking%20in%20AWS%2C%20a%20network%20performance%20deep%C2%A0dive"
+            <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://toonk.io/sending-network-packets-in-go/&amp;title=High-Speed%20Packet%20Transmission%20in%20Go%3A%20From%20net.Dial%20to%20AF_XDP"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Linkedin"
                 class="share-link button button--circle godo-tracking js-share">
                 <svg class="icon"><use xlink:href="#icon-linkedin"></use></svg>
             </a>
-            <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/aws-network-performance-deep-dive/"
+            <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/sending-network-packets-in-go/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Facebook"
@@ -263,25 +263,56 @@
 </header>
         <figure class="post-image u-block u-marginAuto u-sizeFullHeight u-sizeFullWidth u-maxWidth1000">
             <img class="u-block u-marginAuto u-sizeFullWidth simply-zoom"
-                srcset="https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,
-                        https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w,
-                        https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 1000w,
-                        https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 2000w"
+                srcset="https://images.unsplash.com/photo-1559510980-7246660a93d3?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI3fHx2YW5jb3V2ZXJ8ZW58MHx8fHwxNzEwMTMzMDkyfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000 300w,
+                        https://images.unsplash.com/photo-1559510980-7246660a93d3?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI3fHx2YW5jb3V2ZXJ8ZW58MHx8fHwxNzEwMTMzMDkyfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000 600w,
+                        https://images.unsplash.com/photo-1559510980-7246660a93d3?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI3fHx2YW5jb3V2ZXJ8ZW58MHx8fHwxNzEwMTMzMDkyfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000 1000w,
+                        https://images.unsplash.com/photo-1559510980-7246660a93d3?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI3fHx2YW5jb3V2ZXJ8ZW58MHx8fHwxNzEwMTMzMDkyfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000 2000w"
                 sizes="(max-width: 400px) 300px,(max-width: 730px) 600px, (max-width: 1600px) 100vw"
-                src="https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-                alt="100G networking in AWS, a network performance deep dive"
+                src="https://images.unsplash.com/photo-1559510980-7246660a93d3?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI3fHx2YW5jb3V2ZXJ8ZW58MHx8fHwxNzEwMTMzMDkyfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000"
+                alt="High-Speed Packet Transmission in Go: From net.Dial to AF_XDP"
             />
         </figure>
 
     <div class="post-wrap u-maxWidth1000 u-relative u-marginAuto">
-        <div id="post-body" class="post-body u-container u-maxWidth740 u-relative"><h3></h3><p>Loyal readers of my blog will have noticed a theme, I’m interested in the continued move to virtualized network functions, and the need for faster networking options on cloud compute. In this blog, we’ll look at the network performance on the juggernaut of cloud computing, AWS.</p><p>AWS is the leader in the cloud computing world, and many companies now run parts of their services on AWS. The question we’ll try to answer in this article is: how well suited is AWS’ ec2 for high throughput network functions.</p><p><em>I’ve decided to experiment with adding a short demo video to this blog. Below you will find a quick demo and summary of this article. Since these videos are new and a bit of an experiment, let me know if you like it.</em></p><figure class="kg-card kg-embed-card"><iframe width="612" height="344" src="https://www.youtube.com/embed/iwe0gL8VBvA?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></figure><h3 id="100g-networking">100G networking</h3><p>It’s already been two years since AWS <a href="https://aws.amazon.com/about-aws/whats-new/2018/11/introducing-amazon-ec2-c5n-instances/" rel="noopener">announced the C5n instances</a>, featuring 100 Gbps networking. I’m not aware of any other cloud provider offering 100G instances, so this is pretty unique. Ever since this was released I wondered exactly what, if any, the constraints were. Can I send/receive 100g line rate (144Mpps)? So, before we dig into the details, let’s just check if we can really get to 100Gbs.</p><figure class="kg-card kg-embed-card kg-card-hascaption"><blockquote class="twitter-tweet" data-width="550"><p lang="en" dir="ltr">this is fun :)  97Gbs <a href="https://t.co/6VdkR2Rlr4">pic.twitter.com/6VdkR2Rlr4</a></p>&mdash; Andree Toonk, Adelante! (@atoonk) <a href="https://twitter.com/atoonk/status/1266037590492241921?ref_src=twsrc%5Etfw">May 28, 2020</a></blockquote>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<figcaption>100gbs testing.. We’re gonna need a bigger boat..</figcaption></figure><p>There you have it, I was able to get to 100Gbs between 2 instances! That’s exciting. But there are a few caveats. We’ll dig into all of them in this article, with the aim to understand exactly what’s possible, what the various limits are, and how to get to 100g.</p><h3 id="understand-the-limits">Understand the limits</h3><p>Network performance on Linux is typically a function of a few parameters. Most notably, the number of TX/RX queues available on the NIC (network card). The number of CPU cores, ideally at least equal to the number of queues. The pps (packets per second) limit per queue. And finally, in virtual environments like AWS and GCP, potential admin limits on the instance.</p><figure class="kg-card kg-image-card"><img src="https://cdn-images-1.medium.com/max/1200/0*JUjZ5NOIWUrey-Xm" class="kg-image" alt></figure><p>Doing networking in software means that processing a packet (or a batch of them) uses a number of CPU cycles. It’s typically not relevant how many bytes are in a packet. As a result, the best metric to look at is the: pps number (related to our cpu cycle budget). Unfortunately, the pps performance numbers for AWS aren’t published so, we’ll have to measure them in this blog. With that, we should have a much better understanding of the network possibilities on AWS, and hopefully, this saves someone else a lot of time (this took me several days of measuring) ;)</p><h3 id="network-queues-per-instance-type">Network queues per instance type</h3><p>The table below shows the number of NIC queues by ec2 (c5n) Instance type.</p><figure class="kg-card kg-image-card"><img src="https://cdn-images-1.medium.com/max/1600/1*P9_cWmValN63fmRXAWqdqg.png" class="kg-image" alt></figure><p><em>In the world of ec2, 16 vCPUs on the C5n 4xl instance means 1 Socket, 8 Cores per socket, 2 Threads per core.</em></p><p>On AWS, an Elastic Network Adapter (ENA) NIC has as many queues as you have vCPUs. Though it stops at 32 queues, as you can see with the C5n 9l and C5n 18xl instance.</p><p>Like many things in computing, to make things faster, things are parallelized. We see this clearly when looking at CPU capacity, we’re adding more cores, and programs are written in such a way that can leverage the many cores in parallel (multi-threaded programs).</p><p>Scaling Networking performance on our servers is done largely the same. It’s hard to make things significantly faster, but it is easier to add more ‘workers’, especially if the performance is impacted by our CPU capacity. In the world of NICs, these ‘workers’ are queues. Traffic send and received by a host is load-balanced over the available network queues on the NIC. This load balancing is done by hashing (typically the 5 tuples, protocol, source + destination address, and port number). Something you’re likely familiar with from ECMP.</p><figure class="kg-card kg-image-card"><img src="https://cdn-images-1.medium.com/max/1200/1*VsV_F3dbhosQXAi9A97mqQ.jpeg" class="kg-image" alt></figure><blockquote>So queues on a NIC are like lanes on a highway, the more lanes, the more cars can travel the highway. The more queues, the more packets (flows) can be processed.</blockquote><h3 id="test-one-ena-queue-performance">Test one, ENA queue performance</h3><p>As discussed, the network performance of an instance is a function of the number of available queues and cpu’s. So let’s start with measuring the maximum performance of a single flow (queue) and then scale up and measure the pps performance.</p><p>In this measurement, I used two c5n.18xlarge ec2 instances in the same subnet and the same placement zone. The sender is using <a href="https://toonk.io/building-a-high-performance-linux-based-traffic-generator-with-dpdk/index.html" rel="noopener">DPDK-pktgen</a> (igb_uio). The receiver is a stock ubuntu 20.04 LTS instance, using the ena driver.</p><p>The table below shows the TX and RX performance between the two c5n.18xlarge ec2 instances for one and two flows.</p><figure class="kg-card kg-image-card"><img src="https://cdn-images-1.medium.com/max/1600/1*GVmlTopDSacvRFilauWZag.png" class="kg-image" alt></figure><p>With this, it seems the per queue limit is about 1Mpps. Typically the per queue limit is due to the fact that a single queue (soft IRQ) is served by a single CPU core. Meaning, the per queue performance is limited by how many packets per second a single CPU core can process. So again, what you typically see in virtualized environments is that the number of network queues goes up with the number of cores in the VM. In ec2 this is the same, though it’s maxing out at 32 queues.</p><h3 id="test-two-rx-only-pps-performance">Test two, RX only pps performance</h3><p>Now that we determined that the per queue limit appears to be roughly one million packets per second, it’s natural to presume that this number scales up horizontally with the number of cores and queues. For example, the C5n 18xl comes with 32 nic queues and 72 cores, so in theory, we could naively presume that the (RX/TX) performance (given enough flows) should be 32Mpps. Let’s go ahead and validate that.</p><p>The graph below shows the Transmit (TX) performance as measured on a c5n.18xlarge. In each measurement, I gave the packet generator one more queue and vcpu to work with. Starting with one TX queue and one VCPu, incrementing this by one in each measurement until we reached 32 vCPU and 32 queues (max). The results show that the per TX queue performance varied between 1Mpps to 700Kpps. The maximum total TX performance I was able to get however, was ~8.5Mpps using 12 TX queues. After that, adding more queues and vCPu’s didn’t matter, or actually degraded the performance. So this indicates that the performance scales horizontally (per queue), but does max out at a certain point (varies per instance type), in this case at 8.5 Mpps</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/0*7ATryTmrHyn_Inaj" class="kg-image" alt><figcaption>c5n.18xlarge per TX queue performance</figcaption></figure><p>In this next measurement, we’ll use two packet generators and one receiver. I’m using two generators, just to make sure the limit we observed earlier isn’t caused by limitations on the packet generator. Each traffic generator is sending many thousands of flows, making sure we leverage all the available queues.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*S8jlTc-v-Krm8BLx1QCGtw.png" class="kg-image" alt><figcaption>RX pps per C5N instance&nbsp;type</figcaption></figure><p>Alright, after a few minutes of reading (and many, many hours, well really days.. of measurements on my end), we now have a pretty decent idea of the performance numbers. We know how many queues each of the various c5n instance types have.</p><blockquote><strong>We have seen that the per queue limit is roughly 1Mpps. And with the table above, we now see how many packets per second each instance is able to receive (RX)</strong>.</blockquote><h3 id="forwarding-performance">Forwarding performance</h3><p>If we want to use ec2 for virtual network functions, then just receiving traffic isn’t enough. A typical router or firewall should both receive and send traffic at the same time. So let’s take a look at that.</p><p>For this measurement, I used the following setup. Both the traffic generator and receiver were C5n-18xl instances. The Device Under Test (DUT) was a standard Ubuntu 20.04 LTS instance using the ena driver. Since the earlier observed pps numbers weren’t too high, I determined it’s safe to use the regular Linux kernel to forward packets.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*rK_4B6M-0NF2mrrDmheuFQ.png" class="kg-image" alt><figcaption>test setup</figcaption></figure><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*UUWrmoLH-MXLMsNBdCvJXg.png" class="kg-image" alt><figcaption>pps forwarding performance</figcaption></figure><p>The key takeaway from this measurement is that the TX and RX numbers are similar as we’d seen before for the instance types up to (including) the C5n 4xl. For example, earlier we saw the C5n 4xl could receive up to ~3Mpps. This measurement shows that it can do ~3Mpps simultaneously on RX and TX.</p><p>However, if we look at the C5n 9l, we can see it was able to process RX+ TX about 6.2Mpps. Interestingly, earlier we saw it was also able to receive (rx only) ~6Mpps. So it looks like we hit some kind of aggregate limit. We observed a similar limit for the C5n 18xl instance.</p><h3 id="in-summary-">In Summary.</h3><p>In this blog, we looked at the various performance characteristics of networking on ec2. We determined that the <strong>performance of a single queue is roughly 1Mpps</strong>. We then saw how the number of queues goes up with the higher end instances up until <strong>32 queues maximum</strong>.</p><p>We then measure the RX performance of the various instances as well as the forwarding (RX + TX aggregate) performance. Depending on the measurement setup (RX, or TX+RX) we see that <strong>for the largest instance types, the pps performance maxes out at roughly 6.6Mpps to 8.3Mpps</strong>. With that, I think that the C5n 9l hits the sweet spot in terms of cost vs performance.</p><h3 id="so-how-about-that-100g-test">So how about that 100G test?</h3><p>Ah yes! So far, we talked about pps only. How does that translate that to gigabits per second?<br>Let’s look at the quick table below that shows how the pps number translates to Gbs at various packet sizes.</p><figure class="kg-card kg-image-card"><img src="https://cdn-images-1.medium.com/max/1600/1*sXL3CJJ9M955aa8DvRUVyw.png" class="kg-image" alt></figure><p>These are a few examples to get to 10G at various packet sizes. This shows that in order to support line-rate 10G at the smallest packet size, the system will need to be able to do ~14.88 Mpps. The 366 byte packet size is roughly the equivalent average of what you’ll see with an IMIX test, for which the systems needs to be able to process ~3,4Mpps to get to 10G line rate.</p><p>If we look at the same table but then for 100gbps, we see that at the smallest packet size, an instance would need to be able to process is over 148Mpps. But using 9k jumbo frames, you only need 1.39Mpps.</p><figure class="kg-card kg-image-card"><img src="https://cdn-images-1.medium.com/max/1600/1*WbChAl1uTuUMnP6oHFzRhg.png" class="kg-image" alt></figure><p>And so, that’s what you need to do to get to 100G networking in ec2. Use Jumbo frames (supported in ec2, in fact, for the larger instances, this was the default). With that and a few parallel flows you’ll be able to get to 100G “easily”!</p><h3 id="a-few-more-limits">A few more limits</h3><p>One more limitation I <a href="https://cloudonaut.io/ec2-network-performance-cheat-sheet/" rel="noopener">read about while researching</a>, but didn’t look into myself. It appears that some of the instances have time-based limits on the performance. This <a href="https://www.bluematador.com/blog/ec2-packets-per-second-guaranteed-throughput-vs-best-effort" rel="noopener">blog</a> calls it Guaranteed vs. Best Effort. Basically, you’re allowed to burst for a while, but after a certain amount of time, you’ll get throttled. Finally, there is a per-flow limit of 10Gbs. So if you’re doing things like IPSEC, GRE, VXLAN, etc, note that you will never go any faster than 10g.</p><h3 id="closing-thoughts">Closing thoughts</h3><p>Throughout this blog, I mentioned the word ‘limits’ quite a bit, which has a bit of a negative connotation. However, it’s important to keep in mind that AWS is a multi-tenant environment, and it’s their job to make sure the user experience is still as much as possible as if the instance is dedicated to you. So you can also think of them as ‘guarantees’. AWS will not call them that, but in my experience, the throughput tests have been pretty reproducible with, say a +/- 10% measurement margin.</p><p>All in all, it’s pretty cool to be able to do 100G on AWS. As long as you are aware of the various limitations, which unfortunately aren’t well documented. Hopefully, this article helps some of you with that in the future. <br>Finally, could you use AWS to run your virtual firewalls, proxies, VPN gateways, etc? Sure, as long as you’re aware of the performance constraints. And with that design a horizontally scalable design, according to AWS best practices. The one thing you really do need to keep an eye on is the (egress) bandwidth pricing, which, when you started doing many gigabits per second, can add up.</p><p><em>Cheers</em><br><em>- Andree</em></p><p><br></p></div>
+        <div id="post-body" class="post-body u-container u-maxWidth740 u-relative"><p>Recently, I developed a <a href="https://github.com/atoonk/ping-aws-ips">Go program that sends ICMP ping messages</a> to millions of IP addresses. Obviously I wanted this to be done as fast and efficiently as possible. So this prompted me to look into the various methods of interfacing with the network stack and sending packets. It was a fun journey, so in this article, I’ll share some of my learnings and document them for my future self :)  There’s also <a href="https://github.com/atoonk/go-pktgen">this Github repo that has the example code</a>.</p><h2 id="the-use-case">The use case</h2><p>Let’s start with a quick background of the problem statement. I want to be able to send as many packets per second from a Linux machine. There are a few use cases, for example, the Ping example I mentioned earlier, but also maybe something more generic like dpdk-pktgen or even something Iperf. I guess you could summarize it as a packet generator.</p><p>I’m using the Go programming language to explore the various options. In general, the explored methods could be used in any programming language since these are mostly Go-specific interfaces around what the Linux Kernel provides. However,  you may be limited by the libraries or support that exist in your favorite programming language.<br><br>Let’s start our adventure and explore the various ways to generate network packets in Go. I’ll go over the options, and we’ll end with a benchmark, showing us which method is the best for our use case. I’ve included examples of the various methods in a Go package; you can <a href="https://github.com/atoonk/go-pktgen/">find the code here</a>. We’ll use the same code to run a benchmark and see how the various methods compare. </p><h2 id="the-net-dial-method">The net.Dial method</h2><p>The net.Dial method is the most likely candidate for working with network connections in Go. It’s a high-level abstraction provided by the standard library's net package, designed to establish network connections in an easy-to-use and straightforward manner.  You would use this for bi-directional communication where you can simply read and write to a Net.Conn (socket) without having to worry about the details. <br><br>In our case, we’re primarily interested in sending traffic, using the net.Dial method that looks like this:</p><pre><code class="language-Golang">conn, err := net.Dial("udp", fmt.Sprintf("%s:%d", s.dstIP, s.dstPort))
+if err != nil {
+return fmt.Errorf("failed to dial UDP: %w", err)
+}
+defer conn.Close()</code></pre><p>After that, you can simply write bytes to your conn like this</p><pre><code class="language-go">conn.Write(payload)
+</code></pre><p>You can find our code for this in the file <a href="https://github.com/atoonk/go-pktgen/blob/main/pktgen/af_inet.go">af_inet.go</a><br><br>That’s it! Pretty simple, right? As we’ll see, however, when we get to the benchmark, this is the slowest method and not the best for sending packets quickly. Using this method, we can get to about 697,277 pps</p><h2 id="raw-socket">Raw Socket</h2><p>Moving deeper into the network stack, I decided to use raw sockets to send packets in Go. Unlike the more abstract net.Dial method, raw sockets provide a lower-level interface with the network stack, offering granular control over packet headers and content. This method allows us to craft entire packets, including the IP header, manually.</p><p>To create a raw socket, we’ll have to make our own syscall, give it the correct parameters, and provide the type of traffic we’re going to send. We’ll then get back a file descriptor. We can then read and write to this file descriptor. This is what it looks like at the high level; see rawsocket. Go for the complete code.</p><pre><code class="language-Go">fd, err := syscall.Socket(syscall.AF_INET, syscall.SOCK_RAW, syscall.IPPROTO_RAW)
+if err != nil {
+	log.Fatalf("Failed to create raw socket: %v", err)
+}
+defer syscall.Close(fd)
+
+// Set options: here, we enable IP_HDRINCL to manually include the IP header
+if err := syscall.SetsockoptInt(fd, syscall.IPPROTO_IP, syscall.IP_HDRINCL, 1); err != nil {
+	log.Fatalf("Failed to set IP_HDRINCL: %v", err)
+}</code></pre><p><br>That’s it, and now we can read and write our raw packet to file descriptor like this</p><pre><code class="language-Go">err := syscall.Sendto(fd, packet, 0, dstAddr)</code></pre><p>Since I’m using IPPROTO_RAW, we’re bypassing the transport layer of the kernel's network stack, and the kernel expects us to provide a complete IP packet. We do that using the <a href="https://github.com/atoonk/go-pktgen/blob/main/pktgen/rawsocket.go#L66C17-L66C28">BuildPacket function</a>. It’s slightly more work, but the neat thing about raw sockets is that you can construct whatever packet you want. <br></p><p>We’re telling the kernel just to take our packet, it has to do less work, and thus, this process is faster. All we’re really asking from the network stack is to take this IP packet, add the ethernet headers, and hand it to the network card for sending. It comes as no surprise, then, that this option is indeed faster than the Net.Dial option. Using this method, we can reach about 793,781 pps, about 100k PPS more than the net.Dial method.<br></p><h2 id="the-af_inet-syscall-method">The AF_INET Syscall Method</h2><p>Now that we’re used to using syscalls directly, we have another option. In this <a href="https://github.com/atoonk/go-pktgen/blob/main/pktgen/af_inet_syscall.go">example</a>, we create a UDP socket directly like below</p><pre><code class="language-Go">fd, err := syscall.Socket(syscall.AF_INET, syscall.SOCK_DGRAM, syscall.IPPROTO_UDP)</code></pre><p>After that we can simply write our payload to it using the Sendto method like before.</p><pre><code class="language-Go">err = syscall.Sendto(fd, payload, 0, dstAddr)</code></pre><p>It looks similar to the raw socket example, but a few differences exist. The key difference is that in this case we’ve created a socket of type UDP, which means we don’t need to construct the complete packet (IP and UDP header) like before.  When using this method, the kernel manages the construction of the UDP header based on the destination IP and port we specify and handles the encapsulation process into an IP packet.</p><p>In this case, the payload is just the UDP payload. In fact, this method is similar to the Net.Dial method before, but with fewer abstractions. <br><br>Compared to the raw socket method before, I’m now seeing 861,372 pps—that’s a 70k jump. We’re getting faster each step of the way. I’m guessing we get the benefit of some UDP optimizations in the kernel.</p><h2 id="the-pcap-method">The Pcap Method</h2><p>It may be surprising to see Pcap here for sending packets. Most folks know pcap from things like tcpdump or Wireshark to capture packets. But it’s also a fairly common way to send packets. In fact, if you look at many of the Go-packet or Python Scappy examples, this is typically the method listed to send custom packets. So, I figured I should include it and see its performance. I was skeptical, but was pleasantly surprised when I saw the pps numbers!</p><p>First, let’s take a look at what this looks like in Go; again, for the complete example, see my implementation in <a href="https://github.com/atoonk/go-pktgen/blob/main/pktgen/pcap.go">pcap.go here</a><br><br>We start by creating a Pcap handle like this:</p><pre><code class="language-Golang">handle, err := pcap.OpenLive(s.iface, 1500, false, pcap.BlockForever)
+if err != nil {
+	return fmt.Errorf("could not open device: %w", err)
+}
+defer handle.Close()</code></pre><p>Then we <a href="https://github.com/atoonk/go-pktgen/blob/main/pktgen/pcap.go#L51-L64">create the packet manually,</a> similar to the Raw socket method earlier, but in this case, we include the Ethernet headers. <br>After that, we can write the packet to the pcap handle, and we’re done!</p><pre><code class="language-Golang">err := handle.WritePacketData(packet)</code></pre><p>To my surprise, this method resulted in quite a performance win. We surpassed the one million packets per second mark by quite a margin: 1,354,087 pps—almost a 500k pps jump!<br><br>Note that, towards the end of this article, we’ll look at  a caveat, but good to know that this method stops working well when sending multiple streams (go routines).<br></p><h2 id="the-af_packet-method">The af_packet method</h2><p>As we explore the layers of network packet crafting and transmission in Go, we next find the AF_PACKET method. This method is popular for IDS systems on Linux, and for good reasons!</p><p>It gives us direct access to the network device layer, allowing for the transmission of packets at the link layer. This means we can craft packets, including the Ethernet header, and send them directly to the network interface, bypassing the higher networking layers. We can create a socket of type AF_PACKET using a syscall. In Go this will look like this:</p><pre><code class="language-Golang">fd, err := syscall.Socket(syscall.AF_PACKET, syscall.SOCK_RAW, int(htons(syscall.ETH_P_IP)))</code></pre><p>This line of code creates a raw socket that can send packets at the Ethernet layer. With AF_PACKET, we specify SOCK_RAW to indicate that we are interested in raw network protocol access. By setting the protocol to ETH_P_IP, we tell the kernel that we’ll be dealing with IP packets.</p><p>After obtaining a socket descriptor, we must bind it to a network interface. This step ensures that our crafted packets are sent out through the correct network device:</p><pre><code class="language-Golang">addr := &amp;syscall.SockaddrLinklayer{
+	Protocol: htons(syscall.ETH_P_IP),
+	Ifindex:  ifi.Index,
+}</code></pre><p>Crafting packets with AF_PACKET involves manually creating the Ethernet frame. This includes setting both source and destination MAC addresses and the EtherType to indicate what type of payload the frame is carrying (in our case, IP). We’re using the same <a href="https://github.com/atoonk/go-pktgen/blob/main/pktgen/af_packet.go#L56-L68">BuildPacket function</a> as we used for the Pcap method earlier.</p><p>The packet is then ready to be sent directly onto the wire:</p><pre><code class="language-Golang">syscall.Sendto(fd, packet, 0, addr)</code></pre><p>The performance of the AF_PACKET method turns out to be almost identical to that achieved with the pcap method earlier. A quick Google, shows that libpcap, the library underlying tools like tcpdump and the Go pcap bindings, uses AF_PACKET for packet capture and injection on Linux platforms. So that explains the performance similarities.</p><h2 id="using-the-af_xdp-socket">Using the AF_XDP Socket</h2><p>We have one more option to try. AF_XDP is a relatively recent development and promises impressive numbers! It is designed to dramatically increase the speed at which applications can send and receive packets directly from and to the network interface card (NIC) by utilizing a fast path through the traditional Linux network stack. Also see <a href="https://toonk.io/building-an-xdp-express-data-path-based-bgp-peering-router/index.html">my earlier blog on XDP here</a>.</p><p>AF_XDP leverages the XDP (eXpress Data Path) framework. This capability not only provides minimal latency by avoiding kernel overhead but also maximizes throughput by enabling packet processing at the earliest possible point in the software stack.</p><p>The Go standard library doesn’t natively support AF_XDP sockets,  and I was only able to find one library to help with this. So it’s all relatively new still.</p><p>I’m using this library <a href="http://github.com/asavie/xdp">github.com/asavie/xdp</a> and this is how you can initiate an AF_XDP socket.</p><pre><code class="language-Golang">xsk, err := xdp.NewSocket(link.Attrs().Index, s.queueID, nil)</code></pre><p>Note that we need to provide a NIC queue; this is a clear indicator that we’re working at a lower level than before. The complete code is a bit more complicated than the other options, partially because we need to work with a user-space memory buffer (UMEM) for packet data. This method reduces the kernel's involvement in packet processing, cutting down the time packets spend traversing system layers. By crafting and injecting packets directly at the driver level. So instead of pasting the code, please look at <a href="https://github.com/atoonk/go-pktgen/blob/main/pktgen/af_xdp.go#L40-L97">my code here</a>.</p><p>The results look great; using this method, I’m now able to generate 2,647,936 pps. That’s double the performance we saw with AF_PACKET! Whoohoo!</p><h2 id="wrap-up-and-some-takeaways">Wrap-up and some takeaways</h2><p>First off, this was fun to do and learn! We looked at the various options to generate packets from the traditional <em>net.Dial</em> method, to <em>raw sockets</em>, <em>pcap</em>, <em>AF_PACKET</em> and finally <em>AF_XDP</em>. The graph below shows the numbers per method (all using one CPU and one NIC queue). AF_XDP is the big winner!<br></p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://lh7-us.googleusercontent.com/xLiXH5evY6KAyktPqflagrmU8w6FVOpqkSEQKVELG8CzpU4PG-iMy8qN55Lx6vyAvK1Y43Qe2tclpwk1o2yykmIBfF0m415N1p6lrzvhQlNuZG94dFpg8UgshDmQgnTTHlqqQrtWSL-A-NcVTJUsd5M" class="kg-image" alt><figcaption>The various ways to send network traffic in Go</figcaption></figure><p><br>If interested, you can run the benchmarks yourself on a Linux system like below:</p><pre><code class="language-bash">./go-pktgen --dstip 192.168.64.2 --method benchmark \
+ --duration 5 --payloadsize 64 --iface veth0
+
++-------------+-----------+------+
+|   Method    | Packets/s | Mb/s |
++-------------+-----------+------+
+| af_xdp      |   2647936 | 1355 |
+| af_packet   |   1368070 |  700 |
+| af_pcap     |   1354087 |  693 |
+| udp_syscall |    861372 |  441 |
+| raw_socket  |    793781 |  406 |
+| net_conn    |    697277 |  357 |
++-------------+-----------+------+</code></pre><p>The important number to look at is packets per second as that is the limitation on software network stacks. The Mb/s number is simply the packet size x the PPS number you can generate. It’s interesting to see the easy 2x jump from the traditional net.Dial approach to using AF_PACKET. And then another 2x jump when using AF_XDP. Certainly good to know if you’re interested in sending packets fast!</p><p>The benchmark tool above uses one CPU and, thus, one NIC queue by default. The user can, however, elect to use more CPUs, which will start multiple go routines to do the same tests in parallel. The screenshot below shows the tool running with 8 streams (and 8 CPUs) using AF_XDP,  generating 186Gb/s with 1200 byte packets (18.8Mpps)! That’s really quite impressive for a Linux box (and not using DPDK). Faster than what you can do with Iperf3 for example.</p><figure class="kg-card kg-image-card"><img src="https://lh7-us.googleusercontent.com/yHN-VEhY_ykNpfk7nbdBTXxrfdy8fs_Qd5LZ3m970jhRhnvt7nI17W_lq_NuUTJ-iJiCLTCBv77r5jCDmPLE79LXndzyFFHjUyiZz4CJ9MOSoinspjlLt31YEieDY15vaNTK7ECNbtp-sZn4vkiFWx0" class="kg-image" alt></figure><h2 id="some-caveats-and-things-i-d-like-to-look-at-in-the-future">Some caveats and things I’d like to look at in the future<br></h2><p>Running multiple streams (go routines) using the PCAP method doesn’t work well. The performance degrades significantly. The comparable AF_PACKET method, on the other hand, works well with multiple streams and go routines.</p><p>The AF_XDP library I’m using doesn’t seem to work well on most hardware NICs. I opened a <a href="https://github.com/asavie/xdp/issues/31">GitHub issue</a> for this and hope it will be resolved. It would be great to see this be more reliable as it kind of limits more real-world AF_XDP Go applications. I did most of my testing using veth interfaces; i’d love to see how it works on a physical NIC and a driver with XDP support.</p><p>It turns out that for AF_PACKET, there's a zero-copy mode facilitated by the use of memory-mapped (mmap) ring buffers. This feature allows user-space applications to directly access packet data in kernel space without the need for copying data between the kernel and user space, effectively reducing CPU usage and increasing packet processing speed. This means that, in theory, the performance of AF_PACKET and AF_XDP could be very similar.  However, it appears the Go implementations of AF_PACKET do not support zero-copy mode or <a href="https://twitter.com/jtollet/status/1762616103883227490">only for RX</a> and not TX. So I wasn’t able to use that. I found <a href="https://github.com/csulrong/gopacket/pull/1/files">this patch</a> but unfortunately couldn’t get it to work within an hour or so, so I moved on. If this works, this will likely be the preferred approach as you don’t have to rely on AF_XDP support.</p><p>Finally, I’d love to include DPDK support in this <a href="https://github.com/atoonk/go-pktgen/tree/main">pktgen library</a>. It’s the last one missing. But that’s a whole beast on its own, and I need to rely on good Go DPDK libraries. Perhaps in the future! </p><p>That’s it; you made it to the end! Thanks for reading!</p><p>Cheers<br> -Andree</p></div>
     </div>
 
     <footer class="post-footer u-container u-maxWidth740">
             <div class="post-tags buttonSet u-marginTop30">
-        <a href="../tag/aws/index.html" title="aws" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="aws" data-event-non-interaction="true">aws</a><a href="../tag/networking/index.html" title="networking" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="networking" data-event-non-interaction="true">networking</a>
+        <a href="../tag/go/index.html" title="Go" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="Go" data-event-non-interaction="true">Go</a><a href="../tag/networking/index.html" title="networking" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="networking" data-event-non-interaction="true">networking</a>
     </div>
 
         <hr>
@@ -289,39 +320,22 @@
                 <div class="u-flex u-relative godo-tracking u-marginBottom30"
     data-event-category="Article"
     data-event-action="Previous article"
-    data-event-label="http://toonk.io/building-a-global-anycast-service-in-under-a-minute/"
+    data-event-label="http://toonk.io/aws-ipv4-estate-now-worth-4-5-billion/"
     data-event-non-interaction="true">
 
-    <a href="../building-a-global-anycast-service-in-under-a-minute/index.html" class="prev-next-image-link u-relative u-bgColorGrayLight u-flex0" aria-label="Building a global anycast service in under a minute">
-        <img class="u-absolute u-image blur-up lazyload" data-src="https://images.unsplash.com/photo-1527685216219-c7bee79b0089?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" alt="Building a global anycast service in under a minute"/>
+    <a href="../aws-ipv4-estate-now-worth-4-5-billion/index.html" class="prev-next-image-link u-relative u-bgColorGrayLight u-flex0" aria-label="AWS IPv4 Estate Now Worth $4.5 Billion">
+        <img class="u-absolute u-image blur-up lazyload" data-src="https://images.unsplash.com/photo-1613297595539-0d36a37702c6?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fEJyaXRpc2glMjBDb2x1bWJpYXxlbnwwfHx8fDE2OTQ5ODYzNzJ8MA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000" alt="AWS IPv4 Estate Now Worth $4.5 Billion"/>
     </a>
 
     <div class="prev-next-body u-paddingLeft20 u-flex1">
         <div class="u-fontSizeSmaller u-lineHeight1 u-textMuted u-marginBottom10">Previous article</div>
-        <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../building-a-global-anycast-service-in-under-a-minute/index.html" class="u-relative zindex3">Building a global anycast service in under a minute</a></h2>
-        <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">This weekend I decided to take another look at Stackpath and their workload edge compute features. This is a relatively new feature, in fact, I</p>
+        <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../aws-ipv4-estate-now-worth-4-5-billion/index.html" class="u-relative zindex3">AWS IPv4 Estate Now Worth $4.5 Billion</a></h2>
+        <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">AWS grew its IPv4 estate with an additional 27 million IP addresses to now owning 128 Million IPv4 addresses. At a value of $35 per IPv4 address, the total value of AWS’ IPv4 estate is ~4.5 Billion dollars. An increase of $2 billion</p>
     </div>
 
-    <a href="../building-a-global-anycast-service-in-under-a-minute/index.html" aria-label="Building a global anycast service in under a minute" class="u-absolute0 zindex2"></a>
+    <a href="../aws-ipv4-estate-now-worth-4-5-billion/index.html" aria-label="AWS IPv4 Estate Now Worth $4.5 Billion" class="u-absolute0 zindex2"></a>
 </div>
-                <div class="u-flex u-relative godo-tracking "
-    data-event-category="Article"
-    data-event-action="Next article"
-    data-event-label="http://toonk.io/aws-and-their-billions-in-ipv4-addresses/"
-    data-event-non-interaction="true">
-
-    <a href="../aws-and-their-billions-in-ipv4-addresses/index.html" class="prev-next-image-link u-relative u-bgColorGrayLight u-flex0" aria-label="AWS and their Billions in IPv4 addresses">
-        <img class="u-absolute u-image blur-up lazyload" data-src="https://images.unsplash.com/photo-1572288717056-ea97fb77c71e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" alt="AWS and their Billions in IPv4 addresses"/>
-    </a>
-
-    <div class="prev-next-body u-paddingLeft20 u-flex1">
-        <div class="u-fontSizeSmaller u-lineHeight1 u-textMuted u-marginBottom10">Next article</div>
-        <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../aws-and-their-billions-in-ipv4-addresses/index.html" class="u-relative zindex3">AWS and their Billions in IPv4 addresses</a></h2>
-        <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">Earlier this week, I was doing some work on AWS and wanted to know what IP addresses were being used. Luckily for me, AWS publishes</p>
-    </div>
-
-    <a href="../aws-and-their-billions-in-ipv4-addresses/index.html" aria-label="AWS and their Billions in IPv4 addresses" class="u-absolute0 zindex2"></a>
-</div>        </div>
+        </div>
         <hr>
     </footer>
 </article>
@@ -336,33 +350,6 @@
                 <h3 class="u-contentTitle u-fontSizeLarger">Related <span class='text-success'>Articles</span></h3>
             </div>
 
-            <div class="col s12 m6 l4 u-flex">
-                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/sending-network-packets-in-go/" data-event-non-interaction="true">
-    <a href="../sending-network-packets-in-go/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
-        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
-            src="https://images.unsplash.com/photo-1559510980-7246660a93d3?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI3fHx2YW5jb3V2ZXJ8ZW58MHx8fHwxNzEwMTMzMDkyfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000"
-            srcset="https://images.unsplash.com/photo-1559510980-7246660a93d3?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI3fHx2YW5jb3V2ZXJ8ZW58MHx8fHwxNzEwMTMzMDkyfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000"
-            data-srcset="https://images.unsplash.com/photo-1559510980-7246660a93d3?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI3fHx2YW5jb3V2ZXJ8ZW58MHx8fHwxNzEwMTMzMDkyfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000 300w,https://images.unsplash.com/photo-1559510980-7246660a93d3?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI3fHx2YW5jb3V2ZXJ8ZW58MHx8fHwxNzEwMTMzMDkyfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000 600w"
-            data-sizes="(max-width: 1000px) 400px, 600px"
-            alt="High-Speed Packet Transmission in Go: From net.Dial to AF_XDP"
-        />
-    </a>
-
-    <div class="cr-inner u-padding15 u-flexColumnTop">
-        <div class="cr-body">
-                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../sending-network-packets-in-go/index.html">High-Speed Packet Transmission in Go: From net.Dial to AF_XDP</a></h2>
-        </div>
-
-        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2024-03-11">11 Mar 2024</time>
-    <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="10 min read">10 min read</span>
-    
-</div>    </div>
-
-    <a href="../sending-network-packets-in-go/index.html" class="u-absolute0 zindex3" aria-label="High-Speed Packet Transmission in Go: From net.Dial to AF_XDP"></a>
-</div>
-            </div>
             <div class="col s12 m6 l4 u-flex">
                 <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/aws-ipv4-estate-now-worth-4-5-billion/" data-event-non-interaction="true">
     <a href="../aws-ipv4-estate-now-worth-4-5-billion/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
@@ -388,33 +375,6 @@
 </div>    </div>
 
     <a href="../aws-ipv4-estate-now-worth-4-5-billion/index.html" class="u-absolute0 zindex3" aria-label="AWS IPv4 Estate Now Worth $4.5 Billion"></a>
-</div>
-            </div>
-            <div class="col s12 m6 l4 u-flex">
-                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/ipv4-sale-wide-and-apnic-selling-43-8/" data-event-non-interaction="true">
-    <a href="../ipv4-sale-wide-and-apnic-selling-43-8/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
-        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
-            src="https://images.unsplash.com/photo-1557409518-691ebcd96038?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDEzfHx0b2t5b3xlbnwwfHx8fDE2MzQwOTM3Mzc&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000"
-            srcset="https://images.unsplash.com/photo-1557409518-691ebcd96038?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDEzfHx0b2t5b3xlbnwwfHx8fDE2MzQwOTM3Mzc&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000"
-            data-srcset="https://images.unsplash.com/photo-1557409518-691ebcd96038?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDEzfHx0b2t5b3xlbnwwfHx8fDE2MzQwOTM3Mzc&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 300w,https://images.unsplash.com/photo-1557409518-691ebcd96038?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MnwxMTc3M3wwfDF8c2VhcmNofDEzfHx0b2t5b3xlbnwwfHx8fDE2MzQwOTM3Mzc&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000 600w"
-            data-sizes="(max-width: 1000px) 400px, 600px"
-            alt="IPv4 for sale - WIDE and APNIC selling 43.0.0.0/8"
-        />
-    </a>
-
-    <div class="cr-inner u-padding15 u-flexColumnTop">
-        <div class="cr-body">
-                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../ipv4-sale-wide-and-apnic-selling-43-8/index.html">IPv4 for sale - WIDE and APNIC selling 43.0.0.0/8</a></h2>
-        </div>
-
-        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2021-10-13">13 Oct 2021</time>
-    <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="5 min read">5 min read</span>
-    
-</div>    </div>
-
-    <a href="../ipv4-sale-wide-and-apnic-selling-43-8/index.html" class="u-absolute0 zindex3" aria-label="IPv4 for sale - WIDE and APNIC selling 43.0.0.0/8"></a>
 </div>
             </div>
             <div class="col s12 m6 l4 u-flex">
@@ -498,6 +458,60 @@
     <a href="../aws-and-their-billions-in-ipv4-addresses/index.html" class="u-absolute0 zindex3" aria-label="AWS and their Billions in IPv4 addresses"></a>
 </div>
             </div>
+            <div class="col s12 m6 l4 u-flex">
+                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/aws-network-performance-deep-dive/" data-event-non-interaction="true">
+    <a href="../aws-network-performance-deep-dive/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
+        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
+            src="https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            srcset="https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            data-srcset="https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1571864156103-d3c37503b6af?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
+            data-sizes="(max-width: 1000px) 400px, 600px"
+            alt="100G networking in AWS, a network performance deep dive"
+        />
+    </a>
+
+    <div class="cr-inner u-padding15 u-flexColumnTop">
+        <div class="cr-body">
+                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../aws-network-performance-deep-dive/index.html">100G networking in AWS, a network performance deep dive</a></h2>
+        </div>
+
+        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
+    <time class="datetime u-textCapitalize" datetime="2020-10-15">15 Oct 2020</time>
+    <span class="bull">&bull;</span>
+    <span class="readingTime" style="cursor:default" title="9 min read">9 min read</span>
+    
+</div>    </div>
+
+    <a href="../aws-network-performance-deep-dive/index.html" class="u-absolute0 zindex3" aria-label="100G networking in AWS, a network performance deep dive"></a>
+</div>
+            </div>
+            <div class="col s12 m6 l4 u-flex">
+                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/building-an-xdp-express-data-path-based-bgp-peering-router/" data-event-non-interaction="true">
+    <a href="../building-an-xdp-express-data-path-based-bgp-peering-router/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
+        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
+            src="https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            srcset="https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            data-srcset="https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
+            data-sizes="(max-width: 1000px) 400px, 600px"
+            alt="Building an XDP (eXpress Data Path) based BGP peering router"
+        />
+    </a>
+
+    <div class="cr-inner u-padding15 u-flexColumnTop">
+        <div class="cr-body">
+                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../building-an-xdp-express-data-path-based-bgp-peering-router/index.html">Building an XDP (eXpress Data Path) based BGP peering router</a></h2>
+        </div>
+
+        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
+    <time class="datetime u-textCapitalize" datetime="2020-04-19">19 Apr 2020</time>
+    <span class="bull">&bull;</span>
+    <span class="readingTime" style="cursor:default" title="9 min read">9 min read</span>
+    
+</div>    </div>
+
+    <a href="../building-an-xdp-express-data-path-based-bgp-peering-router/index.html" class="u-absolute0 zindex3" aria-label="Building an XDP (eXpress Data Path) based BGP peering router"></a>
+</div>
+            </div>
         </div>
     </div>
 </div>
@@ -513,7 +527,7 @@
     <div class="share-sticky u-textAlignRight is-visible">
     <div class="share-sticky-wrap buttonSet u-container u-maxWidth1200">
         <span class="u-textMuted u-fontSize15 u-paddingRight10 u-hide-before-md">Share this article:</span>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/aws-network-performance-deep-dive/"
+        <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/sending-network-packets-in-go/"
             target="_blank"
             rel="noopener noreferrer"
             title="Share on Facebook"
@@ -525,7 +539,7 @@
             <svg class="icon"><use xlink:href="#icon-facebook"></use></svg>
             Share
         </a>
-        <a href="https://twitter.com/share?text=100G%20networking%20in%20AWS%2C%20a%20network%20performance%20deep%C2%A0dive&amp;url=http://toonk.io/aws-network-performance-deep-dive/"
+        <a href="https://twitter.com/share?text=High-Speed%20Packet%20Transmission%20in%20Go%3A%20From%20net.Dial%20to%20AF_XDP&amp;url=http://toonk.io/sending-network-packets-in-go/"
             target="_blank"
             rel="noopener noreferrer"
             title="Share on Twitter"
@@ -537,7 +551,7 @@
             <svg class="icon"><use xlink:href="#icon-twitter"></use></svg>
             Tweet
         </a>
-        <a href="whatsapp://send?text=http://toonk.io/aws-network-performance-deep-dive/"
+        <a href="whatsapp://send?text=http://toonk.io/sending-network-packets-in-go/"
             target="_blank"
             rel="noopener noreferrer"
             class="godo-tracking button button--s u-textColorWhite bg-whatsapp u-hide-after-lg"
@@ -681,8 +695,8 @@ var disqusShortName = 'toonk-io-1';
     if (typeof disqusShortName === 'undefined') return;
 
     var disqus_config = function () {
-        this.page.url = 'http://toonk.io/aws-network-performance-deep-dive/';
-        this.page.identifier = 'ghost-5f889c6f2257c9dcdf92feb0';
+        this.page.url = 'http://toonk.io/sending-network-packets-in-go/';
+        this.page.identifier = 'ghost-65ee8a8b983b8343105dbe61';
     };
 
     d.querySelector('.js-comments').classList.remove('u-hide')

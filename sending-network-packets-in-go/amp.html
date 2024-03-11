@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html amp lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>High-Speed Packet Transmission in Go: From net.Dial to AF_XDP</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <link rel="icon" href="../favicon.png" type="image/png" />
+    <link rel="canonical" href="index.html" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    
+    <meta property="og:site_name" content="Andree&#x27;s Musings" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="High-Speed Packet Transmission in Go: From net.Dial to AF_XDP" />
+    <meta property="og:description" content="Pushing limits in Go: from net.Dial to syscalls, AF_PACKET, and lightning-fast AF_XDP. Benchmarking packet sending performance.." />
+    <meta property="og:url" content="http://toonk.io/sending-network-packets-in-go/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1559510980-7246660a93d3?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI3fHx2YW5jb3V2ZXJ8ZW58MHx8fHwxNzEwMTMzMDkyfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta property="article:published_time" content="2024-03-11T05:00:24.000Z" />
+    <meta property="article:modified_time" content="2024-03-11T05:22:44.000Z" />
+    <meta property="article:tag" content="Go" />
+    <meta property="article:tag" content="networking" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="High-Speed Packet Transmission in Go: From net.Dial to AF_XDP" />
+    <meta name="twitter:description" content="Pushing limits in Go: from net.Dial to syscalls, AF_PACKET, and lightning-fast AF_XDP. Benchmarking packet sending performance.." />
+    <meta name="twitter:url" content="http://toonk.io/sending-network-packets-in-go/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1559510980-7246660a93d3?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI3fHx2YW5jb3V2ZXJ8ZW58MHx8fHwxNzEwMTMzMDkyfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Andree Toonk" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Go, networking" />
+    <meta name="twitter:site" content="@atoonk" />
+    <meta name="twitter:creator" content="@atoonk" />
+    <meta property="og:image:width" content="2000" />
+    <meta property="og:image:height" content="1321" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Andree&#x27;s Musings",
+        "url": "http://toonk.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "http://toonk.io/content/images/2020/09/download-5.png",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Andree Toonk",
+        "image": {
+            "@type": "ImageObject",
+            "url": "http://toonk.io/content/images/2020/09/andreetoonk.png",
+            "width": 360,
+            "height": 360
+        },
+        "url": "http://toonk.io/author/andree/",
+        "sameAs": [
+            "http://toonk.io/about/",
+            "https://twitter.com/atoonk"
+        ]
+    },
+    "headline": "High-Speed Packet Transmission in Go: From net.Dial to AF_XDP",
+    "url": "http://toonk.io/sending-network-packets-in-go/",
+    "datePublished": "2024-03-11T05:00:24.000Z",
+    "dateModified": "2024-03-11T05:22:44.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1559510980-7246660a93d3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDI3fHx2YW5jb3V2ZXJ8ZW58MHx8fHwxNzEwMTMzMDkyfDA&ixlib=rb-4.0.3&q=80&w=2000",
+        "width": 2000,
+        "height": 1321
+    },
+    "keywords": "Go, networking",
+    "description": "Pushing limits in Go: from net.Dial to syscalls, AF_PACKET, and lightning-fast AF_XDP. Benchmarking packet sending performance..",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://toonk.io/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.34" />
+    <link rel="alternate" type="application/rss+xml" title="Andree&#x27;s Musings" href="../rss/index.html" />
+
+    <link href="https://fonts.googleapis.com/css?family=Domine|Rubik:400,500,700&display=swap" rel="stylesheet">
+
+
+    <style amp-custom>.u-bgColor{background-color:#161D25}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}[hidden],template{display:none}.kg-bookmark-container,body,figcaption,h1,h2,h3,h4,h5,h6{font-family:Rubik,Whitney SSm A,Whitney SSm B,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif}.article-excerpt{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif}.u-flexCenter{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex}.u-block{display:block}.u-relative{position:relative}.u-overflowHidden{overflow:hidden}.u-fontSizeSmaller{font-size:.875rem}.u-flex1{-webkit-box-flex:1;flex:1 1 auto}.u-absolute{position:absolute}.u-textCenter{text-align:center}.u-marginTop30{margin-top:30px}.u-container{margin-left:auto;margin-right:auto;padding-left:16px;padding-right:16px}*,:after,:before{box-sizing:border-box}body{font-size:1rem;font-style:normal;font-weight:400;letter-spacing:0;line-height:1.5em;text-rendering:optimizeLegibility;-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;-ms-text-size-adjust:100%;text-size-adjust:100%;color:#212529}a{color:#00a562;text-decoration:none;word-break:break-word}a:active,a:hover{outline:0}blockquote{border-left:4px solid #212529;font-size:1.125rem;font-style:italic;margin-left:-5px;margin-right:0;padding-bottom:2px;padding-left:20px}figure{margin:0;padding:0}img{-o-object-fit:cover;object-fit:cover;-o-object-position:center;object-position:center}figcaption{color:#6c757d;display:block;font-size:.875rem;font-style:normal;font-weight:400;margin-top:10px;text-align:center;width:100%}h1,h2,h3,h4,h5,h6{color:#111;font-style:normal;font-weight:700;line-height:1.2;margin:25px 0 0;word-break:break-word}h1{font-size:2rem}h2{font-size:1.75rem}h3{font-size:1.5rem}h4{font-size:1.375rem}h5{font-size:1.25rem}h6{font-size:1.125rem}strong{font-weight:700}p{margin:20px 0 0}hr{box-sizing:content-box;height:0;margin:1rem 0;overflow:visible;border:0;border-top:1px solid rgba(0,0,0,.1)}mark{background-color:transparent;background-image:linear-gradient(180deg,#d7fdd3,#d7fdd3);color:rgba(0,0,0,.8)}code,pre{font-family:Menlo,Courier,monospace;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-ms-hyphens:none;hyphens:none}p code{border-radius:2px;padding:1px 6px}p code,pre{background:#2a3644;color:#e5eff5;font-size:.875rem}pre{overflow-x:auto;margin:0;padding:20px;border:none;line-height:1.6em}pre code{padding:0;background:transparent}svg{width:100%;height:100%}svg:not(:root){overflow:hidden}table{border-collapse:collapse;border-spacing:0;display:inline-block;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;font-size:1rem;line-height:1.5;margin:20px 0 0;max-width:100%;overflow-x:auto;vertical-align:top;white-space:nowrap;width:auto;-webkit-overflow-scrolling:touch}table td,table th{padding:6px 13px;border:1px solid #dfe2e5}table tr:nth-child(2n){background-color:#f6f8fa}table th{letter-spacing:.0125rem;text-transform:uppercase;font-weight:500}.header{position:relative;width:100%;height:50px;line-height:1}.logo-link{color:#fff;font-size:1.5rem;font-weight:500}.social-media a{background:#212529;border-radius:4px;color:#fff;display:inline-block;height:36px;margin:0 2px;padding:8px;vertical-align:middle;width:36px}.social-media svg{fill:#fff;stroke:none}.sidebar{width:280px;background:#fff}.sidebar ul{list-style:none;list-style-image:none;margin:18px 0 20px;padding:0}.sidebar ul li a{padding:6px 20px;font-weight:500;font-size:1rem;display:block}.sidebar .social-media{padding:20px;border-top:1px solid #ddd}.close-sidebar{height:50px;font-size:1.5625rem;line-height:3.125rem;text-align:right;padding-right:20px;color:#fff}.hamburgermenu{background-color:transparent;border:none;padding:0;height:48px;position:relative;-webkit-transition:-webkit-transform .4s;transition:-webkit-transform .4s;transition:transform .4s;transition:transform .4s,-webkit-transform .4s;width:48px;margin-right:-15px}.hamburgermenu span{background-color:#fff;display:block;height:2px;left:14px;margin-top:-1px;position:absolute;top:50%;width:20px}.hamburgermenu span:first-child{-webkit-transform:translateY(-6px);transform:translateY(-6px)}.hamburgermenu span:last-child{-webkit-transform:translateY(6px);transform:translateY(6px)}.main{max-width:500px;margin:0 auto}.article{padding-top:25px}.article-title{margin-top:0}.article-excerpt{margin-bottom:20px;margin-top:15px;color:#6c757d;font-size:1.25rem;line-height:1.4}.article-meta{color:#6c757d;margin:15px 0;font-size:.875rem}.article-body{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif;line-height:1.7em;font-size:1.125rem;padding:20px 1rem}.article-body>*{margin-bottom:28px}.article-body a:not(.kg-bookmark-container){word-break:break-word;text-decoration:underline}.article-body ol,.article-body ul{padding-left:20px}.article-body ol li,.article-body ul li{margin-bottom:5px}.button--tags{border-radius:3px;color:#212529;display:inline-block;font-size:.875rem;font-weight:500;height:37px;line-height:2.1875rem;margin:0 8px 8px 0;padding:0 10px;border:2px solid #212529}.button--tags:before{content:"#"}.share-title{display:block;margin-bottom:8px}amp-social-share.custom-style{background-color:teal;background-image:url(https://raw.githubusercontent.com/google/material-design-icons/master/social/1x_web/ic_share_white_48dp.png);background-repeat:no-repeat;background-position:50%;background-size:contain}amp-social-share.rounded{border-radius:10%;background-size:85%}.related{padding-top:40px;padding-bottom:20px;margin-top:20px;background:#efefef}.related-title{border-bottom:1px solid rgba(0,0,0,.15);padding-bottom:15px;margin-bottom:30px;color:#212529;font-weight:500;font-size:1.25rem}.story-border{border-left:3px solid #cc116e;bottom:0;color:rgba(0,0,0,.2);font-size:2.25rem;font-weight:700;left:0;padding:15px 10px 10px;top:0;-webkit-text-fill-color:transparent;-webkit-text-stroke-width:1.4px;-webkit-text-stroke-color:#888}.story:nth-child(3n) .story-border{border-color:#f59e00}.story:nth-child(3n+2) .story-border{border-color:#26a8ed}.story-link{background-color:#fff;border-bottom:1px solid #e2e0e0;box-shadow:0 1px 7px rgba(0,0,0,.05);min-height:50px;padding:15px 15px 15px 55px}.story-title{color:#212529;line-height:1.2;font-size:1.0625rem;font-weight:500;margin:0}.kg-bookmark-container{display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;flex-direction:column;border:1px solid rgba(0,0,0,.1)}.kg-bookmark-content{padding:20px;-webkit-box-ordinal-group:2;order:1}.kg-bookmark-title{font-weight:500;line-height:1.2;font-size:1.125rem}.kg-bookmark-description{color:#6c757d;line-height:1.4;margin-top:10px;font-size:.875rem}.kg-bookmark-metadata{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;font-size:.875rem;margin-top:10px}.kg-bookmark-icon{margin-right:5px}.kg-bookmark-author:after{content:"•";margin:0 6px}.footer{background-color:#efefef;color:rgba(0,0,0,.44);padding-top:20px;font-size:.9375rem;padding-bottom:45px}</style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
+    <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+
+    
+</head>
+<body class="amp-template">
+    <header class="header u-bgColor u-flexCenter u-container">
+    <div class="u-flex1">
+
+
+
+        <a href="../index.html" class="logo-link">Andree&#x27;s Musings</a>
+    </div>
+
+    <button class="hamburgermenu" on="tap:sidenav.open" tabindex="0"><span></span><span></span><span></span></button>
+
+</header>
+
+    <main class="main">
+        
+<article class="article">
+    <header class="article-header u-container">
+        <h1 class="article-title">High-Speed Packet Transmission in Go: From net.Dial to AF_XDP</h1>
+
+        <p class="article-excerpt">Pushing limits in Go: from net.Dial to syscalls, AF_PACKET, and lightning-fast AF_XDP. Benchmarking packet sending performance..</p>
+
+        <hr>
+
+        <div class="article-meta">
+            <span class="author-name">By <a href="../author/andree/index.html">Andree Toonk</a></span>
+
+            <span class="timestamp">
+                <time class="datetime" datetime="2024-03-11">32 minutes ago</time>
+            </span>
+
+            
+                <span>in</span>
+                <span class="categories"><a href="../tag/go/index.html" title="Go">Go</a></span>
+            
+        </div>
+    </header>
+
+        <figure class="article-image u-block u-marginTop30">
+            <amp-img src="https://images.unsplash.com/photo-1559510980-7246660a93d3?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI3fHx2YW5jb3V2ZXJ8ZW58MHx8fHwxNzEwMTMzMDkyfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000" width="600" height="350" layout="responsive" alt="High-Speed Packet Transmission in Go: From net.Dial to AF_XDP"></amp-img>
+        </figure>
+
+    <div class="article-body u-container"> <p>Recently, I developed a <a href="https://github.com/atoonk/ping-aws-ips">Go program that sends ICMP ping messages</a> to millions of IP addresses. Obviously I wanted this to be done as fast and efficiently as possible. So this prompted me to look into the various methods of interfacing with the network stack and sending packets. It was a fun journey, so in this article, I’ll share some of my learnings and document them for my future self :)  There’s also <a href="https://github.com/atoonk/go-pktgen">this Github repo that has the example code</a>.</p><h2 id="the-use-case">The use case</h2><p>Let’s start with a quick background of the problem statement. I want to be able to send as many packets per second from a Linux machine. There are a few use cases, for example, the Ping example I mentioned earlier, but also maybe something more generic like dpdk-pktgen or even something Iperf. I guess you could summarize it as a packet generator.</p><p>I’m using the Go programming language to explore the various options. In general, the explored methods could be used in any programming language since these are mostly Go-specific interfaces around what the Linux Kernel provides. However,  you may be limited by the libraries or support that exist in your favorite programming language.<br /><br />Let’s start our adventure and explore the various ways to generate network packets in Go. I’ll go over the options, and we’ll end with a benchmark, showing us which method is the best for our use case. I’ve included examples of the various methods in a Go package; you can <a href="https://github.com/atoonk/go-pktgen/">find the code here</a>. We’ll use the same code to run a benchmark and see how the various methods compare. </p><h2 id="the-net-dial-method">The net.Dial method</h2><p>The net.Dial method is the most likely candidate for working with network connections in Go. It’s a high-level abstraction provided by the standard library's net package, designed to establish network connections in an easy-to-use and straightforward manner.  You would use this for bi-directional communication where you can simply read and write to a Net.Conn (socket) without having to worry about the details. <br /><br />In our case, we’re primarily interested in sending traffic, using the net.Dial method that looks like this:</p><pre><code class="language-Golang">conn, err := net.Dial("udp", fmt.Sprintf("%s:%d", s.dstIP, s.dstPort))
+if err != nil {
+return fmt.Errorf("failed to dial UDP: %w", err)
+}
+defer conn.Close()</code></pre><p>After that, you can simply write bytes to your conn like this</p><pre><code class="language-go">conn.Write(payload)
+</code></pre><p>You can find our code for this in the file <a href="https://github.com/atoonk/go-pktgen/blob/main/pktgen/af_inet.go">af_inet.go</a><br /><br />That’s it! Pretty simple, right? As we’ll see, however, when we get to the benchmark, this is the slowest method and not the best for sending packets quickly. Using this method, we can get to about 697,277 pps</p><h2 id="raw-socket">Raw Socket</h2><p>Moving deeper into the network stack, I decided to use raw sockets to send packets in Go. Unlike the more abstract net.Dial method, raw sockets provide a lower-level interface with the network stack, offering granular control over packet headers and content. This method allows us to craft entire packets, including the IP header, manually.</p><p>To create a raw socket, we’ll have to make our own syscall, give it the correct parameters, and provide the type of traffic we’re going to send. We’ll then get back a file descriptor. We can then read and write to this file descriptor. This is what it looks like at the high level; see rawsocket. Go for the complete code.</p><pre><code class="language-Go">fd, err := syscall.Socket(syscall.AF_INET, syscall.SOCK_RAW, syscall.IPPROTO_RAW)
+if err != nil {
+	log.Fatalf("Failed to create raw socket: %v", err)
+}
+defer syscall.Close(fd)
+
+// Set options: here, we enable IP_HDRINCL to manually include the IP header
+if err := syscall.SetsockoptInt(fd, syscall.IPPROTO_IP, syscall.IP_HDRINCL, 1); err != nil {
+	log.Fatalf("Failed to set IP_HDRINCL: %v", err)
+}</code></pre><p><br />That’s it, and now we can read and write our raw packet to file descriptor like this</p><pre><code class="language-Go">err := syscall.Sendto(fd, packet, 0, dstAddr)</code></pre><p>Since I’m using IPPROTO_RAW, we’re bypassing the transport layer of the kernel's network stack, and the kernel expects us to provide a complete IP packet. We do that using the <a href="https://github.com/atoonk/go-pktgen/blob/main/pktgen/rawsocket.go#L66C17-L66C28">BuildPacket function</a>. It’s slightly more work, but the neat thing about raw sockets is that you can construct whatever packet you want. <br /></p><p>We’re telling the kernel just to take our packet, it has to do less work, and thus, this process is faster. All we’re really asking from the network stack is to take this IP packet, add the ethernet headers, and hand it to the network card for sending. It comes as no surprise, then, that this option is indeed faster than the Net.Dial option. Using this method, we can reach about 793,781 pps, about 100k PPS more than the net.Dial method.<br /></p><h2 id="the-af_inet-syscall-method">The AF_INET Syscall Method</h2><p>Now that we’re used to using syscalls directly, we have another option. In this <a href="https://github.com/atoonk/go-pktgen/blob/main/pktgen/af_inet_syscall.go">example</a>, we create a UDP socket directly like below</p><pre><code class="language-Go">fd, err := syscall.Socket(syscall.AF_INET, syscall.SOCK_DGRAM, syscall.IPPROTO_UDP)</code></pre><p>After that we can simply write our payload to it using the Sendto method like before.</p><pre><code class="language-Go">err = syscall.Sendto(fd, payload, 0, dstAddr)</code></pre><p>It looks similar to the raw socket example, but a few differences exist. The key difference is that in this case we’ve created a socket of type UDP, which means we don’t need to construct the complete packet (IP and UDP header) like before.  When using this method, the kernel manages the construction of the UDP header based on the destination IP and port we specify and handles the encapsulation process into an IP packet.</p><p>In this case, the payload is just the UDP payload. In fact, this method is similar to the Net.Dial method before, but with fewer abstractions. <br /><br />Compared to the raw socket method before, I’m now seeing 861,372 pps—that’s a 70k jump. We’re getting faster each step of the way. I’m guessing we get the benefit of some UDP optimizations in the kernel.</p><h2 id="the-pcap-method">The Pcap Method</h2><p>It may be surprising to see Pcap here for sending packets. Most folks know pcap from things like tcpdump or Wireshark to capture packets. But it’s also a fairly common way to send packets. In fact, if you look at many of the Go-packet or Python Scappy examples, this is typically the method listed to send custom packets. So, I figured I should include it and see its performance. I was skeptical, but was pleasantly surprised when I saw the pps numbers!</p><p>First, let’s take a look at what this looks like in Go; again, for the complete example, see my implementation in <a href="https://github.com/atoonk/go-pktgen/blob/main/pktgen/pcap.go">pcap.go here</a><br /><br />We start by creating a Pcap handle like this:</p><pre><code class="language-Golang">handle, err := pcap.OpenLive(s.iface, 1500, false, pcap.BlockForever)
+if err != nil {
+	return fmt.Errorf("could not open device: %w", err)
+}
+defer handle.Close()</code></pre><p>Then we <a href="https://github.com/atoonk/go-pktgen/blob/main/pktgen/pcap.go#L51-L64">create the packet manually,</a> similar to the Raw socket method earlier, but in this case, we include the Ethernet headers. <br />After that, we can write the packet to the pcap handle, and we’re done!</p><pre><code class="language-Golang">err := handle.WritePacketData(packet)</code></pre><p>To my surprise, this method resulted in quite a performance win. We surpassed the one million packets per second mark by quite a margin: 1,354,087 pps—almost a 500k pps jump!<br /><br />Note that, towards the end of this article, we’ll look at  a caveat, but good to know that this method stops working well when sending multiple streams (go routines).<br /></p><h2 id="the-af_packet-method">The af_packet method</h2><p>As we explore the layers of network packet crafting and transmission in Go, we next find the AF_PACKET method. This method is popular for IDS systems on Linux, and for good reasons!</p><p>It gives us direct access to the network device layer, allowing for the transmission of packets at the link layer. This means we can craft packets, including the Ethernet header, and send them directly to the network interface, bypassing the higher networking layers. We can create a socket of type AF_PACKET using a syscall. In Go this will look like this:</p><pre><code class="language-Golang">fd, err := syscall.Socket(syscall.AF_PACKET, syscall.SOCK_RAW, int(htons(syscall.ETH_P_IP)))</code></pre><p>This line of code creates a raw socket that can send packets at the Ethernet layer. With AF_PACKET, we specify SOCK_RAW to indicate that we are interested in raw network protocol access. By setting the protocol to ETH_P_IP, we tell the kernel that we’ll be dealing with IP packets.</p><p>After obtaining a socket descriptor, we must bind it to a network interface. This step ensures that our crafted packets are sent out through the correct network device:</p><pre><code class="language-Golang">addr := &amp;syscall.SockaddrLinklayer{
+	Protocol: htons(syscall.ETH_P_IP),
+	Ifindex:  ifi.Index,
+}</code></pre><p>Crafting packets with AF_PACKET involves manually creating the Ethernet frame. This includes setting both source and destination MAC addresses and the EtherType to indicate what type of payload the frame is carrying (in our case, IP). We’re using the same <a href="https://github.com/atoonk/go-pktgen/blob/main/pktgen/af_packet.go#L56-L68">BuildPacket function</a> as we used for the Pcap method earlier.</p><p>The packet is then ready to be sent directly onto the wire:</p><pre><code class="language-Golang">syscall.Sendto(fd, packet, 0, addr)</code></pre><p>The performance of the AF_PACKET method turns out to be almost identical to that achieved with the pcap method earlier. A quick Google, shows that libpcap, the library underlying tools like tcpdump and the Go pcap bindings, uses AF_PACKET for packet capture and injection on Linux platforms. So that explains the performance similarities.</p><h2 id="using-the-af_xdp-socket">Using the AF_XDP Socket</h2><p>We have one more option to try. AF_XDP is a relatively recent development and promises impressive numbers! It is designed to dramatically increase the speed at which applications can send and receive packets directly from and to the network interface card (NIC) by utilizing a fast path through the traditional Linux network stack. Also see <a href="https://toonk.io/building-an-xdp-express-data-path-based-bgp-peering-router/index.html">my earlier blog on XDP here</a>.</p><p>AF_XDP leverages the XDP (eXpress Data Path) framework. This capability not only provides minimal latency by avoiding kernel overhead but also maximizes throughput by enabling packet processing at the earliest possible point in the software stack.</p><p>The Go standard library doesn’t natively support AF_XDP sockets,  and I was only able to find one library to help with this. So it’s all relatively new still.</p><p>I’m using this library <a href="http://github.com/asavie/xdp">github.com/asavie/xdp</a> and this is how you can initiate an AF_XDP socket.</p><pre><code class="language-Golang">xsk, err := xdp.NewSocket(link.Attrs().Index, s.queueID, nil)</code></pre><p>Note that we need to provide a NIC queue; this is a clear indicator that we’re working at a lower level than before. The complete code is a bit more complicated than the other options, partially because we need to work with a user-space memory buffer (UMEM) for packet data. This method reduces the kernel's involvement in packet processing, cutting down the time packets spend traversing system layers. By crafting and injecting packets directly at the driver level. So instead of pasting the code, please look at <a href="https://github.com/atoonk/go-pktgen/blob/main/pktgen/af_xdp.go#L40-L97">my code here</a>.</p><p>The results look great; using this method, I’m now able to generate 2,647,936 pps. That’s double the performance we saw with AF_PACKET! Whoohoo!</p><h2 id="wrap-up-and-some-takeaways">Wrap-up and some takeaways</h2><p>First off, this was fun to do and learn! We looked at the various options to generate packets from the traditional <em>net.Dial</em> method, to <em>raw sockets</em>, <em>pcap</em>, <em>AF_PACKET</em> and finally <em>AF_XDP</em>. The graph below shows the numbers per method (all using one CPU and one NIC queue). AF_XDP is the big winner!<br /></p><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://lh7-us.googleusercontent.com/xLiXH5evY6KAyktPqflagrmU8w6FVOpqkSEQKVELG8CzpU4PG-iMy8qN55Lx6vyAvK1Y43Qe2tclpwk1o2yykmIBfF0m415N1p6lrzvhQlNuZG94dFpg8UgshDmQgnTTHlqqQrtWSL-A-NcVTJUsd5M" class="kg-image" alt width="1600" height="1084" layout="responsive"></amp-img><figcaption>The various ways to send network traffic in Go</figcaption></figure><p><br />If interested, you can run the benchmarks yourself on a Linux system like below:</p><pre><code class="language-bash">./go-pktgen --dstip 192.168.64.2 --method benchmark \
+ --duration 5 --payloadsize 64 --iface veth0
+
++-------------+-----------+------+
+|   Method    | Packets/s | Mb/s |
++-------------+-----------+------+
+| af_xdp      |   2647936 | 1355 |
+| af_packet   |   1368070 |  700 |
+| af_pcap     |   1354087 |  693 |
+| udp_syscall |    861372 |  441 |
+| raw_socket  |    793781 |  406 |
+| net_conn    |    697277 |  357 |
++-------------+-----------+------+</code></pre><p>The important number to look at is packets per second as that is the limitation on software network stacks. The Mb/s number is simply the packet size x the PPS number you can generate. It’s interesting to see the easy 2x jump from the traditional net.Dial approach to using AF_PACKET. And then another 2x jump when using AF_XDP. Certainly good to know if you’re interested in sending packets fast!</p><p>The benchmark tool above uses one CPU and, thus, one NIC queue by default. The user can, however, elect to use more CPUs, which will start multiple go routines to do the same tests in parallel. The screenshot below shows the tool running with 8 streams (and 8 CPUs) using AF_XDP,  generating 186Gb/s with 1200 byte packets (18.8Mpps)! That’s really quite impressive for a Linux box (and not using DPDK). Faster than what you can do with Iperf3 for example.</p><figure class="kg-card kg-image-card"><amp-img src="https://lh7-us.googleusercontent.com/yHN-VEhY_ykNpfk7nbdBTXxrfdy8fs_Qd5LZ3m970jhRhnvt7nI17W_lq_NuUTJ-iJiCLTCBv77r5jCDmPLE79LXndzyFFHjUyiZz4CJ9MOSoinspjlLt31YEieDY15vaNTK7ECNbtp-sZn4vkiFWx0" class="kg-image" alt width="1600" height="940" layout="responsive"></amp-img></figure><h2 id="some-caveats-and-things-i-d-like-to-look-at-in-the-future">Some caveats and things I’d like to look at in the future<br /></h2><p>Running multiple streams (go routines) using the PCAP method doesn’t work well. The performance degrades significantly. The comparable AF_PACKET method, on the other hand, works well with multiple streams and go routines.</p><p>The AF_XDP library I’m using doesn’t seem to work well on most hardware NICs. I opened a <a href="https://github.com/asavie/xdp/issues/31">GitHub issue</a> for this and hope it will be resolved. It would be great to see this be more reliable as it kind of limits more real-world AF_XDP Go applications. I did most of my testing using veth interfaces; i’d love to see how it works on a physical NIC and a driver with XDP support.</p><p>It turns out that for AF_PACKET, there's a zero-copy mode facilitated by the use of memory-mapped (mmap) ring buffers. This feature allows user-space applications to directly access packet data in kernel space without the need for copying data between the kernel and user space, effectively reducing CPU usage and increasing packet processing speed. This means that, in theory, the performance of AF_PACKET and AF_XDP could be very similar.  However, it appears the Go implementations of AF_PACKET do not support zero-copy mode or <a href="https://twitter.com/jtollet/status/1762616103883227490">only for RX</a> and not TX. So I wasn’t able to use that. I found <a href="https://github.com/csulrong/gopacket/pull/1/files">this patch</a> but unfortunately couldn’t get it to work within an hour or so, so I moved on. If this works, this will likely be the preferred approach as you don’t have to rely on AF_XDP support.</p><p>Finally, I’d love to include DPDK support in this <a href="https://github.com/atoonk/go-pktgen/tree/main">pktgen library</a>. It’s the last one missing. But that’s a whole beast on its own, and I need to rely on good Go DPDK libraries. Perhaps in the future! </p><p>That’s it; you made it to the end! Thanks for reading!</p><p>Cheers<br /> -Andree</p> </div>
+
+        <div class="article-tags u-container u-marginTop30">
+            <span class="share-title">Tags:</span>
+                <a href="../tag/go/index.html" title="Go" class="button--tags">Go</a>
+                <a href="../tag/networking/index.html" title="networking" class="button--tags">networking</a>
+        </div>
+
+    <footer class="share u-container u-marginTop30">
+        <span class="share-title">Share this:</span>
+        <amp-social-share class="rounded"
+        type="email"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="facebook"
+        data-param-app_id="254325784911610"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="twitter"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="linkedin"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="whatsapp"
+        width="36"
+        height="36"></amp-social-share>
+    </footer>
+
+</article>
+
+
+            <div class="related u-container">
+        <div class="related-title">Related Articles</div>
+
+        <div class="story">
+            <a href="../aws-ipv4-estate-now-worth-4-5-billion/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">1</span>
+                <h3 class="story-title">AWS IPv4 Estate Now Worth $4.5 Billion</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../the-risks-and-dangers-of-amplified-routing-loops/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">2</span>
+                <h3 class="story-title">The Risks and Dangers of Amplified Routing Loops.</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../introducing-ssh-zero-trust-identity-aware-tcp-sockets/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">3</span>
+                <h3 class="story-title">Introducing SSH zero trust, Identity aware TCP sockets</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../aws-and-their-billions-in-ipv4-addresses/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">4</span>
+                <h3 class="story-title">AWS and their Billions in IPv4 addresses</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../aws-network-performance-deep-dive/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">5</span>
+                <h3 class="story-title">100G networking in AWS, a network performance deep dive</h3>
+            </a>
+        </div>
+
+    </div>
+    </main>
+
+    <amp-sidebar id="sidenav" class="sidebar" layout="nodisplay" side="right">
+    <div class="close-sidebar u-bgColor" role="button" aria-label="close sidebar" on="tap:sidenav.close" tabindex="0">✕</div>
+
+    <ul class="nav" role="menu">
+    <li role="menuitem"><a href="../index.html" class="nav-home">Home</a></li>
+    <li role="menuitem"><a href="../contact/index.html" class="nav-contact">Contact</a></li>
+    <li role="menuitem"><a href="../about/index.html" class="nav-about">About</a></li>
+</ul>
+
+    <div class="social-media">
+
+            <a href="https://twitter.com/atoonk" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 18 18" width="100%" height="100%"><path d="M12.077 2c-1.812 0-3.282 1.582-3.282 3.534 0 .277.03.547.085.806-2.728-.148-5.147-1.555-6.766-3.693-.283.522-.445 1.13-.445 1.777 0 1.226.58 2.308 1.46 2.942-.54-.02-1.05-.178-1.49-.443v.045c0 1.712 1.13 3.14 2.63 3.465-.28.08-.57.124-.87.124-.21 0-.418-.022-.62-.063.418 1.404 1.63 2.426 3.067 2.455-1.125.94-2.54 1.51-4.078 1.51-.267 0-.528-.02-.785-.05 1.46 1 3.185 1.59 5.04 1.59 6.037 0 9.34-5.39 9.34-10.06 0-.153-.005-.306-.01-.457.64-.5 1.197-1.12 1.637-1.83-.59.28-1.22.47-1.885.557.677-.437 1.198-1.13 1.443-1.955-.633.405-1.336.7-2.084.858C13.88 2.43 13.028 2 12.08 2"></path></svg>
+</a>
+
+
+
+
+    </div>
+
+</amp-sidebar>
+
+    <footer class="footer">
+        <section class="u-container copyright u-textCenter">
+            &copy; 2024 <a href="../index.html">Andree&#x27;s Musings</a>
+        </section>
+    </footer>
+</body>
+</html>
