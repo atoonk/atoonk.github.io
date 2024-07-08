@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html amp lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Navigating Infrastructure Outages: Battle Scars and Lessons Learned</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <link rel="icon" href="../favicon.png" type="image/png" />
+    <link rel="canonical" href="index.html" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    
+    <meta property="og:site_name" content="Andree&#x27;s Musings" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Navigating Infrastructure Outages: Battle Scars and Lessons Learned" />
+    <meta property="og:description" content="I&#x27;ve worked on numerous outages, each teaching me invaluable lessons. Inspired by Rogers&#x27; recent outage report, I wrote down some of my lessons learned." />
+    <meta property="og:url" content="http://toonk.io/navigating-infrastructure-outages-battle-scars-and-lessons-learned/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1509390726584-faaa21c8ac95?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDE0fHxvdXRhZ2V8ZW58MHx8fHwxNzIwNDEwODM2fDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta property="article:published_time" content="2024-07-08T03:59:23.000Z" />
+    <meta property="article:modified_time" content="2024-07-08T04:13:07.000Z" />
+    <meta property="article:tag" content="networking" />
+    <meta property="article:tag" content="ddos" />
+    <meta property="article:tag" content="aws" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Navigating Infrastructure Outages: Battle Scars and Lessons Learned" />
+    <meta name="twitter:description" content="I&#x27;ve worked on numerous outages, each teaching me invaluable lessons. Inspired by Rogers&#x27; recent outage report, I wrote down some of my lessons learned." />
+    <meta name="twitter:url" content="http://toonk.io/navigating-infrastructure-outages-battle-scars-and-lessons-learned/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1509390726584-faaa21c8ac95?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDE0fHxvdXRhZ2V8ZW58MHx8fHwxNzIwNDEwODM2fDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Andree Toonk" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="networking, ddos, aws" />
+    <meta name="twitter:site" content="@atoonk" />
+    <meta name="twitter:creator" content="@atoonk" />
+    <meta property="og:image:width" content="2000" />
+    <meta property="og:image:height" content="1325" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Andree&#x27;s Musings",
+        "url": "http://toonk.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "http://toonk.io/content/images/2024/03/toonk-io-icon-1.png",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Andree Toonk",
+        "image": {
+            "@type": "ImageObject",
+            "url": "http://toonk.io/content/images/2020/09/andreetoonk.png",
+            "width": 360,
+            "height": 360
+        },
+        "url": "http://toonk.io/author/andree/",
+        "sameAs": [
+            "http://toonk.io/about/",
+            "https://twitter.com/atoonk"
+        ]
+    },
+    "headline": "Navigating Infrastructure Outages: Battle Scars and Lessons Learned",
+    "url": "http://toonk.io/navigating-infrastructure-outages-battle-scars-and-lessons-learned/",
+    "datePublished": "2024-07-08T03:59:23.000Z",
+    "dateModified": "2024-07-08T04:13:07.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1509390726584-faaa21c8ac95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDE0fHxvdXRhZ2V8ZW58MHx8fHwxNzIwNDEwODM2fDA&ixlib=rb-4.0.3&q=80&w=2000",
+        "width": 2000,
+        "height": 1325
+    },
+    "keywords": "networking, ddos, aws",
+    "description": "I&#x27;ve worked on numerous outages, each teaching me invaluable lessons. Inspired by Rogers&#x27; recent outage report, I wrote down some of my lessons learned.",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://toonk.io/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.34" />
+    <link rel="alternate" type="application/rss+xml" title="Andree&#x27;s Musings" href="../rss/index.html" />
+
+    <link href="https://fonts.googleapis.com/css?family=Domine|Rubik:400,500,700&display=swap" rel="stylesheet">
+
+
+    <style amp-custom>.u-bgColor{background-color:#161D25}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}[hidden],template{display:none}.kg-bookmark-container,body,figcaption,h1,h2,h3,h4,h5,h6{font-family:Rubik,Whitney SSm A,Whitney SSm B,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif}.article-excerpt{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif}.u-flexCenter{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex}.u-block{display:block}.u-relative{position:relative}.u-overflowHidden{overflow:hidden}.u-fontSizeSmaller{font-size:.875rem}.u-flex1{-webkit-box-flex:1;flex:1 1 auto}.u-absolute{position:absolute}.u-textCenter{text-align:center}.u-marginTop30{margin-top:30px}.u-container{margin-left:auto;margin-right:auto;padding-left:16px;padding-right:16px}*,:after,:before{box-sizing:border-box}body{font-size:1rem;font-style:normal;font-weight:400;letter-spacing:0;line-height:1.5em;text-rendering:optimizeLegibility;-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;-ms-text-size-adjust:100%;text-size-adjust:100%;color:#212529}a{color:#00a562;text-decoration:none;word-break:break-word}a:active,a:hover{outline:0}blockquote{border-left:4px solid #212529;font-size:1.125rem;font-style:italic;margin-left:-5px;margin-right:0;padding-bottom:2px;padding-left:20px}figure{margin:0;padding:0}img{-o-object-fit:cover;object-fit:cover;-o-object-position:center;object-position:center}figcaption{color:#6c757d;display:block;font-size:.875rem;font-style:normal;font-weight:400;margin-top:10px;text-align:center;width:100%}h1,h2,h3,h4,h5,h6{color:#111;font-style:normal;font-weight:700;line-height:1.2;margin:25px 0 0;word-break:break-word}h1{font-size:2rem}h2{font-size:1.75rem}h3{font-size:1.5rem}h4{font-size:1.375rem}h5{font-size:1.25rem}h6{font-size:1.125rem}strong{font-weight:700}p{margin:20px 0 0}hr{box-sizing:content-box;height:0;margin:1rem 0;overflow:visible;border:0;border-top:1px solid rgba(0,0,0,.1)}mark{background-color:transparent;background-image:linear-gradient(180deg,#d7fdd3,#d7fdd3);color:rgba(0,0,0,.8)}code,pre{font-family:Menlo,Courier,monospace;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-ms-hyphens:none;hyphens:none}p code{border-radius:2px;padding:1px 6px}p code,pre{background:#2a3644;color:#e5eff5;font-size:.875rem}pre{overflow-x:auto;margin:0;padding:20px;border:none;line-height:1.6em}pre code{padding:0;background:transparent}svg{width:100%;height:100%}svg:not(:root){overflow:hidden}table{border-collapse:collapse;border-spacing:0;display:inline-block;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;font-size:1rem;line-height:1.5;margin:20px 0 0;max-width:100%;overflow-x:auto;vertical-align:top;white-space:nowrap;width:auto;-webkit-overflow-scrolling:touch}table td,table th{padding:6px 13px;border:1px solid #dfe2e5}table tr:nth-child(2n){background-color:#f6f8fa}table th{letter-spacing:.0125rem;text-transform:uppercase;font-weight:500}.header{position:relative;width:100%;height:50px;line-height:1}.logo-link{color:#fff;font-size:1.5rem;font-weight:500}.social-media a{background:#212529;border-radius:4px;color:#fff;display:inline-block;height:36px;margin:0 2px;padding:8px;vertical-align:middle;width:36px}.social-media svg{fill:#fff;stroke:none}.sidebar{width:280px;background:#fff}.sidebar ul{list-style:none;list-style-image:none;margin:18px 0 20px;padding:0}.sidebar ul li a{padding:6px 20px;font-weight:500;font-size:1rem;display:block}.sidebar .social-media{padding:20px;border-top:1px solid #ddd}.close-sidebar{height:50px;font-size:1.5625rem;line-height:3.125rem;text-align:right;padding-right:20px;color:#fff}.hamburgermenu{background-color:transparent;border:none;padding:0;height:48px;position:relative;-webkit-transition:-webkit-transform .4s;transition:-webkit-transform .4s;transition:transform .4s;transition:transform .4s,-webkit-transform .4s;width:48px;margin-right:-15px}.hamburgermenu span{background-color:#fff;display:block;height:2px;left:14px;margin-top:-1px;position:absolute;top:50%;width:20px}.hamburgermenu span:first-child{-webkit-transform:translateY(-6px);transform:translateY(-6px)}.hamburgermenu span:last-child{-webkit-transform:translateY(6px);transform:translateY(6px)}.main{max-width:500px;margin:0 auto}.article{padding-top:25px}.article-title{margin-top:0}.article-excerpt{margin-bottom:20px;margin-top:15px;color:#6c757d;font-size:1.25rem;line-height:1.4}.article-meta{color:#6c757d;margin:15px 0;font-size:.875rem}.article-body{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif;line-height:1.7em;font-size:1.125rem;padding:20px 1rem}.article-body>*{margin-bottom:28px}.article-body a:not(.kg-bookmark-container){word-break:break-word;text-decoration:underline}.article-body ol,.article-body ul{padding-left:20px}.article-body ol li,.article-body ul li{margin-bottom:5px}.button--tags{border-radius:3px;color:#212529;display:inline-block;font-size:.875rem;font-weight:500;height:37px;line-height:2.1875rem;margin:0 8px 8px 0;padding:0 10px;border:2px solid #212529}.button--tags:before{content:"#"}.share-title{display:block;margin-bottom:8px}amp-social-share.custom-style{background-color:teal;background-image:url(https://raw.githubusercontent.com/google/material-design-icons/master/social/1x_web/ic_share_white_48dp.png);background-repeat:no-repeat;background-position:50%;background-size:contain}amp-social-share.rounded{border-radius:10%;background-size:85%}.related{padding-top:40px;padding-bottom:20px;margin-top:20px;background:#efefef}.related-title{border-bottom:1px solid rgba(0,0,0,.15);padding-bottom:15px;margin-bottom:30px;color:#212529;font-weight:500;font-size:1.25rem}.story-border{border-left:3px solid #cc116e;bottom:0;color:rgba(0,0,0,.2);font-size:2.25rem;font-weight:700;left:0;padding:15px 10px 10px;top:0;-webkit-text-fill-color:transparent;-webkit-text-stroke-width:1.4px;-webkit-text-stroke-color:#888}.story:nth-child(3n) .story-border{border-color:#f59e00}.story:nth-child(3n+2) .story-border{border-color:#26a8ed}.story-link{background-color:#fff;border-bottom:1px solid #e2e0e0;box-shadow:0 1px 7px rgba(0,0,0,.05);min-height:50px;padding:15px 15px 15px 55px}.story-title{color:#212529;line-height:1.2;font-size:1.0625rem;font-weight:500;margin:0}.kg-bookmark-container{display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;flex-direction:column;border:1px solid rgba(0,0,0,.1)}.kg-bookmark-content{padding:20px;-webkit-box-ordinal-group:2;order:1}.kg-bookmark-title{font-weight:500;line-height:1.2;font-size:1.125rem}.kg-bookmark-description{color:#6c757d;line-height:1.4;margin-top:10px;font-size:.875rem}.kg-bookmark-metadata{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;font-size:.875rem;margin-top:10px}.kg-bookmark-icon{margin-right:5px}.kg-bookmark-author:after{content:"•";margin:0 6px}.footer{background-color:#efefef;color:rgba(0,0,0,.44);padding-top:20px;font-size:.9375rem;padding-bottom:45px}</style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
+    <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+
+    
+</head>
+<body class="amp-template">
+    <header class="header u-bgColor u-flexCenter u-container">
+    <div class="u-flex1">
+
+
+
+        <a href="../index.html" class="logo-link">Andree&#x27;s Musings</a>
+    </div>
+
+    <button class="hamburgermenu" on="tap:sidenav.open" tabindex="0"><span></span><span></span><span></span></button>
+
+</header>
+
+    <main class="main">
+        
+<article class="article">
+    <header class="article-header u-container">
+        <h1 class="article-title">Navigating Infrastructure Outages: Battle Scars and Lessons Learned</h1>
+
+        <p class="article-excerpt">I&#x27;ve worked on numerous outages, each teaching me invaluable lessons. Inspired by Rogers&#x27; recent outage report, I wrote down some of my lessons learned.</p>
+
+        <hr>
+
+        <div class="article-meta">
+            <span class="author-name">By <a href="../author/andree/index.html">Andree Toonk</a></span>
+
+            <span class="timestamp">
+                <time class="datetime" datetime="2024-07-08">15 minutes ago</time>
+            </span>
+
+            
+                <span>in</span>
+                <span class="categories"><a href="../tag/networking/index.html" title="networking">networking</a></span>
+            
+        </div>
+    </header>
+
+        <figure class="article-image u-block u-marginTop30">
+            <amp-img src="https://images.unsplash.com/photo-1509390726584-faaa21c8ac95?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDE0fHxvdXRhZ2V8ZW58MHx8fHwxNzIwNDEwODM2fDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000" width="600" height="350" layout="responsive" alt="Navigating Infrastructure Outages: Battle Scars and Lessons Learned"></amp-img>
+        </figure>
+
+    <div class="article-body u-container"> <p>One of my great passions is infrastructure operations. My first few jobs were in network engineering, and later on, as the cloud became more prevalent, that turned into what we now call infrastructure or cloud operations. Probably the most stressful times were during outages. Over the last two decades, I've been part of many outages, some worse than others, but I wear my operational battle scars proudly. In this blog, I'll share some learnings and observations from these incidents.</p><h2 id="what-triggered-me-to-write-this-article">What triggered me to write this article</h2><p>I could write many articles about the "epic" incidents I've been part of. While stressful at the time, they make for good war stories afterward. In recent years, companies like Facebook and Cloudflare have started publicly sharing their outage retrospectives (timelines, root causes, and lessons learned), which I enjoy reading. It's free learning!<br /><br />A few days ago, Rogers posted its public incident summary, covering the typical aspects of an outage retrospective. The outage itself was significant. Rogers is Canada's second-largest ISP and cell phone carrier. Two years ago, they experienced a country-wide 24-hour outage that impacted all their phone (including 911) and internet customers. Yes, hard down for a full day! So naturally, as both a Rogers customer and internet operations enthusiast, when they <a href="https://crtc.gc.ca/eng/publications/reports/xona2024.htmhttps://crtc.gc.ca/eng/publications/reports/xona2024.htm">posted their report </a>(2 years later!), I had to read it.</p><h2 id="the-rogers-outage">The Rogers outage</h2><p>Though not the primary focus of this article, let's briefly review the outage. During planned maintenance, Rogers staff removed a network routing policy, which caused (BGP, or OSPF/ISIS) routes to be flooded internally. This overwhelmed the control plane, causing all kinds of challenges, eventually causing it to crash or otherwise render its core routers inoperable. A logical next step would be to try and undo that change, however, the routers themselves were no longer manageable due to the control plane issues, and to make matters worse, the out-of-band (OOB) management network was also down. As it turns out, the out-of-band network somehow depended on the production data network, so when that went down, so did the out-of-band network, making troubleshooting and remediation impossible. Eventually, engineers had to be dispatched to manually get console access.</p><h2 id="thoughts-on-the-rogers-outage">Thoughts on the Rogers outage</h2><p>Outages suck. They’re super stressful and, as the Rogers incident shows, can have significant real-world impacts. Having these retrospectives after the fact, and getting to the root cause, lessons learned, etc., is mandatory for any organization that wants to continuously improve itself.</p><p>One thing that stood out for me was the <a href="https://www.cbc.ca/player/play/video/9.6441391">news article from CBC.ca</a> (a major news outlet in Canada), the headline of which was: “Human error triggered massive 2022 Rogers service outage, report finds.” While it's arguably true that the change made kicked off a sequence of events, declaring that as the root cause is short-sighted. Many of these outages are like airplane crash investigations, where multiple factors contribute to the failure, sometimes starting years ahead or being poorly designed to start with.</p><h2 id="reflecting-on-outages-can-we-eliminate-them-should-we-want-to">Reflecting on Outages: Can We Eliminate Them? Should We Want To?</h2><p>It’s always easy to dunk on an outage from the sidelines and to be clear, that’s not my intent. I’ve learned firsthand that Shit happen! So, with the Rogers outage in mind, but also from past experience, let’s extract some generic lessons.</p><p>First off, I’d say that the goal of eliminating outages altogether is likely too ambitious for most of us. Yes, part of an outage retrospective process should be to prevent the exact same outage from happening in the future, but architectures evolve, technologies change, and even a slight change in parameters can lead to a similar outage again.</p><p>So, although we can limit the chance of outages, you won’t be able to eliminate them 100%. In fact, given the cost of complete outage elimination and depending on your industry (say Facebook vs. flying a passenger airplane), you may not necessarily want to aim for that. There are real financial costs, process costs, agility costs, or time-to-value costs by trying to completely achieve outage elimination.</p><p>So, let’s accept that outages will happen and instead use that insight to focus on limiting their damage and impact! This approach allows us to prioritize effective strategies, which I'll discuss next.</p><h2 id="time-to-detection-aka-be-the-first-to-know-">Time to Detection - aka Be The First To Know!</h2><figure class="kg-card kg-image-card"></figure><p>Sufficient monitoring helps to reduce time to detect and pinpoint root causes. Sounds obvious, right? Yet, almost every outage retrospective will have an improvement action item called “more monitoring.” That’s an indication that we’re always forgetting some metric for some reason we never appear to have all the checks and metrics. That’s why I’m a big fan of synthetic monitoring for availability. </p><p>This check should mimic a typical user experience. So even if you swap out a core component, you’ll still be able to see the impact without adding more metrics. Because you can’t easily miss something, it’s the first check you should add, and most importantly, should alert on. So whether it’s a ping or a simple HTTP test, this will give you instant confidence your service is working. I call this the “be the first to know” principle. You don’t want to hear from your customers that your service is broken; you’re responsible for it, and you should be the first to know!</p><h2 id="limit-blast-radius-">Limit blast radius.</h2><p>Can we contain the impact when something breaks? The Rogers outage is a prime example of the worst case: one change broke the entire network. Logical separation, whether geographical or functional, could have prevented this. Modern-day cloud providers like AWS actively encourage us to think about this. With AWS, you’re always thinking about Multi-AZ or Multi-region. Some go further by going multi-cloud (think multi-vendor in network land).</p><p>However, transitioning from a single region to multi-region or multi-cloud can become exponentially complex and costly. The same is true in network land, where the path from a single vendor to multi-vendor can become quite complex easily.</p><p>Certain services are easier to make multi-region than others (I’m not even thinking about multi-cloud yet). Take your core database, for example. This comes with real complexity costs, and it's understandable why this might not always happen.</p><p>I get it, infrastructure teams are often considered cost centers. While high availability and reliability are touted as priorities, urgent needs, feature development, and cost pressures often take precedence. However, never let a good disaster go to waste! After a significant outage, budgets and priorities often shift. This is your opportunity to advocate for investments in resilience. The value proposition is strongest in the immediate aftermath, so seize the moment.</p><h2 id="management-access">Management access</h2><p>The outages that still haunt me and gave me my “Ops PTSD” are those where we lost management access during the outage. This is what happened to Rogers, and a similar incident happened to one of <a href="https://engineering.fb.com/2021/10/05/networking-traffic/outage-details/">Facebook’s largest outages</a>. It’s a real nightmare scenario: you can’t troubleshoot or remediate the issue since you’ve lost the ability to do anything to the device. Often even the ability to just shut it down or otherwise take it out of rotation. Until you restore some form of management access to the device, you’re stuck.</p><figure class="kg-card kg-image-card"></figure><p>This problem is more present for folks running physical hardware than those running, say, on AWS. So, if you run your own data centers, never compromise on out-of-band network access, without thinking about the worst case. Make sure you have OOB access and that it is isolated from your in-band network access. It's not always easy, but if you don't have this, your outage time will go from minutes to many hours (see Rogers and Facebook's example). The feeling of helplessness, even if you know what the issue is, and it only takes one command to fix the issue, is awful.</p><h2 id="rollback-scenarios">Rollback scenarios</h2><p>Another valuable tool in your toolbox for reducing the impact of an outage is to make sure its duration is limited. You made the change, you quickly see things are bad, and you simply roll back your change. You can see that for this to work, you need management access though (see above).</p><p>In the early days, with Cisco IOS, we’d do it like this:</p><pre><code># reload in 5
+# conf t
+# &lt; do your change &gt;
+# no reload</code></pre><p>This meant that unless you executed the last command, the device would reload 5 minutes after your change. Assuming you wouldn't lose access, you would execute no reload, which would cancel the reload, since it wasn’t necessary. Juniper later introduced a more elegant solution with "commit confirmed," which auto-rolls back changes if not confirmed within a set time frame.</p><pre><code>[edit]
+user@host# commit confirmed 
+commit confirmed will be automatically rolled back in 10 minutes unless confirmed
+commit complete
+#commit confirmed will be rolled back in 10 minutes
+[edit]
+# &lt; On-call blows Up! &gt;
+user@host# rollback 1
+user@host# commit
+</code></pre><p><br />If your environment is more of a software development team, then look at using blue-green deployments. Whatever your choice of making changes or deploying new versions of your software, it’s essential to have the ability to quickly roll back to the latest, known working version. Knowing that you can quickly roll back is great for confidence. Obviously, this depends on our earlier topics: “be the first to know” and management access.</p><h2 id="team-culture-don-t-be-a-hero">Team culture - Don’t be a hero</h2><p>Last but not least, we have to talk about team culture. One of the good things about moving from the traditional Ops model to DevOps (you build it, you own it) is that you no longer throw a new version of the software over the wall and ask your ops team to deploy it sight unseen.</p><p>Inevitably, at some point, you ship a broken version and your Ops person (this was me) has no clue what changed or how to troubleshoot it. This is extremely stressful and, frankly, unfair.</p><p>Nowadays, most development teams own and deploy their own changes and have modern deployment pipelines to deploy them. But even then, the software is complex, and not everyone in the team understands all components. So, when there’s an outage, it should be easy to bring in the rest of the team. Don’t be shy about calling your team members, even in the middle of the night. In a healthy organization, no one should want to wake up the next morning hearing there was a 4-hour outage and someone on your team tried to troubleshoot the bug you introduced. So have a WhatsApp group, or whatever tool you use, just for your team, your own out-of-band channel for emergency help.</p><p>Outages are overwhelming. You get a ton of alerts that all need to be acknowledged, and you get questions from support teams, customers, senior management, etc. And then you’re also expected to troubleshoot. No one person can do this. You need a few folks to troubleshoot, manage the alerts, and coordinate the whole process, including communication. So, don’t be a hero. Call in your teammates; together you’ll be able to deal with this. Remember, one team, one dream.</p><h2 id="wrap-up">Wrap up</h2><p>Outages will inevitably occur. Let's acknowledge this reality and take proactive steps to limit their impact and duration. </p><p>Be mindful of the knee-jerk management response: “We need more change management process!” Unless you’re a real YOLO shop, this is rarely the answer.</p><p>Instead, use the “be the first to know” principle, ensure access to your gear at all times, and have tools ready to swiftly roll back changes to a last-known-good state. Last but not least, embrace the opportunity to learn with your team through retrospectives and emerge even stronger. With a healthy team dynamic, outages can surprisingly become valuable bonding experiences. By being prepared and working together, you'll turn outages into mere blips on the radar.<br /><br /></p> </div>
+
+        <div class="article-tags u-container u-marginTop30">
+            <span class="share-title">Tags:</span>
+                <a href="../tag/networking/index.html" title="networking" class="button--tags">networking</a>
+                <a href="../tag/ddos/index.html" title="ddos" class="button--tags">ddos</a>
+                <a href="../tag/aws/index.html" title="aws" class="button--tags">aws</a>
+        </div>
+
+    <footer class="share u-container u-marginTop30">
+        <span class="share-title">Share this:</span>
+        <amp-social-share class="rounded"
+        type="email"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="facebook"
+        data-param-app_id="254325784911610"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="twitter"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="linkedin"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="whatsapp"
+        width="36"
+        height="36"></amp-social-share>
+    </footer>
+
+</article>
+
+
+            <div class="related u-container">
+        <div class="related-title">Related Articles</div>
+
+        <div class="story">
+            <a href="../sending-network-packets-in-go/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">1</span>
+                <h3 class="story-title">High-Speed Packet Transmission in Go: From net.Dial to AF_XDP</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../aws-ipv4-estate-now-worth-4-5-billion/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">2</span>
+                <h3 class="story-title">AWS IPv4 Estate Now Worth $4.5 Billion</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../ipv4-sale-wide-and-apnic-selling-43-8/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">3</span>
+                <h3 class="story-title">IPv4 for sale - WIDE and APNIC selling 43.0.0.0/8</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../the-risks-and-dangers-of-amplified-routing-loops/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">4</span>
+                <h3 class="story-title">The Risks and Dangers of Amplified Routing Loops.</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../introducing-ssh-zero-trust-identity-aware-tcp-sockets/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">5</span>
+                <h3 class="story-title">Introducing SSH zero trust, Identity aware TCP sockets</h3>
+            </a>
+        </div>
+
+    </div>
+    </main>
+
+    <amp-sidebar id="sidenav" class="sidebar" layout="nodisplay" side="right">
+    <div class="close-sidebar u-bgColor" role="button" aria-label="close sidebar" on="tap:sidenav.close" tabindex="0">✕</div>
+
+    <ul class="nav" role="menu">
+    <li role="menuitem"><a href="../index.html" class="nav-home">Home</a></li>
+    <li role="menuitem"><a href="../contact/index.html" class="nav-contact">Contact</a></li>
+    <li role="menuitem"><a href="../about/index.html" class="nav-about">About</a></li>
+</ul>
+
+    <div class="social-media">
+
+            <a href="https://twitter.com/atoonk" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 18 18" width="100%" height="100%"><path d="M12.077 2c-1.812 0-3.282 1.582-3.282 3.534 0 .277.03.547.085.806-2.728-.148-5.147-1.555-6.766-3.693-.283.522-.445 1.13-.445 1.777 0 1.226.58 2.308 1.46 2.942-.54-.02-1.05-.178-1.49-.443v.045c0 1.712 1.13 3.14 2.63 3.465-.28.08-.57.124-.87.124-.21 0-.418-.022-.62-.063.418 1.404 1.63 2.426 3.067 2.455-1.125.94-2.54 1.51-4.078 1.51-.267 0-.528-.02-.785-.05 1.46 1 3.185 1.59 5.04 1.59 6.037 0 9.34-5.39 9.34-10.06 0-.153-.005-.306-.01-.457.64-.5 1.197-1.12 1.637-1.83-.59.28-1.22.47-1.885.557.677-.437 1.198-1.13 1.443-1.955-.633.405-1.336.7-2.084.858C13.88 2.43 13.028 2 12.08 2"></path></svg>
+</a>
+
+
+
+
+    </div>
+
+</amp-sidebar>
+
+    <footer class="footer">
+        <section class="u-container copyright u-textCenter">
+            &copy; 2024 <a href="../index.html">Andree&#x27;s Musings</a>
+        </section>
+    </footer>
+</body>
+</html>
