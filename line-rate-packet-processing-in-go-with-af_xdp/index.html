@@ -12,7 +12,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <title>Building an XDP (eXpress Data Path) based BGP peering router</title>
+    <title>Line-rate packet processing in Go with AF_XDP</title>
 
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -25,31 +25,33 @@
     <link rel="icon" href="../favicon.png" type="image/png" />
     <link rel="canonical" href="index.html" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
-    <link rel="amphtml" href="amp/index.html" />
+    <link rel="amphtml" href="amp.html" />
     
     <meta property="og:site_name" content="Andree&#x27;s Musings" />
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="Building an XDP (eXpress Data Path) based BGP peering router" />
-    <meta property="og:description" content="Over the last few years, we’ve seen an increase in projects and initiatives to speed up networking in Linux. Because the Linux kernel is slow when it comes to forwarding packets, folks have been looking at userland or kernel bypass networking. In the last few blog posts, we’ve" />
-    <meta property="og:url" content="http://toonk.io/building-an-xdp-express-data-path-based-bgp-peering-router/" />
-    <meta property="og:image" content="https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
-    <meta property="article:published_time" content="2020-04-19T00:00:00.000Z" />
-    <meta property="article:modified_time" content="2020-09-05T17:57:35.000Z" />
+    <meta property="og:title" content="Line-rate packet processing in Go with AF_XDP" />
+    <meta property="og:description" content="If you&#x27;ve been following my blog for a while, you know I have a soft spot for making packets go fast in software. I&#x27;m a network guy at heart, raised on routing and switching, but these days most of that love is written in Go.  Every few years I circle" />
+    <meta property="og:url" content="http://toonk.io/line-rate-packet-processing-in-go-with-af_xdp/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1647655806923-e8202f4f2b8c?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODMzOTA2NDJ8MA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta property="article:published_time" content="2026-07-07T02:18:46.000Z" />
+    <meta property="article:modified_time" content="2026-07-07T02:29:30.000Z" />
+    <meta property="article:tag" content="Go" />
+    <meta property="article:tag" content="xdp" />
     <meta property="article:tag" content="networking" />
     
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Building an XDP (eXpress Data Path) based BGP peering router" />
-    <meta name="twitter:description" content="Over the last few years, we’ve seen an increase in projects and initiatives to speed up networking in Linux. Because the Linux kernel is slow when it comes to forwarding packets, folks have been looking at userland or kernel bypass networking. In the last few blog posts, we’ve" />
-    <meta name="twitter:url" content="http://toonk.io/building-an-xdp-express-data-path-based-bgp-peering-router/" />
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" />
+    <meta name="twitter:title" content="Line-rate packet processing in Go with AF_XDP" />
+    <meta name="twitter:description" content="If you&#x27;ve been following my blog for a while, you know I have a soft spot for making packets go fast in software. I&#x27;m a network guy at heart, raised on routing and switching, but these days most of that love is written in Go.  Every few years I circle" />
+    <meta name="twitter:url" content="http://toonk.io/line-rate-packet-processing-in-go-with-af_xdp/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1647655806923-e8202f4f2b8c?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODMzOTA2NDJ8MA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Andree Toonk" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="networking" />
+    <meta name="twitter:data2" content="Go, xdp, networking" />
     <meta name="twitter:site" content="@atoonk" />
     <meta name="twitter:creator" content="@atoonk" />
     <meta property="og:image:width" content="2000" />
-    <meta property="og:image:height" content="1064" />
+    <meta property="og:image:height" content="1000" />
     
     <script type="application/ld+json">
 {
@@ -81,18 +83,18 @@
             "https://twitter.com/atoonk"
         ]
     },
-    "headline": "Building an XDP (eXpress Data Path) based BGP peering router",
-    "url": "http://toonk.io/building-an-xdp-express-data-path-based-bgp-peering-router/",
-    "datePublished": "2020-04-19T00:00:00.000Z",
-    "dateModified": "2020-09-05T17:57:35.000Z",
+    "headline": "Line-rate packet processing in Go with AF_XDP",
+    "url": "http://toonk.io/line-rate-packet-processing-in-go-with-af_xdp/",
+    "datePublished": "2026-07-07T02:18:46.000Z",
+    "dateModified": "2026-07-07T02:29:30.000Z",
     "image": {
         "@type": "ImageObject",
-        "url": "https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "url": "https://images.unsplash.com/photo-1647655806923-e8202f4f2b8c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODMzOTA2NDJ8MA&ixlib=rb-4.1.0&q=80&w=2000",
         "width": 2000,
-        "height": 1064
+        "height": 1000
     },
-    "keywords": "networking",
-    "description": "Over the last few years, we’ve seen an increase in projects and initiatives to\nspeed up networking in Linux. Because the Linux kernel is slow when it comes to\nforwarding packets, folks have been looking at userland or kernel bypass\nnetworking. In the last few blog posts, we’ve looked at examples of this, mostly\nleveraging DPDK to speed up networking. The trend here is, let’s just take\nnetworking away from the kernel and process them in userland. Great for speed,\nnot so great for all the Kernel n",
+    "keywords": "Go, xdp, networking",
+    "description": "If you&#x27;ve been following my blog for a while, you know I have a soft spot for\nmaking packets go fast in software. I&#x27;m a network guy at heart, raised on\nrouting and switching, but these days most of that love is written in Go. \nEvery few years I circle back to the same question: how fast can we push and\npull packets on a plain Linux box? We&#x27;ve explored this with DPDK, with XDP-based\nrouters, and with the kernel itself. Today we&#x27;re going a level deeper into my\nfavorite of the bunch: AF_XDP, using ",
     "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "http://toonk.io/"
@@ -205,7 +207,7 @@
 
 <article class="post u-marginBottom40 u-relative">
     <header class="post-header u-container u-maxWidth740 u-paddingTop30 u-relative zindex3">
-    <h1 class="post-title u-marginBottom20 u-fontSizeLargest u-md-fontSize36">Building an XDP (eXpress Data Path) based BGP peering router</h1>
+    <h1 class="post-title u-marginBottom20 u-fontSizeLargest u-md-fontSize36">Line-rate packet processing in Go with AF_XDP</h1>
     
 
     <hr>
@@ -228,29 +230,29 @@
         <div class="hh-author-name u-fontSize15 u-noWrapWithEllipsis"><a href="../author/andree/index.html">Andree Toonk</a></div>
 
         <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2020-04-19">19 Apr 2020</time>
+    <time class="datetime u-textCapitalize" datetime="2026-07-07">7 Jul 2026</time>
     <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="9 min read">9 min read</span>
+    <span class="readingTime" style="cursor:default" title="7 min read">7 min read</span>
     
 </div>    </div>
 </div>
         <aside class="post-shasre u-flex0 u-flexCenter u-hide-before-md">
             <span class="share-label u-textMuted u-fontSizeSmaller">Share:</span>
-            <a href="https://twitter.com/share?text=Building%20an%20XDP%20(eXpress%20Data%20Path)%20based%20BGP%20peering%20router&amp;url=http://toonk.io/building-an-xdp-express-data-path-based-bgp-peering-router/"
+            <a href="https://twitter.com/share?text=Line-rate%20packet%20processing%20in%20Go%20with%20AF_XDP&amp;url=http://toonk.io/line-rate-packet-processing-in-go-with-af_xdp/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Twitter"
                 class="share-link button button--circle godo-tracking js-share">
                 <svg class="icon"><use xlink:href="#icon-twitter"></use></svg>
             </a>
-            <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://toonk.io/building-an-xdp-express-data-path-based-bgp-peering-router/&amp;title=Building%20an%20XDP%20(eXpress%20Data%20Path)%20based%20BGP%20peering%20router"
+            <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://toonk.io/line-rate-packet-processing-in-go-with-af_xdp/&amp;title=Line-rate%20packet%20processing%20in%20Go%20with%20AF_XDP"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Linkedin"
                 class="share-link button button--circle godo-tracking js-share">
                 <svg class="icon"><use xlink:href="#icon-linkedin"></use></svg>
             </a>
-            <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/building-an-xdp-express-data-path-based-bgp-peering-router/"
+            <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/line-rate-packet-processing-in-go-with-af_xdp/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Facebook"
@@ -262,41 +264,48 @@
 </header>
         <figure class="post-image u-block u-marginAuto u-sizeFullHeight u-sizeFullWidth u-maxWidth1000">
             <img class="u-block u-marginAuto u-sizeFullWidth simply-zoom"
-                srcset="https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,
-                        https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w,
-                        https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 1000w,
-                        https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 2000w"
+                srcset="https://images.unsplash.com/photo-1647655806923-e8202f4f2b8c?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODMzOTA2NDJ8MA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000 300w,
+                        https://images.unsplash.com/photo-1647655806923-e8202f4f2b8c?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODMzOTA2NDJ8MA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000 600w,
+                        https://images.unsplash.com/photo-1647655806923-e8202f4f2b8c?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODMzOTA2NDJ8MA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000 1000w,
+                        https://images.unsplash.com/photo-1647655806923-e8202f4f2b8c?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODMzOTA2NDJ8MA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000 2000w"
                 sizes="(max-width: 400px) 300px,(max-width: 730px) 600px, (max-width: 1600px) 100vw"
-                src="https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
-                alt="Building an XDP (eXpress Data Path) based BGP peering router"
+                src="https://images.unsplash.com/photo-1647655806923-e8202f4f2b8c?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODMzOTA2NDJ8MA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000"
+                alt="Line-rate packet processing in Go with AF_XDP"
             />
         </figure>
 
     <div class="post-wrap u-maxWidth1000 u-relative u-marginAuto">
-        <div id="post-body" class="post-body u-container u-maxWidth740 u-relative"><p>Over the last few years, we’ve seen an increase in projects and initiatives to speed up networking in Linux. Because the Linux kernel is slow when it comes to forwarding packets, folks have been looking at userland or kernel bypass networking. In the last few blog posts, we’ve looked at examples of this, mostly leveraging DPDK to speed up networking. The trend here is, let’s just take networking away from the kernel and process them in userland. Great for speed, not so great for all the Kernel network stack features that now have to be re-implemented in userland.</p><p>The Linux Kernel community has recently come up with an alternative to userland networking, called XDP, Express data path, it tries to strike a balance between the benefits of the kernel and faster packet processing. In this article, we’ll take a look at what it would take to build a Linux router using XDP. We will go over what XDP is, how to build an XDP packet forwarder combined with a BGP router, and of course, look at the performance.</p><h1 id="xdp-express-data-path-">XDP (eXpress Data Path)</h1><p>XDP (eXpress Data Path) is an eBPF based high-performance data path merged in the Linux kernel since version 4.8. Yes, BPF, the same Berkeley packet filter as you’re likely familiar with from tcpdump filters, though that’s now referred to as Classic BPF. Enhanced BPF has gained a lot of popularity over the last few years within the Linux community. BPF allows you to connect to Linux kernel hook points, each time the kernel reaches one of those hook points, it can execute an eBPF program. I’ve heard some people describe eBPF as what Java script was for the web, an easy way to enhance the ’web’, or in this case, the kernel. With BPF you can execute code without having to write kernel modules. XDP, as part of the BPF family, operates early on in the Kernel network code. The idea behind XDP is to add an early hook in the RX path of the kernel and let a user-supplied eBPF program decide the fate of the packet. The hook is placed in the NIC driver just after the interrupt processing and before any memory allocation needed by the network stack itself. So all this happens before an SKB (the most fundamental data structure in the Linux networking code) is allocated. Practically this means this is executed before things like tc and iptables.</p><p>A BPF program is a small virtual machine, perhaps not the typical virtual machines you’re familiar with, but a tiny (RISC register machine) isolated environment. Since it’s running in conjunction with the kernel, there are some protective measures that limit how much code can be executed and what it can do. For example, it can not contain loops (only bounded loops), there are a limited number of eBPF instructions and helper functions. The maximum instruction limit per program is restricted to 4096 BPF instructions, which, by design, means that any program will terminate quickly. For kernel newer than 5.1, this limit was lifted to 1 million BPF instructions.</p><h1 id="when-and-where-is-the-xdp-code-executed">When and Where is the XDP code executed</h1><p>XDP programs can be attached to three different points. The fastest is to have it run on the NIC itself, for that you need a smartnic and is called offload mode. To the best of my knowledge, this is currently only supported on Netronome cards. The next attachment opportunity is essentially in the driver before the kernel allocates an SKB. This is called “native” mode and means you need your driver to support this, luckily <a href="https://github.com/xdp-project/xdp-project/blob/master/areas/drivers/README.org" rel="noopener nofollow">most popular drivers do nowadays</a>.</p><p>Finally, there is SKB or Generic Mode XDP, where the XDP hook is called from <em><em>netif _ receive _ skb()</em></em>, this is after the packet DMA and skb allocation are completed, as a result, you lose most of the performance benefits.</p><p>Assuming you don’t have a smartnic, the best place to run your XDP program is in native mode as you’ll really benefit from the performance gain.</p><h1 id="xdp-actions">XDP actions</h1><p>Now that we know that XDP code is an eBPF C program, and we understand where it can run, now let’s take a look at what you can do with it. Once the program is called, it receives the packet context and from that point on you can read the content, update some counters, potentially modify the packet, and then the program needs to terminate with one of 5 XDP actions:</p><p><strong><strong>XDP_DROP</strong></strong><br>This does exactly what you think it does; it drops the packet and is often used for XDP based firewalls and DDOS mitigation scenarios.<br><strong><strong>XDP_ABORTED</strong></strong><br>Similar to DROP, but indicates something went wrong when processing. This action is not something a functional program should ever use as a return code.<br><strong><strong>XDP_PASS</strong></strong><br>This will release the packet and send it up to the kernel network stack for regular processing. This could be the original packet or a modified version of it.<br><strong><strong>XDP_TX</strong></strong><br>This action results in bouncing the received packet back out the same NIC it arrived on. This is usually combined with modifying the packet contents, like for example, rewriting the IP and Mac address, such as for a one-legged load balancer.<br><strong><strong>XDP_REDIRECT</strong></strong><br>The redirect action allows a BPF program to redirect the packet somewhere else, either a different CPU or different NIC. We’ll use this function later to build our router. It is also used to implement AF_XDP, a new socket family that solves the highspeed packet acquisition problem often faced by virtual network functions. AF_XDP is, for example, used by IDS’ and now also supported by Open vSwitch.</p><h1 id="building-an-xdp-based-high-performant-router">Building an XDP based high performant router</h1><p>Alright, now that we have a better idea of what XDP is and some of its capabilities, let’s start building! My goal is to build an XDP program that forwards packets at line-rate between two 10G NICs. I also want the program to use the regular Linux routing table. This means I can add static routes using the “ip route” command, but it also means I could use an opensource BGP daemon such as Bird or FRR.</p><p>We’ll jump straight to the code. I’m using the excellent XDP tutorial code to get started.<a href="https://github.com/atoonk/xdp-tutorial/blob/master/packet-solutions/xdp_prog_kern_03.c#L225-L320" rel="noopener nofollow"> I forked it here</a>, but it’s mostly the same code as the original. This is an example called “xdp_router” and uses the <em><em>bpf_fib_lookup()</em></em> function to determine the egress interface for a given packet using the Linux routing table. The program then uses the action <em><em>bpf_redirect_map()</em></em> to send it out to the correct egress interface. <a href="https://github.com/atoonk/xdp-tutorial/blob/master/packet-solutions/xdp_prog_kern_03.c#L225-L335" rel="noopener nofollow">You can see code here</a>. It’s only a hundred lines of code to do all the work.</p><p>After we compile the code (just run make in the parent directory), we load the code using the <em><em>./xdp_loader</em></em> program included in the repo and use the .<em><em>/xdp_prog_user</em></em> program to populate and query the redirect_params maps.</p><pre><code>#pin BPF resources (redirect map) to a persistent filesystem
-mount -t bpf bpf /sys/fs/bpf/
-
-# attach xdp_router code to eno2
-./xdp_loader -d eno2 -F — progsec xdp_router
-
-# attach xdp_router code to eno4
-./xdp_loader -d eno4 -F — progsec xdp_router
-
-# populate redirect_params maps
-./xdp_prog_user -d eno2
-./xdp_prog_user -d eno4</code></pre><h1 id="test-setup">Test setup</h1><p>So far, so good, we’ve built an XDP based packet forwarder! For each packet that comes in on either network interface eno2 or eno4 it does a route lookup and redirects it to the correct egres interface, all in eBPF code. All in a hundred lines of code, Pretty awesome, right?! Now let’s measure the performance to see if it’s worth it. Below is the test setup.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="../content/images/2020/09/image-1.png" class="kg-image" alt srcset="../content/images/size/w600/2020/09/image-1.png 600w, ../content/images/size/w1000/2020/09/image-1.png 1000w, ../content/images/2020/09/image-1.png 1400w" sizes="(min-width: 720px) 720px"><figcaption>test setup</figcaption></figure><p>I’m using <a href="https://medium.com/@atoonk/building-a-high-performance-linux-based-traffic-generator-with-dpdk-93bb9904416c?source=friends_link&amp;sk=fb002771094f1f79654ec9a8be5761c7" rel="noopener">the same traffic generator as before </a>to generate 14Mpps at 64Bytes for each 10G link. Below are the results:</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="../content/images/2020/09/image-2.png" class="kg-image" alt srcset="../content/images/size/w600/2020/09/image-2.png 600w, ../content/images/size/w1000/2020/09/image-2.png 1000w, ../content/images/2020/09/image-2.png 1400w" sizes="(min-width: 720px) 720px"><figcaption>XDP forwarding Test results</figcaption></figure><p>The results are amazing! A single flow in one direction can go as high as 4.6 Mpps, using one core. Earlier, we saw the Linux kernel can go as high as 1.4Mpps for one flow using one core.</p><p>14Mpps in one direction between the two NICs require four cores. Our earlier blog showed that the regular kernel would need 16 cores to do this work!</p><figure class="kg-card kg-image-card kg-width-wide kg-card-hascaption"><img src="../content/images/2020/09/image-3.png" class="kg-image" alt srcset="../content/images/size/w600/2020/09/image-3.png 600w, ../content/images/size/w1000/2020/09/image-3.png 1000w, ../content/images/2020/09/image-3.png 1600w" sizes="(min-width: 1200px) 1200px"><figcaption>Test result — XDP forwarding using XDP_REDIRECT, 5 cores to forward 29Mpps</figcaption></figure><p>Finally, for the bidirectional 10,000 flow test, forwarding 28Mpps, we need five cores. All tests are significantly faster than forwarding packets using the regular kernel and all that with minor changes to the system.</p><h2 id="just-so-you-know">Just so you know</h2><p>Since all packet forwarding happens in XDP, packets redirected by XDP won’t be visible to IPtables or even tcpdump. Everything happens before packets even reach that layer, and since we’re redirecting the packet, it never moves up higher the stack. So if you need features like ACLs or NAT, you will have to implement that in XDP (take a look at <a href="https://cilium.io/" rel="noopener nofollow">https://cilium.io/</a>).</p><p></p><!--kg-card-begin: markdown--><p><strong>A word on measuring cpu usage.</strong><br>
-To control and measure the number of CPU cores used by XDP, I’m changing the number of queues the NIC can use. I increase the number of queues on my XL710 Intel NIC incrementally until I get a packet loss-free transfer between the two ports on the traffic generator. For example, to get 14Mpps in one direction from port 0 to 1 on the traffic generator through our XDP router, which was forwarding between eno2 and eno4, I used the following settings:</p>
-<pre><code>ethtool -L eno2 combined 4
-ethtool -L eno4 combined 4</code></pre>
-<!--kg-card-end: markdown--><!--kg-card-begin: markdown--><p>For the 28Mpps testing, I used the following</p>
-<pre><code>ethtool -L eno2 combined 4
-ethtool -L eno4 combined 4</code></pre>
-<!--kg-card-end: markdown--><blockquote><em><em><strong>A word of caution</strong></em></em><br><em><em>Interestingly, increasing the number of queues, and thus using more cores, appears to, in some cases, have a negative impact on the efficiency. Ie. I’ve seen scenarios when using 30 queues, where the unidirectional 14mps test with 10,000 flows appear to use almost no CPU (between 1 and 2) while the same test bidirectionally uses up all 30 cores. When restarting this test, I see some inconsistent behavior in terms of CPU usage, so not sure what’s going on, I will need to spend a bit more time on this later.</em></em></blockquote><h1 id="xdp-as-a-peering-router"><strong>XDP as a peering router</strong></h1><p>The tests above show promising results, but one major difference between a simple forwarding test and a real life peering router is the number of routes in the forwarding table. So the questions we need to answer was how the <em><em>bpf_fib_lookup</em></em> function will perform when there are more than just a few routes in the routing table. More concretely, <strong><strong><em><em>could you use Linux with XDP as a full route peering router?</em></em></strong></strong><br>To answer this question, I installed <a href="https://bird.network.cz/" rel="noopener nofollow">bird</a> as a bgp daemon on the XDP router. Bird has a peering session with an <a href="https://github.com/Exa-Networks/exabgp" rel="noopener nofollow">exabgp</a> instance, which I loaded with a full routing table using <a href="https://github.com/t2mune/mrtparse/blob/master/examples/mrt2exabgp.py" rel="noopener nofollow">mrt2exabgp.py</a> and a MRT files from <a href="https://www.ripe.net/analyse/internet-measurements/routing-information-service-ris/ris-raw-data" rel="noopener nofollow">RIPE RIS</a>.<br>Just to be a <em><em>real</em></em> peering router, I also filtered out the RPKI invalid routes using <a href="https://github.com/job/rtrsub" rel="noopener nofollow">rtrsub</a>. The end result is a full routing table with about 800k routes in the Linux FIB.</p><figure class="kg-card kg-image-card kg-width-wide kg-card-hascaption"><img src="../content/images/2020/09/image-4.png" class="kg-image" alt srcset="../content/images/size/w600/2020/09/image-4.png 600w, ../content/images/size/w1000/2020/09/image-4.png 1000w, ../content/images/size/w1600/2020/09/image-4.png 1600w, ../content/images/2020/09/image-4.png 2000w" sizes="(min-width: 1200px) 1200px"><figcaption>Test result — XDP router with a ful routing table. 5 cores to forward 28Mpps</figcaption></figure><blockquote>After re-running the performance tests with 800k bgp routes in the FIB, I observed <strong><em>no noticeable decrease in performance</em></strong>.</blockquote><blockquote>This indicates that a larger FIB table has no measurable impact on the XDP helper <em>bpf_fib_lookup</em>(). This is exciting news for those interested in a cheap and fast peering router.</blockquote><h2 id="conclusion-and-closing-thoughts-">Conclusion and closing thoughts.</h2><p>We started the article with a quick introduction to eBPF and XDP. We learned that XDP is a subset of the recent eBPF developments focused specifically on the hooks in the network stack. We went over the different XDP actions and introduced the redirect action, which, together with the bpf_fib_lookup helper allows us to build the XDP router.</p><p>When looking at the performance, we see this we can speed up <a href="https://medium.com/@atoonk/linux-kernel-and-measuring-network-throughput-547c3b68c4d2?source=friends_link&amp;sk=b8a74c58f8b7a0d998a8796410b3fb96">packet forwarding in Linux</a> by roughly five times in terms of CPU efficiency compared to regular kernel forwarding. We observed we needed about five cores to forward 28Mpps bidirectional between two 10G NICs.</p><p>When we compare these results with the results from my last blog,<a href="https://medium.com/swlh/kernel-bypass-networking-with-fd-io-and-vpp-fc3a53a669f9?source=friends_link&amp;sk=ab92fa42f7ffdfb6dca39ae9601f3d3e"> DPDK and VPP</a>, we see that XDP is slightly slower, ie. 3 cores (vpp) vs 5 cores (XDP) for the 28Mpps test. However, the nice part about working with XDP was that I was able to leverage the Linux routing table out of the box, which is a major advantage.</p><p>The exciting part is that this setup integrates natively with Netlink, which allowed us to use Bird, or really any other routing daemon, to populate the FIB. We also saw that the impact of 800K routes in the fib had no measurable impact on the performance.</p><blockquote>The fib_lookup helper function allowed us to build a router and leverage well-known userland routing daemons. I would love to also see a similar helper function for conntrack, or perhaps some other integration with Netfilter. It would make building firewalls and perhaps even NAT a lot easier. Punting the first packet to the kernel, and subsequent packets are handled by XDP.</blockquote><blockquote>Wrapping up, we started with the question can we build a high performant peering router using XDP? The answer is yes! You can build a high performant peering router using just Linux and relying on XDP to accelerate the dataplane. While leveraging the various open-source routing daemons to run your routing protocols. That’s exciting!</blockquote><blockquote>Cheers<br> -Andree</blockquote></div>
+        <div id="post-body" class="post-body u-container u-maxWidth740 u-relative"><p>If you've been following my blog for a while, you know I have a soft spot for making packets go fast in software. I'm a network guy at heart, raised on routing and switching, but these days most of that love is written in Go. <br>Every few years I circle back to the same question: how fast can we push and pull packets on a plain Linux box? We've explored this with DPDK, with XDP-based routers, and with the kernel itself. Today we're going a level deeper into my favorite of the bunch: AF_XDP, using a Go library I wrote to make it easy: <a href="https://github.com/atoonk/go-afxdp">go-afxd</a> . </p><p>If you want to skip ahead and see it in action, the <a href="https://github.com/atoonk/go-afxdp/blob/main/examples/blast/main.go">blast</a> and <a href="https://github.com/atoonk/go-afxdp/tree/main/examples/drop">drop</a> examples in the repo are a great place to start.</p><h2 id="some-background">Some background</h2><p>A while ago I wrote this article: <a href="https://toonk.io/sending-network-packets-in-go/">High-Speed Packet Transmission in Go: from net.Dial to AF_XDP</a>. In that article we worked through every way Linux gives you to send a packet from Go: <code>net.Dial</code>, raw sockets, <code>AF_PACKET</code>, <code>pcap</code>. At the end of that journey sat <code>AF_XDP</code>, and it beat everything else by a mile.</p><p>That was my first hands-on experience with <code>AF_XDP</code>, through a third-party library <a href="https://github.com/asavie/xdp">asavie/xdp</a>. It showed off the potential, but it was quite low-level and, honestly, a bit fragile; some of you who tried it on real hardware ran into panics I couldn't fix from my side. So, building on that code, I wrote my own library. The goal: keep the raw speed, make it higher level and more reliable, and have it do the right thing for whatever hardware or cloud you're on, without you needing to understand every knob under the covers.</p><h2 id="so-what-is-af_xdp">So, what is AF_XDP?</h2><p>AF_XDP is a socket type in Linux, like the ones you already know. The mental model is close to <code>AF_PACKET</code> (the thing <code>tcpdump</code> is built on): instead of asking the kernel to "send this payload to this IP and port," you hand it complete Ethernet frames, MAC addresses and all, and you receive complete Ethernet frames back. You're operating at layer 2.</p><p>The difference is how much of the kernel you skip on the way to the wire. <code>AF_PACKET</code> still takes a fairly scenic route through the network stack. <code>AF_XDP</code> takes the express lane: your program and the kernel share a chunk of memory (the UMEM), carved into packet buffers, and packets move through lock-free rings in that shared memory. On a modern NIC and driver it goes one step further with <strong><em>zero-copy</em></strong> mode: the NIC's DMA engine writes incoming packets directly into your program's memory and reads outgoing packets straight from it. No copies, no socket buffers, no per-packet syscalls.</p><p>How fast is that in practice? On a bare-metal machine with a 10G Intel NIC, I measured three methods, all sending small 64-byte packets. Plain kernel UDP sockets, one <code>sendto()</code> per packet, topped out around 3 million packets per second no matter how many workers I threw at it. Adding UDP GSO trickery (UDP_SEGMENT, where the kernel slices one big send into many packets) more than doubled that to almost 8 million. And go-afxdp? ~13.5 million packets per second, which is virtually 10G line rate, with the receiving side keeping up without dropping a packet. At that point the wire is the bottleneck, not the software. I still think that's kind of amazing for a Go program you can <code>go build</code> like any other.</p><p>These numbers come from <a href="https://github.com/atoonk/go-pktgen">go-pktgen</a>, my packet generator that benchmarks all the send methods side by side; I've updated it so its af_xdp mode now uses this new library. Check that repo if you want the full comparison table. Btw, <code>AF_XDP</code> shines even more on the RX path than TX.</p><h2 id="the-best-part-you-don-t-lose-your-nic">The best part: you don't lose your NIC</h2><p>When you open an <code>AF_XDP</code> socket with go-afxdp, the library compiles a small eBPF program and attaches it to the interface as an XDP program. XDP programs run inside the driver, for every incoming packet, before the kernel stack ever sees it (the same technology b<a href="https://toonk.io/building-an-xdp-express-data-path-based-bgp-peering-router/">ehind my XDP-based BGP peering router</a>  from a few years back). The program's job here is simple: if a packet matches the filter you asked for, <em>redirect</em> it into your socket's ring. That's it.</p><p>The key word is <em>if</em>. Everything that doesn't match is handed to the kernel stack, completely unaffected. Say you only want UDP port 9999: those packets land straight in your Go program, while your SSH session, DNS lookups, and everything else on the interface keep flowing like nothing happened. You can be surgical about exactly which traffic takes the fast path. This is exactly where <a href="https://toonk.io/building-a-high-performance-linux-based-traffic-generator-with-dpdk/">DPDK</a> hurts: it takes over the entire NIC, and the interface disappears from the kernel, SSH session and all. With <code>AF_XDP</code> the NIC stays a normal Linux interface.</p><h2 id="what-it-looks-like-in-go">What it looks like in Go</h2><p>This is what receiving packets looks like. Open the interface with a filter, and you get one socket per NIC queue:</p><pre><code class="language-go">fleet, err := afxdp.Open("eth0", afxdp.WithUDPPorts(9999))
+if err != nil {
+	log.Fatal(err)
+}
+// Info() tells you what you actually got: queues, XDP mode, zero-copy, driver.
+// e.g. "eth0: 12 queues, zero-copy, native XDP, 8192x2048B frames, driver ixgbe"
+info, _ := fleet.Info()
+log.Printf("started: %s", info)
+// One receive loop per queue: Fill -&gt; Poll -&gt; Receive -&gt; Recycle.
+for _, xsk := range fleet.Sockets() {
+	go func(xsk *afxdp.Socket) {
+		for {
+			xsk.Fill(xsk.NumFreeFillSlots()) // hand the kernel empty buffers
+			n, err := xsk.Poll(-1)           // block until packets arrive
+			if err != nil {
+				return
+			}
+			descs := xsk.Receive(n)
+			for _, d := range descs {
+				packet := xsk.GetFrame(d) // the raw Ethernet frame ([]byte)
+				// ... do something with it ...
+			}
+			xsk.Recycle(descs) // give the buffers back for reuse
+		}
+	}(xsk)
+}</code></pre><p><br>Pretty simple, right? No BPF to write, no UMEM math, no ring management. The <code>Fill -&gt; Poll -&gt; Receive -&gt; Recycle</code> loop is the whole programming model, and transmit is the same idea in reverse. This snippet is essentially the <a href="https://github.com/atoonk/go-afxdp/tree/main/examples/drop">drop</a> example, a UDP sink that counts how fast it can receive; its counterpart <a href="https://github.com/atoonk/go-afxdp/tree/main/examples/blast">blast</a> is the transmit side, a UDP flooder that fills every TX queue. Those two together are how I got the numbers in this article.</p><p>Notice the <code>Info()</code> line. AF_XDP can run in very different modes: <strong>native</strong> (in the driver) or <strong>generic</strong> (a slower fallback that works anywhere, even on veth), with <em>zero-copy </em>or <em>copy</em>. The difference between them is huge. The library picks the fastest mode your driver supports and then tells you what you got.</p><h2 id="it-should-just-do-the-right-thing">It should just do the right thing</h2><p>That mode business is where my old frustrations came from, and where I spent the most effort this time. Whether you get the fast path depends on your driver, your queue configuration, even your MTU. That's a lot of tribal knowledge to expect from someone who just wants to receive or send packets quickly.</p><p>A concrete example: I recently tested on AWS, on a pair of c7gn.xlarge instances. Out of the box, <code>AF_XDP</code> on the ENA driver quietly falls back to generic mode, and in generic mode my receiver silently lost about 25% of the packets, with no counter anywhere admitting to it. Getting the fast path on ENA requires some unobvious things, including page-sized (4096-byte) packet buffers instead of the usual 2048. Miss that one and zero-copy silently doesn't engage. The library now detects the ENA driver and handles it automatically, so the stock examples come up as "zero-copy, native XDP" on EC2 with no code changes. The same test then ran at a clean, steady 5 million packets per second, completely lossless, at which point you hit AWS's per-instance packets-per-second allowance. But hey, that means the software is no longer the bottleneck.</p><p>That's the philosophy of the library, you shouldn't need to know that one particular AWS driver wants page-aligned frame sizes. It should just do the right thing.</p><h2 id="how-does-it-compare-to-dpdk">How does it compare to DPDK?</h2><p>Honestly, the performance is in the same ballpark, and that surprised me. DPDK is still the gold standard for absolute numbers, but the gap has become small and the price difference is enormous. With DPDK you lose the whole NIC, you're tied to specific drivers and a heavy build-and-tuning universe, and there's effectively no good Go story. <code>AF_XDP</code> works on any modern Linux kernel, keeps the NIC as a normal interface, lets you pick which traffic to bypass, and is one <code>go get</code> away. For me it's become the sweet spot: 95%+ of the performance at 10% of the operational pain.</p><h2 id="where-this-fits-and-where-it-doesn-t-">Where this fits (and where it doesn't)</h2><p>The cases where <code>AF_XDP</code> shines is anything that's packet-in, packet-out at high packet rates:</p><ul><li>Packet generators and performance testing. the blast and drop examples together are a poor man's IXIA, the same itch I used to scratch with DPDK's pktgen, now in a couple hundred lines of Go.</li><li>UDP-based servers and protocols.  There's a <a href="https://github.com/atoonk/go-afxdp/tree/main/examples/dns">DNS server example</a> in the repo that answers queries straight from the AF_XDP path. Tunnels, VXLAN, QUIC-adjacent experiments: anything UDP-shaped fits naturally.</li><li>Network scanners, IDS-style monitoring, DDoS scrubbing. Anywhere you want to see a lot of packets cheaply, for a specific slice of traffic, without taking the box off the network.<br></li></ul><p>And where it doesn't fit: TCP. With <code>AF_XDP</code> you're getting raw Ethernet frames, so TCP means bringing your own TCP stack in userland, retransmissions and congestion control included. The kernel gives you a world-class TCP implementation for free, and my strong suspicion is that a userland stack bolted onto AF_XDP would give back most of the performance while adding a pile of complexity. If your workload is TCP-shaped, use the kernel. <code>AF_XDP</code> is for when your workload is packets.</p><h2 id="wrap-up">Wrap-up</h2><p>To me, a reliable easy to use <code>AF_XDP</code> library felt like a missing piece in Go for years: kernel sockets are easy but top out in the low millions of packets per second, and DPDK is fast but heavy, using C, and takes your NIC away. <code>AF_XDP</code> sits right in between: a Go program, built with the normal toolchain, sending and receiving at 10G line rate with a couple of CPU cores, while the rest of the box carries on like normal.</p><p>The code is at <a href="https://github.com/atoonk/go-afxdp">github.com/atoonk/go-afxdp</a>. If you try it on hardware I haven't, I'd love to hear about it, especially the failure cases. That's how the ENA quirks got found and fixed.</p><p>That's it; you made it to the end! Thanks for reading! Let's push some packets :) <br>Cheers <br> -Andree</p></div>
     </div>
 
     <footer class="post-footer u-container u-maxWidth740">
             <div class="post-tags buttonSet u-marginTop30">
-        <a href="../tag/networking/index.html" title="networking" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="networking" data-event-non-interaction="true">networking</a>
+        <a href="../tag/go/index.html" title="Go" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="Go" data-event-non-interaction="true">Go</a><a href="../tag/xdp/index.html" title="xdp" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="xdp" data-event-non-interaction="true">xdp</a><a href="../tag/networking/index.html" title="networking" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="networking" data-event-non-interaction="true">networking</a>
     </div>
 
         <hr>
@@ -304,39 +313,22 @@ ethtool -L eno4 combined 4</code></pre>
                 <div class="u-flex u-relative godo-tracking u-marginBottom30"
     data-event-category="Article"
     data-event-action="Previous article"
-    data-event-label="http://toonk.io/kernel-bypass-networking-with-fd-io-and-vpp/"
+    data-event-label="http://toonk.io/navigating-infrastructure-outages-battle-scars-and-lessons-learned/"
     data-event-non-interaction="true">
 
-    <a href="../kernel-bypass-networking-with-fd-io-and-vpp/index.html" class="prev-next-image-link u-relative u-bgColorGrayLight u-flex0" aria-label="Kernel bypass networking with FD.io and VPP.">
-        <img class="u-absolute u-image blur-up lazyload" data-src="https://images.unsplash.com/photo-1570854226992-255c6e78e342?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIyfHx2YW5jb3V2ZXIlMjBieXBhc3N8ZW58MHx8fHwxNzEyMDI5NDUwfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000" alt="Kernel bypass networking with FD.io and VPP."/>
+    <a href="../navigating-infrastructure-outages-battle-scars-and-lessons-learned/index.html" class="prev-next-image-link u-relative u-bgColorGrayLight u-flex0" aria-label="Navigating Infrastructure Outages: Battle Scars and Lessons Learned">
+        <img class="u-absolute u-image blur-up lazyload" data-src="https://images.unsplash.com/photo-1509390726584-faaa21c8ac95?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDE0fHxvdXRhZ2V8ZW58MHx8fHwxNzIwNDEwODM2fDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000" alt="Navigating Infrastructure Outages: Battle Scars and Lessons Learned"/>
     </a>
 
     <div class="prev-next-body u-paddingLeft20 u-flex1">
         <div class="u-fontSizeSmaller u-lineHeight1 u-textMuted u-marginBottom10">Previous article</div>
-        <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../kernel-bypass-networking-with-fd-io-and-vpp/index.html" class="u-relative zindex3">Kernel bypass networking with FD.io and VPP.</a></h2>
-        <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">In this blog, we’ll look at VPP, a fast, flexible, and open-source network forwarding plane. I think you will be blown away by the performance numbers.</p>
+        <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../navigating-infrastructure-outages-battle-scars-and-lessons-learned/index.html" class="u-relative zindex3">Navigating Infrastructure Outages: Battle Scars and Lessons Learned</a></h2>
+        <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">I've worked on numerous outages, each teaching me invaluable lessons. Inspired by Rogers' recent outage report, I wrote down some of my lessons learned.</p>
     </div>
 
-    <a href="../kernel-bypass-networking-with-fd-io-and-vpp/index.html" aria-label="Kernel bypass networking with FD.io and VPP." class="u-absolute0 zindex2"></a>
+    <a href="../navigating-infrastructure-outages-battle-scars-and-lessons-learned/index.html" aria-label="Navigating Infrastructure Outages: Battle Scars and Lessons Learned" class="u-absolute0 zindex2"></a>
 </div>
-                <div class="u-flex u-relative godo-tracking "
-    data-event-category="Article"
-    data-event-action="Next article"
-    data-event-label="http://toonk.io/building-a-global-anycast-service-in-under-a-minute/"
-    data-event-non-interaction="true">
-
-    <a href="../building-a-global-anycast-service-in-under-a-minute/index.html" class="prev-next-image-link u-relative u-bgColorGrayLight u-flex0" aria-label="Building a global anycast service in under a minute">
-        <img class="u-absolute u-image blur-up lazyload" data-src="https://images.unsplash.com/photo-1527685216219-c7bee79b0089?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" alt="Building a global anycast service in under a minute"/>
-    </a>
-
-    <div class="prev-next-body u-paddingLeft20 u-flex1">
-        <div class="u-fontSizeSmaller u-lineHeight1 u-textMuted u-marginBottom10">Next article</div>
-        <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../building-a-global-anycast-service-in-under-a-minute/index.html" class="u-relative zindex3">Building a global anycast service in under a minute</a></h2>
-        <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">This weekend I decided to take another look at Stackpath and their workload edge compute features. This is a relatively new feature, in fact, I</p>
-    </div>
-
-    <a href="../building-a-global-anycast-service-in-under-a-minute/index.html" aria-label="Building a global anycast service in under a minute" class="u-absolute0 zindex2"></a>
-</div>        </div>
+        </div>
         <hr>
     </footer>
 </article>
@@ -351,33 +343,6 @@ ethtool -L eno4 combined 4</code></pre>
                 <h3 class="u-contentTitle u-fontSizeLarger">Related <span class='text-success'>Articles</span></h3>
             </div>
 
-            <div class="col s12 m6 l4 u-flex">
-                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/line-rate-packet-processing-in-go-with-af_xdp/" data-event-non-interaction="true">
-    <a href="../line-rate-packet-processing-in-go-with-af_xdp/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
-        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
-            src="https://images.unsplash.com/photo-1647655806923-e8202f4f2b8c?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODMzOTA2NDJ8MA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000"
-            srcset="https://images.unsplash.com/photo-1647655806923-e8202f4f2b8c?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODMzOTA2NDJ8MA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000"
-            data-srcset="https://images.unsplash.com/photo-1647655806923-e8202f4f2b8c?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODMzOTA2NDJ8MA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000 300w,https://images.unsplash.com/photo-1647655806923-e8202f4f2b8c?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODMzOTA2NDJ8MA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000 600w"
-            data-sizes="(max-width: 1000px) 400px, 600px"
-            alt="Line-rate packet processing in Go with AF_XDP"
-        />
-    </a>
-
-    <div class="cr-inner u-padding15 u-flexColumnTop">
-        <div class="cr-body">
-                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../line-rate-packet-processing-in-go-with-af_xdp/index.html">Line-rate packet processing in Go with AF_XDP</a></h2>
-        </div>
-
-        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2026-07-07">7 Jul 2026</time>
-    <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="7 min read">7 min read</span>
-    
-</div>    </div>
-
-    <a href="../line-rate-packet-processing-in-go-with-af_xdp/index.html" class="u-absolute0 zindex3" aria-label="Line-rate packet processing in Go with AF_XDP"></a>
-</div>
-            </div>
             <div class="col s12 m6 l4 u-flex">
                 <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/navigating-infrastructure-outages-battle-scars-and-lessons-learned/" data-event-non-interaction="true">
     <a href="../navigating-infrastructure-outages-battle-scars-and-lessons-learned/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
@@ -513,6 +478,33 @@ ethtool -L eno4 combined 4</code></pre>
     <a href="../introducing-ssh-zero-trust-identity-aware-tcp-sockets/index.html" class="u-absolute0 zindex3" aria-label="Introducing SSH zero trust, Identity aware TCP sockets"></a>
 </div>
             </div>
+            <div class="col s12 m6 l4 u-flex">
+                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/aws-and-their-billions-in-ipv4-addresses/" data-event-non-interaction="true">
+    <a href="../aws-and-their-billions-in-ipv4-addresses/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
+        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
+            src="https://images.unsplash.com/photo-1572288717056-ea97fb77c71e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            srcset="https://images.unsplash.com/photo-1572288717056-ea97fb77c71e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ"
+            data-srcset="https://images.unsplash.com/photo-1572288717056-ea97fb77c71e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 300w,https://images.unsplash.com/photo-1572288717056-ea97fb77c71e?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ 600w"
+            data-sizes="(max-width: 1000px) 400px, 600px"
+            alt="AWS and their Billions in IPv4 addresses"
+        />
+    </a>
+
+    <div class="cr-inner u-padding15 u-flexColumnTop">
+        <div class="cr-body">
+                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../aws-and-their-billions-in-ipv4-addresses/index.html">AWS and their Billions in IPv4 addresses</a></h2>
+        </div>
+
+        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
+    <time class="datetime u-textCapitalize" datetime="2020-10-20">20 Oct 2020</time>
+    <span class="bull">&bull;</span>
+    <span class="readingTime" style="cursor:default" title="4 min read">4 min read</span>
+    
+</div>    </div>
+
+    <a href="../aws-and-their-billions-in-ipv4-addresses/index.html" class="u-absolute0 zindex3" aria-label="AWS and their Billions in IPv4 addresses"></a>
+</div>
+            </div>
         </div>
     </div>
 </div>
@@ -528,7 +520,7 @@ ethtool -L eno4 combined 4</code></pre>
     <div class="share-sticky u-textAlignRight is-visible">
     <div class="share-sticky-wrap buttonSet u-container u-maxWidth1200">
         <span class="u-textMuted u-fontSize15 u-paddingRight10 u-hide-before-md">Share this article:</span>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/building-an-xdp-express-data-path-based-bgp-peering-router/"
+        <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/line-rate-packet-processing-in-go-with-af_xdp/"
             target="_blank"
             rel="noopener noreferrer"
             title="Share on Facebook"
@@ -540,7 +532,7 @@ ethtool -L eno4 combined 4</code></pre>
             <svg class="icon"><use xlink:href="#icon-facebook"></use></svg>
             Share
         </a>
-        <a href="https://twitter.com/share?text=Building%20an%20XDP%20(eXpress%20Data%20Path)%20based%20BGP%20peering%20router&amp;url=http://toonk.io/building-an-xdp-express-data-path-based-bgp-peering-router/"
+        <a href="https://twitter.com/share?text=Line-rate%20packet%20processing%20in%20Go%20with%20AF_XDP&amp;url=http://toonk.io/line-rate-packet-processing-in-go-with-af_xdp/"
             target="_blank"
             rel="noopener noreferrer"
             title="Share on Twitter"
@@ -552,7 +544,7 @@ ethtool -L eno4 combined 4</code></pre>
             <svg class="icon"><use xlink:href="#icon-twitter"></use></svg>
             Tweet
         </a>
-        <a href="whatsapp://send?text=http://toonk.io/building-an-xdp-express-data-path-based-bgp-peering-router/"
+        <a href="whatsapp://send?text=http://toonk.io/line-rate-packet-processing-in-go-with-af_xdp/"
             target="_blank"
             rel="noopener noreferrer"
             class="godo-tracking button button--s u-textColorWhite bg-whatsapp u-hide-after-lg"
@@ -695,8 +687,8 @@ var followSocialMedia = {
     if (typeof disqusShortName === 'undefined') return;
 
     var disqus_config = function () {
-        this.page.url = 'http://toonk.io/building-an-xdp-express-data-path-based-bgp-peering-router/';
-        this.page.identifier = 'ghost-5f53ccd83680d46e73ec6039';
+        this.page.url = 'http://toonk.io/line-rate-packet-processing-in-go-with-af_xdp/';
+        this.page.identifier = 'ghost-6a4c5c98ed81a12c01da6658';
     };
 
     d.querySelector('.js-comments').classList.remove('u-hide')
