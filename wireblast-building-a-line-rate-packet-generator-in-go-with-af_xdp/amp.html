@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html amp lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Wireblast: Building a line-rate packet generator in Go with AF_XDP</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <link rel="icon" href="../favicon.png" type="image/png" />
+    <link rel="canonical" href="index.html" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    
+    <meta property="og:site_name" content="Andree&#x27;s Musings" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Wireblast: Building a line-rate packet generator in Go with AF_XDP" />
+    <meta property="og:description" content="If you’ve followed my blog for a while, you know I love tinkering with packets and making them go fast in software. A few weeks ago, I wrote about go-afxdp, a small Go library I&#x27;ve been working on for sending and receiving Ethernet frames at line rate using AF_" />
+    <meta property="og:url" content="http://toonk.io/wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1535989052107-a9a9a9d1c538?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDN8fHNxdWFtaXNofGVufDB8fHx8MTc4NTcxMTg2Mnww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta property="article:published_time" content="2026-08-02T23:02:36.000Z" />
+    <meta property="article:modified_time" content="2026-08-05T17:02:55.000Z" />
+    <meta property="article:tag" content="Go" />
+    <meta property="article:tag" content="networking" />
+    <meta property="article:tag" content="xdp" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Wireblast: Building a line-rate packet generator in Go with AF_XDP" />
+    <meta name="twitter:description" content="If you’ve followed my blog for a while, you know I love tinkering with packets and making them go fast in software. A few weeks ago, I wrote about go-afxdp, a small Go library I&#x27;ve been working on for sending and receiving Ethernet frames at line rate using AF_" />
+    <meta name="twitter:url" content="http://toonk.io/wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1535989052107-a9a9a9d1c538?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDN8fHNxdWFtaXNofGVufDB8fHx8MTc4NTcxMTg2Mnww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Andree Toonk" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Go, networking, xdp" />
+    <meta name="twitter:site" content="@atoonk" />
+    <meta name="twitter:creator" content="@atoonk" />
+    <meta property="og:image:width" content="2000" />
+    <meta property="og:image:height" content="1334" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Andree&#x27;s Musings",
+        "url": "http://toonk.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "http://toonk.io/content/images/2024/03/toonk-io-icon-1.png",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Andree Toonk",
+        "image": {
+            "@type": "ImageObject",
+            "url": "http://toonk.io/content/images/2020/09/andreetoonk.png",
+            "width": 360,
+            "height": 360
+        },
+        "url": "http://toonk.io/author/andree/",
+        "sameAs": [
+            "http://toonk.io/about/",
+            "https://twitter.com/atoonk"
+        ]
+    },
+    "headline": "Wireblast: Building a line-rate packet generator in Go with AF_XDP",
+    "url": "http://toonk.io/wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/",
+    "datePublished": "2026-08-02T23:02:36.000Z",
+    "dateModified": "2026-08-05T17:02:55.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1535989052107-a9a9a9d1c538?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDN8fHNxdWFtaXNofGVufDB8fHx8MTc4NTcxMTg2Mnww&ixlib=rb-4.1.0&q=80&w=2000",
+        "width": 2000,
+        "height": 1334
+    },
+    "keywords": "Go, networking, xdp",
+    "description": "If you’ve followed my blog for a while, you know I love tinkering with packets\nand making them go fast in software.\n\nA few weeks ago, I wrote about go-afxdp [https://github.com/atoonk/go-afxdp], a\nsmall Go library I&#x27;ve been working on for sending and receiving Ethernet frames\nat line rate using AF_XDP, without DPDK and without leaving Go.\n\nI was pretty happy with how it turned out. But a library is just a library; the\nreal value is in how you use it. So the next question is, what can we build wi",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://toonk.io/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.34" />
+    <link rel="alternate" type="application/rss+xml" title="Andree&#x27;s Musings" href="../rss/index.html" />
+
+    <link href="https://fonts.googleapis.com/css?family=Domine|Rubik:400,500,700&display=swap" rel="stylesheet">
+
+
+    <style amp-custom>.u-bgColor{background-color:#161D25}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}[hidden],template{display:none}.kg-bookmark-container,body,figcaption,h1,h2,h3,h4,h5,h6{font-family:Rubik,Whitney SSm A,Whitney SSm B,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif}.article-excerpt{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif}.u-flexCenter{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex}.u-block{display:block}.u-relative{position:relative}.u-overflowHidden{overflow:hidden}.u-fontSizeSmaller{font-size:.875rem}.u-flex1{-webkit-box-flex:1;flex:1 1 auto}.u-absolute{position:absolute}.u-textCenter{text-align:center}.u-marginTop30{margin-top:30px}.u-container{margin-left:auto;margin-right:auto;padding-left:16px;padding-right:16px}*,:after,:before{box-sizing:border-box}body{font-size:1rem;font-style:normal;font-weight:400;letter-spacing:0;line-height:1.5em;text-rendering:optimizeLegibility;-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;-ms-text-size-adjust:100%;text-size-adjust:100%;color:#212529}a{color:#00a562;text-decoration:none;word-break:break-word}a:active,a:hover{outline:0}blockquote{border-left:4px solid #212529;font-size:1.125rem;font-style:italic;margin-left:-5px;margin-right:0;padding-bottom:2px;padding-left:20px}figure{margin:0;padding:0}img{-o-object-fit:cover;object-fit:cover;-o-object-position:center;object-position:center}figcaption{color:#6c757d;display:block;font-size:.875rem;font-style:normal;font-weight:400;margin-top:10px;text-align:center;width:100%}h1,h2,h3,h4,h5,h6{color:#111;font-style:normal;font-weight:700;line-height:1.2;margin:25px 0 0;word-break:break-word}h1{font-size:2rem}h2{font-size:1.75rem}h3{font-size:1.5rem}h4{font-size:1.375rem}h5{font-size:1.25rem}h6{font-size:1.125rem}strong{font-weight:700}p{margin:20px 0 0}hr{box-sizing:content-box;height:0;margin:1rem 0;overflow:visible;border:0;border-top:1px solid rgba(0,0,0,.1)}mark{background-color:transparent;background-image:linear-gradient(180deg,#d7fdd3,#d7fdd3);color:rgba(0,0,0,.8)}code,pre{font-family:Menlo,Courier,monospace;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-ms-hyphens:none;hyphens:none}p code{border-radius:2px;padding:1px 6px}p code,pre{background:#2a3644;color:#e5eff5;font-size:.875rem}pre{overflow-x:auto;margin:0;padding:20px;border:none;line-height:1.6em}pre code{padding:0;background:transparent}svg{width:100%;height:100%}svg:not(:root){overflow:hidden}table{border-collapse:collapse;border-spacing:0;display:inline-block;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;font-size:1rem;line-height:1.5;margin:20px 0 0;max-width:100%;overflow-x:auto;vertical-align:top;white-space:nowrap;width:auto;-webkit-overflow-scrolling:touch}table td,table th{padding:6px 13px;border:1px solid #dfe2e5}table tr:nth-child(2n){background-color:#f6f8fa}table th{letter-spacing:.0125rem;text-transform:uppercase;font-weight:500}.header{position:relative;width:100%;height:50px;line-height:1}.logo-link{color:#fff;font-size:1.5rem;font-weight:500}.social-media a{background:#212529;border-radius:4px;color:#fff;display:inline-block;height:36px;margin:0 2px;padding:8px;vertical-align:middle;width:36px}.social-media svg{fill:#fff;stroke:none}.sidebar{width:280px;background:#fff}.sidebar ul{list-style:none;list-style-image:none;margin:18px 0 20px;padding:0}.sidebar ul li a{padding:6px 20px;font-weight:500;font-size:1rem;display:block}.sidebar .social-media{padding:20px;border-top:1px solid #ddd}.close-sidebar{height:50px;font-size:1.5625rem;line-height:3.125rem;text-align:right;padding-right:20px;color:#fff}.hamburgermenu{background-color:transparent;border:none;padding:0;height:48px;position:relative;-webkit-transition:-webkit-transform .4s;transition:-webkit-transform .4s;transition:transform .4s;transition:transform .4s,-webkit-transform .4s;width:48px;margin-right:-15px}.hamburgermenu span{background-color:#fff;display:block;height:2px;left:14px;margin-top:-1px;position:absolute;top:50%;width:20px}.hamburgermenu span:first-child{-webkit-transform:translateY(-6px);transform:translateY(-6px)}.hamburgermenu span:last-child{-webkit-transform:translateY(6px);transform:translateY(6px)}.main{max-width:500px;margin:0 auto}.article{padding-top:25px}.article-title{margin-top:0}.article-excerpt{margin-bottom:20px;margin-top:15px;color:#6c757d;font-size:1.25rem;line-height:1.4}.article-meta{color:#6c757d;margin:15px 0;font-size:.875rem}.article-body{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif;line-height:1.7em;font-size:1.125rem;padding:20px 1rem}.article-body>*{margin-bottom:28px}.article-body a:not(.kg-bookmark-container){word-break:break-word;text-decoration:underline}.article-body ol,.article-body ul{padding-left:20px}.article-body ol li,.article-body ul li{margin-bottom:5px}.button--tags{border-radius:3px;color:#212529;display:inline-block;font-size:.875rem;font-weight:500;height:37px;line-height:2.1875rem;margin:0 8px 8px 0;padding:0 10px;border:2px solid #212529}.button--tags:before{content:"#"}.share-title{display:block;margin-bottom:8px}amp-social-share.custom-style{background-color:teal;background-image:url(https://raw.githubusercontent.com/google/material-design-icons/master/social/1x_web/ic_share_white_48dp.png);background-repeat:no-repeat;background-position:50%;background-size:contain}amp-social-share.rounded{border-radius:10%;background-size:85%}.related{padding-top:40px;padding-bottom:20px;margin-top:20px;background:#efefef}.related-title{border-bottom:1px solid rgba(0,0,0,.15);padding-bottom:15px;margin-bottom:30px;color:#212529;font-weight:500;font-size:1.25rem}.story-border{border-left:3px solid #cc116e;bottom:0;color:rgba(0,0,0,.2);font-size:2.25rem;font-weight:700;left:0;padding:15px 10px 10px;top:0;-webkit-text-fill-color:transparent;-webkit-text-stroke-width:1.4px;-webkit-text-stroke-color:#888}.story:nth-child(3n) .story-border{border-color:#f59e00}.story:nth-child(3n+2) .story-border{border-color:#26a8ed}.story-link{background-color:#fff;border-bottom:1px solid #e2e0e0;box-shadow:0 1px 7px rgba(0,0,0,.05);min-height:50px;padding:15px 15px 15px 55px}.story-title{color:#212529;line-height:1.2;font-size:1.0625rem;font-weight:500;margin:0}.kg-bookmark-container{display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;flex-direction:column;border:1px solid rgba(0,0,0,.1)}.kg-bookmark-content{padding:20px;-webkit-box-ordinal-group:2;order:1}.kg-bookmark-title{font-weight:500;line-height:1.2;font-size:1.125rem}.kg-bookmark-description{color:#6c757d;line-height:1.4;margin-top:10px;font-size:.875rem}.kg-bookmark-metadata{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;font-size:.875rem;margin-top:10px}.kg-bookmark-icon{margin-right:5px}.kg-bookmark-author:after{content:"•";margin:0 6px}.footer{background-color:#efefef;color:rgba(0,0,0,.44);padding-top:20px;font-size:.9375rem;padding-bottom:45px}</style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
+    <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+
+    
+</head>
+<body class="amp-template">
+    <header class="header u-bgColor u-flexCenter u-container">
+    <div class="u-flex1">
+
+
+
+        <a href="../index.html" class="logo-link">Andree&#x27;s Musings</a>
+    </div>
+
+    <button class="hamburgermenu" on="tap:sidenav.open" tabindex="0"><span></span><span></span><span></span></button>
+
+</header>
+
+    <main class="main">
+        
+<article class="article">
+    <header class="article-header u-container">
+        <h1 class="article-title">Wireblast: Building a line-rate packet generator in Go with AF_XDP</h1>
+
+        
+
+        <hr>
+
+        <div class="article-meta">
+            <span class="author-name">By <a href="../author/andree/index.html">Andree Toonk</a></span>
+
+            <span class="timestamp">
+                <time class="datetime" datetime="2026-08-02">3 days ago</time>
+            </span>
+
+            
+                <span>in</span>
+                <span class="categories"><a href="../tag/go/index.html" title="Go">Go</a></span>
+            
+        </div>
+    </header>
+
+        <figure class="article-image u-block u-marginTop30">
+            <amp-img src="https://images.unsplash.com/photo-1535989052107-a9a9a9d1c538?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDN8fHNxdWFtaXNofGVufDB8fHx8MTc4NTcxMTg2Mnww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" width="600" height="350" layout="responsive" alt="Wireblast: Building a line-rate packet generator in Go with AF_XDP"></amp-img>
+        </figure>
+
+    <div class="article-body u-container"> <p>If you’ve followed my blog for a while, you know I love tinkering with packets and making them go fast in software.</p><p>A few weeks ago, I wrote about <a href="https://github.com/atoonk/go-afxdp">go-afxdp</a>, a small Go library I've been working on for sending and receiving Ethernet frames at line rate using AF_XDP, without DPDK and without leaving Go.</p><p>I was pretty happy with how it turned out. But a library is just a library; the real value is in how you use it. So the next question is, what can we build with it?</p><p>I have a few things cooking, all about fast packet forwarding on Linux. But to know whether a fast forwarding path is actually fast, you need to throw traffic at it. A lot of traffic! And you need to trust the numbers. So I built a packet generator. It’s called <strong>Wireblast</strong>.</p><figure class="kg-card kg-image-card kg-width-wide kg-card-hascaption"><figcaption>100Gbs line rate traffic generator</figcaption></figure><h2 id="the-gap-iperf-leaves">The gap iperf leaves</h2><p>For network performance testing, most of us reach for <code>iperf3</code>. I do too.</p><p>It’s easy, it’s everywhere, and if you want a quick answer to “How many gigabits per second can these two hosts push?”, it’s exactly the right tool.</p><p>But network performance isn’t only about bits per second. Packets per second matter just as much, especially when you’re testing routers, firewalls, load balancers, or anything else that has to do work for every packet.</p><p>That is where <code>iperf</code> starts to hit a wall.</p><p>Its traffic still travels through the Linux socket and networking stacks. A Linux host might process somewhere around a million packets per second per core, depending on the hardware and workload.<br />That sounds like a lot until you compare it with 10G line rate for 64-byte Ethernet frames: <strong>14.88 million packets per second</strong>. And yeah, for 100G that's <strong>144M</strong> pps. The kernel won’t even get close to that; you’re lucky if you reach 10% of it on a beefy box.</p><p><code>iperf3</code> is not going to get us anywhere near line rate. The <em>kernel</em> becomes the bottleneck long before the wire does.</p><p>So, if you want to quickly test whether two hosts can move a few gigabits per second, use <code>iperf3</code>. But if you want to know what the network path can really do with small packets, high packet rates, and lots of different flows, you need a different kind of tool.</p><p>Historically, that meant jumping to something like T-Rex, DPDK Pktgen, or a hardware tester such as Ixia. These are powerful tools and will happily saturate 100G, but now you’re dealing with DPDK, hugepages, special drivers, dedicated interfaces, lots of setup, and sometimes a purchase order. </p><p>There’s a pretty big gap between those worlds:</p><div>
+
+<table> <thead> <tr> <th>Tool</th> <th>Best for</th> <th>Ceiling</th> </tr> </thead> <tbody> <tr> <td><code>iperf3</code></td> <td>Quick host-to-host bandwidth tests</td> <td>Limited by the kernel</td> </tr> <tr> <td><code>wireblast</code></td> <td>Packet-rate, flow, and line-rate testing</td> <td>Line rate</td> </tr> <tr> <td>T-Rex, Pktgen, or Ixia</td> <td>Advanced traffic generation and test suites</td> <td>Line rate and beyond</td> </tr> </tbody> </table>
+
+</div><p>That middle row is the whole idea: something nearly as easy to use as <code>iperf</code>, but able to tell you what the network can actually do when packets per second, not just bits per second, become the limiting factor.</p><h2 id="meet-wireblast">Meet Wireblast</h2><p>Wireblast is a single, static, 14 MB Go binary. There’s no DPDK and no complicated setup. You download it, run it, and start sending (or receiving) packets.</p><p>Run it without arguments and you get a small interactive wizard. Or provide everything as command-line flags, which makes it easy to use from scripts and automated tests.</p><p>The code is available on <a href="https://github.com/atoonk/wireblast">GitHub</a>, and the documentation is at <a href="https://wireblast.mintlify.site/">wireblast.mintlify.site</a>.</p><p>Under the hood, Wireblast uses AF_XDP to bypass most of the normal kernel networking path when transmitting packets. That makes it possible to reach very high packet rates: 14M pps on 10G hardware and 144M packets per second on 100G NICs.</p><h2 id="let-s-send-some-packets">Let’s send some packets</h2><p>Grab the latest binary:</p><pre><code class="language-bash">curl -sSL https://github.com/atoonk/wireblast/releases/latest/download/wireblast_linux_amd64.tar.gz \
+  | tar xz
+
+sudo install -m 0755 wireblast /usr/local/bin/
+wireblast --version
+</code></pre><p>There’s an arm64 build too, or you can install it using Go:</p><pre><code class="language-bash">go install github.com/atoonk/wireblast/cmd/wireblast@latest
+</code></pre><p>Now let’s start with the hardest thing you can ask a NIC to do: tiny packets.</p><p>Small frames are the classic stress test because you’re bottlenecked on packets per second rather than bits per second. </p><pre><code class="language-bash">sudo wireblast --start -yes -i eno2 --vlan 2043 \
+   --src-ip 192.168.43.1 \
+   --dst-ip 192.168.43.2 \
+   --dst-mac 7c:c2:55:be:f4:1b \
+   -size 80 \
+   --flows 100 \
+   --pps unlimited -d 30s</code></pre><p>UDP is e the defaults, so that’s the whole command. Of course you only need the vlan flag when running on tagged vlans.</p><pre><code class="language-text">Wireblast  running   elapsed 0:05
+  interface  eth1  ixgbe · 4 queue(s) · native XDP · zero-copy
+  pattern    udp  fixed 64-byte frames
+  rate       set unlimited  actual 14.88 Mpps
+
+  Packets/sec      14.88 Mpps
+  Bits/sec L1      10 Gbit/s
+</code></pre><p>That’s <strong>14.88 million packets per second</strong>: line rate for 10G, from a Go program using only a few CPU cores. I still think that’s kind of amazing.</p><h2 id="imix-and-pcap-replay">IMIX and PCAP replay</h2><p>Fixed-size packets are great for finding the ceiling, but real traffic contains a mix of packet sizes.</p><p>Wireblast includes the classic IMIX profile: a 7:4:1 ratio of 64-, 594-, and 1518-byte frames.</p><pre><code class="language-bash">sudo wireblast -i eth1 \
+  --dst-ip 192.0.2.10 \
+  --mode imix \
+  --flows 64 \
+  --pps 200k \
+  --start
+</code></pre><p>The 64 flows vary the source ports, which is useful when testing anything involving RSS, ECMP, link aggregation, load balancers, or connection tables.</p><p>You can also replay PCAP and PCAPNG files:</p><pre><code class="language-bash">sudo wireblast -i eth1 \
+  --pcap capture.pcap \
+  --pps 100k \
+  --start
+</code></pre><p>By default, Wireblast loops the capture at your requested rate. It can also reproduce the original packet timing:</p><pre><code class="language-bash">sudo wireblast -i eth1 \
+  --pcap capture.pcap \
+  --pcap-timing original \
+  --pcap-loop=false
+</code></pre><p>For automation, <code>--no-tui</code> skips the wizard and dashboard and prints plain-text statistics once per second:</p><pre><code class="language-bash">sudo wireblast --no-tui \
+  -i eth1 \
+  --dst-ip 192.0.2.10 \
+  --pps unlimited \
+  -d 30s \
+  -y
+</code></pre><pre><code class="language-text">[0:05] tx 74.4 M pkts  14.88 Mpps  L1 10 Gbit/s  L2 7.62 Gbit/s  avg 64B
+</code></pre><p>Everything is scriptable, and there isn’t much to learn.</p><h2 id="going-big-100g">Going big: 100G</h2><p>10G is fun, but I had to know how far this thing would go. <br />So I put Wireblast on a pair of machines with 100G Mellanox ConnectX NICs using the <code>mlx5</code> driver and let it rip. (By the way, I’ve been spending waaay too much money on <a href="https://www.latitude.sh/">Latitude.sh</a> for this project, but I highly recommend them for renting bare-metal machines with a second NIC for network testing.)</p><p>Below is a test with 80 bytes packets.  <strong>98Gb/s at 122Mpps! nice!</strong></p><figure class="kg-card kg-image-card"></figure><p></p><p>That’s 99% of tagged line rate for minimum-size frames on a 100G link, from one Go binary. And it wasn’t limited to tiny packets:</p><div>
+
+<table> <thead> <tr> <th>Frame size</th> <th>Packets per second</th> <th>L1 throughput</th> </tr> </thead> <tbody> <tr> <td>68 B</td> <td>138.2 Mpps</td> <td>97.3 Gbit/s</td> </tr> <tr> <td>512 B</td> <td>23.0 Mpps</td> <td>98.0 Gbit/s</td> </tr> <tr> <td>1518 B</td> <td>8.0 Mpps</td> <td>98.5 Gbit/s</td> </tr> <tr> <td>IMIX, approximately 364 B</td> <td>32.0 Mpps</td> <td>98.3 Gbit/s</td> </tr> </tbody> </table>
+
+</div><p>The queue-scaling results surprised me even more. With large frames, one queue already pushed 83 Gbit/s. Two queues nearly saturated the link.</p><p>You don’t need a monster machine. You need a decent NIC and a couple of CPU cores, which is a wild thing to be able to say about a software packet generator.</p><h2 id="where-wireblast-fits">Where Wireblast fits</h2><p>Wireblast is meant to cover the easy 80%. It is not trying to replace an Ixia.</p><p>It counts packets and bytes, but it does not measure latency or jitter, and it does not support hardware timestamping. Its TCP mode generates stateless SYN packets rather than complete TCP sessions.</p><p>That makes it useful for testing:</p><ul><li>Packet-forwarding performance</li><li>Firewalls and ACLs</li><li>Connection tables</li><li>RSS and queue distribution</li><li>ECMP Link aggregation</li><li>Load balancers</li><li>Packet-processing software</li></ul><p>When I want to know, “Can this path do line rate, and does the far end see the packets?”, Wireblast answers that question in about 30 seconds.</p><h2 id="wrap-up">Wrap-up</h2><p>Building Wireblast was fun. More importantly, building it on top of go-afxdp was easy.</p><p>Claude Code also made building the TUI surprisingly quick. That’s a nice thing to be able to say about both the library and the current state of software development.</p><p>For years, software traffic generation meant choosing between an easy tool limited by the normal kernel path and a powerful tool that pulled you into DPDK, out dated howto's and specialized test setups.</p><p>Wireblast is the middle ground I wanted: download one binary, point it at an interface, and start sending packets at line rate.</p><p>No hugepages. No NIC surgery. No DPDK expertise required. And let’s be real: what’s more fun than sending packets at line rate?</p><p>Fourteen million packets per second on a normal 10G box. More than 100 million <em>packets</em> per second on a 100G NIC. All from one command, with almost no setup required. Pretty amazing!</p><p>Next up, now that I have a reliable traffic generator, I want to get back to the project that started all of this: a completely Go-based dataplane that bypasses the kernel for routing, switching, and firewalling.</p><p>Now I finally have a good way to measure it. Stay tuned!</p><p>The code is on <a href="https://github.com/atoonk/wireblast">GitHub</a>, the documentation is at <a href="https://wireblast.mintlify.site/">wireblast.mintlify.site</a>, and it’s all built on <a href="https://github.com/atoonk/go-afxdp">go-afxdp</a>.</p><p>That’s it :) you made it to the end. Thanks for reading!</p><p>Cheers,<br />Andree</p> </div>
+
+        <div class="article-tags u-container u-marginTop30">
+            <span class="share-title">Tags:</span>
+                <a href="../tag/go/index.html" title="Go" class="button--tags">Go</a>
+                <a href="../tag/networking/index.html" title="networking" class="button--tags">networking</a>
+                <a href="../tag/xdp/index.html" title="xdp" class="button--tags">xdp</a>
+        </div>
+
+    <footer class="share u-container u-marginTop30">
+        <span class="share-title">Share this:</span>
+        <amp-social-share class="rounded"
+        type="email"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="facebook"
+        data-param-app_id="254325784911610"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="twitter"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="linkedin"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="whatsapp"
+        width="36"
+        height="36"></amp-social-share>
+    </footer>
+
+</article>
+
+
+            <div class="related u-container">
+        <div class="related-title">Related Articles</div>
+
+        <div class="story">
+            <a href="../line-rate-packet-processing-in-go-with-af_xdp/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">1</span>
+                <h3 class="story-title">Line-rate packet processing in Go with AF_XDP</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../navigating-infrastructure-outages-battle-scars-and-lessons-learned/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">2</span>
+                <h3 class="story-title">Navigating Infrastructure Outages: Battle Scars and Lessons Learned</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../sending-network-packets-in-go/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">3</span>
+                <h3 class="story-title">High-Speed Packet Transmission in Go: From net.Dial to AF_XDP</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../aws-ipv4-estate-now-worth-4-5-billion/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">4</span>
+                <h3 class="story-title">AWS IPv4 Estate Now Worth $4.5 Billion</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../the-risks-and-dangers-of-amplified-routing-loops/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">5</span>
+                <h3 class="story-title">The Risks and Dangers of Amplified Routing Loops.</h3>
+            </a>
+        </div>
+
+    </div>
+    </main>
+
+    <amp-sidebar id="sidenav" class="sidebar" layout="nodisplay" side="right">
+    <div class="close-sidebar u-bgColor" role="button" aria-label="close sidebar" on="tap:sidenav.close" tabindex="0">✕</div>
+
+    <ul class="nav" role="menu">
+    <li role="menuitem"><a href="../index.html" class="nav-home">Home</a></li>
+    <li role="menuitem"><a href="../contact/index.html" class="nav-contact">Contact</a></li>
+    <li role="menuitem"><a href="../about/index.html" class="nav-about">About</a></li>
+</ul>
+
+    <div class="social-media">
+
+            <a href="https://twitter.com/atoonk" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 18 18" width="100%" height="100%"><path d="M12.077 2c-1.812 0-3.282 1.582-3.282 3.534 0 .277.03.547.085.806-2.728-.148-5.147-1.555-6.766-3.693-.283.522-.445 1.13-.445 1.777 0 1.226.58 2.308 1.46 2.942-.54-.02-1.05-.178-1.49-.443v.045c0 1.712 1.13 3.14 2.63 3.465-.28.08-.57.124-.87.124-.21 0-.418-.022-.62-.063.418 1.404 1.63 2.426 3.067 2.455-1.125.94-2.54 1.51-4.078 1.51-.267 0-.528-.02-.785-.05 1.46 1 3.185 1.59 5.04 1.59 6.037 0 9.34-5.39 9.34-10.06 0-.153-.005-.306-.01-.457.64-.5 1.197-1.12 1.637-1.83-.59.28-1.22.47-1.885.557.677-.437 1.198-1.13 1.443-1.955-.633.405-1.336.7-2.084.858C13.88 2.43 13.028 2 12.08 2"></path></svg>
+</a>
+
+
+
+
+    </div>
+
+</amp-sidebar>
+
+    <footer class="footer">
+        <section class="u-container copyright u-textCenter">
+            &copy; 2026 <a href="../index.html">Andree&#x27;s Musings</a>
+        </section>
+    </footer>
+</body>
+</html>
