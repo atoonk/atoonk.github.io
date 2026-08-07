@@ -18,7 +18,7 @@
     <meta property="og:url" content="http://toonk.io/wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/" />
     <meta property="og:image" content="https://images.unsplash.com/photo-1535989052107-a9a9a9d1c538?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDN8fHNxdWFtaXNofGVufDB8fHx8MTc4NTcxMTg2Mnww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" />
     <meta property="article:published_time" content="2026-08-05T23:02:00.000Z" />
-    <meta property="article:modified_time" content="2026-08-06T14:17:17.000Z" />
+    <meta property="article:modified_time" content="2026-08-07T17:17:28.000Z" />
     <meta property="article:tag" content="Go" />
     <meta property="article:tag" content="networking" />
     <meta property="article:tag" content="xdp" />
@@ -70,7 +70,7 @@
     "headline": "Wireblast: a 100Gbs packet generator in Go with AF_XDP",
     "url": "http://toonk.io/wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/",
     "datePublished": "2026-08-05T23:02:00.000Z",
-    "dateModified": "2026-08-06T14:17:17.000Z",
+    "dateModified": "2026-08-07T17:17:28.000Z",
     "image": {
         "@type": "ImageObject",
         "url": "https://images.unsplash.com/photo-1535989052107-a9a9a9d1c538?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDN8fHNxdWFtaXNofGVufDB8fHx8MTc4NTcxMTg2Mnww&ixlib=rb-4.1.0&q=80&w=2000",
@@ -128,7 +128,7 @@
             <span class="author-name">By <a href="../author/andree/index.html">Andree Toonk</a></span>
 
             <span class="timestamp">
-                <time class="datetime" datetime="2026-08-05">a day ago</time>
+                <time class="datetime" datetime="2026-08-05">2 days ago</time>
             </span>
 
             
@@ -146,7 +146,7 @@
 
 <table> <thead> <tr> <th>Tool</th> <th>Best for</th> <th>Ceiling</th> </tr> </thead> <tbody> <tr> <td><code>iperf3</code></td> <td>Quick host-to-host bandwidth tests</td> <td>Limited by the kernel</td> </tr> <tr> <td><code>wireblast</code></td> <td>Packet-rate, flow, and line-rate testing</td> <td>Line rate</td> </tr> <tr> <td>T-Rex, Pktgen, or Ixia</td> <td>Advanced traffic generation and test suites</td> <td>Line rate and beyond</td> </tr> </tbody> </table>
 
-</div><p>That middle row is the idea behind Wireblast: nearly as easy to use as <code>iperf3</code>, but built for the point where packets per second not just bits per second, become the limiting factor.</p><h2 id="meet-wireblast">Meet Wireblast</h2><p><a href="https://wireblast.mintlify.site/">Wireblast</a> is a single, static, 14 MB Go binary. There’s no DPDK and no complicated setup. You download it, run it, and start sending (or receiving) packets.</p><p>Run it without arguments and you get a small interactive wizard. Or provide everything as command-line flags, which makes it easy to use from scripts and automated tests.</p><p>The code is available on <a href="https://github.com/atoonk/wireblast">GitHub</a>, and the documentation is at <a href="https://wireblast.mintlify.site/">wireblast.mintlify.site</a>.</p><p>Under the hood, Wireblast uses AF_XDP to bypass most of the normal kernel networking path when transmitting packets. That makes it possible to reach very high packet rates: 14M pps on 10G hardware and 148M packets per second on 100G NICs.</p><h2 id="let-s-send-some-packets">Let’s send some packets</h2><p>Grab the latest binary:</p><pre><code class="language-bash">curl -sSL https://github.com/atoonk/wireblast/releases/latest/download/wireblast_linux_amd64.tar.gz \
+</div><p>That middle row is the idea behind Wireblast: nearly as easy to use as <code>iperf3</code>, but built for the point where packets per second not just bits per second, become the limiting factor.</p><h2 id="meet-wireblast">Meet Wireblast</h2><p><a href="https://wireblast.mintlify.site/">Wireblast</a> is a single, static, 14 MB Go binary. There’s no DPDK and no complicated setup. You download it, run it, and start sending (or receiving) packets.</p><p>Run it without arguments and you get a small interactive wizard. Or provide everything as command-line flags, which makes it easy to use from scripts and automated tests.</p><p>The code is available on <a href="https://github.com/atoonk/wireblast">GitHub</a>, and the documentation is at <a href="https://wireblast.mintlify.site/">wireblast.mintlify.site</a>.</p><p>Under the hood, Wireblast uses AF_XDP to bypass most of the normal kernel networking path when transmitting packets. That makes it possible to reach very high packet rates: 14M pps on 10G hardware and close to line rate, 138M pps packets per second on 100G NICs.</p><h2 id="let-s-send-some-packets">Let’s send some packets</h2><p>Grab the latest binary:</p><pre><code class="language-bash">curl -sSL https://github.com/atoonk/wireblast/releases/latest/download/wireblast_linux_amd64.tar.gz \
   | tar xz
 
 sudo install -m 0755 wireblast /usr/local/bin/
@@ -156,7 +156,7 @@ wireblast --version
    --src-ip 192.168.43.1 \
    --dst-ip 192.168.43.2 \
    --dst-mac 7c:c2:55:be:f4:1b \
-   --packet-size 80 \
+   --packet-size 64 \
    --flows 100 \
    --pps unlimited -d 30s</code></pre><p>UDP is the default, so that’s the whole command. Of course you only need the vlan flag when running on tagged vlans.</p><p>On a 10G capable nic, that's <strong>14.88 million packets per second</strong>: line rate for 10G, from a Go program using only a few CPU cores. I still think that’s kind of amazing.</p><h2 id="imix-and-pcap-replay">IMIX and PCAP replay</h2><p>Fixed-size packets are great for finding the ceiling, but real traffic contains a mix of packet sizes.</p><p>Wireblast includes the classic IMIX profile: a 7:4:1 ratio of 64-, 594-, and 1518-byte frames.</p><pre><code class="language-bash">sudo wireblast -i eth1 \
   --dst-ip 192.0.2.10 \
@@ -181,7 +181,7 @@ wireblast --version
 </code></pre><pre><code class="language-text">[0:05] tx 74.4 M pkts  14.88 Mpps  L1 10 Gbit/s  L2 7.62 Gbit/s  avg 64B
 </code></pre><p>Everything is scriptable, and there isn’t much to learn.</p><h2 id="going-big-100g">Going big: 100G</h2><p>10G is fun, but I had to know how far this thing would go. <br />So I put Wireblast on a pair of machines with 100G Mellanox ConnectX NICs using the <code>mlx5</code> driver and let it rip. (By the way, I’ve been spending waaay too much money on <a href="https://www.latitude.sh/">Latitude.sh</a> for this project, but I highly recommend them for renting bare-metal machines with a second NIC for network testing.)</p><p>Below is a test with 80 bytes packets.  <strong>98Gb/s at 122Mpps! nice!</strong></p><figure class="kg-card kg-image-card"></figure><p></p><p>That’s 99% of tagged line rate for minimum-size frames on a 100G link, from one Go binary. And it wasn’t limited to tiny packets:</p><div>
 
-<table> <thead> <tr> <th>Frame size</th> <th>Packets per second</th> <th>L1 throughput</th> </tr> </thead> <tbody> <tr> <td>68 B</td> <td>138.2 Mpps</td> <td>97.3 Gbit/s</td> </tr> <tr> <td>512 B</td> <td>23.0 Mpps</td> <td>98.0 Gbit/s</td> </tr> <tr> <td>1518 B</td> <td>8.0 Mpps</td> <td>98.5 Gbit/s</td> </tr> <tr> <td>IMIX, approximately 362 B</td> <td>32.0 Mpps</td> <td>98.3 Gbit/s</td> </tr> </tbody> </table>
+<table> <thead> <tr> <th>Frame size</th> <th>Packets per second</th> <th>L1 throughput</th> </tr> </thead> <tbody> <tr> <td>68 B (tagged)</td> <td>135 Mpps</td> <td>95 Gbit/s</td> </tr> <tr> <td>512 B</td> <td>23.0 Mpps</td> <td>98.0 Gbit/s</td> </tr> <tr> <td>1518 B</td> <td>8.0 Mpps</td> <td>98.5 Gbit/s</td> </tr> <tr> <td>IMIX, approximately 362 B</td> <td>32.0 Mpps</td> <td>98.3 Gbit/s</td> </tr> </tbody> </table>
 
 </div><p>The queue-scaling results surprised me even more. With large frames, one queue already pushed 83 Gbit/s. Two queues nearly saturated the link.</p><p>You don’t need a monster machine. You need a decent NIC and a couple of CPU cores, which is a wild thing to be able to say about a software packet generator.</p><h2 id="where-wireblast-fits">Where Wireblast fits</h2><p>Wireblast is meant to cover the easy 80%. It is not trying to replace an Ixia.</p><p>It counts packets and bytes, but it does not measure latency or jitter, and it does not support hardware timestamping. Its TCP mode generates stateless SYN packets rather than complete TCP sessions.</p><p>That makes it useful for testing:</p><ul><li>Packet-forwarding performance</li><li>Firewalls and ACLs</li><li>Connection tables</li><li>RSS and queue distribution</li><li>ECMP Link aggregation</li><li>Load balancers</li><li>Packet-processing software</li></ul><p>When I want to know, “Can this path do line rate, and does the far end see the packets?”, Wireblast answers that question in about 30 seconds.</p><h2 id="wrap-up">Wrap-up</h2><p>Building Wireblast was fun. More importantly, building it on top of go-afxdp was easy.</p><p>Claude Code also made building the TUI surprisingly quick. That’s a nice thing to be able to say about both the library and the current state of software development.</p><p>For years, software traffic generation meant choosing between an easy tool limited by the normal kernel path and a powerful tool that pulled you into DPDK, out dated howto's and specialized test setups.</p><p>Wireblast is the middle ground I wanted: download one binary, point it at an interface, and start sending packets at line rate.</p><p>No hugepages. No NIC surgery. No DPDK expertise required. And let’s be real: what’s more fun than sending packets at line rate?</p><p>Fourteen million packets per second on a normal 10G box. More than 100 million <em>packets</em> per second on a 100G NIC. All from one command, with almost no setup required. Pretty amazing!</p><p>Next up, now that I have a reliable traffic generator, I want to get back to the project that started all of this: a completely Go-based dataplane that bypasses the kernel for routing, switching, and firewalling.</p><p>Now I finally have a good way to measure it. Stay tuned!</p><p>The code is on <a href="https://github.com/atoonk/wireblast">GitHub</a>, the documentation is at <a href="https://wireblast.mintlify.site/">wireblast.mintlify.site</a>, and it’s all built on <a href="https://github.com/atoonk/go-afxdp">go-afxdp</a>.</p><p>That’s it :) you made it to the end. Thanks for reading!</p><p>Cheers,<br />Andree</p> </div>
 
