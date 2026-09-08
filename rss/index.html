@@ -1,4 +1,269 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:media="http://search.yahoo.com/mrss/"><channel><title><![CDATA[Andree's Musings]]></title><description><![CDATA[Thoughts, stories and wild ideas from the world of Infrastructure Engineering.]]></description><link>http://toonk.io/</link><image><url>http://toonk.io/favicon.png</url><title>Andree&apos;s Musings</title><link>http://toonk.io/</link></image><generator>Ghost 3.34</generator><lastBuildDate>Fri, 07 Aug 2026 17:18:25 GMT</lastBuildDate><atom:link href="http://toonk.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Wireblast: a 100Gbs packet generator in Go with AF_XDP]]></title><description><![CDATA[<p>If you’ve followed my blog for a while, you know I love tinkering with packets and making them go fast in software. Today I'm <a href="https://github.com/atoonk/wireblast/">releasing</a> a new tool called <a href="https://wireblast.mintlify.site/">wireblast</a>, a blazingly fast network packet generator.</p><p>A few weeks ago, I wrote about <a href="https://github.com/atoonk/go-afxdp">go-afxdp</a>, a small Go library I've</p>]]></description><link>http://toonk.io/wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/</link><guid isPermaLink="false">6a6fcb60ed81a12c01da675c</guid><category><![CDATA[Go]]></category><category><![CDATA[networking]]></category><category><![CDATA[xdp]]></category><dc:creator><![CDATA[Andree Toonk]]></dc:creator><pubDate>Wed, 05 Aug 2026 23:02:00 GMT</pubDate><media:content url="https://images.unsplash.com/photo-1535989052107-a9a9a9d1c538?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3wxMTc3M3wwfDF8c2VhcmNofDN8fHNxdWFtaXNofGVufDB8fHx8MTc4NTcxMTg2Mnww&amp;ixlib=rb-4.1.0&amp;q=80&amp;w=2000" medium="image"/><content:encoded><![CDATA[<img src="https://images.unsplash.com/photo-1535989052107-a9a9a9d1c538?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDN8fHNxdWFtaXNofGVufDB8fHx8MTc4NTcxMTg2Mnww&ixlib=rb-4.1.0&q=80&w=2000" alt="Wireblast: a 100Gbs packet generator in Go with AF_XDP"><p>If you’ve followed my blog for a while, you know I love tinkering with packets and making them go fast in software. Today I'm <a href="https://github.com/atoonk/wireblast/">releasing</a> a new tool called <a href="https://wireblast.mintlify.site/">wireblast</a>, a blazingly fast network packet generator.</p><p>A few weeks ago, I wrote about <a href="https://github.com/atoonk/go-afxdp">go-afxdp</a>, a small Go library I've been working on for sending and receiving Ethernet frames at line rate using AF_XDP, without DPDK and without leaving Go.</p><p>I was pretty happy with how it turned out. But a library is just a library; the real value is in how you use it. So the next question is, what can we build with it?</p><p>I have a few things cooking, all about fast packet forwarding on Linux. But to know whether a fast forwarding path is actually fast, you need to throw traffic at it. A lot of traffic! And you need to trust the numbers. So I built a packet generator. It’s called <strong>Wireblast</strong>.</p><figure class="kg-card kg-embed-card"><iframe width="356" height="200" src="https://www.youtube.com/embed/8EmxvaOR5uA?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen title="Wireblast Demo: 100 Gbps Packet Generation with AF_XDP"></iframe></figure><h2 id="the-gap-iperf-leaves">The gap iperf leaves</h2><p>For network performance testing, most of us reach for <code>iperf3</code>. I do too. It’s easy, widely available, and perfect for answering, “How many gigabits per second can these two hosts push?”<br><br>But bandwidth is only part of the story. Packets per second matter just as much when testing routers, firewalls, load balancers, or anything else that does work for every packet. </p><p>That’s where <code>iperf3</code> (or really the kernel) hits a wall. Its traffic still passes through the Linux networking stack, which becomes the bottleneck long before the wire does. At 10G, line rate for 64-byte frames is 14.88 Mpps. At 100G, it’s 148.8 Mpps. You cannot reach those numbers with Linux kernel, in fact you may only get to 10% of the 100G capability and small packets sizes.</p><p>For small packets, high packet rates, or lots of flows, you traditionally need something like T-Rex, DPDK Pktgen, or Ixia. Those tools are powerful, but they also bring DPDK, hugepages, dedicated interfaces, extra setup, and sometimes a purchase order. It's a lot of work and complicated.</p><!--kg-card-begin: html--><div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:media="http://search.yahoo.com/mrss/"><channel><title><![CDATA[Andree's Musings]]></title><description><![CDATA[Thoughts, stories and wild ideas from the world of Infrastructure Engineering.]]></description><link>http://toonk.io/</link><image><url>http://toonk.io/favicon.png</url><title>Andree&apos;s Musings</title><link>http://toonk.io/</link></image><generator>Ghost 3.34</generator><lastBuildDate>Tue, 08 Sep 2026 02:54:14 GMT</lastBuildDate><atom:link href="http://toonk.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Four ways to do super fast packet processing in Go]]></title><description><![CDATA[<!--kg-card-begin: markdown--><p>The last few months I've reignited my strange hobby of doing network packet processing in software. My language of choice is Go, and I'm always looking and learning how to do this as fast as possible.</p>
+<p>A few weeks ago I released <a href="https://github.com/atoonk/go-afxdp">go-afxdp</a>, a Go library for sending and receiving</p>]]></description><link>http://toonk.io/packetio/</link><guid isPermaLink="false">6a9f68a3ed81a12c01da67a2</guid><category><![CDATA[Go]]></category><category><![CDATA[networking]]></category><category><![CDATA[xdp]]></category><category><![CDATA[dpdk]]></category><dc:creator><![CDATA[Andree Toonk]]></dc:creator><pubDate>Tue, 08 Sep 2026 01:49:44 GMT</pubDate><media:content url="https://images.unsplash.com/photo-1587381419916-78fc843a36f8?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3wxMTc3M3wwfDF8c2VhcmNofDI4fHxjYW5hZGF8ZW58MHx8fHwxNzg4ODM1MDgzfDA&amp;ixlib=rb-4.1.0&amp;q=80&amp;w=2000" medium="image"/><content:encoded><![CDATA[<!--kg-card-begin: markdown--><img src="https://images.unsplash.com/photo-1587381419916-78fc843a36f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDI4fHxjYW5hZGF8ZW58MHx8fHwxNzg4ODM1MDgzfDA&ixlib=rb-4.1.0&q=80&w=2000" alt="Four ways to do super fast packet processing in Go"><p>The last few months I've reignited my strange hobby of doing network packet processing in software. My language of choice is Go, and I'm always looking and learning how to do this as fast as possible.</p>
+<p>A few weeks ago I released <a href="https://github.com/atoonk/go-afxdp">go-afxdp</a>, a Go library for sending and receiving packets using AF_XDP. Then I built Wireblast on top of it and got that to 100G line rate.</p>
+<p>I've also been playing quite a bit with DPDK, VPP, different NICs, and more recently NVIDIA/Mellanox Direct Verbs.</p>
+<p>It's been a fun rabbit hole :) But while doing all of this, I kept running into the same thing.<br>
+The actual packet processing is usually the easy part. Receive some packets, inspect them, maybe change a few bytes, do a lookup, and send them back out.</p>
+<p>Getting packets efficiently between the NIC and your Go program is where all the complexity lives. And depending on how you want to do that, you end up in completely different worlds.</p>
+<p>AF_XDP has UMEM and rings. DPDK has mbufs, mempools, EAL, hugepages and PMDs. Mellanox ConnectX cards have yet another path using Direct Verbs. All complicated words most of us probably don't want to deal with.</p>
+<p>That's what I've been working on. One library to abstract all of them, It's called <strong><a href="https://github.com/atoonk/packetio">packetio</a></strong>.</p>
+<h2 id="fourwaystogetatapacket">Four ways to get at a packet</h2>
+<p>There are basically four ways I care about for getting raw packets in and out of a Go program on Linux.<br>
+<img src="http://toonk.io/content/images/2026/09/ec0a6022-35fa-46f6-b8c2-27e9741df4c7.png" alt="Four ways to do super fast packet processing in Go"></p>
+<p>There's <strong>AF_PACKET</strong>, which is the normal Linux packet socket. It's what tools like tcpdump use. It works almost anywhere and requires very little setup, but it's slow as packets still go through much of the normal kernel machinery.</p>
+<p>Then there's <strong>AF_XDP</strong>, which I've <a href="https://toonk.io/line-rate-packet-processing-in-go-with-af_xdp/">written</a> about quite a bit already. It lets you intercept packets very early in the Linux driver and move them into memory shared with your application. On supported drivers it can be zero-copy, so the NIC writes packets directly into memory your Go program can access.</p>
+<p>The part I really like about AF_XDP is that Linux still owns the interface. You can send only the traffic you care about to your program and your SSH session, ARP, routing protocols and everything else keep working normally.</p>
+<p>Then there's <strong>DPDK</strong>.<br>
+DPDK is still the obvious answer when someone says &quot;I want to do packet processing as fast as possible in userspace.&quot; It supports a large number of NICs and has been optimized for this job for years.</p>
+<p>It's also a bit of a world of its own. If you've ever started a DPDK application from scratch, you know what I mean. Hugepages, EAL arguments, mbufs, mempools, PCI devices, queue setup. None of it is particularly impossible, but there's a huge learning curve.</p>
+<p>And then there is the fourth option, which is the one I only really started appreciating recently: <strong>mlx5 Direct Verbs</strong>. More on that one in a bit.</p>
+<h2 id="oneapioverallofthem">One API over all of them</h2>
+<p>The idea behind packetio is pretty simple. A device has RX queues and TX queues. Queues give you frames. You process those frames in batches and give them back.<br>
+That's about as much as I want the application to know.</p>
+<p>For example:</p>
+<pre><code class="language-go">dev, err := mlx5.Open(&quot;eno2&quot;, mlx5.WithQueues(4))
+</code></pre>
+<p>Or afxdp:</p>
+<pre><code class="language-go">dev, err := afxdp.Open(&quot;eno2&quot;, afxdp.WithQueues(4))
+</code></pre>
+<p>Or DPDK:</p>
+<pre><code class="language-go">dev, err := dpdk.Open(&quot;0000:c1:00.1&quot;, dpdk.WithQueues(4))
+</code></pre>
+<p>There's also:</p>
+<pre><code class="language-go">dev, err := afpacket.Open(&quot;eno2&quot;, afpacket.WithQueues(4))
+</code></pre>
+<p>After that, the packet loop is the same. Something like:</p>
+<pre><code class="language-go">rx := dev.RxQueue(0)
+for {
+    rx.Fill(rx.NumFreeFillSlots())
+    rx.Poll(time.Second)
+
+    descs := rx.Receive(256)
+
+    for _, desc := range descs {
+        pkt := rx.Region().Frame(desc)
+        // Do something useful with the packet.
+        process(pkt)
+    }
+    rx.Recycle(descs)
+}
+</code></pre>
+<p>And transmitting is similarly boring:</p>
+<pre><code class="language-go">tx := dev.TxQueue(0)
+
+tx.SendFunc(256, func(_ int, frame []byte) int {
+    return copy(frame, myPacket)
+})
+</code></pre>
+<p>That's really all there's to it! You still have queues and batches because those things matter when you're doing high-speed packet processing. I'm not trying to hide reality behind some <code>net.Conn</code> abstraction.</p>
+<p>But I also don't think you should need to understand an AF_XDP fill ring, an <code>rte_mbuf</code>, or an mlx5 WQE before you can get a packet onto the wire.<br>
+Changing the backend should mostly mean changing how you open the device.<br>
+That sounds like a relatively small thing, but in practice I think it's pretty powerful.</p>
+<h2 id="dpdkfromgofinally">DPDK from Go, finally</h2>
+<p>One of the original motivations for this project was actually DPDK.<br>
+I've wanted a good way to use DPDK from Go for years.</p>
+<p>There have been Go wrappers before, but I never found one that gave me the programming model I wanted. I don't want to write my packet processing in C, and I definitely don't want to cross from Go into C for every packet.</p>
+<p>packetio crosses into DPDK once per <strong>batch</strong>, not once per packet. The packet memory stays in DPDK's mempool and Go works directly on those bytes.<br>
+So you get to write what looks like a pretty normal Go program while DPDK does all the ugly setup underneath.</p>
+<p>No <code>rte_eth_rx_burst</code> scattered through your application. No mbuf ownership rules in your business logic. No giant EAL argument string you copied from Stack Overflow three years ago. And if you don't know what that means, congrats, you dont need to!</p>
+<p>You open the device and start receiving packets, all in Go.That's the DPDK experience I've wanted for a long time.</p>
+<h2 id="directverbswasthesurprise">Direct Verbs was the surprise</h2>
+<p>The most interesting part of this project for me has probably been learning about mlx5 backend and something called direct verbs.</p>
+<p>Jérôme Tollet has been doing some great work in VPP around NVIDIA/Mellanox ConnectX NICs. He recently <a href="https://medium.com/fd-io-vpp/three-vpp-datapaths-for-nvidia-connectx-and-bluefield-309c0124019d">published a comparison of VPP's three high-performance datapaths</a>: AF_XDP, DPDK mlx5 and native RDMA Direct Verbs.</p>
+<p>That sent me down another rabbit hole. It turns out that with a ConnectX NIC you can talk to the hardware queues directly using mlx5 Direct Verbs.</p>
+<p>So instead of:<br>
+<strong>Go &gt; DPDK &gt; mlx5 PMD &gt; NIC</strong><br>
+you can do:<br>
+<strong>Go &gt; mlx5 queues &gt; NIC</strong></p>
+<p>There is obviously quite a bit hiding behind that sentence, but from the application's perspective that's the useful mental model.</p>
+<p>And it has another property I really like. ConnectX NICs support a bifurcated model. Linux can keep its normal interface while hardware steering sends selected traffic directly into queues owned by your application.</p>
+<p>So <code>eno2</code> doesn't disappear. SSH keeps working. Linux can still use the interface for ordinary traffic while your Go program handles the packets you've claimed.</p>
+<p>ConnectX can do this with DPDK too, but Direct Verbs lets us skip the DPDK layer entirely. For what I've been building lately, that's a pretty compelling combination.<br>
+AF_XDP-like operational behavior, but with a very short userspace datapath.</p>
+<h2 id="howfastisit">How fast is it?</h2>
+<p>Yes, the big question! I benchmarked all of this! I actually spent quite a bit of time on these numbers, so I'm going to put them all here.</p>
+<p>Hopefully they're useful to someone else comparing these different approaches. And if nothing else, I know I'll be coming back to this blog myself six months from now trying to remember how DPDK compared to AF_XDP :)</p>
+<p>The setup is two AMD EPYC 9275F machines with NVIDIA ConnectX-6 Dx 100G NICs. I'm testing 64-byte packets, which is really the worst case for packet processing. At that size, 100G Ethernet is about <strong>148.8 million packets per second</strong>.</p>
+<p>That's one packet every 6.7 nanoseconds. That's very little time. So yeah, things like memory accesses and extra trips through the kernel start to matter.</p>
+<p>The nice thing about this new <code>packetio</code> library is that all four backends are running essentially the <strong>same userspace benchmark program</strong>. Same receive loop, same transmit loop, same forwarding code. The backend is the only thing that changes.</p>
+<p>I'm also measuring CPU across the whole machine, not just the Go process. That's particularly important for AF_XDP. Quite a bit of its work happens inside the kernel in IRQ/NAPI/softirq context. If you only measure your Go process, those cores magically disappear from the benchmark even though you're still paying for them.<br>
+Jérôme took the same approach in his VPP measurements, which is one of the things I liked about his comparison.</p>
+<h3 id="receive">Receive</h3>
+<p>For receive I'm offering <strong>148.6 Mpps across 4096 flows</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Backend</th>
+<th style="text-align:right">Mpps</th>
+<th style="text-align:right">CPU cores</th>
+<th style="text-align:right">Softirq cores</th>
+<th style="text-align:right">Queues</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AF_PACKET</strong></td>
+<td style="text-align:right">2.3</td>
+<td style="text-align:right">52.8</td>
+<td style="text-align:right">52.7</td>
+<td style="text-align:right">16</td>
+</tr>
+<tr>
+<td><strong>AF_XDP</strong></td>
+<td style="text-align:right">146.5</td>
+<td style="text-align:right">11.4</td>
+<td style="text-align:right">7.5</td>
+<td style="text-align:right">8</td>
+</tr>
+<tr>
+<td><strong>mlx5 Direct Verbs</strong></td>
+<td style="text-align:right"><strong>148.6</strong></td>
+<td style="text-align:right">10.0</td>
+<td style="text-align:right">0.0</td>
+<td style="text-align:right">10</td>
+</tr>
+<tr>
+<td><strong>DPDK</strong></td>
+<td style="text-align:right"><strong>148.6</strong></td>
+<td style="text-align:right"><strong>8.0</strong></td>
+<td style="text-align:right">0.0</td>
+<td style="text-align:right">8</td>
+</tr>
+</tbody>
+</table>
+<p>AF_PACKET is probably the most interesting row here, just for the wrong reason. We're throwing 148.6 million packets per second at the machine. The AF_PACKET program manages to receive only 2.3 million of them, while basically all of the CPU time is disappearing into kernel softirq processing.</p>
+<p>That's the argument for bypassing the normal kernel packet path in one row, and why you can't really use it for anything that needs speed.</p>
+<p>AF_XDP is a completely different story. It receives <strong>146.5 Mpps</strong>, so essentially the whole 100G flood, with 11.4 cores of machine CPU.</p>
+<p>But look at the softirq column. <strong>7.5 of those cores are kernel work.</strong><br>
+I think that's the really interesting comparison. If you only looked at CPU consumed by the Go program, AF_XDP would look dramatically cheaper than it actually is.</p>
+<p>Direct Verbs and DPDK don't have that extra kernel datapath, and both receive the full 148.6 Mpps. DPDK does it with eight cores and mlx5 with ten.</p>
+<h3 id="transmit">Transmit</h3>
+<p>For transmit this is a single flow generated by the DUT itself.</p>
+<table>
+<thead>
+<tr>
+<th>Backend</th>
+<th style="text-align:right">Mpps</th>
+<th style="text-align:right">CPU cores</th>
+<th style="text-align:right">Softirq cores</th>
+<th style="text-align:right">Queues</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AF_PACKET</strong></td>
+<td style="text-align:right">17.3</td>
+<td style="text-align:right">16.0</td>
+<td style="text-align:right">4.1</td>
+<td style="text-align:right">16</td>
+</tr>
+<tr>
+<td><strong>AF_XDP</strong></td>
+<td style="text-align:right">147.9</td>
+<td style="text-align:right">20.0</td>
+<td style="text-align:right">14.0</td>
+<td style="text-align:right">20</td>
+</tr>
+<tr>
+<td><strong>mlx5 Direct Verbs</strong></td>
+<td style="text-align:right"><strong>148.8</strong></td>
+<td style="text-align:right">4.0</td>
+<td style="text-align:right">0.0</td>
+<td style="text-align:right">4</td>
+</tr>
+<tr>
+<td><strong>DPDK</strong></td>
+<td style="text-align:right"><strong>148.8</strong></td>
+<td style="text-align:right"><strong>3.0</strong></td>
+<td style="text-align:right">0.0</td>
+<td style="text-align:right">3</td>
+</tr>
+</tbody>
+</table>
+<p>This one still makes me smile. <strong>Three Go workers using DPDK can fill a 100G interface with minimum-sized Ethernet frames.</strong><br>
+148.8 million packets per seconds, From Go! Pretty amazing.</p>
+<p>The Direct Verbs backend gets there with four cores. And AF_XDP gets essentially there too, at 147.9 Mpps. But look at the CPU cost: 20 cores, with <strong>14 cores worth of softirq</strong>.</p>
+<p>Again, that's not necessarily bad. It's the tradeoff. With AF_XDP you keep the normal Linux driver and all the operational convenience that comes with it. DPDK and Direct Verbs have a much shorter path, so they need substantially less CPU to do the same amount of work.</p>
+<h3 id="forwarding">Forwarding</h3>
+<p>For this test we receive a packet, do a L3 longest-prefix match, rewrite it and transmit it again.</p>
+<p>So this is closer to the kind of thing I'm usually interested in: routers, NAT, firewalls, load balancers, etc.<br>
+The offered load is again <strong>148.6 Mpps</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Backend</th>
+<th style="text-align:right">Mpps</th>
+<th style="text-align:right">CPU cores</th>
+<th style="text-align:right">Softirq cores</th>
+<th style="text-align:right">Queues</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AF_PACKET</strong></td>
+<td style="text-align:right">0.01</td>
+<td style="text-align:right">49.6</td>
+<td style="text-align:right">49.6</td>
+<td style="text-align:right">16</td>
+</tr>
+<tr>
+<td><strong>AF_XDP</strong></td>
+<td style="text-align:right">138.4</td>
+<td style="text-align:right">28.7</td>
+<td style="text-align:right">12.6</td>
+<td style="text-align:right">16</td>
+</tr>
+<tr>
+<td><strong>mlx5 Direct Verbs</strong></td>
+<td style="text-align:right"><strong>147.4</strong></td>
+<td style="text-align:right"><strong>12.0</strong></td>
+<td style="text-align:right">0.0</td>
+<td style="text-align:right">12</td>
+</tr>
+<tr>
+<td><strong>DPDK</strong></td>
+<td style="text-align:right">143.5</td>
+<td style="text-align:right">16.0</td>
+<td style="text-align:right">0.0</td>
+<td style="text-align:right">16</td>
+</tr>
+</tbody>
+</table>
+<p>Direct Verbs gets to <strong>147.4 Mpps</strong>, basically 100G line rate, using 12 cores.<br>
+DPDK is close behind at <strong>143.5 Mpps</strong> using 16 cores.<br>
+AF_XDP gets to a very respectable <strong>138.4 Mpps</strong>, but needs 28.7 cores of machine CPU to do it, 12.6 of which are softirq.</p>
+<p>And then there's AF_PACKET :) Under the same flood it forwards essentially nothing, about <strong>0.01 Mpps</strong>, while burning almost 50 cores in the kernel.<br>
+That's a pretty dramatic picture of why all these faster packet I/O mechanisms exist in the first place.</p>
+<p>There are dozens of little things like queue counts, CPU placement, RSS configuration, descriptor formats and prefetching that can completely change your result.<br>
+I've spent way too much time figuring those things out. And that's another thing I want packetio to do for you: put good measured defaults in one place so you can mostly forget about them and get on with whatever you're actually trying to build.</p>
+<h2 id="itworksonec2too">It works on EC2 too</h2>
+<p>I also didn't want this to become one of those libraries that only works on the one server I happen to be testing on. So I've been testing packetio on EC2 as well.</p>
+<p>The DPDK backend works with AWS ENA, and the same application code runs there unchanged. Networking in AWS is its own adventure, because the instances themselves have packet per second limits. Most of the instances I experimented with had either around 1 Mpps or 5 Mpps limits. These are AWS limits, not packetio limits. Generally the bigger the instance, the larger the networking allowance.</p>
+<p>If you're experimenting with ENA yourself, the counter to keep an eye on is:</p>
+<pre><code class="language-bash">ethtool -S eth0 | grep pps_allowance_exceeded
+</code></pre>
+<p>If <code>pps_allowance_exceeded</code> starts increasing, you've hit the EC2 instance's packet-per-second allowance and AWS is queueing or dropping packets. When using the DPDK ENA driver, the same counter is available through the ENA PMD extended stats.</p>
+<p>I also tested the DPDK backend on a 10G Intel X550. DPDK fills the wire in both directions on a single core. So we're starting to cover quite a large surface area: bare metal, EC2, ConnectX, Intel, ENA, AF_XDP and DPDK.<br>
+That's exactly what I wanted from this library.</p>
+<h2 id="sowhichoneshouldyouuse">So which one should you use?</h2>
+<p>well it depends... if I have a ConnectX card, I'm increasingly drawn to Direct Verbs. The performance is excellent and I really like keeping the normal Linux interface around.</p>
+<p>For general modern Linux hardware, AF_XDP is a great place to start. It's fast, operationally convenient, and has much broader hardware support than the mlx5-specific backend.</p>
+<p>DPDK is still the big hammer. It has a great driver ecosystem and decades of work behind it. There are plenty of environments where it's exactly the right choice.</p>
+<p>And AF_PACKET is great when you just need to see some packets and don't care about moving millions of them per second.</p>
+<p>But the thing I'm most excited about with <a href="https://github.com/atoonk/packetio">packetio</a> is that this choice doesn't have to dominate the design of your program anymore.</p>
+<p>Write your packet processing once. Run it with AF_XDP. Try DPDK.<br>
+If there's a ConnectX in the server, try Direct Verbs. Then measure it.<br>
+Changing how packets reach your Go program should be a configuration decision, not a rewrite. That's really the whole idea.</p>
+<p>I've already moved <a href="https://toonk.io/wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/">Wireblast</a> onto <code>packetio</code>, and there are a few other things I'm building on top of it as well.</p>
+<p>If you look carefully :) you'll even find a userspace TCP/IP stack based on gVisor that can run on top of these backends. I've spent waaay too much time trying to make that go fast as well. IMHO its defaults aren't exactly optimized for this kind of workload..but that's probably a blog post on its own.</p>
+<p>If nothing else, I now finally have the packet I/O library I've wanted for the last few years. Super happy with it and also pretty proud!</p>
+<p>It supports DPDK, which is what I originally really wanted. Along the way I got to go deep on AF_XDP and learned a whole lot about ConnectX NICs and Direct Verbs.</p>
+<p>And it can push <strong>148 million packets per second</strong>. Not bad for Go :)<br>
+The code is on <a href="https://github.com/atoonk/packetio">GitHub</a>, go give it a try, there's <a href="https://github.com/atoonk/packetio/tree/main/examples">plenty of exampes</a>. Also see this <a href="https://gist.github.com/atoonk/63ad7ca0c7e4c0e0b167695b311a455e">copy paste ready DPDK example</a>.</p>
+<p>That's it! Thanks for reading. Let's push some packets, and let me know what you're building.</p>
+<p>Cheers,<br>
+Andree</p>
+<!--kg-card-end: markdown-->]]></content:encoded></item><item><title><![CDATA[Wireblast: a 100Gbs packet generator in Go with AF_XDP]]></title><description><![CDATA[<p>If you’ve followed my blog for a while, you know I love tinkering with packets and making them go fast in software. Today I'm <a href="https://github.com/atoonk/wireblast/">releasing</a> a new tool called <a href="https://wireblast.mintlify.site/">wireblast</a>, a blazingly fast network packet generator.</p><p>A few weeks ago, I wrote about <a href="https://github.com/atoonk/go-afxdp">go-afxdp</a>, a small Go library I've</p>]]></description><link>http://toonk.io/wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/</link><guid isPermaLink="false">6a6fcb60ed81a12c01da675c</guid><category><![CDATA[Go]]></category><category><![CDATA[networking]]></category><category><![CDATA[xdp]]></category><dc:creator><![CDATA[Andree Toonk]]></dc:creator><pubDate>Wed, 05 Aug 2026 23:02:00 GMT</pubDate><media:content url="https://images.unsplash.com/photo-1535989052107-a9a9a9d1c538?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3wxMTc3M3wwfDF8c2VhcmNofDN8fHNxdWFtaXNofGVufDB8fHx8MTc4NTcxMTg2Mnww&amp;ixlib=rb-4.1.0&amp;q=80&amp;w=2000" medium="image"/><content:encoded><![CDATA[<img src="https://images.unsplash.com/photo-1535989052107-a9a9a9d1c538?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDN8fHNxdWFtaXNofGVufDB8fHx8MTc4NTcxMTg2Mnww&ixlib=rb-4.1.0&q=80&w=2000" alt="Wireblast: a 100Gbs packet generator in Go with AF_XDP"><p>If you’ve followed my blog for a while, you know I love tinkering with packets and making them go fast in software. Today I'm <a href="https://github.com/atoonk/wireblast/">releasing</a> a new tool called <a href="https://wireblast.mintlify.site/">wireblast</a>, a blazingly fast network packet generator.</p><p>A few weeks ago, I wrote about <a href="https://github.com/atoonk/go-afxdp">go-afxdp</a>, a small Go library I've been working on for sending and receiving Ethernet frames at line rate using AF_XDP, without DPDK and without leaving Go.</p><p>I was pretty happy with how it turned out. But a library is just a library; the real value is in how you use it. So the next question is, what can we build with it?</p><p>I have a few things cooking, all about fast packet forwarding on Linux. But to know whether a fast forwarding path is actually fast, you need to throw traffic at it. A lot of traffic! And you need to trust the numbers. So I built a packet generator. It’s called <strong>Wireblast</strong>.</p><figure class="kg-card kg-embed-card"><iframe width="356" height="200" src="https://www.youtube.com/embed/8EmxvaOR5uA?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen title="Wireblast Demo: 100 Gbps Packet Generation with AF_XDP"></iframe></figure><h2 id="the-gap-iperf-leaves">The gap iperf leaves</h2><p>For network performance testing, most of us reach for <code>iperf3</code>. I do too. It’s easy, widely available, and perfect for answering, “How many gigabits per second can these two hosts push?”<br><br>But bandwidth is only part of the story. Packets per second matter just as much when testing routers, firewalls, load balancers, or anything else that does work for every packet. </p><p>That’s where <code>iperf3</code> (or really the kernel) hits a wall. Its traffic still passes through the Linux networking stack, which becomes the bottleneck long before the wire does. At 10G, line rate for 64-byte frames is 14.88 Mpps. At 100G, it’s 148.8 Mpps. You cannot reach those numbers with Linux kernel, in fact you may only get to 10% of the 100G capability and small packets sizes.</p><p>For small packets, high packet rates, or lots of flows, you traditionally need something like T-Rex, DPDK Pktgen, or Ixia. Those tools are powerful, but they also bring DPDK, hugepages, dedicated interfaces, extra setup, and sometimes a purchase order. It's a lot of work and complicated.</p><!--kg-card-begin: html--><div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
 
 <table> <thead> <tr> <th>Tool</th> <th>Best for</th> <th>Ceiling</th> </tr> </thead> <tbody> <tr> <td><code>iperf3</code></td> <td>Quick host-to-host bandwidth tests</td> <td>Limited by the kernel</td> </tr> <tr> <td><code>wireblast</code></td> <td>Packet-rate, flow, and line-rate testing</td> <td>Line rate</td> </tr> <tr> <td>T-Rex, Pktgen, or Ixia</td> <td>Advanced traffic generation and test suites</td> <td>Line rate and beyond</td> </tr> </tbody> </table>
 
@@ -363,15 +628,4 @@ mysocketctl login  \
 #Launch your first global socket ;)
 mysocketctl connect \
     --port 8000 \
-    --name "my test service"</code></pre><h2 id="architecture-overview">Architecture overview</h2><p>Ok, so how does it work? The process for requesting a “global socket” starts with an API call. You can do this by directly interfacing with <a href="https://api.mysocket.io/" rel="noopener">the RESTful API</a>, or by using the <a href="https://mysocket.readthedocs.io/en/latest/mysocketctl/mysocket.html" rel="noopener">mysocketctl</a> tool. This returns a global mysocket object, which has a name, port number(s), and some other information.</p><p>Users can now use this socket object to create tunnel objects. These tunnels are then used to connect your local service to the global mysocket.io infrastructure. By stitching these two TCP sessions together, we made your local service globally available.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*L4orGfToNQ3fUgjrZC_3Qw.png" class="kg-image" alt="Introducing Mysocket.io"><figcaption>Creating a Socket, a Tunnel and connecting to mysocket.io</figcaption></figure><p>The diagram below provides a high-level overview of the service data-plane. On the left, we have the origin service. This could be your laptop, your raspberry pi at home, or even a set of containers in a Kubernetes cluster. The origin service can be behind a very strict firewall or even NAT. All it needs is outbound network access. We can then set up a secure encrypted tunnel to any of the mysocket.io servers around the world.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*ePYWcZbw_jzNriOwCThNFQ.png" class="kg-image" alt="Introducing Mysocket.io"><figcaption>Mysocket.io dataplane</figcaption></figure><h2 id="anycast">Anycast</h2><p>The Mysocket.io services use AWS’ global accelerator. With this, I’m making both the tunnel servers and proxy services anycasted. This solves some of the load balancing and high availability challenges. The mysocket tunnel and proxy servers are located in North America, Europe, and Asia.</p><p>Once the tunnel is established, the connection event is signaled to all other nodes in real-time, ensuring that all edge nodes know where the tunnel for the service is.</p><h2 id="documentation">Documentation</h2><p>One of my goals is to make Mysocket super easy to use. One way to do that is to have good documentation. I invite you to check out our readthedocs.io documentation here <a href="https://mysocket.readthedocs.io/en/latest/" rel="noopener">https://mysocket.readthedocs.io/</a></p><p>It’s divided into two sections:</p><ol><li><a href="https://mysocket.readthedocs.io/en/latest/about/about.html" rel="noopener">General information </a>about mysocket.io and some of the concepts.</li><li>Information and user guides for the <a href="https://mysocket.readthedocs.io/en/latest/mysocketctl/mysocket.html" rel="noopener">mysocketctl command-line tool</a>.</li></ol><p>The documentation itself and mysocketctl tool are both <a href="https://github.com/mysocketio" rel="noopener">opensource</a> so feel free to open pull requests or open issues if you have any questions.</p><p>You may have noticed there’s a <a href="https://mysocket.io" rel="noopener">website</a> as well. I wanted to create a quick landing page, so I decided to play with Wix.com. They make it super easy;  I may have gone overboard a bit ;)  All that was clicked together in just one evening, pretty neat.</p><h2 id="more-to-come">More to come</h2><p>There’s a lot more to tell and plenty more geeky details to dive into. More importantly, we can continue to build on this and make it even better (ping me if you have ideas or suggestions)! <br>So stay tuned. That’s the plan for subsequent Blog posts soon, either in this blog or the <a href="https://www.mysocket.io/blog" rel="noopener">mysocket.io blog</a>.</p><p><em>Cheers,</em><br><em> -Andree</em><br></p>]]></content:encoded></item><item><title><![CDATA[AWS and their Billions in IPv4 addresses]]></title><description><![CDATA[<p>Earlier this week, I was doing some work on AWS and wanted to know what IP addresses were being used. Luckily for me, AWS publishes this all here <a href="https://ip-ranges.amazonaws.com/ip-ranges.json" rel="nofollow noopener">https://ip-ranges.amazonaws.com/ip-ranges.json</a>. When you go through this list, you’ll quickly see that AWS has a massive asset</p>]]></description><link>http://toonk.io/aws-and-their-billions-in-ipv4-addresses/</link><guid isPermaLink="false">5f88bf632257c9dcdf92feee</guid><category><![CDATA[ipv4]]></category><category><![CDATA[aws]]></category><category><![CDATA[networking]]></category><dc:creator><![CDATA[Andree Toonk]]></dc:creator><pubDate>Tue, 20 Oct 2020 16:01:11 GMT</pubDate><media:content url="https://images.unsplash.com/photo-1572288717056-ea97fb77c71e?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=2000&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ" medium="image"/><content:encoded><![CDATA[<img src="https://images.unsplash.com/photo-1572288717056-ea97fb77c71e?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ" alt="AWS and their Billions in IPv4 addresses"><p>Earlier this week, I was doing some work on AWS and wanted to know what IP addresses were being used. Luckily for me, AWS publishes this all here <a href="https://ip-ranges.amazonaws.com/ip-ranges.json" rel="nofollow noopener">https://ip-ranges.amazonaws.com/ip-ranges.json</a>. When you go through this list, you’ll quickly see that AWS has a massive asset of IPv4 allocations. Just counting quickly I noticed a lot of big prefixes.</p><figure class="kg-card kg-embed-card"><blockquote class="twitter-tweet" data-width="550"><p lang="en" dir="ltr">Ever wondered what all of the AWS network ranges are? You can find them all here:<a href="https://t.co/NBaBF6w0la">https://t.co/NBaBF6w0la</a><br>That&#39;s *a lot* of big prefixes!<br>4x /11, 14x /12, 30x /13, 78x /14, 184x /15, 278x /16</p>&mdash; Andree Toonk, Adelante! (@atoonk) <a href="https://twitter.com/atoonk/status/1316098702260359168?ref_src=twsrc%5Etfw">October 13, 2020</a></blockquote>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-</figure><p>However, the IPv4 ranges on that list are just the ranges that are in use and allocated today by AWS. Time to dig a bit deeper.</p><h3 id="ipv4-address-acquisitions-by-aws">IPv4 address acquisitions by AWS</h3><p>Over the years, AWS has acquired a lot of IPv4 address space. Most of this happens without gaining too much attention, but there were a few notable acquisitions that I’ll quickly summarize below.</p><h4 id="2017-mit-selling-8-million-ipv4-addresses-to-aws">2017: MIT selling 8 million IPv4 addresses to AWS</h4><p>In 2017 <a href="https://www.internetsociety.org/blog/2017/05/mit-goes-on-ipv4-selling-spree/" rel="noopener">MIT sold half of its 18.0.0.0/8</a> allocation to AWS. This 18.128.0.0/9 range holds about 8 million IPv4 addresses.</p><h4 id="2018-ge-sells-3-0-0-0-8-to-aws">2018: GE sells 3.0.0.0/8 to AWS</h4><p>In 2018 the IPv4 prefix 3.0.0.0/8 was transferred from GE to AWS. With this, AWS became the proud owner of its first /8! That’s sixteen million new IPv4 addresses to feed us hungry AWS customers. <a href="https://news.ycombinator.com/item?id=18407173" rel="nofollow noopener">https://news.ycombinator.com/item?id=18407173</a></p><h4 id="2019-aws-buys-amprnet-44-192-0-0-10">2019: AWS buys AMPRnet 44.192.0.0/10</h4><p>In 2019 AWS bought a /10 from AMPR.org, the Amateur Radio Digital Communications (ARDC). The IPv4 range 44.0.0.0/8 was an allocation made to the Amateur Radio organization in 1981 and known as the AMPRNet. This sell caused a fair bit of discussion, check out the <a href="https://mailman.nanog.org/pipermail/nanog/2019-July/thread.html#102103" rel="noopener">nanog discussion here.</a></p><p>Just this month, it <a href="http://www.southgatearc.org/news/2020/october/sale-of-amateur-radio-amprnet-tcp-ip-addresses.htm" rel="noopener">became public knowledge</a> AWS paid $108 million for this /10. That’s $25.74 per IP address.</p><p>These are just a few examples. Obviously, AWS has way more IP addresses than the three examples I listed here. The IPv4 transfer market is very active. Check out this website to get a sense of all transfers: <a href="https://account.arin.net/public/transfer-log#NRPM-8.3IPv4" rel="noopener">https://account.arin.net/public/transfer-log</a></p><h3 id="all-aws-ipv4-addresses">All AWS IPv4 addresses</h3><p>Armed with the information above it was clear that not all of the AWS owned ranges were in the <a href="https://ip-ranges.amazonaws.com/ip-ranges.json">JSON</a> that AWS published. For example, parts of the 3.0.0.0/8 range are missing. Likely because some of it is reserved for future use.</p><p>I did a bit of digging and tried to figure out how many IPv4 addresses AWS really owns. A good start is the Json that AWS publishes. I then combined that with all the ARIN, APNIC, and RIPE entries for Amazon I could find. A few examples include:<br><br><a href="https://rdap.arin.net/registry/entity/AMAZON-4" rel="nofollow noopener">https://rdap.arin.net/registry/entity/AMAZON-4</a><br><a href="https://rdap.arin.net/registry/entity/AMAZO-4" rel="nofollow noopener">https://rdap.arin.net/registry/entity/AMAZO-4</a><br><a href="https://rdap.arin.net/registry/entity/AT-88-Z" rel="nofollow noopener">https://rdap.arin.net/registry/entity/AT-88-Z</a></p><p>Combining all those IPv4 prefixes, removing duplicates and overlaps by aggregating them results in the following list of unique IPv4 address owned by AWS: <a href="https://gist.github.com/atoonk/b749305012ae5b86bacba9b01160df9f#all-prefixes" rel="nofollow noopener">https://gist.github.com/atoonk/b749305012ae5b86bacba9b01160df9f#all-prefixes</a></p><p>The total number of IPv4 addresses in that list is just over 100 Million (100,750,168). That’s <strong>the equivalent of just over six /8’s,</strong> not bad!</p><p>If we break this down by allocation size, we see the following:</p><pre><code>1x /8     =&gt; 16,777,216 IPv4 addresses
-1x /9     =&gt; 8,388,608 IPv4 addresses
-4x /10    =&gt; 16,777,216 IPv4 addresses
-5x /11    =&gt; 10,485,760 IPv4 addresses
-11x /12   =&gt; 11,534,336 IPv4 addresses
-13x /13   =&gt; 6,815,744 IPv4 addresses
-34x /14   =&gt; 8,912,896 IPv4 addresses
-53x /15   =&gt; 6,946,816 IPv4 addresses
-182x /16  =&gt; 11,927,552 IPv4 addresses
-&lt;and more&gt;</code></pre><p>A complete breakdown can be found here: <a href="https://gist.github.com/atoonk/b749305012ae5b86bacba9b01160df9f#breakdown-by-ipv4-prefix-size" rel="nofollow noopener">https://gist.github.com/atoonk/b749305012ae5b86bacba9b01160df9f#breakdown-by-ipv4-prefix-size</a></p><h3 id="putting-a-valuation-on-aws-ipv4-assets">Putting a valuation on AWS’ IPv4 assets</h3><blockquote>Alright.. this is just for fun…</blockquote><p>Since AWS is (one of) the largest buyers of IPv4 addresses, they have spent a significant amount on stacking up their IPv4 resources. It’s impossible, as an outsider, to know how much AWS paid for each deal. However, we can for fun, try to put a dollar number on AWS’ current IPv4 assets.</p><p>The average price for IPv4 addresses has gone up over the years. From ~$10 per IP a few years back to ~$25 per IP <a href="https://auctions.ipv4.global/" rel="noopener">nowadays</a>. <br>Note that these are market prices, so if AWS would suddenly decide to sell its IPv4 addresses and overwhelm the market with supply, prices would drop. But that won’t happen since we’re all still addicted to IPv4 ;)</p><p>Anyway, let’s stick with $25 and do the math just for fun.</p><pre><code>100,750,168 ipv4 addresses x $25 per IP = $2,518,754,200</code></pre><p>Just<strong> over $2.5 billion worth of IPv4 addresses,</strong> not bad! </p><h3 id="peeking-into-the-future">Peeking into the future</h3><p>It’s clear AWS is working hard behind the scenes to make sure we can all continue to build more on AWS. One final question we could look at is: <em>how much buffer does AWS have?</em> ie. how healthy is their IPv4 reserve?</p><p>According to their <a href="https://ip-ranges.amazonaws.com/ip-ranges.json" rel="noopener">published data</a>, they have allocated roughly 53 Million IPv4 addresses to existing AWS services. We found that all their IPv4 addresses combined equates to approximately 100 Million IPv4 addresses. That means they still have ~47 Million IPv4 addresses, or 47% available for future allocations. That’s pretty healthy! And on top of that, I’m sure they’ll continue to source more IPv4 addresses. The IPv4 market is still hot!</p><p></p>]]></content:encoded></item></channel></rss>
+    --name "my test service"</code></pre><h2 id="architecture-overview">Architecture overview</h2><p>Ok, so how does it work? The process for requesting a “global socket” starts with an API call. You can do this by directly interfacing with <a href="https://api.mysocket.io/" rel="noopener">the RESTful API</a>, or by using the <a href="https://mysocket.readthedocs.io/en/latest/mysocketctl/mysocket.html" rel="noopener">mysocketctl</a> tool. This returns a global mysocket object, which has a name, port number(s), and some other information.</p><p>Users can now use this socket object to create tunnel objects. These tunnels are then used to connect your local service to the global mysocket.io infrastructure. By stitching these two TCP sessions together, we made your local service globally available.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*L4orGfToNQ3fUgjrZC_3Qw.png" class="kg-image" alt="Introducing Mysocket.io"><figcaption>Creating a Socket, a Tunnel and connecting to mysocket.io</figcaption></figure><p>The diagram below provides a high-level overview of the service data-plane. On the left, we have the origin service. This could be your laptop, your raspberry pi at home, or even a set of containers in a Kubernetes cluster. The origin service can be behind a very strict firewall or even NAT. All it needs is outbound network access. We can then set up a secure encrypted tunnel to any of the mysocket.io servers around the world.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*ePYWcZbw_jzNriOwCThNFQ.png" class="kg-image" alt="Introducing Mysocket.io"><figcaption>Mysocket.io dataplane</figcaption></figure><h2 id="anycast">Anycast</h2><p>The Mysocket.io services use AWS’ global accelerator. With this, I’m making both the tunnel servers and proxy services anycasted. This solves some of the load balancing and high availability challenges. The mysocket tunnel and proxy servers are located in North America, Europe, and Asia.</p><p>Once the tunnel is established, the connection event is signaled to all other nodes in real-time, ensuring that all edge nodes know where the tunnel for the service is.</p><h2 id="documentation">Documentation</h2><p>One of my goals is to make Mysocket super easy to use. One way to do that is to have good documentation. I invite you to check out our readthedocs.io documentation here <a href="https://mysocket.readthedocs.io/en/latest/" rel="noopener">https://mysocket.readthedocs.io/</a></p><p>It’s divided into two sections:</p><ol><li><a href="https://mysocket.readthedocs.io/en/latest/about/about.html" rel="noopener">General information </a>about mysocket.io and some of the concepts.</li><li>Information and user guides for the <a href="https://mysocket.readthedocs.io/en/latest/mysocketctl/mysocket.html" rel="noopener">mysocketctl command-line tool</a>.</li></ol><p>The documentation itself and mysocketctl tool are both <a href="https://github.com/mysocketio" rel="noopener">opensource</a> so feel free to open pull requests or open issues if you have any questions.</p><p>You may have noticed there’s a <a href="https://mysocket.io" rel="noopener">website</a> as well. I wanted to create a quick landing page, so I decided to play with Wix.com. They make it super easy;  I may have gone overboard a bit ;)  All that was clicked together in just one evening, pretty neat.</p><h2 id="more-to-come">More to come</h2><p>There’s a lot more to tell and plenty more geeky details to dive into. More importantly, we can continue to build on this and make it even better (ping me if you have ideas or suggestions)! <br>So stay tuned. That’s the plan for subsequent Blog posts soon, either in this blog or the <a href="https://www.mysocket.io/blog" rel="noopener">mysocket.io blog</a>.</p><p><em>Cheers,</em><br><em> -Andree</em><br></p>]]></content:encoded></item></channel></rss>

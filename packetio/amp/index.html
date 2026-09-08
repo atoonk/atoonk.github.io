@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html amp lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Four ways to do super fast packet processing in Go</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <link rel="icon" href="../../favicon.png" type="image/png" />
+    <link rel="canonical" href="../index.html" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    
+    <meta property="og:site_name" content="Andree&#x27;s Musings" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Four ways to do super fast packet processing in Go" />
+    <meta property="og:description" content="The last few months I&#x27;ve reignited my strange hobby of doing network packet processing in software. My language of choice is Go, and I&#x27;m always looking and learning how to do this as fast as possible.  A few weeks ago I released go-afxdp, a Go library for sending and receiving" />
+    <meta property="og:url" content="http://toonk.io/packetio/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1587381419916-78fc843a36f8?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI4fHxjYW5hZGF8ZW58MHx8fHwxNzg4ODM1MDgzfDA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta property="article:published_time" content="2026-09-08T01:49:44.000Z" />
+    <meta property="article:modified_time" content="2026-09-08T02:41:39.000Z" />
+    <meta property="article:tag" content="Go" />
+    <meta property="article:tag" content="networking" />
+    <meta property="article:tag" content="xdp" />
+    <meta property="article:tag" content="dpdk" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Four ways to do super fast packet processing in Go" />
+    <meta name="twitter:description" content="The last few months I&#x27;ve reignited my strange hobby of doing network packet processing in software. My language of choice is Go, and I&#x27;m always looking and learning how to do this as fast as possible.  A few weeks ago I released go-afxdp, a Go library for sending and receiving" />
+    <meta name="twitter:url" content="http://toonk.io/packetio/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1587381419916-78fc843a36f8?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI4fHxjYW5hZGF8ZW58MHx8fHwxNzg4ODM1MDgzfDA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Andree Toonk" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Go, networking, xdp, dpdk" />
+    <meta name="twitter:site" content="@atoonk" />
+    <meta name="twitter:creator" content="@atoonk" />
+    <meta property="og:image:width" content="2000" />
+    <meta property="og:image:height" content="1333" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Andree&#x27;s Musings",
+        "url": "http://toonk.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "http://toonk.io/content/images/2024/03/toonk-io-icon-1.png",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Andree Toonk",
+        "image": {
+            "@type": "ImageObject",
+            "url": "http://toonk.io/content/images/2020/09/andreetoonk.png",
+            "width": 360,
+            "height": 360
+        },
+        "url": "http://toonk.io/author/andree/",
+        "sameAs": [
+            "http://toonk.io/about/",
+            "https://twitter.com/atoonk"
+        ]
+    },
+    "headline": "Four ways to do super fast packet processing in Go",
+    "url": "http://toonk.io/packetio/",
+    "datePublished": "2026-09-08T01:49:44.000Z",
+    "dateModified": "2026-09-08T02:41:39.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1587381419916-78fc843a36f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDI4fHxjYW5hZGF8ZW58MHx8fHwxNzg4ODM1MDgzfDA&ixlib=rb-4.1.0&q=80&w=2000",
+        "width": 2000,
+        "height": 1333
+    },
+    "keywords": "Go, networking, xdp, dpdk",
+    "description": "The last few months I&#x27;ve reignited my strange hobby of doing network packet\nprocessing in software. My language of choice is Go, and I&#x27;m always looking and\nlearning how to do this as fast as possible.\n\nA few weeks ago I released go-afxdp [https://github.com/atoonk/go-afxdp], a Go\nlibrary for sending and receiving packets using AF_XDP. Then I built Wireblast\non top of it and got that to 100G line rate.\n\nI&#x27;ve also been playing quite a bit with DPDK, VPP, different NICs, and more\nrecently NVIDIA/Me",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://toonk.io/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.34" />
+    <link rel="alternate" type="application/rss+xml" title="Andree&#x27;s Musings" href="../../rss/index.html" />
+
+    <link href="https://fonts.googleapis.com/css?family=Domine|Rubik:400,500,700&display=swap" rel="stylesheet">
+
+
+    <style amp-custom>.u-bgColor{background-color:#161D25}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}[hidden],template{display:none}.kg-bookmark-container,body,figcaption,h1,h2,h3,h4,h5,h6{font-family:Rubik,Whitney SSm A,Whitney SSm B,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif}.article-excerpt{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif}.u-flexCenter{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex}.u-block{display:block}.u-relative{position:relative}.u-overflowHidden{overflow:hidden}.u-fontSizeSmaller{font-size:.875rem}.u-flex1{-webkit-box-flex:1;flex:1 1 auto}.u-absolute{position:absolute}.u-textCenter{text-align:center}.u-marginTop30{margin-top:30px}.u-container{margin-left:auto;margin-right:auto;padding-left:16px;padding-right:16px}*,:after,:before{box-sizing:border-box}body{font-size:1rem;font-style:normal;font-weight:400;letter-spacing:0;line-height:1.5em;text-rendering:optimizeLegibility;-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;-ms-text-size-adjust:100%;text-size-adjust:100%;color:#212529}a{color:#00a562;text-decoration:none;word-break:break-word}a:active,a:hover{outline:0}blockquote{border-left:4px solid #212529;font-size:1.125rem;font-style:italic;margin-left:-5px;margin-right:0;padding-bottom:2px;padding-left:20px}figure{margin:0;padding:0}img{-o-object-fit:cover;object-fit:cover;-o-object-position:center;object-position:center}figcaption{color:#6c757d;display:block;font-size:.875rem;font-style:normal;font-weight:400;margin-top:10px;text-align:center;width:100%}h1,h2,h3,h4,h5,h6{color:#111;font-style:normal;font-weight:700;line-height:1.2;margin:25px 0 0;word-break:break-word}h1{font-size:2rem}h2{font-size:1.75rem}h3{font-size:1.5rem}h4{font-size:1.375rem}h5{font-size:1.25rem}h6{font-size:1.125rem}strong{font-weight:700}p{margin:20px 0 0}hr{box-sizing:content-box;height:0;margin:1rem 0;overflow:visible;border:0;border-top:1px solid rgba(0,0,0,.1)}mark{background-color:transparent;background-image:linear-gradient(180deg,#d7fdd3,#d7fdd3);color:rgba(0,0,0,.8)}code,pre{font-family:Menlo,Courier,monospace;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-ms-hyphens:none;hyphens:none}p code{border-radius:2px;padding:1px 6px}p code,pre{background:#2a3644;color:#e5eff5;font-size:.875rem}pre{overflow-x:auto;margin:0;padding:20px;border:none;line-height:1.6em}pre code{padding:0;background:transparent}svg{width:100%;height:100%}svg:not(:root){overflow:hidden}table{border-collapse:collapse;border-spacing:0;display:inline-block;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;font-size:1rem;line-height:1.5;margin:20px 0 0;max-width:100%;overflow-x:auto;vertical-align:top;white-space:nowrap;width:auto;-webkit-overflow-scrolling:touch}table td,table th{padding:6px 13px;border:1px solid #dfe2e5}table tr:nth-child(2n){background-color:#f6f8fa}table th{letter-spacing:.0125rem;text-transform:uppercase;font-weight:500}.header{position:relative;width:100%;height:50px;line-height:1}.logo-link{color:#fff;font-size:1.5rem;font-weight:500}.social-media a{background:#212529;border-radius:4px;color:#fff;display:inline-block;height:36px;margin:0 2px;padding:8px;vertical-align:middle;width:36px}.social-media svg{fill:#fff;stroke:none}.sidebar{width:280px;background:#fff}.sidebar ul{list-style:none;list-style-image:none;margin:18px 0 20px;padding:0}.sidebar ul li a{padding:6px 20px;font-weight:500;font-size:1rem;display:block}.sidebar .social-media{padding:20px;border-top:1px solid #ddd}.close-sidebar{height:50px;font-size:1.5625rem;line-height:3.125rem;text-align:right;padding-right:20px;color:#fff}.hamburgermenu{background-color:transparent;border:none;padding:0;height:48px;position:relative;-webkit-transition:-webkit-transform .4s;transition:-webkit-transform .4s;transition:transform .4s;transition:transform .4s,-webkit-transform .4s;width:48px;margin-right:-15px}.hamburgermenu span{background-color:#fff;display:block;height:2px;left:14px;margin-top:-1px;position:absolute;top:50%;width:20px}.hamburgermenu span:first-child{-webkit-transform:translateY(-6px);transform:translateY(-6px)}.hamburgermenu span:last-child{-webkit-transform:translateY(6px);transform:translateY(6px)}.main{max-width:500px;margin:0 auto}.article{padding-top:25px}.article-title{margin-top:0}.article-excerpt{margin-bottom:20px;margin-top:15px;color:#6c757d;font-size:1.25rem;line-height:1.4}.article-meta{color:#6c757d;margin:15px 0;font-size:.875rem}.article-body{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif;line-height:1.7em;font-size:1.125rem;padding:20px 1rem}.article-body>*{margin-bottom:28px}.article-body a:not(.kg-bookmark-container){word-break:break-word;text-decoration:underline}.article-body ol,.article-body ul{padding-left:20px}.article-body ol li,.article-body ul li{margin-bottom:5px}.button--tags{border-radius:3px;color:#212529;display:inline-block;font-size:.875rem;font-weight:500;height:37px;line-height:2.1875rem;margin:0 8px 8px 0;padding:0 10px;border:2px solid #212529}.button--tags:before{content:"#"}.share-title{display:block;margin-bottom:8px}amp-social-share.custom-style{background-color:teal;background-image:url(https://raw.githubusercontent.com/google/material-design-icons/master/social/1x_web/ic_share_white_48dp.png);background-repeat:no-repeat;background-position:50%;background-size:contain}amp-social-share.rounded{border-radius:10%;background-size:85%}.related{padding-top:40px;padding-bottom:20px;margin-top:20px;background:#efefef}.related-title{border-bottom:1px solid rgba(0,0,0,.15);padding-bottom:15px;margin-bottom:30px;color:#212529;font-weight:500;font-size:1.25rem}.story-border{border-left:3px solid #cc116e;bottom:0;color:rgba(0,0,0,.2);font-size:2.25rem;font-weight:700;left:0;padding:15px 10px 10px;top:0;-webkit-text-fill-color:transparent;-webkit-text-stroke-width:1.4px;-webkit-text-stroke-color:#888}.story:nth-child(3n) .story-border{border-color:#f59e00}.story:nth-child(3n+2) .story-border{border-color:#26a8ed}.story-link{background-color:#fff;border-bottom:1px solid #e2e0e0;box-shadow:0 1px 7px rgba(0,0,0,.05);min-height:50px;padding:15px 15px 15px 55px}.story-title{color:#212529;line-height:1.2;font-size:1.0625rem;font-weight:500;margin:0}.kg-bookmark-container{display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;flex-direction:column;border:1px solid rgba(0,0,0,.1)}.kg-bookmark-content{padding:20px;-webkit-box-ordinal-group:2;order:1}.kg-bookmark-title{font-weight:500;line-height:1.2;font-size:1.125rem}.kg-bookmark-description{color:#6c757d;line-height:1.4;margin-top:10px;font-size:.875rem}.kg-bookmark-metadata{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;font-size:.875rem;margin-top:10px}.kg-bookmark-icon{margin-right:5px}.kg-bookmark-author:after{content:"•";margin:0 6px}.footer{background-color:#efefef;color:rgba(0,0,0,.44);padding-top:20px;font-size:.9375rem;padding-bottom:45px}</style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
+    <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+
+    
+</head>
+<body class="amp-template">
+    <header class="header u-bgColor u-flexCenter u-container">
+    <div class="u-flex1">
+
+
+
+        <a href="../../index.html" class="logo-link">Andree&#x27;s Musings</a>
+    </div>
+
+    <button class="hamburgermenu" on="tap:sidenav.open" tabindex="0"><span></span><span></span><span></span></button>
+
+</header>
+
+    <main class="main">
+        
+<article class="article">
+    <header class="article-header u-container">
+        <h1 class="article-title">Four ways to do super fast packet processing in Go</h1>
+
+        
+
+        <hr>
+
+        <div class="article-meta">
+            <span class="author-name">By <a href="../../author/andree/index.html">Andree Toonk</a></span>
+
+            <span class="timestamp">
+                <time class="datetime" datetime="2026-09-08">an hour ago</time>
+            </span>
+
+            
+                <span>in</span>
+                <span class="categories"><a href="../../tag/go/index.html" title="Go">Go</a></span>
+            
+        </div>
+    </header>
+
+        <figure class="article-image u-block u-marginTop30">
+            <amp-img src="https://images.unsplash.com/photo-1587381419916-78fc843a36f8?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI4fHxjYW5hZGF8ZW58MHx8fHwxNzg4ODM1MDgzfDA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" width="600" height="350" layout="responsive" alt="Four ways to do super fast packet processing in Go"></amp-img>
+        </figure>
+
+    <div class="article-body u-container"> <p>The last few months I've reignited my strange hobby of doing network packet processing in software. My language of choice is Go, and I'm always looking and learning how to do this as fast as possible.</p>
+<p>A few weeks ago I released <a href="https://github.com/atoonk/go-afxdp">go-afxdp</a>, a Go library for sending and receiving packets using AF_XDP. Then I built Wireblast on top of it and got that to 100G line rate.</p>
+<p>I've also been playing quite a bit with DPDK, VPP, different NICs, and more recently NVIDIA/Mellanox Direct Verbs.</p>
+<p>It's been a fun rabbit hole :) But while doing all of this, I kept running into the same thing.<br />
+The actual packet processing is usually the easy part. Receive some packets, inspect them, maybe change a few bytes, do a lookup, and send them back out.</p>
+<p>Getting packets efficiently between the NIC and your Go program is where all the complexity lives. And depending on how you want to do that, you end up in completely different worlds.</p>
+<p>AF_XDP has UMEM and rings. DPDK has mbufs, mempools, EAL, hugepages and PMDs. Mellanox ConnectX cards have yet another path using Direct Verbs. All complicated words most of us probably don't want to deal with.</p>
+<p>That's what I've been working on. One library to abstract all of them, It's called <strong><a href="https://github.com/atoonk/packetio">packetio</a></strong>.</p>
+<h2 id="fourwaystogetatapacket">Four ways to get at a packet</h2>
+<p>There are basically four ways I care about for getting raw packets in and out of a Go program on Linux.<br />
+</p>
+<p>There's <strong>AF_PACKET</strong>, which is the normal Linux packet socket. It's what tools like tcpdump use. It works almost anywhere and requires very little setup, but it's slow as packets still go through much of the normal kernel machinery.</p>
+<p>Then there's <strong>AF_XDP</strong>, which I've <a href="https://toonk.io/line-rate-packet-processing-in-go-with-af_xdp/">written</a> about quite a bit already. It lets you intercept packets very early in the Linux driver and move them into memory shared with your application. On supported drivers it can be zero-copy, so the NIC writes packets directly into memory your Go program can access.</p>
+<p>The part I really like about AF_XDP is that Linux still owns the interface. You can send only the traffic you care about to your program and your SSH session, ARP, routing protocols and everything else keep working normally.</p>
+<p>Then there's <strong>DPDK</strong>.<br />
+DPDK is still the obvious answer when someone says "I want to do packet processing as fast as possible in userspace." It supports a large number of NICs and has been optimized for this job for years.</p>
+<p>It's also a bit of a world of its own. If you've ever started a DPDK application from scratch, you know what I mean. Hugepages, EAL arguments, mbufs, mempools, PCI devices, queue setup. None of it is particularly impossible, but there's a huge learning curve.</p>
+<p>And then there is the fourth option, which is the one I only really started appreciating recently: <strong>mlx5 Direct Verbs</strong>. More on that one in a bit.</p>
+<h2 id="oneapioverallofthem">One API over all of them</h2>
+<p>The idea behind packetio is pretty simple. A device has RX queues and TX queues. Queues give you frames. You process those frames in batches and give them back.<br />
+That's about as much as I want the application to know.</p>
+<p>For example:</p>
+<pre><code class="language-go">dev, err := mlx5.Open("eno2", mlx5.WithQueues(4))
+</code></pre>
+<p>Or afxdp:</p>
+<pre><code class="language-go">dev, err := afxdp.Open("eno2", afxdp.WithQueues(4))
+</code></pre>
+<p>Or DPDK:</p>
+<pre><code class="language-go">dev, err := dpdk.Open("0000:c1:00.1", dpdk.WithQueues(4))
+</code></pre>
+<p>There's also:</p>
+<pre><code class="language-go">dev, err := afpacket.Open("eno2", afpacket.WithQueues(4))
+</code></pre>
+<p>After that, the packet loop is the same. Something like:</p>
+<pre><code class="language-go">rx := dev.RxQueue(0)
+for {
+    rx.Fill(rx.NumFreeFillSlots())
+    rx.Poll(time.Second)
+
+    descs := rx.Receive(256)
+
+    for _, desc := range descs {
+        pkt := rx.Region().Frame(desc)
+        // Do something useful with the packet.
+        process(pkt)
+    }
+    rx.Recycle(descs)
+}
+</code></pre>
+<p>And transmitting is similarly boring:</p>
+<pre><code class="language-go">tx := dev.TxQueue(0)
+
+tx.SendFunc(256, func(_ int, frame []byte) int {
+    return copy(frame, myPacket)
+})
+</code></pre>
+<p>That's really all there's to it! You still have queues and batches because those things matter when you're doing high-speed packet processing. I'm not trying to hide reality behind some <code>net.Conn</code> abstraction.</p>
+<p>But I also don't think you should need to understand an AF_XDP fill ring, an <code>rte_mbuf</code>, or an mlx5 WQE before you can get a packet onto the wire.<br />
+Changing the backend should mostly mean changing how you open the device.<br />
+That sounds like a relatively small thing, but in practice I think it's pretty powerful.</p>
+<h2 id="dpdkfromgofinally">DPDK from Go, finally</h2>
+<p>One of the original motivations for this project was actually DPDK.<br />
+I've wanted a good way to use DPDK from Go for years.</p>
+<p>There have been Go wrappers before, but I never found one that gave me the programming model I wanted. I don't want to write my packet processing in C, and I definitely don't want to cross from Go into C for every packet.</p>
+<p>packetio crosses into DPDK once per <strong>batch</strong>, not once per packet. The packet memory stays in DPDK's mempool and Go works directly on those bytes.<br />
+So you get to write what looks like a pretty normal Go program while DPDK does all the ugly setup underneath.</p>
+<p>No <code>rte_eth_rx_burst</code> scattered through your application. No mbuf ownership rules in your business logic. No giant EAL argument string you copied from Stack Overflow three years ago. And if you don't know what that means, congrats, you dont need to!</p>
+<p>You open the device and start receiving packets, all in Go.That's the DPDK experience I've wanted for a long time.</p>
+<h2 id="directverbswasthesurprise">Direct Verbs was the surprise</h2>
+<p>The most interesting part of this project for me has probably been learning about mlx5 backend and something called direct verbs.</p>
+<p>Jérôme Tollet has been doing some great work in VPP around NVIDIA/Mellanox ConnectX NICs. He recently <a href="https://medium.com/fd-io-vpp/three-vpp-datapaths-for-nvidia-connectx-and-bluefield-309c0124019d">published a comparison of VPP's three high-performance datapaths</a>: AF_XDP, DPDK mlx5 and native RDMA Direct Verbs.</p>
+<p>That sent me down another rabbit hole. It turns out that with a ConnectX NIC you can talk to the hardware queues directly using mlx5 Direct Verbs.</p>
+<p>So instead of:<br />
+<strong>Go &gt; DPDK &gt; mlx5 PMD &gt; NIC</strong><br />
+you can do:<br />
+<strong>Go &gt; mlx5 queues &gt; NIC</strong></p>
+<p>There is obviously quite a bit hiding behind that sentence, but from the application's perspective that's the useful mental model.</p>
+<p>And it has another property I really like. ConnectX NICs support a bifurcated model. Linux can keep its normal interface while hardware steering sends selected traffic directly into queues owned by your application.</p>
+<p>So <code>eno2</code> doesn't disappear. SSH keeps working. Linux can still use the interface for ordinary traffic while your Go program handles the packets you've claimed.</p>
+<p>ConnectX can do this with DPDK too, but Direct Verbs lets us skip the DPDK layer entirely. For what I've been building lately, that's a pretty compelling combination.<br />
+AF_XDP-like operational behavior, but with a very short userspace datapath.</p>
+<h2 id="howfastisit">How fast is it?</h2>
+<p>Yes, the big question! I benchmarked all of this! I actually spent quite a bit of time on these numbers, so I'm going to put them all here.</p>
+<p>Hopefully they're useful to someone else comparing these different approaches. And if nothing else, I know I'll be coming back to this blog myself six months from now trying to remember how DPDK compared to AF_XDP :)</p>
+<p>The setup is two AMD EPYC 9275F machines with NVIDIA ConnectX-6 Dx 100G NICs. I'm testing 64-byte packets, which is really the worst case for packet processing. At that size, 100G Ethernet is about <strong>148.8 million packets per second</strong>.</p>
+<p>That's one packet every 6.7 nanoseconds. That's very little time. So yeah, things like memory accesses and extra trips through the kernel start to matter.</p>
+<p>The nice thing about this new <code>packetio</code> library is that all four backends are running essentially the <strong>same userspace benchmark program</strong>. Same receive loop, same transmit loop, same forwarding code. The backend is the only thing that changes.</p>
+<p>I'm also measuring CPU across the whole machine, not just the Go process. That's particularly important for AF_XDP. Quite a bit of its work happens inside the kernel in IRQ/NAPI/softirq context. If you only measure your Go process, those cores magically disappear from the benchmark even though you're still paying for them.<br />
+Jérôme took the same approach in his VPP measurements, which is one of the things I liked about his comparison.</p>
+<h3 id="receive">Receive</h3>
+<p>For receive I'm offering <strong>148.6 Mpps across 4096 flows</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Backend</th>
+<th>Mpps</th>
+<th>CPU cores</th>
+<th>Softirq cores</th>
+<th>Queues</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AF_PACKET</strong></td>
+<td>2.3</td>
+<td>52.8</td>
+<td>52.7</td>
+<td>16</td>
+</tr>
+<tr>
+<td><strong>AF_XDP</strong></td>
+<td>146.5</td>
+<td>11.4</td>
+<td>7.5</td>
+<td>8</td>
+</tr>
+<tr>
+<td><strong>mlx5 Direct Verbs</strong></td>
+<td><strong>148.6</strong></td>
+<td>10.0</td>
+<td>0.0</td>
+<td>10</td>
+</tr>
+<tr>
+<td><strong>DPDK</strong></td>
+<td><strong>148.6</strong></td>
+<td><strong>8.0</strong></td>
+<td>0.0</td>
+<td>8</td>
+</tr>
+</tbody>
+</table>
+<p>AF_PACKET is probably the most interesting row here, just for the wrong reason. We're throwing 148.6 million packets per second at the machine. The AF_PACKET program manages to receive only 2.3 million of them, while basically all of the CPU time is disappearing into kernel softirq processing.</p>
+<p>That's the argument for bypassing the normal kernel packet path in one row, and why you can't really use it for anything that needs speed.</p>
+<p>AF_XDP is a completely different story. It receives <strong>146.5 Mpps</strong>, so essentially the whole 100G flood, with 11.4 cores of machine CPU.</p>
+<p>But look at the softirq column. <strong>7.5 of those cores are kernel work.</strong><br />
+I think that's the really interesting comparison. If you only looked at CPU consumed by the Go program, AF_XDP would look dramatically cheaper than it actually is.</p>
+<p>Direct Verbs and DPDK don't have that extra kernel datapath, and both receive the full 148.6 Mpps. DPDK does it with eight cores and mlx5 with ten.</p>
+<h3 id="transmit">Transmit</h3>
+<p>For transmit this is a single flow generated by the DUT itself.</p>
+<table>
+<thead>
+<tr>
+<th>Backend</th>
+<th>Mpps</th>
+<th>CPU cores</th>
+<th>Softirq cores</th>
+<th>Queues</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AF_PACKET</strong></td>
+<td>17.3</td>
+<td>16.0</td>
+<td>4.1</td>
+<td>16</td>
+</tr>
+<tr>
+<td><strong>AF_XDP</strong></td>
+<td>147.9</td>
+<td>20.0</td>
+<td>14.0</td>
+<td>20</td>
+</tr>
+<tr>
+<td><strong>mlx5 Direct Verbs</strong></td>
+<td><strong>148.8</strong></td>
+<td>4.0</td>
+<td>0.0</td>
+<td>4</td>
+</tr>
+<tr>
+<td><strong>DPDK</strong></td>
+<td><strong>148.8</strong></td>
+<td><strong>3.0</strong></td>
+<td>0.0</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<p>This one still makes me smile. <strong>Three Go workers using DPDK can fill a 100G interface with minimum-sized Ethernet frames.</strong><br />
+148.8 million packets per seconds, From Go! Pretty amazing.</p>
+<p>The Direct Verbs backend gets there with four cores. And AF_XDP gets essentially there too, at 147.9 Mpps. But look at the CPU cost: 20 cores, with <strong>14 cores worth of softirq</strong>.</p>
+<p>Again, that's not necessarily bad. It's the tradeoff. With AF_XDP you keep the normal Linux driver and all the operational convenience that comes with it. DPDK and Direct Verbs have a much shorter path, so they need substantially less CPU to do the same amount of work.</p>
+<h3 id="forwarding">Forwarding</h3>
+<p>For this test we receive a packet, do a L3 longest-prefix match, rewrite it and transmit it again.</p>
+<p>So this is closer to the kind of thing I'm usually interested in: routers, NAT, firewalls, load balancers, etc.<br />
+The offered load is again <strong>148.6 Mpps</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Backend</th>
+<th>Mpps</th>
+<th>CPU cores</th>
+<th>Softirq cores</th>
+<th>Queues</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AF_PACKET</strong></td>
+<td>0.01</td>
+<td>49.6</td>
+<td>49.6</td>
+<td>16</td>
+</tr>
+<tr>
+<td><strong>AF_XDP</strong></td>
+<td>138.4</td>
+<td>28.7</td>
+<td>12.6</td>
+<td>16</td>
+</tr>
+<tr>
+<td><strong>mlx5 Direct Verbs</strong></td>
+<td><strong>147.4</strong></td>
+<td><strong>12.0</strong></td>
+<td>0.0</td>
+<td>12</td>
+</tr>
+<tr>
+<td><strong>DPDK</strong></td>
+<td>143.5</td>
+<td>16.0</td>
+<td>0.0</td>
+<td>16</td>
+</tr>
+</tbody>
+</table>
+<p>Direct Verbs gets to <strong>147.4 Mpps</strong>, basically 100G line rate, using 12 cores.<br />
+DPDK is close behind at <strong>143.5 Mpps</strong> using 16 cores.<br />
+AF_XDP gets to a very respectable <strong>138.4 Mpps</strong>, but needs 28.7 cores of machine CPU to do it, 12.6 of which are softirq.</p>
+<p>And then there's AF_PACKET :) Under the same flood it forwards essentially nothing, about <strong>0.01 Mpps</strong>, while burning almost 50 cores in the kernel.<br />
+That's a pretty dramatic picture of why all these faster packet I/O mechanisms exist in the first place.</p>
+<p>There are dozens of little things like queue counts, CPU placement, RSS configuration, descriptor formats and prefetching that can completely change your result.<br />
+I've spent way too much time figuring those things out. And that's another thing I want packetio to do for you: put good measured defaults in one place so you can mostly forget about them and get on with whatever you're actually trying to build.</p>
+<h2 id="itworksonec2too">It works on EC2 too</h2>
+<p>I also didn't want this to become one of those libraries that only works on the one server I happen to be testing on. So I've been testing packetio on EC2 as well.</p>
+<p>The DPDK backend works with AWS ENA, and the same application code runs there unchanged. Networking in AWS is its own adventure, because the instances themselves have packet per second limits. Most of the instances I experimented with had either around 1 Mpps or 5 Mpps limits. These are AWS limits, not packetio limits. Generally the bigger the instance, the larger the networking allowance.</p>
+<p>If you're experimenting with ENA yourself, the counter to keep an eye on is:</p>
+<pre><code class="language-bash">ethtool -S eth0 | grep pps_allowance_exceeded
+</code></pre>
+<p>If <code>pps_allowance_exceeded</code> starts increasing, you've hit the EC2 instance's packet-per-second allowance and AWS is queueing or dropping packets. When using the DPDK ENA driver, the same counter is available through the ENA PMD extended stats.</p>
+<p>I also tested the DPDK backend on a 10G Intel X550. DPDK fills the wire in both directions on a single core. So we're starting to cover quite a large surface area: bare metal, EC2, ConnectX, Intel, ENA, AF_XDP and DPDK.<br />
+That's exactly what I wanted from this library.</p>
+<h2 id="sowhichoneshouldyouuse">So which one should you use?</h2>
+<p>well it depends... if I have a ConnectX card, I'm increasingly drawn to Direct Verbs. The performance is excellent and I really like keeping the normal Linux interface around.</p>
+<p>For general modern Linux hardware, AF_XDP is a great place to start. It's fast, operationally convenient, and has much broader hardware support than the mlx5-specific backend.</p>
+<p>DPDK is still the big hammer. It has a great driver ecosystem and decades of work behind it. There are plenty of environments where it's exactly the right choice.</p>
+<p>And AF_PACKET is great when you just need to see some packets and don't care about moving millions of them per second.</p>
+<p>But the thing I'm most excited about with <a href="https://github.com/atoonk/packetio">packetio</a> is that this choice doesn't have to dominate the design of your program anymore.</p>
+<p>Write your packet processing once. Run it with AF_XDP. Try DPDK.<br />
+If there's a ConnectX in the server, try Direct Verbs. Then measure it.<br />
+Changing how packets reach your Go program should be a configuration decision, not a rewrite. That's really the whole idea.</p>
+<p>I've already moved <a href="https://toonk.io/wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/">Wireblast</a> onto <code>packetio</code>, and there are a few other things I'm building on top of it as well.</p>
+<p>If you look carefully :) you'll even find a userspace TCP/IP stack based on gVisor that can run on top of these backends. I've spent waaay too much time trying to make that go fast as well. IMHO its defaults aren't exactly optimized for this kind of workload..but that's probably a blog post on its own.</p>
+<p>If nothing else, I now finally have the packet I/O library I've wanted for the last few years. Super happy with it and also pretty proud!</p>
+<p>It supports DPDK, which is what I originally really wanted. Along the way I got to go deep on AF_XDP and learned a whole lot about ConnectX NICs and Direct Verbs.</p>
+<p>And it can push <strong>148 million packets per second</strong>. Not bad for Go :)<br />
+The code is on <a href="https://github.com/atoonk/packetio">GitHub</a>, go give it a try, there's <a href="https://github.com/atoonk/packetio/tree/main/examples">plenty of exampes</a>. Also see this <a href="https://gist.github.com/atoonk/63ad7ca0c7e4c0e0b167695b311a455e">copy paste ready DPDK example</a>.</p>
+<p>That's it! Thanks for reading. Let's push some packets, and let me know what you're building.</p>
+<p>Cheers,<br />
+Andree</p>
+ </div>
+
+        <div class="article-tags u-container u-marginTop30">
+            <span class="share-title">Tags:</span>
+                <a href="../../tag/go/index.html" title="Go" class="button--tags">Go</a>
+                <a href="../../tag/networking/index.html" title="networking" class="button--tags">networking</a>
+                <a href="../../tag/xdp/index.html" title="xdp" class="button--tags">xdp</a>
+                <a href="../../tag/dpdk/index.html" title="dpdk" class="button--tags">dpdk</a>
+        </div>
+
+    <footer class="share u-container u-marginTop30">
+        <span class="share-title">Share this:</span>
+        <amp-social-share class="rounded"
+        type="email"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="facebook"
+        data-param-app_id="254325784911610"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="twitter"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="linkedin"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="whatsapp"
+        width="36"
+        height="36"></amp-social-share>
+    </footer>
+
+</article>
+
+
+            <div class="related u-container">
+        <div class="related-title">Related Articles</div>
+
+        <div class="story">
+            <a href="../../wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">1</span>
+                <h3 class="story-title">Wireblast: a 100Gbs packet generator in Go with AF_XDP</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../line-rate-packet-processing-in-go-with-af_xdp/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">2</span>
+                <h3 class="story-title">Line-rate packet processing in Go with AF_XDP</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../navigating-infrastructure-outages-battle-scars-and-lessons-learned/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">3</span>
+                <h3 class="story-title">Navigating Infrastructure Outages: Battle Scars and Lessons Learned</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../sending-network-packets-in-go/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">4</span>
+                <h3 class="story-title">High-Speed Packet Transmission in Go: From net.Dial to AF_XDP</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../aws-ipv4-estate-now-worth-4-5-billion/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">5</span>
+                <h3 class="story-title">AWS IPv4 Estate Now Worth $4.5 Billion</h3>
+            </a>
+        </div>
+
+    </div>
+    </main>
+
+    <amp-sidebar id="sidenav" class="sidebar" layout="nodisplay" side="right">
+    <div class="close-sidebar u-bgColor" role="button" aria-label="close sidebar" on="tap:sidenav.close" tabindex="0">✕</div>
+
+    <ul class="nav" role="menu">
+    <li role="menuitem"><a href="../../index.html" class="nav-home">Home</a></li>
+    <li role="menuitem"><a href="../../contact/index.html" class="nav-contact">Contact</a></li>
+    <li role="menuitem"><a href="../../about/index.html" class="nav-about">About</a></li>
+</ul>
+
+    <div class="social-media">
+
+            <a href="https://twitter.com/atoonk" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 18 18" width="100%" height="100%"><path d="M12.077 2c-1.812 0-3.282 1.582-3.282 3.534 0 .277.03.547.085.806-2.728-.148-5.147-1.555-6.766-3.693-.283.522-.445 1.13-.445 1.777 0 1.226.58 2.308 1.46 2.942-.54-.02-1.05-.178-1.49-.443v.045c0 1.712 1.13 3.14 2.63 3.465-.28.08-.57.124-.87.124-.21 0-.418-.022-.62-.063.418 1.404 1.63 2.426 3.067 2.455-1.125.94-2.54 1.51-4.078 1.51-.267 0-.528-.02-.785-.05 1.46 1 3.185 1.59 5.04 1.59 6.037 0 9.34-5.39 9.34-10.06 0-.153-.005-.306-.01-.457.64-.5 1.197-1.12 1.637-1.83-.59.28-1.22.47-1.885.557.677-.437 1.198-1.13 1.443-1.955-.633.405-1.336.7-2.084.858C13.88 2.43 13.028 2 12.08 2"></path></svg>
+</a>
+
+
+
+
+    </div>
+
+</amp-sidebar>
+
+    <footer class="footer">
+        <section class="u-container copyright u-textCenter">
+            &copy; 2026 <a href="../../index.html">Andree&#x27;s Musings</a>
+        </section>
+    </footer>
+</body>
+</html>
