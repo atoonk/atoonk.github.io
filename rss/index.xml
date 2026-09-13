@@ -1,4 +1,285 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:media="http://search.yahoo.com/mrss/"><channel><title><![CDATA[Andree's Musings]]></title><description><![CDATA[Thoughts, stories and wild ideas from the world of Infrastructure Engineering.]]></description><link>http://toonk.io/</link><image><url>http://toonk.io/favicon.png</url><title>Andree&apos;s Musings</title><link>http://toonk.io/</link></image><generator>Ghost 3.34</generator><lastBuildDate>Tue, 08 Sep 2026 14:36:22 GMT</lastBuildDate><atom:link href="http://toonk.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Four ways to do super fast packet processing in Go]]></title><description><![CDATA[<!--kg-card-begin: markdown--><p><em><strong>Meet <a href="https://github.com/atoonk/packetio">packetio</a>, the Go packet I/O library I wish I'd had a years ago. AFXDP, DPDK, mlx5 Direct Verbs, and AFPACKET behind one API.</strong></em></p>
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:media="http://search.yahoo.com/mrss/"><channel><title><![CDATA[Andree's Musings]]></title><description><![CDATA[Thoughts, stories and wild ideas from the world of Infrastructure Engineering.]]></description><link>http://toonk.io/</link><image><url>http://toonk.io/favicon.png</url><title>Andree&apos;s Musings</title><link>http://toonk.io/</link></image><generator>Ghost 3.34</generator><lastBuildDate>Sun, 13 Sep 2026 18:37:58 GMT</lastBuildDate><atom:link href="http://toonk.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[How fast can you actually go on AWS? Pushing packets on the biggest network optimized EC2 instances]]></title><description><![CDATA[<!--kg-card-begin: markdown--><p>If you've been following along, you know I've spent the last few months making packets go fast in Go. We looked at AF_XDP, DPDK, and most recently Mellanox Direct Verbs, all behind one library, <a href="https://github.com/atoonk/packetio">packetio</a>. On real hardware that ends the way you'd hope: 148 million packets per second,</p>]]></description><link>http://toonk.io/how-fast-can-you-actually-go-on-aws-pushing-packets-on-the-biggest-network-optimized-ec2-instances/</link><guid isPermaLink="false">6aa6e8e1ed81a12c01da67d4</guid><dc:creator><![CDATA[Andree Toonk]]></dc:creator><pubDate>Sun, 13 Sep 2026 18:21:11 GMT</pubDate><media:content url="https://images.unsplash.com/photo-1660143158587-bddffa026e06?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3wxMTc3M3wwfDF8c2VhcmNofDV8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODkzMjM2Mjd8MA&amp;ixlib=rb-4.1.0&amp;q=80&amp;w=2000" medium="image"/><content:encoded><![CDATA[<!--kg-card-begin: markdown--><img src="https://images.unsplash.com/photo-1660143158587-bddffa026e06?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDV8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODkzMjM2Mjd8MA&ixlib=rb-4.1.0&q=80&w=2000" alt="How fast can you actually go on AWS? Pushing packets on the biggest network optimized EC2 instances"><p>If you've been following along, you know I've spent the last few months making packets go fast in Go. We looked at AF_XDP, DPDK, and most recently Mellanox Direct Verbs, all behind one library, <a href="https://github.com/atoonk/packetio">packetio</a>. On real hardware that ends the way you'd hope: 148 million packets per second, line rate on 100G, from a handful of Go workers.</p>
+<p>This weekend I wondered how much of that survives on EC2. I already knew the DPDK backend worked on Amazon's ENA network interfaces, but I'd only ever tried it on small instances. Meanwhile, AWS sells network-optimized instances with numbers like 300 and 600 Gb/s on the spec sheet. So my question for today: how well do those machines actually hold up when you point a packet generator at them?</p>
+<p>Two things I wanted out of this:</p>
+<ol>
+<li>Take <a href="https://github.com/atoonk/packetio">packetio</a> for a ride on some seriously beefy machines.</li>
+<li>And this is the bigger one: AWS publishes bandwidth for every instance type, but publishes nothing about packets per second. If you do anything with networking in software, you know packets per second is the number that matters. So let's go measure it.</li>
+</ol>
+<h2 id="theinstances">The instances</h2>
+<p>I went up the c8gn ladder, Amazon's current Graviton network-optimized family, from the 100G size all the way to the 600G one:</p>
+<table>
+<thead>
+<tr>
+<th>instance</th>
+<th style="text-align:right">vCPU</th>
+<th style="text-align:right">published bandwidth</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>c8gn.8xlarge</td>
+<td style="text-align:right">32</td>
+<td style="text-align:right">100 Gbps</td>
+</tr>
+<tr>
+<td>c8gn.12xlarge</td>
+<td style="text-align:right">48</td>
+<td style="text-align:right">150 Gbps</td>
+</tr>
+<tr>
+<td>c8gn.16xlarge</td>
+<td style="text-align:right">64</td>
+<td style="text-align:right">200 Gbps</td>
+</tr>
+<tr>
+<td>c8gn.24xlarge</td>
+<td style="text-align:right">96</td>
+<td style="text-align:right">300 Gbps</td>
+</tr>
+<tr>
+<td>c8gn.48xlarge</td>
+<td style="text-align:right">192</td>
+<td style="text-align:right">600 Gbps</td>
+</tr>
+</tbody>
+</table>
+<p>These are not cheap machines, but the specs are pretty impressive! The 48xlarge pair costs about $23 an hour, so every test is designed to be short and to get the answer in one go.</p>
+<h2 id="howitested">How I tested</h2>
+<p>The setup was identical for every instance type:</p>
+<ul>
+<li><strong>A pair of identical instances</strong>, same VPC, same subnet, same availability zone, talking to each other over a dedicated ENA NIC. Management traffic goes over a separate interface so nothing but test traffic touches the counters we care about.</li>
+<li><strong>DPDK on both ends.</strong> The data interface is bound to <code>vfio-pci</code> and owned by a DPDK application; the kernel never sees a packet. I went with DPDK rather than the kernel or AF_XDP because I wanted the NIC to be the only variable.</li>
+<li><strong>packetio's stock examples.</strong> The sender is <code>blast</code>, the receiver is <code>drop</code>, the same programs from the <a href="https://github.com/atoonk/packetio">packetio</a> repo that I used for the hardware numbers. No special EC2 build. Both are Go programs using the DPDK backend, so what you see below is what a Go application would see.</li>
+<li><strong>Three packet sizes.</strong> 64 bytes for the packet rate, 1500 bytes for what a normal MTU gets you, and 9000 bytes to validate the published bandwidth.</li>
+<li><strong>A queue ladder.</strong> For every instance I started with one queue on one core and doubled up until the number stopped moving. That's how you tell a per-core limit from an instance limit.</li>
+<li><strong>Read the results at the receiver.</strong> The sender's transmit counter is not what gets delivered, as AWS's shaper sits after it. On one instance the sender happily reported 3.6 Mpps while 1.0 Mpps arrived. Every number here is what the other side actually received.</li>
+</ul>
+<p>Two things kept me honest. Every transmit test was repeated with a ~120 line plain C DPDK sender that shares nothing with <a href="https://github.com/atoonk/packetio">packetio</a>, and the two always landed within a few percent of each other. And I kept a close eye on the ENA driver's allowance counters, <code>pps_allowance_exceeded</code>, <code>bw_in_allowance_exceeded</code> and friends, which the Nitro card exposes to tell you <em>which</em> limit you just hit. This gives me confidence the numbers aren't implementation specific. I added support for reading those from a DPDK-owned interface to packetio along the way, because without them you're guessing.</p>
+<h2 id="packetspersecondiseverything">Packets per second is everything</h2>
+<p>The thing about networking in software: every packet costs roughly the same amount of work regardless of how big it is: a lookup, a header rewrite, a descriptor. A router, a firewall, a VPN gateway, a load balancer, all of them are packet per second machines first and bandwidth machines second. Bandwidth is just packets times size. So when a spec sheet says 100 Gbps, the question I actually need answered is: at what packet size?</p>
+<p>At 64 bytes, 100 Gbps is 148.8 million packets per second. That's what the ConnectX-6 in my lab does, and it's our benchmark.</p>
+<h3 id="onequeueonecore">One queue, one core</h3>
+<p>Let's start small. One transmit queue, driven by one core, 64 byte packets:</p>
+<table>
+<thead>
+<tr>
+<th>instance</th>
+<th style="text-align:right">one queue, packetio</th>
+<th style="text-align:right">one queue, plain DPDK</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>c8gn.8xlarge</td>
+<td style="text-align:right">2.19 Mpps</td>
+<td style="text-align:right">2.33 Mpps</td>
+</tr>
+<tr>
+<td>c8gn.12xlarge</td>
+<td style="text-align:right">1.52 Mpps</td>
+<td style="text-align:right">1.61 Mpps</td>
+</tr>
+<tr>
+<td>c8gn.16xlarge</td>
+<td style="text-align:right">1.52 Mpps</td>
+<td style="text-align:right">1.61 Mpps</td>
+</tr>
+<tr>
+<td>c8gn.24xlarge</td>
+<td style="text-align:right">1.52 Mpps</td>
+<td style="text-align:right">1.61 Mpps</td>
+</tr>
+<tr>
+<td>c8gn.48xlarge</td>
+<td style="text-align:right">1.47 Mpps</td>
+<td style="text-align:right">1.60 Mpps</td>
+</tr>
+</tbody>
+</table>
+<p>About 1.5 to 2.2 million packets per second per core. On the ConnectX-6 in my lab one core does around 60 million. That's a 30x gap, and it's not packetio: the plain C sender lands in the same place. Bigger batches, deeper rings, prebuilt frames, checksum offload: I tried them all and none of it moves the number.</p>
+<p>I don't have a definitive answer for why, but I have a suspect. ENA runs its transmit queues in what the driver docs call <a href="https://www.kernel.org/doc/html/latest/networking/device_drivers/ethernet/amazon/ena.html">Low Latency Queue mode</a>: instead of the NIC fetching your packet from memory, the driver pushes the descriptor and the first 96 bytes of every packet straight into the device over PCIe. For a 64-byte packet that's the whole thing, written by the CPU, one packet at a time. At 2.8 GHz, 2 Mpps works out to roughly 1,450 cycles per packet, against about 50 on the Mellanox card, and that's the kind of gap a PCIe write per packet would explain. You can't test the theory by turning it off: with <code>enable_llq=0</code> the queue refuses to start, and <a href="https://doc.dpdk.org/guides-23.11/nics/ena.html">DPDK's own docs</a> say disabling it is &quot;highly not recommended&quot; anyway.</p>
+<p>So on EC2, a core buys you about two million packets per second. The interesting question is what happens when you add more of them.</p>
+<h3 id="addingqueues">Adding queues</h3>
+<p>Same test, now with N transmit queues on N cores, receiver side:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:right">queues</th>
+<th style="text-align:right">8xlarge</th>
+<th style="text-align:right">12xlarge</th>
+<th style="text-align:right">16xlarge</th>
+<th style="text-align:right">24xlarge</th>
+<th style="text-align:right">48xlarge</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">1</td>
+<td style="text-align:right">2.19</td>
+<td style="text-align:right">1.52</td>
+<td style="text-align:right">1.52</td>
+<td style="text-align:right">1.52</td>
+<td style="text-align:right">1.46</td>
+</tr>
+<tr>
+<td style="text-align:right">2</td>
+<td style="text-align:right">4.39</td>
+<td style="text-align:right">3.08</td>
+<td style="text-align:right">3.08</td>
+<td style="text-align:right">3.08</td>
+<td style="text-align:right">3.06</td>
+</tr>
+<tr>
+<td style="text-align:right">4</td>
+<td style="text-align:right">9.12</td>
+<td style="text-align:right">6.33</td>
+<td style="text-align:right">6.33</td>
+<td style="text-align:right">6.33</td>
+<td style="text-align:right">6.29</td>
+</tr>
+<tr>
+<td style="text-align:right">8</td>
+<td style="text-align:right">16.51</td>
+<td style="text-align:right">13.34</td>
+<td style="text-align:right">13.35</td>
+<td style="text-align:right">13.34</td>
+<td style="text-align:right">13.25</td>
+</tr>
+<tr>
+<td style="text-align:right">16</td>
+<td style="text-align:right">21.12</td>
+<td style="text-align:right">27.71</td>
+<td style="text-align:right">27.75</td>
+<td style="text-align:right">27.73</td>
+<td style="text-align:right">27.51</td>
+</tr>
+<tr>
+<td style="text-align:right">24</td>
+<td style="text-align:right">17.15</td>
+<td style="text-align:right">36.65</td>
+<td style="text-align:right">36.65</td>
+<td style="text-align:right">36.65</td>
+<td style="text-align:right">35.22</td>
+</tr>
+<tr>
+<td style="text-align:right">32</td>
+<td style="text-align:right">16.47</td>
+<td style="text-align:right">36.66</td>
+<td style="text-align:right">36.67</td>
+<td style="text-align:right">36.67</td>
+<td style="text-align:right">35.26</td>
+</tr>
+<tr>
+<td style="text-align:right">48</td>
+<td style="text-align:right">-</td>
+<td style="text-align:right">36.38</td>
+<td style="text-align:right">36.71</td>
+<td style="text-align:right">36.71</td>
+<td style="text-align:right">35.26</td>
+</tr>
+<tr>
+<td style="text-align:right">64</td>
+<td style="text-align:right">-</td>
+<td style="text-align:right">-</td>
+<td style="text-align:right">36.48</td>
+<td style="text-align:right">36.73</td>
+<td style="text-align:right">35.34</td>
+</tr>
+</tbody>
+</table>
+<p>It scales linearly, about 1.6 to 2.2 Mpps per queue, right up until it doesn't. The 8xlarge peaks at 16 queues and 21 Mpps and then actually gets <em>worse</em> with more. And the 12xlarge, 16xlarge and 24xlarge all stop at the same place: <strong>36.6 million packets per second</strong>, at 24 queues, flat as a table from there to 64. Adding 40 more cores changes nothing. That's not a CPU limit, that's a wall, and the ENA counters confirm it: push the offer past ~36 M and <code>pps_allowance_exceeded</code> starts ticking on the sender.</p>
+<p><strong>The takeaway: on a c8gn.12xlarge or anything bigger, one network interface tops out at roughly 36 million packets per second.</strong> It doesn't matter how many queues you use, how many cores you throw at it, or whether the spec sheet says 150, 300 or 600 Gbps. 36M pps, that's the number I was looking for!</p>
+<h2 id="theresults">The results</h2>
+<p>Here's the complete table I wish AWS would publish. Everything measured at the receiver, 64 byte packets for the packet rate, 1500 and 9000 byte packets for bandwidth:</p>
+<table>
+<thead>
+<tr>
+<th>instance</th>
+<th style="text-align:right">vCPU</th>
+<th style="text-align:right">published</th>
+<th style="text-align:right"><strong>pps @ 64B</strong></th>
+<th style="text-align:right">Gbps @ 1500B</th>
+<th style="text-align:right">Gbps @ 9000B</th>
+<th style="text-align:right">% of published, at 64B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>c8gn.8xlarge</td>
+<td style="text-align:right">32</td>
+<td style="text-align:right">100 Gbps</td>
+<td style="text-align:right"><strong>21.1 M</strong></td>
+<td style="text-align:right">102</td>
+<td style="text-align:right">101</td>
+<td style="text-align:right">14%</td>
+</tr>
+<tr>
+<td>c8gn.12xlarge</td>
+<td style="text-align:right">48</td>
+<td style="text-align:right">150 Gbps</td>
+<td style="text-align:right"><strong>36.6 M</strong></td>
+<td style="text-align:right">153</td>
+<td style="text-align:right">151</td>
+<td style="text-align:right">16%</td>
+</tr>
+<tr>
+<td>c8gn.16xlarge</td>
+<td style="text-align:right">64</td>
+<td style="text-align:right">200 Gbps</td>
+<td style="text-align:right"><strong>36.6 M</strong></td>
+<td style="text-align:right">205</td>
+<td style="text-align:right">203</td>
+<td style="text-align:right">12%</td>
+</tr>
+<tr>
+<td>c8gn.24xlarge</td>
+<td style="text-align:right">96</td>
+<td style="text-align:right">300 Gbps</td>
+<td style="text-align:right"><strong>36.6 M</strong></td>
+<td style="text-align:right">282</td>
+<td style="text-align:right">304</td>
+<td style="text-align:right">8%</td>
+</tr>
+<tr>
+<td>c8gn.48xlarge</td>
+<td style="text-align:right">192</td>
+<td style="text-align:right">600 Gbps</td>
+<td style="text-align:right"><strong>35.3 M</strong></td>
+<td style="text-align:right">282</td>
+<td style="text-align:right">304</td>
+<td style="text-align:right">4%</td>
+</tr>
+</tbody>
+</table>
+<p>A few things jump out.<br>
+<strong>The bandwidth numbers are honest.</strong> With 9000 byte packets every instance hit its published number, usually a few percent over. If you move big packets, you get what you paid for.</p>
+<p><strong>Packets per second are a different story.</strong> 36.6 million packets per second is about a quarter of what a single 100G NIC does in my lab, on an instance sold as 150, 200 or 300 Gbps. At 64 bytes you're only using between 8 and 16 percent of the bandwidth you're paying for. That's not a complaint, it's how the platform works, but it is the number to design around, and it's not on any spec sheet.</p>
+<p><strong>There's one packet rate from the 12xlarge up.</strong> 150G, 200G, 300G, one network card of the 600G: all ~36 Mpps. The extra bandwidth and the extra cores buy you nothing for small packets. Per gigabit that's 244 kpps on the 12xlarge, 183 on the 16xlarge and 122 on the 24xlarge. If your workload is small packets, the 12xlarge is the sweet spot of this family, and the bigger sizes only make sense when the packets get big too.</p>
+<p><strong>Where does bandwidth take over?</strong> Since the packet rate is flat, the bandwidth you actually get is simply the packet rate times the packet size, until you hit the published number. I ran a size ladder to find where that happens. The 8xlarge fills its 100G at about 640 bytes. The 12xlarge fills 150G already at 512 bytes. The 16xlarge needs about 700 bytes. The 24xlarge doesn't get there at 1500 bytes at all: 282 Gbps, and that's the sender's NIC topping out, not AWS. Same for the 48xlarge. Above 200G, you need jumbo frames to see the bandwidth you're paying for.</p>
+<h2 id="600gbpsneedstwonetworkcards">600 Gbps needs two network cards</h2>
+<p>The 48xlarge was the one I was most curious about, and it came in at exactly the same numbers as the 24xlarge: 35 Mpps, 282 Gbps at 1500 bytes, 304 Gbps with jumbo frames. Half the published bandwidth, and this time with <code>bw_out_allowance_exceeded</code> firing on the sender. AWS was shaping me at 300G on a 600G instance.</p>
+<p>The reason: to get 600 Gbps on the 48xlarge you need to use <strong>two network cards</strong>, each with its own 300 Gbps allowance. Normally the published bandwidth is per instance and every ENI shares it; here it's per card. To get 600 you need two interfaces, one attached to each card (<code>--network-card-index 1</code> for the second), and something spreading traffic over both. There's no bonding layer doing that for you. Attach one interface, run iperf, and you'll measure a 300G machine.</p>
+<p>In hindsight this makes sense. The fastest NICs you can commonly buy today are 400G; anything beyond that is two of them. It would have been odd for AWS to have a single 600G device.</p>
+<p>It is documented, sort of. Someone on Twitter kindly pointed me at the <a href="https://docs.aws.amazon.com/ec2/latest/instancetypes/co.html#co_network">network specifications table for compute optimized instances</a>, which has a &quot;Network cards&quot; column, and the c8gn.48xlarge says 2. Not a page you naturally end up on, and nothing there says one interface gets half.</p>
+<p>It probably also means the packet rate in the table is per card, so both cards together would be good for ~70 Mpps. I didn't test that (the pair was expensive enough for one weekend), so treat it as a well-founded guess.</p>
+<h2 id="whatididnttest">What I didn't test</h2>
+<p>AWS documents a burst and baseline mechanism for bandwidth on the smaller instance sizes. The c8gn sizes I tested all have a fixed bandwidth, and my runs were short by design, a few minutes each, so I have nothing to say about credit buckets here. I did keep the allowance counters in view the whole time and saw no sign of a packet-rate bucket in any run. If you run these instances at full blast for an hour, tell me what you see.</p>
+<h2 id="thingsfixedalongtheway">Things fixed along the way</h2>
+<p>As usual, running on new hardware finds bugs. <a href="https://github.com/atoonk/packetio">packetio</a>'s DPDK backend now builds on arm64 (all of these are Graviton machines, and the mempool header alignment differs from x86), it can read the ENA allowance counters through DPDK's xstats, and the CPU pinning code learned about hyperthreads: on an Intel instance it used to place one worker per physical core and leave half the vCPUs idle. All of that is in the repo.</p>
+<h2 id="wrapup">Wrap-up</h2>
+<p>So, how fast can you go on AWS?</p>
+<ul>
+<li><strong>Bandwidth: as fast as it says on the box.</strong> Every published number held, as long as the packets are big enough, and above 200G that means jumbo frames. On the 48xlarge it also means two network interfaces.</li>
+<li><strong>Packets per second: about 36 million per network interface</strong>, from the 12xlarge up. That's the number AWS doesn't publish, and it's about a quarter of what one 100G NIC does on bare metal.</li>
+<li><strong>Per core: about 2 million pps.</strong> Roughly 30x more expensive per packet than a ConnectX. You need 24 cores just to push enough packets to find the instance limit.</li>
+</ul>
+<p>So we got the numbers we were after, and <a href="https://github.com/atoonk/packetio">packetio</a> got better along the way. If you're building network functions on EC2, you now have the figure that was missing, and it's the one to pick your instance by: know your packet size first. For small packets the budget is one flat number across a 4x range of prices, and a single 100G ConnectX in a bare-metal box does four times the packets of a c8gn.24xlarge for a lot less money.</p>
+<p>One more catch, and it has nothing to do with packets. Everything here ran inside one availability zone, where traffic is free. Cross an AZ and it's $0.01 per GB each direction. 300 Gbps is 135 TB an hour, so a 48xlarge at its rated bandwidth costs about $1,350 an hour in transfer, on top of $11 for the instance. Serious networking on AWS needs a serious credit card, and it's the traffic that runs it up. That's a post of its own.</p>
+<p>The tooling is in the <a href="https://github.com/atoonk/packetio">packetio repo</a>; the <code>blast</code> and <code>drop</code> examples are all you need to reproduce any row in the table. If you run this on an instance family I didn't, I'd love to see the numbers.</p>
+<p>That's it, thanks for reading! Pushing packets on AWS is now a little clearer :)</p>
+<p>Cheers<br>
+-Andree</p>
+<!--kg-card-end: markdown-->]]></content:encoded></item><item><title><![CDATA[Four ways to do super fast packet processing in Go]]></title><description><![CDATA[<!--kg-card-begin: markdown--><p><em><strong>Meet <a href="https://github.com/atoonk/packetio">packetio</a>, the Go packet I/O library I wish I'd had a years ago. AFXDP, DPDK, mlx5 Direct Verbs, and AFPACKET behind one API.</strong></em></p>
 <p>The last few months I've reignited my strange hobby of doing network packet processing in software. My language of choice is Go, and I'm always</p>]]></description><link>http://toonk.io/packetio/</link><guid isPermaLink="false">6a9f68a3ed81a12c01da67a2</guid><category><![CDATA[Go]]></category><category><![CDATA[networking]]></category><category><![CDATA[xdp]]></category><category><![CDATA[dpdk]]></category><dc:creator><![CDATA[Andree Toonk]]></dc:creator><pubDate>Tue, 08 Sep 2026 01:49:44 GMT</pubDate><media:content url="https://images.unsplash.com/photo-1587381419916-78fc843a36f8?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3wxMTc3M3wwfDF8c2VhcmNofDI4fHxjYW5hZGF8ZW58MHx8fHwxNzg4ODM1MDgzfDA&amp;ixlib=rb-4.1.0&amp;q=80&amp;w=2000" medium="image"/><content:encoded><![CDATA[<!--kg-card-begin: markdown--><img src="https://images.unsplash.com/photo-1587381419916-78fc843a36f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDI4fHxjYW5hZGF8ZW58MHx8fHwxNzg4ODM1MDgzfDA&ixlib=rb-4.1.0&q=80&w=2000" alt="Four ways to do super fast packet processing in Go"><p><em><strong>Meet <a href="https://github.com/atoonk/packetio">packetio</a>, the Go packet I/O library I wish I'd had a years ago. AFXDP, DPDK, mlx5 Direct Verbs, and AFPACKET behind one API.</strong></em></p>
 <p>The last few months I've reignited my strange hobby of doing network packet processing in software. My language of choice is Go, and I'm always looking and learning how to do this as fast as possible.</p>
 <p>A few weeks ago I released <a href="https://github.com/atoonk/go-afxdp">go-afxdp</a>, a Go library for sending and receiving packets using AF_XDP. Then I built Wireblast on top of it and got that to 100G line rate.</p>
@@ -610,23 +891,4 @@ python3 ./gif_service.py</code></pre><p>Alright, now we have this service runnin
 	--port 8000 \
 	--socket_id 1fab407c-a49d-4c5e-8287-8b138b7549c0 \
 	--tunnel_id 3f46a01f-ef5b-4b0c-a1ce-9a294be2be03</code></pre><p>This will securely connect the local gif web service listening on port 8000, to the mysocket infrastructure and make it available as <a href="https://wandering-shape-7752.edge.mysocket.io/" rel="noopener">https://wandering-shape-7752.edge.mysocket.io</a></p><h3 id="wrapping-up">Wrapping up</h3><p>In this blog post, we looked at the two main mysocket primitives, <em>Sockets</em>, and <em>Tunnels</em>. We saw how users can create a Socket object and get a static DNS name and possibly even a dedicated TCP port. In the demo, we used the <em>tunnel connect</em> feature to make port 8000 on my local VM available to the Internet. With that, we made the Internet a little bit better by adding <a href="http://wandering-shape-7752.edge.mysocket.io/" rel="noopener">yet another Gif service</a>, that just happens to run on a VM hosted on my laptop.</p><p></p><!--kg-card-begin: html--><img src="https://media.giphy.com/media/aaw0ay7NqrucU/source.gif" alt="Static DNS names for your mysocket.io services (and a new gif service)">
-<!--kg-card-end: html-->]]></content:encoded></item><item><title><![CDATA[Introducing Mysocket.io]]></title><description><![CDATA[Mysocket is a service that provides users with fast and secure TCP sockets for services that aren’t normally directly reachable from the Internet. Using a simple client, we connect your local services to the Internet.]]></description><link>http://toonk.io/introducing-mysocket-io/</link><guid isPermaLink="false">5fbb2ca251a5ff44fb64d8b7</guid><category><![CDATA[mysocket]]></category><category><![CDATA[anycast]]></category><dc:creator><![CDATA[Andree Toonk]]></dc:creator><pubDate>Mon, 23 Nov 2020 03:40:48 GMT</pubDate><media:content url="https://images.unsplash.com/photo-1519331582073-283f1a211a3e?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=2000&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ" medium="image"/><content:encoded><![CDATA[<blockquote>In this blog, I’d like to introduce a new project I’m calling Mysocket.io. Before we dive in, a bit of background.</blockquote><img src="https://images.unsplash.com/photo-1519331582073-283f1a211a3e?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ" alt="Introducing Mysocket.io"><p>Loyal readers know I enjoy building global infrastructure services that need to be able to carry a significant amount of traffic and a large number of requests. Building services like these often require us to solve several challenges. Things to consider include: high availability, scaling, DDoS proofing, monitoring, logging, testing, deployments, user-facing &amp; backend APIs, policy management (user preferences) and distribution, life-cycling, etc. All this while keeping an eye on cost and keeping complexity to a minimum (which really is human, operational cost).</p><p>To experiment with these topics, it’s necessary to have a project to anchor these experiments to. Something I can continuously work on, and while doing so, improve the project as a whole. Now, there are many projects I started over time, but one that I've worked most on recently, and wanted to share with a wider audience, is <a href="https://www.mysocket.io/" rel="noopener"><strong>mysocket.io</strong></a>. A service that provides secure public endpoints for services that are otherwise not publicly reachable.</p><figure class="kg-card kg-image-card"><img src="https://cdn-images-1.medium.com/max/1600/1*43NirbSJ49IN0yPBE5wuAg.png" class="kg-image" alt="Introducing Mysocket.io"></figure><p>A typical example case that <a href="https://mysocket.io" rel="noopener">mysocket.io</a> can help with is a web service running on your laptop, which you’d like to make available to a team member or client. Or ssh access to servers behind NAT or a firewall, like a raspberry pi on your home network or ec2 instances behind NAT.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*yF9ppVXSZcwOz5Rlzh39QQ.png" class="kg-image" alt="Introducing Mysocket.io"><figcaption>make your localhost app available from&nbsp;anywhere</figcaption></figure><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*E-cZOCwqsH3tOkRjzA-ZJQ.png" class="kg-image" alt="Introducing Mysocket.io"><figcaption>Provide SSH access to your home server behind&nbsp;NAT.</figcaption></figure><h2 id="more-details">More details</h2><p>Alright, a good way to share more details and is to do a quick demo! You can see a brief overview in this video, or even better, try it yourself by simply following the four easy steps below.</p><figure class="kg-card kg-embed-card"><iframe width="459" height="344" src="https://www.youtube.com/embed/lEZX_xCTDlo?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></figure><blockquote>If you’re interested or curious, feel free to give it a spin and let me know what worked or didn’t, or even better, how it can be improved. Getting started will take you just one minute. Just follow these simple steps.</blockquote><pre><code class="language-bash">#Install client, using python's package manager (pip)
-pip3 install mysocketctl
-
-#Create account
-mysocketctl account create \
-    --name "your_name" \
-    --email "your_email_address" \
-    --password "a_secure_password" \
-    --sshkey "$(cat ~/.ssh/id_rsa.pub)"
-    
-#login
-mysocketctl login  \
-    --email "your_email_address" \
-    --password "a_secure_password" 
-    
- 
-#Launch your first global socket ;)
-mysocketctl connect \
-    --port 8000 \
-    --name "my test service"</code></pre><h2 id="architecture-overview">Architecture overview</h2><p>Ok, so how does it work? The process for requesting a “global socket” starts with an API call. You can do this by directly interfacing with <a href="https://api.mysocket.io/" rel="noopener">the RESTful API</a>, or by using the <a href="https://mysocket.readthedocs.io/en/latest/mysocketctl/mysocket.html" rel="noopener">mysocketctl</a> tool. This returns a global mysocket object, which has a name, port number(s), and some other information.</p><p>Users can now use this socket object to create tunnel objects. These tunnels are then used to connect your local service to the global mysocket.io infrastructure. By stitching these two TCP sessions together, we made your local service globally available.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*L4orGfToNQ3fUgjrZC_3Qw.png" class="kg-image" alt="Introducing Mysocket.io"><figcaption>Creating a Socket, a Tunnel and connecting to mysocket.io</figcaption></figure><p>The diagram below provides a high-level overview of the service data-plane. On the left, we have the origin service. This could be your laptop, your raspberry pi at home, or even a set of containers in a Kubernetes cluster. The origin service can be behind a very strict firewall or even NAT. All it needs is outbound network access. We can then set up a secure encrypted tunnel to any of the mysocket.io servers around the world.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*ePYWcZbw_jzNriOwCThNFQ.png" class="kg-image" alt="Introducing Mysocket.io"><figcaption>Mysocket.io dataplane</figcaption></figure><h2 id="anycast">Anycast</h2><p>The Mysocket.io services use AWS’ global accelerator. With this, I’m making both the tunnel servers and proxy services anycasted. This solves some of the load balancing and high availability challenges. The mysocket tunnel and proxy servers are located in North America, Europe, and Asia.</p><p>Once the tunnel is established, the connection event is signaled to all other nodes in real-time, ensuring that all edge nodes know where the tunnel for the service is.</p><h2 id="documentation">Documentation</h2><p>One of my goals is to make Mysocket super easy to use. One way to do that is to have good documentation. I invite you to check out our readthedocs.io documentation here <a href="https://mysocket.readthedocs.io/en/latest/" rel="noopener">https://mysocket.readthedocs.io/</a></p><p>It’s divided into two sections:</p><ol><li><a href="https://mysocket.readthedocs.io/en/latest/about/about.html" rel="noopener">General information </a>about mysocket.io and some of the concepts.</li><li>Information and user guides for the <a href="https://mysocket.readthedocs.io/en/latest/mysocketctl/mysocket.html" rel="noopener">mysocketctl command-line tool</a>.</li></ol><p>The documentation itself and mysocketctl tool are both <a href="https://github.com/mysocketio" rel="noopener">opensource</a> so feel free to open pull requests or open issues if you have any questions.</p><p>You may have noticed there’s a <a href="https://mysocket.io" rel="noopener">website</a> as well. I wanted to create a quick landing page, so I decided to play with Wix.com. They make it super easy;  I may have gone overboard a bit ;)  All that was clicked together in just one evening, pretty neat.</p><h2 id="more-to-come">More to come</h2><p>There’s a lot more to tell and plenty more geeky details to dive into. More importantly, we can continue to build on this and make it even better (ping me if you have ideas or suggestions)! <br>So stay tuned. That’s the plan for subsequent Blog posts soon, either in this blog or the <a href="https://www.mysocket.io/blog" rel="noopener">mysocket.io blog</a>.</p><p><em>Cheers,</em><br><em> -Andree</em><br></p>]]></content:encoded></item></channel></rss>
+<!--kg-card-end: html-->]]></content:encoded></item></channel></rss>
