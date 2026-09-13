@@ -25,7 +25,7 @@
     <link rel="icon" href="../favicon.png" type="image/png" />
     <link rel="canonical" href="index.html" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
-    <link rel="amphtml" href="amp/index.html" />
+    <link rel="amphtml" href="amp.html" />
     
     <meta property="og:site_name" content="Andree&#x27;s Musings" />
     <meta property="og:type" content="article" />
@@ -35,6 +35,12 @@
     <meta property="og:image" content="https://images.unsplash.com/photo-1660143158587-bddffa026e06?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDV8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODkzMjM2Mjd8MA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" />
     <meta property="article:published_time" content="2026-09-13T18:21:11.000Z" />
     <meta property="article:modified_time" content="2026-09-13T18:37:45.000Z" />
+    <meta property="article:tag" content="aws" />
+    <meta property="article:tag" content="dpdk" />
+    <meta property="article:tag" content="Go" />
+    <meta property="article:tag" content="networking" />
+    <meta property="article:tag" content="xdp" />
+    
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="How fast can you actually go on AWS? Pushing packets on the biggest network optimized EC2 instances" />
     <meta name="twitter:description" content="If you&#x27;ve been following along, you know I&#x27;ve spent the last few months making packets go fast in Go. We looked at AF_XDP, DPDK, and most recently Mellanox Direct Verbs, all behind one library, packetio. On real hardware that ends the way you&#x27;d hope: 148 million packets per second," />
@@ -42,6 +48,8 @@
     <meta name="twitter:image" content="https://images.unsplash.com/photo-1660143158587-bddffa026e06?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDV8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODkzMjM2Mjd8MA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Andree Toonk" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="aws, dpdk, Go, networking, xdp" />
     <meta name="twitter:site" content="@atoonk" />
     <meta name="twitter:creator" content="@atoonk" />
     <meta property="og:image:width" content="2000" />
@@ -87,6 +95,7 @@
         "width": 2000,
         "height": 1333
     },
+    "keywords": "aws, dpdk, Go, networking, xdp",
     "description": "If you&#x27;ve been following along, you know I&#x27;ve spent the last few months making\npackets go fast in Go. We looked at AF_XDP, DPDK, and most recently Mellanox\nDirect Verbs, all behind one library, packetio\n[https://github.com/atoonk/packetio]. On real hardware that ends the way you&#x27;d\nhope: 148 million packets per second, line rate on 100G, from a handful of Go\nworkers.\n\nThis weekend I wondered how much of that survives on EC2. I already knew the\nDPDK backend worked on Amazon&#x27;s ENA network interface",
     "mainEntityOfPage": {
         "@type": "WebPage",
@@ -553,7 +562,10 @@
     </div>
 
     <footer class="post-footer u-container u-maxWidth740">
-        
+            <div class="post-tags buttonSet u-marginTop30">
+        <a href="../tag/aws/index.html" title="aws" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="aws" data-event-non-interaction="true">aws</a><a href="../tag/dpdk/index.html" title="dpdk" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="dpdk" data-event-non-interaction="true">dpdk</a><a href="../tag/go/index.html" title="Go" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="Go" data-event-non-interaction="true">Go</a><a href="../tag/networking/index.html" title="networking" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="networking" data-event-non-interaction="true">networking</a><a href="../tag/xdp/index.html" title="xdp" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="xdp" data-event-non-interaction="true">xdp</a>
+    </div>
+
         <hr>
         <div class="prev-next">
                 <div class="u-flex u-relative godo-tracking u-marginBottom30"
@@ -579,6 +591,181 @@
     </footer>
 </article>
 
+
+
+<div class="post-related u-bgColorGrayLight">
+    <div class="u-container u-maxWidth1200">
+        <div class="row">
+
+            <div class="col s12 u-marginBottom40 u-textAlignCenter">
+                <h3 class="u-contentTitle u-fontSizeLarger">Related <span class='text-success'>Articles</span></h3>
+            </div>
+
+            <div class="col s12 m6 l4 u-flex">
+                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/packetio/" data-event-non-interaction="true">
+    <a href="../packetio/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
+        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
+            src="https://images.unsplash.com/photo-1587381419916-78fc843a36f8?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI4fHxjYW5hZGF8ZW58MHx8fHwxNzg4ODM1MDgzfDA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000"
+            srcset="https://images.unsplash.com/photo-1587381419916-78fc843a36f8?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI4fHxjYW5hZGF8ZW58MHx8fHwxNzg4ODM1MDgzfDA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000"
+            data-srcset="https://images.unsplash.com/photo-1587381419916-78fc843a36f8?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI4fHxjYW5hZGF8ZW58MHx8fHwxNzg4ODM1MDgzfDA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000 300w,https://images.unsplash.com/photo-1587381419916-78fc843a36f8?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI4fHxjYW5hZGF8ZW58MHx8fHwxNzg4ODM1MDgzfDA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000 600w"
+            data-sizes="(max-width: 1000px) 400px, 600px"
+            alt="Four ways to do super fast packet processing in Go"
+        />
+    </a>
+
+    <div class="cr-inner u-padding15 u-flexColumnTop">
+        <div class="cr-body">
+                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../packetio/index.html">Four ways to do super fast packet processing in Go</a></h2>
+        </div>
+
+        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
+    <time class="datetime u-textCapitalize" datetime="2026-09-08">8 Sep 2026</time>
+    <span class="bull">&bull;</span>
+    <span class="readingTime" style="cursor:default" title="10 min read">10 min read</span>
+    
+</div>    </div>
+
+    <a href="../packetio/index.html" class="u-absolute0 zindex3" aria-label="Four ways to do super fast packet processing in Go"></a>
+</div>
+            </div>
+            <div class="col s12 m6 l4 u-flex">
+                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/" data-event-non-interaction="true">
+    <a href="../wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
+        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
+            src="https://images.unsplash.com/photo-1535989052107-a9a9a9d1c538?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDN8fHNxdWFtaXNofGVufDB8fHx8MTc4NTcxMTg2Mnww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000"
+            srcset="https://images.unsplash.com/photo-1535989052107-a9a9a9d1c538?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDN8fHNxdWFtaXNofGVufDB8fHx8MTc4NTcxMTg2Mnww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000"
+            data-srcset="https://images.unsplash.com/photo-1535989052107-a9a9a9d1c538?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDN8fHNxdWFtaXNofGVufDB8fHx8MTc4NTcxMTg2Mnww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000 300w,https://images.unsplash.com/photo-1535989052107-a9a9a9d1c538?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDN8fHNxdWFtaXNofGVufDB8fHx8MTc4NTcxMTg2Mnww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000 600w"
+            data-sizes="(max-width: 1000px) 400px, 600px"
+            alt="Wireblast: a 100Gbs packet generator in Go with AF_XDP"
+        />
+    </a>
+
+    <div class="cr-inner u-padding15 u-flexColumnTop">
+        <div class="cr-body">
+                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/index.html">Wireblast: a 100Gbs packet generator in Go with AF_XDP</a></h2>
+        </div>
+
+        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
+    <time class="datetime u-textCapitalize" datetime="2026-08-05">5 Aug 2026</time>
+    <span class="bull">&bull;</span>
+    <span class="readingTime" style="cursor:default" title="6 min read">6 min read</span>
+    
+</div>    </div>
+
+    <a href="../wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/index.html" class="u-absolute0 zindex3" aria-label="Wireblast: a 100Gbs packet generator in Go with AF_XDP"></a>
+</div>
+            </div>
+            <div class="col s12 m6 l4 u-flex">
+                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/line-rate-packet-processing-in-go-with-af_xdp/" data-event-non-interaction="true">
+    <a href="../line-rate-packet-processing-in-go-with-af_xdp/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
+        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
+            src="https://images.unsplash.com/photo-1647655806923-e8202f4f2b8c?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODMzOTA2NDJ8MA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000"
+            srcset="https://images.unsplash.com/photo-1647655806923-e8202f4f2b8c?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODMzOTA2NDJ8MA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000"
+            data-srcset="https://images.unsplash.com/photo-1647655806923-e8202f4f2b8c?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODMzOTA2NDJ8MA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000 300w,https://images.unsplash.com/photo-1647655806923-e8202f4f2b8c?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODMzOTA2NDJ8MA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000 600w"
+            data-sizes="(max-width: 1000px) 400px, 600px"
+            alt="Line-rate packet processing in Go with AF_XDP"
+        />
+    </a>
+
+    <div class="cr-inner u-padding15 u-flexColumnTop">
+        <div class="cr-body">
+                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../line-rate-packet-processing-in-go-with-af_xdp/index.html">Line-rate packet processing in Go with AF_XDP</a></h2>
+        </div>
+
+        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
+    <time class="datetime u-textCapitalize" datetime="2026-07-07">7 Jul 2026</time>
+    <span class="bull">&bull;</span>
+    <span class="readingTime" style="cursor:default" title="7 min read">7 min read</span>
+    
+</div>    </div>
+
+    <a href="../line-rate-packet-processing-in-go-with-af_xdp/index.html" class="u-absolute0 zindex3" aria-label="Line-rate packet processing in Go with AF_XDP"></a>
+</div>
+            </div>
+            <div class="col s12 m6 l4 u-flex">
+                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/navigating-infrastructure-outages-battle-scars-and-lessons-learned/" data-event-non-interaction="true">
+    <a href="../navigating-infrastructure-outages-battle-scars-and-lessons-learned/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
+        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
+            src="https://images.unsplash.com/photo-1509390726584-faaa21c8ac95?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDE0fHxvdXRhZ2V8ZW58MHx8fHwxNzIwNDEwODM2fDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000"
+            srcset="https://images.unsplash.com/photo-1509390726584-faaa21c8ac95?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDE0fHxvdXRhZ2V8ZW58MHx8fHwxNzIwNDEwODM2fDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000"
+            data-srcset="https://images.unsplash.com/photo-1509390726584-faaa21c8ac95?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDE0fHxvdXRhZ2V8ZW58MHx8fHwxNzIwNDEwODM2fDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000 300w,https://images.unsplash.com/photo-1509390726584-faaa21c8ac95?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDE0fHxvdXRhZ2V8ZW58MHx8fHwxNzIwNDEwODM2fDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000 600w"
+            data-sizes="(max-width: 1000px) 400px, 600px"
+            alt="Navigating Infrastructure Outages: Battle Scars and Lessons Learned"
+        />
+    </a>
+
+    <div class="cr-inner u-padding15 u-flexColumnTop">
+        <div class="cr-body">
+                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../navigating-infrastructure-outages-battle-scars-and-lessons-learned/index.html">Navigating Infrastructure Outages: Battle Scars and Lessons Learned</a></h2>
+        </div>
+
+        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
+    <time class="datetime u-textCapitalize" datetime="2024-07-08">8 Jul 2024</time>
+    <span class="bull">&bull;</span>
+    <span class="readingTime" style="cursor:default" title="8 min read">8 min read</span>
+    
+</div>    </div>
+
+    <a href="../navigating-infrastructure-outages-battle-scars-and-lessons-learned/index.html" class="u-absolute0 zindex3" aria-label="Navigating Infrastructure Outages: Battle Scars and Lessons Learned"></a>
+</div>
+            </div>
+            <div class="col s12 m6 l4 u-flex">
+                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/sending-network-packets-in-go/" data-event-non-interaction="true">
+    <a href="../sending-network-packets-in-go/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
+        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
+            src="https://images.unsplash.com/photo-1559510980-7246660a93d3?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI3fHx2YW5jb3V2ZXJ8ZW58MHx8fHwxNzEwMTMzMDkyfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000"
+            srcset="https://images.unsplash.com/photo-1559510980-7246660a93d3?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI3fHx2YW5jb3V2ZXJ8ZW58MHx8fHwxNzEwMTMzMDkyfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000"
+            data-srcset="https://images.unsplash.com/photo-1559510980-7246660a93d3?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI3fHx2YW5jb3V2ZXJ8ZW58MHx8fHwxNzEwMTMzMDkyfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000 300w,https://images.unsplash.com/photo-1559510980-7246660a93d3?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDI3fHx2YW5jb3V2ZXJ8ZW58MHx8fHwxNzEwMTMzMDkyfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000 600w"
+            data-sizes="(max-width: 1000px) 400px, 600px"
+            alt="High-Speed Packet Transmission in Go: From net.Dial to AF_XDP"
+        />
+    </a>
+
+    <div class="cr-inner u-padding15 u-flexColumnTop">
+        <div class="cr-body">
+                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../sending-network-packets-in-go/index.html">High-Speed Packet Transmission in Go: From net.Dial to AF_XDP</a></h2>
+        </div>
+
+        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
+    <time class="datetime u-textCapitalize" datetime="2024-03-11">11 Mar 2024</time>
+    <span class="bull">&bull;</span>
+    <span class="readingTime" style="cursor:default" title="10 min read">10 min read</span>
+    
+</div>    </div>
+
+    <a href="../sending-network-packets-in-go/index.html" class="u-absolute0 zindex3" aria-label="High-Speed Packet Transmission in Go: From net.Dial to AF_XDP"></a>
+</div>
+            </div>
+            <div class="col s12 m6 l4 u-flex">
+                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/aws-ipv4-estate-now-worth-4-5-billion/" data-event-non-interaction="true">
+    <a href="../aws-ipv4-estate-now-worth-4-5-billion/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
+        <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
+            src="https://images.unsplash.com/photo-1613297595539-0d36a37702c6?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fEJyaXRpc2glMjBDb2x1bWJpYXxlbnwwfHx8fDE2OTQ5ODYzNzJ8MA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000"
+            srcset="https://images.unsplash.com/photo-1613297595539-0d36a37702c6?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fEJyaXRpc2glMjBDb2x1bWJpYXxlbnwwfHx8fDE2OTQ5ODYzNzJ8MA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000"
+            data-srcset="https://images.unsplash.com/photo-1613297595539-0d36a37702c6?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fEJyaXRpc2glMjBDb2x1bWJpYXxlbnwwfHx8fDE2OTQ5ODYzNzJ8MA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000 300w,https://images.unsplash.com/photo-1613297595539-0d36a37702c6?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fEJyaXRpc2glMjBDb2x1bWJpYXxlbnwwfHx8fDE2OTQ5ODYzNzJ8MA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000 600w"
+            data-sizes="(max-width: 1000px) 400px, 600px"
+            alt="AWS IPv4 Estate Now Worth $4.5 Billion"
+        />
+    </a>
+
+    <div class="cr-inner u-padding15 u-flexColumnTop">
+        <div class="cr-body">
+                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../aws-ipv4-estate-now-worth-4-5-billion/index.html">AWS IPv4 Estate Now Worth $4.5 Billion</a></h2>
+        </div>
+
+        <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
+    <time class="datetime u-textCapitalize" datetime="2023-09-17">17 Sep 2023</time>
+    <span class="bull">&bull;</span>
+    <span class="readingTime" style="cursor:default" title="5 min read">5 min read</span>
+    
+</div>    </div>
+
+    <a href="../aws-ipv4-estate-now-worth-4-5-billion/index.html" class="u-absolute0 zindex3" aria-label="AWS IPv4 Estate Now Worth $4.5 Billion"></a>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
     <div id="post-comments" class="post-comments js-comments u-hide u-bgColorGrayLight u-paddingTop30 u-paddingBottom30 u-contentTitle">
