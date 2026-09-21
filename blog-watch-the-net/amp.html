@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html amp lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Watch the Net: measuring the pulse of the Internet</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <link rel="icon" href="../favicon.png" type="image/png" />
+    <link rel="canonical" href="index.html" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    
+    <meta property="og:site_name" content="Andree&#x27;s Musings" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Watch the Net: measuring the pulse of the Internet" />
+    <meta property="og:description" content="Today I&#x27;m releasing a fun new project I&#x27;ve been working on called Watch the Net. It&#x27;s a live view of what&#x27;s happening on the Internet, based entirely on active measurements. You can drill down by country, region, city, ASN, organization, or even an individual IP address.  I&#x27;ve been posting screenshots" />
+    <meta property="og:url" content="http://toonk.io/blog-watch-the-net/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1648075082746-2511f68e57b5?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlciUyMGxpZ2h0aG91c2V8ZW58MHx8fHwxNzg5OTMyNTgwfDA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta property="article:published_time" content="2026-09-20T19:20:07.000Z" />
+    <meta property="article:modified_time" content="2026-09-21T03:52:07.000Z" />
+    <meta property="article:tag" content="monitoring" />
+    <meta property="article:tag" content="dpdk" />
+    <meta property="article:tag" content="Go" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Watch the Net: measuring the pulse of the Internet" />
+    <meta name="twitter:description" content="Today I&#x27;m releasing a fun new project I&#x27;ve been working on called Watch the Net. It&#x27;s a live view of what&#x27;s happening on the Internet, based entirely on active measurements. You can drill down by country, region, city, ASN, organization, or even an individual IP address.  I&#x27;ve been posting screenshots" />
+    <meta name="twitter:url" content="http://toonk.io/blog-watch-the-net/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1648075082746-2511f68e57b5?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlciUyMGxpZ2h0aG91c2V8ZW58MHx8fHwxNzg5OTMyNTgwfDA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Andree Toonk" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="monitoring, dpdk, Go" />
+    <meta name="twitter:site" content="@atoonk" />
+    <meta name="twitter:creator" content="@atoonk" />
+    <meta property="og:image:width" content="2000" />
+    <meta property="og:image:height" content="1333" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Andree&#x27;s Musings",
+        "url": "http://toonk.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "http://toonk.io/content/images/2024/03/toonk-io-icon-1.png",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Andree Toonk",
+        "image": {
+            "@type": "ImageObject",
+            "url": "http://toonk.io/content/images/2020/09/andreetoonk.png",
+            "width": 360,
+            "height": 360
+        },
+        "url": "http://toonk.io/author/andree/",
+        "sameAs": [
+            "http://toonk.io/about/",
+            "https://twitter.com/atoonk"
+        ]
+    },
+    "headline": "Watch the Net: measuring the pulse of the Internet",
+    "url": "http://toonk.io/blog-watch-the-net/",
+    "datePublished": "2026-09-20T19:20:07.000Z",
+    "dateModified": "2026-09-21T03:52:07.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1648075082746-2511f68e57b5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlciUyMGxpZ2h0aG91c2V8ZW58MHx8fHwxNzg5OTMyNTgwfDA&ixlib=rb-4.1.0&q=80&w=2000",
+        "width": 2000,
+        "height": 1333
+    },
+    "keywords": "monitoring, dpdk, Go",
+    "description": "Today I&#x27;m releasing a fun new project I&#x27;ve been working on called Watch the Net.\n[https://watchthenet.com/]\n\nIt&#x27;s a live view of what&#x27;s happening on the Internet, based entirely on active\nmeasurements. You can drill down by country, region, city, ASN, organization, or\neven an individual IP address.\n\nI&#x27;ve been posting screenshots from it on Twitter for the last few weeks, usually\nwhen something interesting breaks, and quite a few people have asked if they\ncould play with it themselves. Well, now ",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://toonk.io/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.34" />
+    <link rel="alternate" type="application/rss+xml" title="Andree&#x27;s Musings" href="../rss/index.html" />
+
+    <link href="https://fonts.googleapis.com/css?family=Domine|Rubik:400,500,700&display=swap" rel="stylesheet">
+
+
+    <style amp-custom>.u-bgColor{background-color:#161D25}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}[hidden],template{display:none}.kg-bookmark-container,body,figcaption,h1,h2,h3,h4,h5,h6{font-family:Rubik,Whitney SSm A,Whitney SSm B,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif}.article-excerpt{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif}.u-flexCenter{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex}.u-block{display:block}.u-relative{position:relative}.u-overflowHidden{overflow:hidden}.u-fontSizeSmaller{font-size:.875rem}.u-flex1{-webkit-box-flex:1;flex:1 1 auto}.u-absolute{position:absolute}.u-textCenter{text-align:center}.u-marginTop30{margin-top:30px}.u-container{margin-left:auto;margin-right:auto;padding-left:16px;padding-right:16px}*,:after,:before{box-sizing:border-box}body{font-size:1rem;font-style:normal;font-weight:400;letter-spacing:0;line-height:1.5em;text-rendering:optimizeLegibility;-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;-ms-text-size-adjust:100%;text-size-adjust:100%;color:#212529}a{color:#00a562;text-decoration:none;word-break:break-word}a:active,a:hover{outline:0}blockquote{border-left:4px solid #212529;font-size:1.125rem;font-style:italic;margin-left:-5px;margin-right:0;padding-bottom:2px;padding-left:20px}figure{margin:0;padding:0}img{-o-object-fit:cover;object-fit:cover;-o-object-position:center;object-position:center}figcaption{color:#6c757d;display:block;font-size:.875rem;font-style:normal;font-weight:400;margin-top:10px;text-align:center;width:100%}h1,h2,h3,h4,h5,h6{color:#111;font-style:normal;font-weight:700;line-height:1.2;margin:25px 0 0;word-break:break-word}h1{font-size:2rem}h2{font-size:1.75rem}h3{font-size:1.5rem}h4{font-size:1.375rem}h5{font-size:1.25rem}h6{font-size:1.125rem}strong{font-weight:700}p{margin:20px 0 0}hr{box-sizing:content-box;height:0;margin:1rem 0;overflow:visible;border:0;border-top:1px solid rgba(0,0,0,.1)}mark{background-color:transparent;background-image:linear-gradient(180deg,#d7fdd3,#d7fdd3);color:rgba(0,0,0,.8)}code,pre{font-family:Menlo,Courier,monospace;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-ms-hyphens:none;hyphens:none}p code{border-radius:2px;padding:1px 6px}p code,pre{background:#2a3644;color:#e5eff5;font-size:.875rem}pre{overflow-x:auto;margin:0;padding:20px;border:none;line-height:1.6em}pre code{padding:0;background:transparent}svg{width:100%;height:100%}svg:not(:root){overflow:hidden}table{border-collapse:collapse;border-spacing:0;display:inline-block;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;font-size:1rem;line-height:1.5;margin:20px 0 0;max-width:100%;overflow-x:auto;vertical-align:top;white-space:nowrap;width:auto;-webkit-overflow-scrolling:touch}table td,table th{padding:6px 13px;border:1px solid #dfe2e5}table tr:nth-child(2n){background-color:#f6f8fa}table th{letter-spacing:.0125rem;text-transform:uppercase;font-weight:500}.header{position:relative;width:100%;height:50px;line-height:1}.logo-link{color:#fff;font-size:1.5rem;font-weight:500}.social-media a{background:#212529;border-radius:4px;color:#fff;display:inline-block;height:36px;margin:0 2px;padding:8px;vertical-align:middle;width:36px}.social-media svg{fill:#fff;stroke:none}.sidebar{width:280px;background:#fff}.sidebar ul{list-style:none;list-style-image:none;margin:18px 0 20px;padding:0}.sidebar ul li a{padding:6px 20px;font-weight:500;font-size:1rem;display:block}.sidebar .social-media{padding:20px;border-top:1px solid #ddd}.close-sidebar{height:50px;font-size:1.5625rem;line-height:3.125rem;text-align:right;padding-right:20px;color:#fff}.hamburgermenu{background-color:transparent;border:none;padding:0;height:48px;position:relative;-webkit-transition:-webkit-transform .4s;transition:-webkit-transform .4s;transition:transform .4s;transition:transform .4s,-webkit-transform .4s;width:48px;margin-right:-15px}.hamburgermenu span{background-color:#fff;display:block;height:2px;left:14px;margin-top:-1px;position:absolute;top:50%;width:20px}.hamburgermenu span:first-child{-webkit-transform:translateY(-6px);transform:translateY(-6px)}.hamburgermenu span:last-child{-webkit-transform:translateY(6px);transform:translateY(6px)}.main{max-width:500px;margin:0 auto}.article{padding-top:25px}.article-title{margin-top:0}.article-excerpt{margin-bottom:20px;margin-top:15px;color:#6c757d;font-size:1.25rem;line-height:1.4}.article-meta{color:#6c757d;margin:15px 0;font-size:.875rem}.article-body{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif;line-height:1.7em;font-size:1.125rem;padding:20px 1rem}.article-body>*{margin-bottom:28px}.article-body a:not(.kg-bookmark-container){word-break:break-word;text-decoration:underline}.article-body ol,.article-body ul{padding-left:20px}.article-body ol li,.article-body ul li{margin-bottom:5px}.button--tags{border-radius:3px;color:#212529;display:inline-block;font-size:.875rem;font-weight:500;height:37px;line-height:2.1875rem;margin:0 8px 8px 0;padding:0 10px;border:2px solid #212529}.button--tags:before{content:"#"}.share-title{display:block;margin-bottom:8px}amp-social-share.custom-style{background-color:teal;background-image:url(https://raw.githubusercontent.com/google/material-design-icons/master/social/1x_web/ic_share_white_48dp.png);background-repeat:no-repeat;background-position:50%;background-size:contain}amp-social-share.rounded{border-radius:10%;background-size:85%}.related{padding-top:40px;padding-bottom:20px;margin-top:20px;background:#efefef}.related-title{border-bottom:1px solid rgba(0,0,0,.15);padding-bottom:15px;margin-bottom:30px;color:#212529;font-weight:500;font-size:1.25rem}.story-border{border-left:3px solid #cc116e;bottom:0;color:rgba(0,0,0,.2);font-size:2.25rem;font-weight:700;left:0;padding:15px 10px 10px;top:0;-webkit-text-fill-color:transparent;-webkit-text-stroke-width:1.4px;-webkit-text-stroke-color:#888}.story:nth-child(3n) .story-border{border-color:#f59e00}.story:nth-child(3n+2) .story-border{border-color:#26a8ed}.story-link{background-color:#fff;border-bottom:1px solid #e2e0e0;box-shadow:0 1px 7px rgba(0,0,0,.05);min-height:50px;padding:15px 15px 15px 55px}.story-title{color:#212529;line-height:1.2;font-size:1.0625rem;font-weight:500;margin:0}.kg-bookmark-container{display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;flex-direction:column;border:1px solid rgba(0,0,0,.1)}.kg-bookmark-content{padding:20px;-webkit-box-ordinal-group:2;order:1}.kg-bookmark-title{font-weight:500;line-height:1.2;font-size:1.125rem}.kg-bookmark-description{color:#6c757d;line-height:1.4;margin-top:10px;font-size:.875rem}.kg-bookmark-metadata{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;font-size:.875rem;margin-top:10px}.kg-bookmark-icon{margin-right:5px}.kg-bookmark-author:after{content:"•";margin:0 6px}.footer{background-color:#efefef;color:rgba(0,0,0,.44);padding-top:20px;font-size:.9375rem;padding-bottom:45px}</style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
+    <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+
+    
+</head>
+<body class="amp-template">
+    <header class="header u-bgColor u-flexCenter u-container">
+    <div class="u-flex1">
+
+
+
+        <a href="../index.html" class="logo-link">Andree&#x27;s Musings</a>
+    </div>
+
+    <button class="hamburgermenu" on="tap:sidenav.open" tabindex="0"><span></span><span></span><span></span></button>
+
+</header>
+
+    <main class="main">
+        
+<article class="article">
+    <header class="article-header u-container">
+        <h1 class="article-title">Watch the Net: measuring the pulse of the Internet</h1>
+
+        
+
+        <hr>
+
+        <div class="article-meta">
+            <span class="author-name">By <a href="../author/andree/index.html">Andree Toonk</a></span>
+
+            <span class="timestamp">
+                <time class="datetime" datetime="2026-09-20">9 hours ago</time>
+            </span>
+
+            
+                <span>in</span>
+                <span class="categories"><a href="../tag/monitoring/index.html" title="monitoring">monitoring</a></span>
+            
+        </div>
+    </header>
+
+        <figure class="article-image u-block u-marginTop30">
+            <amp-img src="https://images.unsplash.com/photo-1648075082746-2511f68e57b5?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlciUyMGxpZ2h0aG91c2V8ZW58MHx8fHwxNzg5OTMyNTgwfDA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" width="600" height="350" layout="responsive" alt="Watch the Net: measuring the pulse of the Internet"></amp-img>
+        </figure>
+
+    <div class="article-body u-container"> <p>Today I'm releasing a fun new project I've been working on called <a href="https://watchthenet.com/"><strong>Watch the Net</strong>.</a></p><p>It's a live view of what's happening on the Internet, based entirely on active measurements. You can drill down by country, region, city, ASN, organization, or even an individual IP address.</p>
+<p>I've been posting screenshots from it on Twitter for the last few weeks, usually when something interesting breaks, and quite a few people have asked if they could play with it themselves. Well, now you can :)</p>
+<p><strong>Watch the Net is live at <a href="https://watchthenet.com/">watchthenet.com</a>.</strong> And the question I'm trying to answer is pretty simple:<br />
+<strong>What's happening on the Internet right now?</strong><br />
+Not inferred from BGP updates, news reports, or someone else's telemetry. I wanted to measure it myself.</p>
+<p>And unsurprisingly, it combines two things I've been slightly obsessed with for a while: monitoring the Internet and sending packets fast.<br />
+</p>
+<h2 id="bethefirsttoknow">Be the first to know</h2>
+<p>I've spent most of my career building and operating Internet infrastructure, which also means I've spent a lot of time dealing with outages :)<br />
+One lesson I keep coming back to is <strong><a href="https://toonk.io/navigating-infrastructure-outages-battle-scars-and-lessons-learned/index.html">be the first to know</a></strong>. You don't want your customers telling you something is broken. You want to already know.</p>
+<p>That's why I've always been a big fan of synthetic monitoring. Don't just watch CPU counters, interface stats, BGP sessions, or logs. Actually send traffic and check whether things work.</p>
+<p>I've wanted something similar for the Internet itself for a long time, and at times <a href="https://blackhat.com/us-15/briefings.html#bgp-stream">have built</a> versions of it.</p>
+<p>Countries, cities and networks all have their own rhythm. Most of the time things just work. Then something breaks and you wonder: what's the impact, and who else is affected?<br />
+I wanted to see that happening as close to real time as possible.</p>
+<h2 id="meanwhileiwasmakingpacketsgofast">Meanwhile, I was making packets go fast</h2>
+<p>The other half of this started as a completely different project.<br />
+Over the last few months I've gone pretty deep into high-speed packet processing in Go. First AF_XDP, then DPDK, then Mellanox Direct Verbs, and eventually all of them behind one library called <a href="https://toonk.io/packetio/">packetio</a>.</p>
+<p>On a 100G ConnectX NIC, packetio can send around <strong>148 million packets per second</strong> with just a few cores. I was pretty happy with that number.<br />
+Then one evening I did some very simple math that I somehow hadn't done before.</p>
+<p>There are about 4 Billion IPv4 addresses. Remove private space, multicast, loopback, reserved ranges and everything else we don't care about, then look at what is actually announced in BGP today, and you're left with roughly <strong>3.1 billion routed IPv4 addresses</strong>.</p>
+<p>At 148 million packets per second, you could send one packet to every routed IPv4 address in about 21 seconds.<br />
+Even if you sent two probes to every address, you're still talking about reaching every routed IP on the Internet in under a minute. That's pretty crazy, right?!</p>
+<p>Combining my interest in Internet events like outages and sending packets fast is kind of how Watch the Net started.</p>
+<p><a href="https://x.com/atoonk/status/2089071263386042377"></a></p>
+<h2 id="whatwatchthenetdoes">What Watch the Net does</h2>
+<p>The basic idea is relatively simple. Watch the Net continuously walks the routed IPv4 Internet and sends two small probes to each address: an ICMP echo request and a TCP SYN.</p>
+<p>If an address responds to either, I consider it reachable. Using two probe types helps because plenty of networks drop ICMP but will happily respond to a TCP SYN. A SYN-ACK counts, but so does a TCP RST. If a machine tells me there's nothing listening on that port, it still answered.</p>
+<p>The same goes for ICMP errors. If the target itself responds, that's evidence that it's there. I don't inspect payloads or try to figure out what software you're running. I'm really only asking one question: <strong>Are you there?</strong></p>
+<p>There is one thing I do check. Every probe contains a small fingerprint derived from the destination address and a secret unique to that scan, tucked into fields that come back in the response, like the ICMP sequence number or TCP sequence number.</p>
+<p>When a response arrives, I recompute that fingerprint from the source address. If it matches, I know it was in response to something I sent. If not, I ignore it.<br />
+A nice side effect is that the scanner can be completely stateless. I never need to remember what I sent or keep a giant table of outstanding probes. One goroutine sends, another receives, and they don't even need to talk to each other.<br />
+I really like this part. It keeps the scanner surprisingly simple, even if you scale it to millions of probes per second.</p>
+<h2 id="beingagoodinternetneighbour">Being a good Internet neighbour</h2>
+<p>Those responses are grouped by geography and network metadata and turned into time series for countries, regions, cities, ASNs and organizations. On top of that sits an outage detector looking for significant changes from normal reachability.</p>
+<p>Right now I'm scanning just over <strong>3 billion IPv4 addresses</strong> at around <strong>500,000 packets per second</strong>, which works out to a full sweep every <strong>3.5 hours</strong>. I could go much faster, but deliberately don't.</p>
+<p>At that rate, an entire /24 sees a pair of probes roughly once every <strong>49 seconds</strong>. The scan order is randomized as well, using <strong>BlackRock</strong> from the masscan lineage, so consecutive probes land in completely different parts of the Internet rather than creating bursts toward individual networks.<br />
+The end result is a very small, evenly distributed amount of traffic. I want the measurements to be useful, but also want to be a good Internet neighbour.</p>
+<p>All of the resulting measurement data ends up in DuckDB. I've been looking for a good excuse to use it for a while, and this turned out to be a great one. I've been really impressed by how well it performs with this kind of data.</p>
+<h2 id="sowhatdoesitsee">So, what does it see?</h2>
+<p>This is where it gets fun :)</p>
+<h3 id="iraqdisappearseverymorning">Iraq disappears every morning</h3>
+<p>One of the first patterns that jumped out at me was Iraq.<br />
+At almost exactly the same time every morning, roughly 80% of the country's normal responding addresses would disappear.</p>
+<p>Some of the events looked like this:</p>
+<table>
+<thead>
+<tr>
+<th><strong>Date</strong></th>
+<th><strong>Start</strong></th>
+<th><strong>End</strong></th>
+<th><strong>Drop</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Aug 31</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>79%</td>
+</tr>
+<tr>
+<td>Sep 1</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>79%</td>
+</tr>
+<tr>
+<td>Sep 2</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>78%</td>
+</tr>
+<tr>
+<td>Sep 3</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>80%</td>
+</tr>
+<tr>
+<td>Sep 5</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>74%</td>
+</tr>
+<tr>
+<td>Sep 6</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>77%</td>
+</tr>
+<tr>
+<td>Sep 7</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>79%</td>
+</tr>
+<tr>
+<td>Sep 8</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>76%</td>
+</tr>
+<tr>
+<td>Sep 9</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>77%</td>
+</tr>
+</tbody>
+</table>
+<p>Not approximately half past three. The drop starts around <strong>03:30 UTC</strong> and things come back around <strong>04:14 UTC</strong>, almost every time.</p>
+<p>I've followed Internet outages and measurements for a long time, so this pattern looked familiar. Iraq has been shutting down Internet access during school exams for years as a way to prevent cheating.</p>
+<p>A quick search confirmed that they were doing it again this year. <a href="https://pulse.internetsociety.org/en/shutdowns/exams-shutdown-iraq-01-september-2026/">Internet Society Pulse</a> lists the official shutdown window as <strong>06:20 to 07:10 local time</strong>.<br />
+Iraq is UTC+3, so that's <strong>03:20 to 04:10 UTC</strong>.<br />
+Watch the Net measured roughly <strong>03:30 to 04:14 UTC</strong>.</p>
+<p>That's the part I thought was really cool. I'd known these shutdowns happened, but now I could actually see one in my own measurements and pinpoint the start and recovery almost to the minute.<br />
+And there was another nice detail in the data. September 4th is missing from the sequence. That was a Friday, the weekend in Iraq.</p>
+<p>One thing that might seem surprising is how quickly a change like this shows up when I'm probing each individual network so lightly. The trick is that at country scale I'm sampling thousands of /24s continuously. Any one /24 only sees a probe pair every 49 seconds or so, but all of those samples are happening at different times. When 80% of a country disappears at once, the aggregate changes very quickly.</p>
+<p>That's exactly the kind of thing I wanted to make visible.<br />
+<a href="https://watchthenet.com/e/country/IQ?from=1788133762&amp;to=1789178910"></a></p>
+<h2 id="portugal">Portugal</h2>
+<p>Another good example happened recently in Portugal.<br />
+Late on September 13 UTC, Portugal's measured reachability suddenly dropped by around <strong>86%</strong>, representing roughly 5.9 million addresses.<br />
+The big one was MEO, AS3243.</p>
+<p>Its measured reachability basically went to zero. Porto dropped 87%, Braga 97% and Lisbon 79%. Then it recovered.</p>
+<p>About seventeen hours later, almost exactly the same thing happened again. Same country, same operator, same magnitude.</p>
+<p>At the time, all I had was the measurement. But it already told me something useful: this wasn't a random collection of endpoints disappearing across Portugal. The impact was heavily concentrated in one operator.</p>
+<p>A couple of days later, <a href="https://observador.pt/2026/09/15/instabilidade-da-meo-foi-provocada-por-ataque-distribuido-de-negacao-de-servico-comunicacoes-estao-estabilizadas/">MEO confirmed</a> that it had been hit by a large DDoS attack that caused congestion and temporary degradation of its international network.</p>
+<p>The timing lines up surprisingly well too.<br />
+Watch the Net saw the first event begin at <strong>23:48 UTC</strong>, which was <strong>00:48 local time in Portugal</strong>. MEO later reported impact beginning around <strong>00:45</strong>.<br />
+That's exactly the kind of visibility I was hoping to get from this project.</p>
+<p><a href="https://watchthenet.com/e/country/PT?from=1789299554&amp;to=1789440300"></a></p>
+<h2 id="donetskhawaii">Donetsk, Hawaii</h2>
+<p>There have been plenty of other interesting examples.</p>
+<p><strong>Donetsk, September 18.</strong> The region's measured reachability dropped roughly 90%, with the city itself dropping even further. Ukraine is somewhere I watch fairly closely, and outages there often have a very geographic shape. Parts disappear and then recover in stages.</p>
+<p><strong>Hawaii, August 17.</strong> This was the first big one I spotted when i just started. Around 57% of the state's measured responding addresses disappeared. Kailua-Kona dropped 79%, 'Ewa Beach 81%, and Waipahu 64%. A few hours later it recovered. This was due to a tropical storm causing power outages.</p>
+<p></p>
+<h2 id="theinternethasarhythm">The Internet has a rhythm</h2>
+<p>At country scale, Internet reachability is generally pretty stable. There is some normal variation throughout the day, but complete countries don't just disappear very often.</p>
+<p>That's part of what makes the bigger outages so easy to spot. When a country suddenly loses 50%, 70%, or 90% of its normal reachability, the shape changes dramatically.<br />
+Things get more interesting when you zoom in to individual networks.</p>
+<p>University networks are a great example. You can actually watch the campus wake up in the morning and quiet down again at night. Weekends look different from weekdays, and the start of a new school year can show up directly in the number of responding IP addresses.</p>
+<p>I saw this recently at the University of British Columbia. Over the long weekend the network was relatively quiet, then students started coming back and the number of responding addresses climbed noticeably. <a href="https://x.com/atoonk/status/2097872160312394060">I posted a graph of that here.</a></p>
+<p>The same thing is even clearer on SURF, the Dutch university network and, coincidentally, one of the first ASes I ever worked on. During the week you get these very obvious daily peaks as campuses wake up, almost nothing on the weekends, and then much larger peaks once the academic year starts.<br />
+<a href="https://watchthenet.com/e/asn/AS1103?from=1788053895&amp;to=1789957939"></a></p>
+<p>I really like this part of the data. Outages are obviously interesting, but you can also see the normal ebb and flow of how networks are actually being used. (It does make you wonder though: do all those students get public IP addresses?).</p>
+<h2 id="gohavealook">Go have a look</h2>
+<p>You can search for a country, region, city, ASN, organization, network, or individual IP address and see its reachability over time.</p>
+<p>There's also a worldwide view, a map, recent outage advisories, and individual outage pages where you can drill into which underlying networks were affected.</p>
+<p>For now, an outage advisory requires an entity to lose at least <strong>50% of its normal reachability for five consecutive minutes</strong>.</p>
+<p>That's deliberately conservative. I'd much rather have a small number of alerts worth looking at than a constant stream of noise.</p>
+<p>I've been using the site myself for the last few weeks, and it's quickly become one of those tabs I leave open all day. Most mornings I check it to see what happened overnight :)</p>
+<h2 id="wrappingup">Wrapping up</h2>
+<p>This has been a really fun project to work on because it brought together two things I've been obsessed with for a while: understanding what's happening on the Internet, and figuring out how to send packets really fast from Go. It's been fun to use the packetIO library for an actual application.</p>
+<p>For this, the speed was never really the interesting part. What matters is that it makes it practical to continuously ask billions of Internet addresses a very simple question and turn the answers into something we can watch.</p>
+<p>There are a couple of obvious caveats. <strong>Watch the Net is IPv4 only for now</strong>, and all of these measurements currently come from <strong>a single vantage point</strong>. IPv6 needs a very different approach, and adding more vantage points would give a much richer view of what's happening from different parts of the Internet. But for that we need a project sponsor, as my various hobby project are slowely getting out of hand :)</p>
+<p>For now, though, I'm pretty happy with what this already makes visible.<br />
+So go have a look at <a href="https://watchthenet.com/"><strong>watchthenet.com</strong></a>.</p>
+<p>If you find something interesting, weird, or just plain wrong, I'd love to hear about it.<br />
+That's it, thanks for reading!</p>
+<p>Cheers<br />
+-Andree</p>
+ </div>
+
+        <div class="article-tags u-container u-marginTop30">
+            <span class="share-title">Tags:</span>
+                <a href="../tag/monitoring/index.html" title="monitoring" class="button--tags">monitoring</a>
+                <a href="../tag/dpdk/index.html" title="dpdk" class="button--tags">dpdk</a>
+                <a href="../tag/go/index.html" title="Go" class="button--tags">Go</a>
+        </div>
+
+    <footer class="share u-container u-marginTop30">
+        <span class="share-title">Share this:</span>
+        <amp-social-share class="rounded"
+        type="email"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="facebook"
+        data-param-app_id="254325784911610"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="twitter"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="linkedin"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="whatsapp"
+        width="36"
+        height="36"></amp-social-share>
+    </footer>
+
+</article>
+
+
+            <div class="related u-container">
+        <div class="related-title">Related Articles</div>
+
+        <div class="story">
+            <a href="../how-fast-can-you-actually-go-on-aws-pushing-packets-on-the-biggest-network-optimized-ec2-instances/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">1</span>
+                <h3 class="story-title">How fast can you actually go on AWS? Pushing packets on the biggest network optimized EC2 instances</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../packetio/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">2</span>
+                <h3 class="story-title">Four ways to do super fast packet processing in Go</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">3</span>
+                <h3 class="story-title">Wireblast: a 100Gbs packet generator in Go with AF_XDP</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../line-rate-packet-processing-in-go-with-af_xdp/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">4</span>
+                <h3 class="story-title">Line-rate packet processing in Go with AF_XDP</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../sending-network-packets-in-go/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">5</span>
+                <h3 class="story-title">High-Speed Packet Transmission in Go: From net.Dial to AF_XDP</h3>
+            </a>
+        </div>
+
+    </div>
+    </main>
+
+    <amp-sidebar id="sidenav" class="sidebar" layout="nodisplay" side="right">
+    <div class="close-sidebar u-bgColor" role="button" aria-label="close sidebar" on="tap:sidenav.close" tabindex="0">✕</div>
+
+    <ul class="nav" role="menu">
+    <li role="menuitem"><a href="../index.html" class="nav-home">Home</a></li>
+    <li role="menuitem"><a href="../contact/index.html" class="nav-contact">Contact</a></li>
+    <li role="menuitem"><a href="../about/index.html" class="nav-about">About</a></li>
+</ul>
+
+    <div class="social-media">
+
+            <a href="https://twitter.com/atoonk" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 18 18" width="100%" height="100%"><path d="M12.077 2c-1.812 0-3.282 1.582-3.282 3.534 0 .277.03.547.085.806-2.728-.148-5.147-1.555-6.766-3.693-.283.522-.445 1.13-.445 1.777 0 1.226.58 2.308 1.46 2.942-.54-.02-1.05-.178-1.49-.443v.045c0 1.712 1.13 3.14 2.63 3.465-.28.08-.57.124-.87.124-.21 0-.418-.022-.62-.063.418 1.404 1.63 2.426 3.067 2.455-1.125.94-2.54 1.51-4.078 1.51-.267 0-.528-.02-.785-.05 1.46 1 3.185 1.59 5.04 1.59 6.037 0 9.34-5.39 9.34-10.06 0-.153-.005-.306-.01-.457.64-.5 1.197-1.12 1.637-1.83-.59.28-1.22.47-1.885.557.677-.437 1.198-1.13 1.443-1.955-.633.405-1.336.7-2.084.858C13.88 2.43 13.028 2 12.08 2"></path></svg>
+</a>
+
+
+
+
+    </div>
+
+</amp-sidebar>
+
+    <footer class="footer">
+        <section class="u-container copyright u-textCenter">
+            &copy; 2026 <a href="../index.html">Andree&#x27;s Musings</a>
+        </section>
+    </footer>
+</body>
+</html>
