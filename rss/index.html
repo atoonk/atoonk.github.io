@@ -1,4 +1,169 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:media="http://search.yahoo.com/mrss/"><channel><title><![CDATA[Andree's Musings]]></title><description><![CDATA[Thoughts, stories and wild ideas from the world of Infrastructure Engineering.]]></description><link>http://toonk.io/</link><image><url>http://toonk.io/favicon.png</url><title>Andree&apos;s Musings</title><link>http://toonk.io/</link></image><generator>Ghost 3.34</generator><lastBuildDate>Sun, 13 Sep 2026 18:39:05 GMT</lastBuildDate><atom:link href="http://toonk.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[How fast can you actually go on AWS? Pushing packets on the biggest network optimized EC2 instances]]></title><description><![CDATA[<!--kg-card-begin: markdown--><p>If you've been following along, you know I've spent the last few months making packets go fast in Go. We looked at AF_XDP, DPDK, and most recently Mellanox Direct Verbs, all behind one library, <a href="https://github.com/atoonk/packetio">packetio</a>. On real hardware that ends the way you'd hope: 148 million packets per second,</p>]]></description><link>http://toonk.io/how-fast-can-you-actually-go-on-aws-pushing-packets-on-the-biggest-network-optimized-ec2-instances/</link><guid isPermaLink="false">6aa6e8e1ed81a12c01da67d4</guid><category><![CDATA[aws]]></category><category><![CDATA[dpdk]]></category><category><![CDATA[Go]]></category><category><![CDATA[networking]]></category><category><![CDATA[xdp]]></category><dc:creator><![CDATA[Andree Toonk]]></dc:creator><pubDate>Sun, 13 Sep 2026 18:21:11 GMT</pubDate><media:content url="https://images.unsplash.com/photo-1660143158587-bddffa026e06?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3wxMTc3M3wwfDF8c2VhcmNofDV8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODkzMjM2Mjd8MA&amp;ixlib=rb-4.1.0&amp;q=80&amp;w=2000" medium="image"/><content:encoded><![CDATA[<!--kg-card-begin: markdown--><img src="https://images.unsplash.com/photo-1660143158587-bddffa026e06?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDV8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODkzMjM2Mjd8MA&ixlib=rb-4.1.0&q=80&w=2000" alt="How fast can you actually go on AWS? Pushing packets on the biggest network optimized EC2 instances"><p>If you've been following along, you know I've spent the last few months making packets go fast in Go. We looked at AF_XDP, DPDK, and most recently Mellanox Direct Verbs, all behind one library, <a href="https://github.com/atoonk/packetio">packetio</a>. On real hardware that ends the way you'd hope: 148 million packets per second, line rate on 100G, from a handful of Go workers.</p>
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:media="http://search.yahoo.com/mrss/"><channel><title><![CDATA[Andree's Musings]]></title><description><![CDATA[Thoughts, stories and wild ideas from the world of Infrastructure Engineering.]]></description><link>http://toonk.io/</link><image><url>http://toonk.io/favicon.png</url><title>Andree&apos;s Musings</title><link>http://toonk.io/</link></image><generator>Ghost 3.34</generator><lastBuildDate>Mon, 21 Sep 2026 03:35:38 GMT</lastBuildDate><atom:link href="http://toonk.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Watch the Net: measuring the pulse of the Internet]]></title><description><![CDATA[<p>Today I'm releasing a fun new project I've been working on called <a href="https://watchthenet.com/"><strong>Watch the Net</strong>.</a></p><!--kg-card-begin: markdown--><p>It's a live view of what's happening on the Internet, based entirely on active measurements. It continuously measures Internet reachability around the world and lets you drill down by country, region, city, ASN, organization, or</p>]]></description><link>http://toonk.io/untitled/</link><guid isPermaLink="false">6ab0318aed81a12c01da67ea</guid><category><![CDATA[monitoring]]></category><category><![CDATA[dpdk]]></category><category><![CDATA[Go]]></category><dc:creator><![CDATA[Andree Toonk]]></dc:creator><pubDate>Sun, 20 Sep 2026 19:20:07 GMT</pubDate><media:content url="https://images.unsplash.com/photo-1648075082746-2511f68e57b5?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlciUyMGxpZ2h0aG91c2V8ZW58MHx8fHwxNzg5OTMyNTgwfDA&amp;ixlib=rb-4.1.0&amp;q=80&amp;w=2000" medium="image"/><content:encoded><![CDATA[<img src="https://images.unsplash.com/photo-1648075082746-2511f68e57b5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlciUyMGxpZ2h0aG91c2V8ZW58MHx8fHwxNzg5OTMyNTgwfDA&ixlib=rb-4.1.0&q=80&w=2000" alt="Watch the Net: measuring the pulse of the Internet"><p>Today I'm releasing a fun new project I've been working on called <a href="https://watchthenet.com/"><strong>Watch the Net</strong>.</a></p><!--kg-card-begin: markdown--><p>It's a live view of what's happening on the Internet, based entirely on active measurements. It continuously measures Internet reachability around the world and lets you drill down by country, region, city, ASN, organization, or even an individual IP address.</p>
+<p>I've been posting screenshots from it on Twitter for the last few weeks, usually when something interesting breaks, and quite a few people have asked if they could play with it themselves. Well, I registered a fresh domain and now you can :)</p>
+<p><strong>Watch the Net is live at <a href="https://watchthenet.com/">watchthenet.com</a>.</strong></p>
+<p>At the simplest level, the question I'm trying to answer is:<br>
+<strong>What's happening on the Internet right now?</strong><br>
+Not inferred from BGP updates, news reports, or someone else's telemetry. I wanted to continuously measure it myself.</p>
+<p>And perhaps unsurprisingly, this project combines two things I've been slightly obsessed with for a long time: monitoring the Internet and sending packets fast.</p>
+<p><img src="http://toonk.io/content/images/2026/09/Screenshot-2026-09-20-at-12.22.03-PM-1.png" alt="Watch the Net: measuring the pulse of the Internet"></p>
+<h2 id="bethefirsttoknow">Be the first to know</h2>
+<p>I've spent most of my career around Internet infrastructure, which also means I've spent a lot of time dealing with outages :)</p>
+<p>A few years ago I wrote about some of the lessons I've learned from those outages. One of the main ones was something I call <strong><a href="https://toonk.io/navigating-infrastructure-outages-battle-scars-and-lessons-learned/index.html">be the first to know</a></strong>.<br>
+If you're responsible for a service, you don't want your customers telling you it's broken. You want to already know.</p>
+<p>That's why I've always been a big fan of synthetic monitoring. Don't just look at CPU counters, interface stats, BGP sessions, or logs. Actually send some traffic and check whether the thing works.<br>
+I've always wanted something similar for the Internet itself (and at times <a href="https://blackhat.com/us-15/briefings.html#bgp-stream">have built</a> versions of it).</p>
+<p>Countries, cities and networks all have their own rhythm. Most of the time things just work. Then something breaks and you wonder: what's the impact, and who else is affected? I wanted to see that happening as close to real time as possible.</p>
+<h2 id="meanwhileiwasmakingpacketsgofast">Meanwhile, I was making packets go fast</h2>
+<p>The other half of this started as a completely different project.<br>
+Over the last few months I've gone pretty deep into high-speed packet processing in Go. First AF_XDP, then DPDK, then Mellanox Direct Verbs, and eventually all of them behind one library called <a href="https://toonk.io/packetio/">packetio</a>.</p>
+<p>On a 100G ConnectX NIC, packetio can send around <strong>148 million packets per second</strong> with just a few cores. I was pretty happy with that number.<br>
+Then one evening I did some very simple math that I somehow hadn't done before.</p>
+<p>There are 4,294,967,296 possible IPv4 addresses. Remove private space, multicast, loopback, reserved ranges and everything else we don't care about, then look at what is actually announced in BGP today, and you're left with roughly <strong>3.1 billion routed IPv4 addresses</strong>.</p>
+<p>At 148 million packets per second, you could send one packet to every routed IPv4 address in about 21 seconds.<br>
+Even if you sent two probes to every address, you're still talking about reaching every routed IP on the Internet in under a minute. That's pretty crazy, right?!</p>
+<p>Combining my interest in Internet events like outages and sending packets fast is kind of how Watch the Net started.</p>
+<p><a href="https://x.com/atoonk/status/2089071263386042377"><img src="http://toonk.io/content/images/2026/09/Screenshot-2026-09-20-at-7.56.21-PM.png" alt="Watch the Net: measuring the pulse of the Internet"></a></p>
+<h2 id="whatwatchthenetdoes">What Watch the Net does</h2>
+<p>The basic idea is relatively simple. Watch the Net continuously walks the routed IPv4 Internet and sends two very small probes to each address: an ICMP echo request and a TCP SYN.</p>
+<p>If an address responds to either, I consider it reachable. I’m using two probe types, plenty of networks drop ICMP entirely but will happily respond to a TCP SYN. A SYN-ACK obviously counts, but so does a TCP RST. If a machine tells me there's nothing listening on that port, it still answered.</p>
+<p>The same is true for ICMP. If the target itself sends back an error, that's still evidence that it's there. I don't really need to know much more than that.<br>
+I don't inspect payloads or try to figure out what software you're running. I'm really only asking one question: <strong>Are you there?</strong></p>
+<p>There is one thing I do check. Every probe contains a small fingerprint derived from the destination address and a secret that's unique to that scan. I tuck that into fields that come back in the response, such as the ICMP sequence number or the TCP sequence number.</p>
+<p>When a response arrives, I can calculate what that fingerprint should have been based on the source address. If it does, I know it was in response to something I sent. If it doesn't match, I ignore the packet.</p>
+<p>But there's another nice benefit to doing it this way: the scanner can be completely stateless.<br>
+Because the fingerprint can be reconstructed from the address itself, I never have to remember what I sent. There's no giant table of outstanding probes and no per-target state to maintain. One goroutine sends packets, another receives them, and they're completely asynchronous. They don't even need to talk to each other.</p>
+<p>The receiver simply looks at an incoming packet, calculates what the fingerprint should be, and checks whether it matches. I really like this part and it keeps the scanner surprisingly simple, even if you'd scale it to millions of probes per second.</p>
+<h2 id="beingagoodinternetneighbour">Being a good Internet neighbour</h2>
+<p>Those responses are grouped by geography and network metadata and turned into time series for countries, regions, cities, ASNs and organizations. On top of that sits an outage detector looking for significant changes from normal reachability.</p>
+<p>Right now I'm scanning just over <strong>3 billion IPv4 addresses</strong> at around <strong>500,000 packets per second</strong>, which works out to a full sweep every <strong>3.5 hours</strong>. I could go much faster, but deliberately don't.</p>
+<p>At that rate, an entire /24 sees a pair of probes roughly once every <strong>49 seconds</strong>. The scan order is randomized as well, using <strong>BlackRock</strong> from the masscan lineage, so consecutive probes land in completely different parts of the Internet rather than creating bursts toward individual networks.<br>
+The end result is a very small, evenly distributed amount of traffic. I want the measurements to be useful, but also want to be a good Internet neighbour.</p>
+<p>All of the resulting measurement data ends up in DuckDB. I've been looking for a good excuse to use it for a while, and this turned out to be a great one. I've been really impressed by how well it performs with this kind of data.</p>
+<h2 id="sowhatdoesitsee">So, what does it see?</h2>
+<p>This is where it gets fun :)</p>
+<h3 id="iraqdisappearseverymorning">Iraq disappears every morning</h3>
+<p>One of the first patterns that jumped out at me was Iraq.<br>
+At almost exactly the same time every morning, roughly 80% of the country's normal responding addresses would disappear.</p>
+<p>Some of the events looked like this:</p>
+<table>
+<thead>
+<tr>
+<th><strong>Date</strong></th>
+<th><strong>Start</strong></th>
+<th><strong>End</strong></th>
+<th><strong>Drop</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Aug 31</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>79%</td>
+</tr>
+<tr>
+<td>Sep 1</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>79%</td>
+</tr>
+<tr>
+<td>Sep 2</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>78%</td>
+</tr>
+<tr>
+<td>Sep 3</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>80%</td>
+</tr>
+<tr>
+<td>Sep 5</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>74%</td>
+</tr>
+<tr>
+<td>Sep 6</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>77%</td>
+</tr>
+<tr>
+<td>Sep 7</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>79%</td>
+</tr>
+<tr>
+<td>Sep 8</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>76%</td>
+</tr>
+<tr>
+<td>Sep 9</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>77%</td>
+</tr>
+</tbody>
+</table>
+<p>Not approximately half past three. The drop starts around <strong>03:30 UTC</strong> and things come back around <strong>04:14 UTC</strong>, almost every time.</p>
+<p>I've followed Internet outages and measurements for a long time, so this pattern looked familiar. Iraq has been shutting down Internet access during school exams for years as a way to prevent cheating.</p>
+<p>A quick search confirmed that they were doing it again this year. <a href="https://pulse.internetsociety.org/en/shutdowns/exams-shutdown-iraq-01-september-2026/">Internet Society Pulse</a> lists the official shutdown window as <strong>06:20 to 07:10 local time</strong>.<br>
+Iraq is UTC+3, so that's <strong>03:20 to 04:10 UTC</strong>.<br>
+Watch the Net measured roughly <strong>03:30 to 04:14 UTC</strong>.</p>
+<p>That's the part I thought was really cool. I'd known these shutdowns happened, but now I could actually see one in my own measurements and pinpoint the start and recovery almost to the minute.<br>
+And there was another nice detail in the data. September 4th is missing from the sequence. That was a Friday, the weekend in Iraq.</p>
+<p>One thing that might seem surprising is how quickly a change like this shows up when I'm probing each individual network so lightly. The trick is that at country scale I'm sampling thousands of /24s continuously. Any one /24 only sees a probe pair every 49 seconds or so, but all of those samples are happening at different times. When 80% of a country disappears at once, the aggregate changes very quickly.</p>
+<p>That's exactly the kind of thing I wanted to make visible.<br>
+<a href="https://watchthenet.com/e/country/IQ?from=1788133762&amp;to=1789178910"><img src="http://toonk.io/content/images/2026/09/HRpr7bPbkAA07bo.jpeg" alt="Watch the Net: measuring the pulse of the Internet"></a></p>
+<h2 id="portugal">Portugal</h2>
+<p>Another good example happened recently in Portugal.<br>
+Late on September 13 UTC, Portugal's measured reachability suddenly dropped by around <strong>86%</strong>, representing roughly 5.9 million addresses.<br>
+The big one was MEO, AS3243.</p>
+<p>Its measured reachability basically went to zero. Porto dropped 87%, Braga 97% and Lisbon 79%. Then it recovered.</p>
+<p>About seventeen hours later, almost exactly the same thing happened again. Same country, same operator, same magnitude.</p>
+<p>At the time, all I had was the measurement. But it already told me something useful: this wasn't a random collection of endpoints disappearing across Portugal. The impact was heavily concentrated in one operator.</p>
+<p>A couple of days later, <a href="https://observador.pt/2026/09/15/instabilidade-da-meo-foi-provocada-por-ataque-distribuido-de-negacao-de-servico-comunicacoes-estao-estabilizadas/">MEO confirmed</a> that it had been hit by a large DDoS attack that caused congestion and temporary degradation of its international network.</p>
+<p>The timing lines up surprisingly well too.<br>
+Watch the Net saw the first event begin at <strong>23:48 UTC</strong>, which was <strong>00:48 local time in Portugal</strong>. MEO later reported impact beginning around <strong>00:45</strong>.<br>
+That's exactly the kind of visibility I was hoping to get from this project.</p>
+<p><a href="https://watchthenet.com/e/country/PT?from=1789299554&amp;to=1789440300"><img src="http://toonk.io/content/images/2026/09/Screenshot-2026-09-20-at-5.02.33-PM.png" alt="Watch the Net: measuring the pulse of the Internet"></a></p>
+<h2 id="donetskhawaii">Donetsk, Hawaii</h2>
+<p>There have been plenty of other interesting examples.</p>
+<p><strong>Donetsk, September 18.</strong> The region's measured reachability dropped roughly 90%, with the city itself dropping even further. Ukraine is somewhere I watch fairly closely, and outages there often have a very geographic shape. Parts disappear and then recover in stages.</p>
+<p><strong>Hawaii, August 17.</strong> This was the first big one I spotted when i just started. Around 57% of the state's measured responding addresses disappeared. Kailua-Kona dropped 79%, 'Ewa Beach 81%, and Waipahu 64%. A few hours later it recovered. This was due to a tropical storm causing power outages.</p>
+<p><img src="http://toonk.io/content/images/2026/09/Screenshot-2026-09-20-at-7.56.14-PM.png" alt="Watch the Net: measuring the pulse of the Internet"></p>
+<h2 id="theinternethasarhythm">The Internet has a rhythm</h2>
+<p>At country scale, Internet reachability is generally pretty stable. There is some normal variation throughout the day, but complete countries don't just disappear very often.</p>
+<p>That's part of what makes the bigger outages so easy to spot. When a country suddenly loses 50%, 70%, or 90% of its normal reachability, the shape changes dramatically.<br>
+Things get more interesting when you zoom in to individual networks.</p>
+<p>University networks are a great example. You can actually watch the campus wake up in the morning and quiet down again at night. Weekends look different from weekdays, and the start of a new school year can show up directly in the number of responding IP addresses.</p>
+<p>I saw this recently at the University of British Columbia. Over the long weekend the network was relatively quiet, then students started coming back and the number of responding addresses climbed noticeably. <a href="https://x.com/atoonk/status/2097872160312394060">I posted a graph of that here.</a></p>
+<p>The same thing is even clearer on SURF, the Dutch university network and, coincidentally, one of the first ASes I ever worked on. During the week you get these very obvious daily peaks as campuses wake up, almost nothing on the weekends, and then much larger peaks once the academic year starts.<br>
+<a href="https://watchthenet.com/e/asn/AS1103?from=1788053895&amp;to=1789957939"><img src="http://toonk.io/content/images/2026/09/Screenshot-2026-09-20-at-8.05.46-PM.png" alt="Watch the Net: measuring the pulse of the Internet"></a></p>
+<p>I really like this part of the data. Outages are obviously interesting, but you can also see the normal ebb and flow of how networks are actually being used. (It does make you wonder though: do all those students get public IP addresses?).</p>
+<h2 id="gohavealook">Go have a look</h2>
+<p>You can search for a country, region, city, ASN, organization, network, or individual IP address and see its reachability over time.</p>
+<p>There's also a worldwide view, a map, recent outage advisories, and individual outage pages where you can drill into which underlying networks were affected.</p>
+<p>For now, an outage advisory requires an entity to lose at least <strong>50% of its normal reachability for five consecutive minutes</strong>.</p>
+<p>That's deliberately conservative. I'd much rather have a small number of alerts worth looking at than a constant stream of noise.</p>
+<p>I've been using the site myself for the last few weeks, and it's quickly become one of those tabs I leave open all day. Most mornings I check it to see what happened overnight :)</p>
+<h2 id="wrappingup">Wrapping up</h2>
+<p>This has been a really fun project to work on because it brought together two things I've been obsessed with for a while: understanding what's happening on the Internet, and figuring out how to send packets really fast from Go. It's been fun to use the packetIO library for an actual application.</p>
+<p>For this, the speed was never really the interesting part. What matters is that it makes it practical to continuously ask billions of Internet addresses a very simple question and turn the answers into something we can watch.</p>
+<p>There are a couple of obvious caveats. <strong>Watch the Net is IPv4 only for now</strong>, and all of these measurements currently come from <strong>a single vantage point</strong>. IPv6 needs a very different approach, and adding more vantage points would give a much richer view of what's happening from different parts of the Internet.</p>
+<p>For now, though, I'm pretty happy with what this already makes visible.</p>
+<p>So go have a look at <a href="https://watchthenet.com/"><strong>watchthenet.com</strong></a>.</p>
+<p>If you find something interesting, weird, or just plain wrong, I'd love to hear about it.</p>
+<p>That's it, thanks for reading!</p>
+<p>Cheers<br>
+-Andree</p>
+<!--kg-card-end: markdown-->]]></content:encoded></item><item><title><![CDATA[How fast can you actually go on AWS? Pushing packets on the biggest network optimized EC2 instances]]></title><description><![CDATA[<!--kg-card-begin: markdown--><p>If you've been following along, you know I've spent the last few months making packets go fast in Go. We looked at AF_XDP, DPDK, and most recently Mellanox Direct Verbs, all behind one library, <a href="https://github.com/atoonk/packetio">packetio</a>. On real hardware that ends the way you'd hope: 148 million packets per second,</p>]]></description><link>http://toonk.io/how-fast-can-you-actually-go-on-aws-pushing-packets-on-the-biggest-network-optimized-ec2-instances/</link><guid isPermaLink="false">6aa6e8e1ed81a12c01da67d4</guid><category><![CDATA[aws]]></category><category><![CDATA[dpdk]]></category><category><![CDATA[Go]]></category><category><![CDATA[networking]]></category><category><![CDATA[xdp]]></category><dc:creator><![CDATA[Andree Toonk]]></dc:creator><pubDate>Sun, 13 Sep 2026 18:21:11 GMT</pubDate><media:content url="https://images.unsplash.com/photo-1660143158587-bddffa026e06?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3wxMTc3M3wwfDF8c2VhcmNofDV8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODkzMjM2Mjd8MA&amp;ixlib=rb-4.1.0&amp;q=80&amp;w=2000" medium="image"/><content:encoded><![CDATA[<!--kg-card-begin: markdown--><img src="https://images.unsplash.com/photo-1660143158587-bddffa026e06?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDV8fHZhbmNvdXZlcnxlbnwwfHx8fDE3ODkzMjM2Mjd8MA&ixlib=rb-4.1.0&q=80&w=2000" alt="How fast can you actually go on AWS? Pushing packets on the biggest network optimized EC2 instances"><p>If you've been following along, you know I've spent the last few months making packets go fast in Go. We looked at AF_XDP, DPDK, and most recently Mellanox Direct Verbs, all behind one library, <a href="https://github.com/atoonk/packetio">packetio</a>. On real hardware that ends the way you'd hope: 148 million packets per second, line rate on 100G, from a handful of Go workers.</p>
 <p>This weekend I wondered how much of that survives on EC2. I already knew the DPDK backend worked on Amazon's ENA network interfaces, but I'd only ever tried it on small instances. Meanwhile, AWS sells network-optimized instances with numbers like 300 and 600 Gb/s on the spec sheet. So my question for today: how well do those machines actually hold up when you point a packet generator at them?</p>
 <p>Two things I wanted out of this:</p>
 <ol>
@@ -874,21 +1039,4 @@ done | sort | uniq -c
    5 Server: compute-000-nyc1
    5 Server: compute-000-tor1
    5 Server: compute-001-nyc1
-   5 Server: compute-001-tor1</code></pre><p></p><p>Horizontally scaling the service is easy; simply change the count number in the <a href="https://github.com/mysocketio/examples/blob/main/2020-12-06-multi-region/main.tf">terraform file,</a> or add / remove regions. Since the VM’s will call the mysocket api on boot, these new VM’s will automatically become part of the load balancing pool. Pretty neat and easy, right?!</p><h3 id="failover-scenarios">Failover scenarios</h3><p>So what happens when a server or region becomes unavailable? There are a few things that make this as painless as possible for users. First, the origin service can de-register itself; this will allow for the most graceful scenario.</p><p>For less graceful scenarios, mysocket load balancers will, after 60 seconds automatically detect that a tunnel has gone down and take the origin out of the load balancing pool. And even during this 60-second degradation before the tunnel is declared down, our load balancers will use a 10 second connect time out when connecting to origin service and automatically fail back to the remaining origins. So, all in all, failures should be hidden as much as possible from your users.</p><h3 id="wrapping-up">Wrapping up</h3><p>In this blog, we looked at how Mysocket can be used as a global load balancer, for your multi-region load deployments. In our demo, we looked at two Digital ocean regions, but this could also be over multiple AWS regions, or even Multi-cloud, with one cluster in AWS, one in Digital Ocean, and throw in some Google cloud for good measure.</p><p>We saw how Mysocket provides users with a global anycasted ingress point and provides seamless load balancing for your services. Best of all, it only took us 90 seconds to get all of this going! I guess it’s fair to say that Mysocket makes going multi-region and even multi-cloud easier.</p>]]></content:encoded></item><item><title><![CDATA[Static DNS names for your mysocket.io services (and a new gif service)]]></title><description><![CDATA[<p>In my last blog post, I announced the <a href="https://mysocket.io ">mysocket.io </a>service and demonstrated how to get started quickly. It’s been great to see people signing up and giving it a spin! Your feedback has been great, motivating, and has helped make the service better already.</p><p>Most users that gave</p>]]></description><link>http://toonk.io/static-dns-names-for-your-sockets-and-a-new-gif-service/</link><guid isPermaLink="false">5fc5be7c51a5ff44fb64d914</guid><category><![CDATA[mysocket]]></category><dc:creator><![CDATA[Andree Toonk]]></dc:creator><pubDate>Tue, 01 Dec 2020 04:14:11 GMT</pubDate><media:content url="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&amp;ixlib=rb-1.2.1&amp;q=80&amp;w=2000" medium="image"/><content:encoded><![CDATA[<img src="https://images.unsplash.com/photo-1531610373189-61a2afd654e4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwxMTc3M3wwfDF8c2VhcmNofDEwfHx8ZW58MHx8fA&ixlib=rb-1.2.1&q=80&w=2000" alt="Static DNS names for your mysocket.io services (and a new gif service)"><p>In my last blog post, I announced the <a href="https://mysocket.io ">mysocket.io </a>service and demonstrated how to get started quickly. It’s been great to see people signing up and giving it a spin! Your feedback has been great, motivating, and has helped make the service better already.</p><p>Most users that gave mysocket a try used the <em>mysocketctl connect</em> (aka “quick connect”) feature. This is the easiest way to get started and instantly creates a global socket, great for quick testing. However, when you’re done and exit the program, the “connect” feature cleans up the socket. It’s easy to create new ones, but each time with a different name. Not surprisingly then, that a few users asked the question about sockets with static names.</p><h3 id="static-names-for-your-services">Static names for your services</h3><p>Most residential ISPs give their customers a dynamic IP address (one that changes from time to time) through DHCP. If you have a service you’d like to make available but don’t have a static IP, then this post is for you!</p><p>Perhaps you have a server at home, either a fancy setup, rack-mounted and UPS for emergency power, or perhaps just a modest Raspberry Pi. Either way, you’d like to make this available from the Internet, so you can access it when you’re not at your home network, or perhaps you are home, but your nice cooperate VPN client blocks access to your local network. Or maybe you’d like to make it available to your friend.</p><p>That’s great, but you have two challenges:</p><p>1) the server sits behind NAT, so you can’t simply connect to the server from the Internet.</p><p>2) your ISP gives you dynamic IPs, so every few days/weeks, the IP changes, so it’s hard to keep track of the IP. Ideally, you could use a static name, that no matter your dynamic IP, remains stable.</p><p>So what you’d need is a static DNS name! Good news, that’s the default on the Socket primitive.</p><h2 id="mysocket-primitives">Mysocket primitives</h2><p>Let’s take a more in-depth look at the two main primitives that make up the mysocket service: Sockets and Tunnels</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1455/1*2y4Ngw325mE8T-OPoP5OSw.png" class="kg-image" alt="Static DNS names for your mysocket.io services (and a new gif service)"><figcaption>Socket and Tunnel primitives</figcaption></figure><h3 id="a-global-socket">A Global Socket</h3><p>The first primitive we need is a <em>socket</em> object. This object is the public endpoint for your service and can be created like this:</p><pre><code>mysocketctl socket create \
-	--type http \
-	--name "my service at home"</code></pre><p>This, among other things, returns a static DNS name that is yours to use. Think of it as your global public endpoint for your load balancer. In this case, mysocket runs the load balancer, and it’s made highly available through our anycast setup.</p><p>In the example above, we created an HTTP/HTTPS socket. Other options are TCP and TLS sockets. In those cases, the API will return not only a static DNS name for your service but also your own dedicated static TCP port number. A typical use case for a TCP socket is making your ssh service available.</p><h3 id="tunnels">Tunnels</h3><p>The second primitive is a tunnel. A tunnel object represents your origin service and the secure connection between the origin and the mysocket global infrastructure. Let’s look at the example below.</p><pre><code>mysocketctl tunnel create \
-	--socket_id 1fab407c-a49d-4c5e-8287-8b138b7549c0</code></pre><p>When creating the tunnel object, simply pass along the socket_id from the socket you’d like to be connected to.</p><h3 id="putting-it-together">Putting it together</h3><p>In summary, we can create a globally available service by first creating a socket of type HTTP/HTTPS, TCP or TLS. This returns a static name for your service and optionally a unique port number. After that, we create a tunnel that links the origin to the socket.</p><figure class="kg-card kg-image-card"><img src="https://cdn-images-1.medium.com/max/1455/1*6FoxMwJ7gMzk3MvjAvufpw.png" class="kg-image" alt="Static DNS names for your mysocket.io services (and a new gif service)"></figure><p>Now that we have created a Socket and Tunnel, it’s time to connect to it, spin up the dataplane, and expose the local service port. We do that using the following command:</p><pre><code>mysocketctl tunnel connect \
-	--port 8000 \
-	--socket_id 1fab407c-a49d-4c5e-8287-8b138b7549c0 \
-	--tunnel_id 3f46a01f-ef5b-4b0c-a1ce-9a294be2be03</code></pre><p>In the example above, we only create one tunnel for the socket, but nothing stops you from creating multiple tunnels (origins) per socket. In that case, mysocket will load balance over all available tunnels.</p><h2 id="demo-time-exposing-a-local-gif-service-to-the-internet">Demo time:<br>exposing a local Gif service to the Internet</h2><p>Alright, time to look at a simple demo and get our hands dirty. For this demo, I developed a small<a href="https://gist.github.com/atoonk/0bfc784feb66ffc03541462fbc945df7#file-gif_service-py" rel="noopener"> proof of concept python web service</a> that shows a random Gif from <a href="https://giphy.com/" rel="noopener">Giphy</a> each time a visitor loads the webpage.</p><p>I’m running this service locally on a VM on my laptop. The goal is to make this service publicly available, and overcoming the two levels of NAT and my ISP that hands out dynamic IP addresses. At the end of this demo, I’m able to share a static DNS name with my users, and you’ll be able to try it!</p><p><strong><em>Watch the video below for a live demo.</em></strong></p><figure class="kg-card kg-embed-card"><iframe width="459" height="344" src="https://www.youtube.com/embed/bZh3vZLCdYM?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></figure><p>First, let’s download the demo python code and start the Gif web service</p><pre><code>wget https://gist.githubusercontent.com/atoonk/0bfc784feb66ffc03541462fbc945df7/raw/812d839f60ea7bfd98a530a3fc549137abe0b329/gif_service.py
-
-#make sure to update the API key in gif_service.py
-
-python3 ./gif_service.py</code></pre><p>Alright, now we have this service running, but it’s only reachable from my local network. Next up, we create a socket and a tunnel.</p><pre><code>mysocketctl socket create \
-	--name "my local http Gif service" \ 
-	--type http</code></pre><p>Ok, that returns a socket_id and our static DNS name! In my case, the DNS name is: <a href="https://wandering-shape-7752.edge.mysocket.io" rel="noopener">wandering-shape-7752.edge.mysocket.io</a></p><p>Next up, we’ll use the socket_id to create the tunnel object:</p><pre><code>mysocketctl tunnel create \
-	--socket_id 1fab407c-a49d-4c5e-8287-8b138b7549c0</code></pre><p>Cool, now all we need to do is start the tunnel connection.</p><pre><code>mysocketctl tunnel connect \
-	--port 8000 \
-	--socket_id 1fab407c-a49d-4c5e-8287-8b138b7549c0 \
-	--tunnel_id 3f46a01f-ef5b-4b0c-a1ce-9a294be2be03</code></pre><p>This will securely connect the local gif web service listening on port 8000, to the mysocket infrastructure and make it available as <a href="https://wandering-shape-7752.edge.mysocket.io/" rel="noopener">https://wandering-shape-7752.edge.mysocket.io</a></p><h3 id="wrapping-up">Wrapping up</h3><p>In this blog post, we looked at the two main mysocket primitives, <em>Sockets</em>, and <em>Tunnels</em>. We saw how users can create a Socket object and get a static DNS name and possibly even a dedicated TCP port. In the demo, we used the <em>tunnel connect</em> feature to make port 8000 on my local VM available to the Internet. With that, we made the Internet a little bit better by adding <a href="http://wandering-shape-7752.edge.mysocket.io/" rel="noopener">yet another Gif service</a>, that just happens to run on a VM hosted on my laptop.</p><p></p><!--kg-card-begin: html--><img src="https://media.giphy.com/media/aaw0ay7NqrucU/source.gif" alt="Static DNS names for your mysocket.io services (and a new gif service)">
-<!--kg-card-end: html-->]]></content:encoded></item></channel></rss>
+   5 Server: compute-001-tor1</code></pre><p></p><p>Horizontally scaling the service is easy; simply change the count number in the <a href="https://github.com/mysocketio/examples/blob/main/2020-12-06-multi-region/main.tf">terraform file,</a> or add / remove regions. Since the VM’s will call the mysocket api on boot, these new VM’s will automatically become part of the load balancing pool. Pretty neat and easy, right?!</p><h3 id="failover-scenarios">Failover scenarios</h3><p>So what happens when a server or region becomes unavailable? There are a few things that make this as painless as possible for users. First, the origin service can de-register itself; this will allow for the most graceful scenario.</p><p>For less graceful scenarios, mysocket load balancers will, after 60 seconds automatically detect that a tunnel has gone down and take the origin out of the load balancing pool. And even during this 60-second degradation before the tunnel is declared down, our load balancers will use a 10 second connect time out when connecting to origin service and automatically fail back to the remaining origins. So, all in all, failures should be hidden as much as possible from your users.</p><h3 id="wrapping-up">Wrapping up</h3><p>In this blog, we looked at how Mysocket can be used as a global load balancer, for your multi-region load deployments. In our demo, we looked at two Digital ocean regions, but this could also be over multiple AWS regions, or even Multi-cloud, with one cluster in AWS, one in Digital Ocean, and throw in some Google cloud for good measure.</p><p>We saw how Mysocket provides users with a global anycasted ingress point and provides seamless load balancing for your services. Best of all, it only took us 90 seconds to get all of this going! I guess it’s fair to say that Mysocket makes going multi-region and even multi-cloud easier.</p>]]></content:encoded></item></channel></rss>

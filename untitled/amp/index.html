@@ -2,7 +2,7 @@
 <html amp lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Global load balancing with Kubernetes</title>
+    <title>Watch the Net: measuring the pulse of the Internet</title>
 
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
@@ -13,27 +13,29 @@
     
     <meta property="og:site_name" content="Andree&#x27;s Musings" />
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="Global load balancing with Kubernetes" />
-    <meta property="og:description" content="If you’re in the world of cloud infrastructure, then you’ve heard of Kubernetes. Some of you are experts already, while some of us are just learning or getting started. In this blog, we’ll introduce a mysocket controller for Kubernetes and demonstrate how easy it is to use" />
+    <meta property="og:title" content="Watch the Net: measuring the pulse of the Internet" />
+    <meta property="og:description" content="Today I&#x27;m releasing a fun new project I&#x27;ve been working on called Watch the Net. It&#x27;s a live view of what&#x27;s happening on the Internet, based entirely on active measurements. It continuously measures Internet reachability around the world and lets you drill down by country, region, city, ASN, organization, or" />
     <meta property="og:url" content="http://toonk.io/untitled/" />
-    <meta property="og:image" content="https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
-    <meta property="article:published_time" content="2020-12-22T06:17:15.000Z" />
-    <meta property="article:modified_time" content="2020-12-22T16:54:47.000Z" />
-    <meta property="article:tag" content="mysocket" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1648075082746-2511f68e57b5?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlciUyMGxpZ2h0aG91c2V8ZW58MHx8fHwxNzg5OTMyNTgwfDA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta property="article:published_time" content="2026-09-20T19:20:07.000Z" />
+    <meta property="article:modified_time" content="2026-09-21T03:35:11.000Z" />
+    <meta property="article:tag" content="monitoring" />
+    <meta property="article:tag" content="dpdk" />
+    <meta property="article:tag" content="Go" />
     
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Global load balancing with Kubernetes" />
-    <meta name="twitter:description" content="If you’re in the world of cloud infrastructure, then you’ve heard of Kubernetes. Some of you are experts already, while some of us are just learning or getting started. In this blog, we’ll introduce a mysocket controller for Kubernetes and demonstrate how easy it is to use" />
+    <meta name="twitter:title" content="Watch the Net: measuring the pulse of the Internet" />
+    <meta name="twitter:description" content="Today I&#x27;m releasing a fun new project I&#x27;ve been working on called Watch the Net. It&#x27;s a live view of what&#x27;s happening on the Internet, based entirely on active measurements. It continuously measures Internet reachability around the world and lets you drill down by country, region, city, ASN, organization, or" />
     <meta name="twitter:url" content="http://toonk.io/untitled/" />
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1648075082746-2511f68e57b5?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlciUyMGxpZ2h0aG91c2V8ZW58MHx8fHwxNzg5OTMyNTgwfDA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Andree Toonk" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="mysocket" />
+    <meta name="twitter:data2" content="monitoring, dpdk, Go" />
     <meta name="twitter:site" content="@atoonk" />
     <meta name="twitter:creator" content="@atoonk" />
     <meta property="og:image:width" content="2000" />
-    <meta property="og:image:height" content="1328" />
+    <meta property="og:image:height" content="1333" />
     
     <script type="application/ld+json">
 {
@@ -45,7 +47,7 @@
         "url": "http://toonk.io/",
         "logo": {
             "@type": "ImageObject",
-            "url": "http://toonk.io/content/images/2020/09/download-5.png",
+            "url": "http://toonk.io/content/images/2024/03/toonk-io-icon-1.png",
             "width": 60,
             "height": 60
         }
@@ -65,18 +67,18 @@
             "https://twitter.com/atoonk"
         ]
     },
-    "headline": "Global load balancing with Kubernetes",
+    "headline": "Watch the Net: measuring the pulse of the Internet",
     "url": "http://toonk.io/untitled/",
-    "datePublished": "2020-12-22T06:17:15.000Z",
-    "dateModified": "2020-12-22T16:54:47.000Z",
+    "datePublished": "2026-09-20T19:20:07.000Z",
+    "dateModified": "2026-09-21T03:35:11.000Z",
     "image": {
         "@type": "ImageObject",
-        "url": "https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&ixlib=rb-1.2.1&q=80&w=2000",
+        "url": "https://images.unsplash.com/photo-1648075082746-2511f68e57b5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlciUyMGxpZ2h0aG91c2V8ZW58MHx8fHwxNzg5OTMyNTgwfDA&ixlib=rb-4.1.0&q=80&w=2000",
         "width": 2000,
-        "height": 1328
+        "height": 1333
     },
-    "keywords": "mysocket",
-    "description": "If you’re in the world of cloud infrastructure, then you’ve heard of Kubernetes.\nSome of you are experts already, while some of us are just learning or getting\nstarted. In this blog, we’ll introduce a mysocket controller for Kubernetes and\ndemonstrate how easy it is to use mysocket.io as your cloud-delivered load\nbalancer for your Kubernetes Services. If you’re a Kubernetes user already, then\nit should just take a minute to get this mysocket controller setup.\n\n&gt; See this video for a demo of the ",
+    "keywords": "monitoring, dpdk, Go",
+    "description": "Today I&#x27;m releasing a fun new project I&#x27;ve been working on called Watch the Net.\n[https://watchthenet.com/]\n\nIt&#x27;s a live view of what&#x27;s happening on the Internet, based entirely on active\nmeasurements. It continuously measures Internet reachability around the world\nand lets you drill down by country, region, city, ASN, organization, or even an\nindividual IP address.\n\nI&#x27;ve been posting screenshots from it on Twitter for the last few weeks, usually\nwhen something interesting breaks, and quite a fe",
     "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "http://toonk.io/"
@@ -97,7 +99,7 @@
     <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
     <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
 
-    <script async custom-element="amp-youtube" src="https://cdn.ampproject.org/v0/amp-youtube-0.1.js"></script>
+    
 </head>
 <body class="amp-template">
     <header class="header u-bgColor u-flexCenter u-container">
@@ -116,7 +118,7 @@
         
 <article class="article">
     <header class="article-header u-container">
-        <h1 class="article-title">Global load balancing with Kubernetes</h1>
+        <h1 class="article-title">Watch the Net: measuring the pulse of the Internet</h1>
 
         
 
@@ -126,50 +128,192 @@
             <span class="author-name">By <a href="../../author/andree/index.html">Andree Toonk</a></span>
 
             <span class="timestamp">
-                <time class="datetime" datetime="2020-12-22">11 hours ago</time>
+                <time class="datetime" datetime="2026-09-20">8 hours ago</time>
             </span>
 
             
                 <span>in</span>
-                <span class="categories"><a href="../../tag/mysocket/index.html" title="mysocket">mysocket</a></span>
+                <span class="categories"><a href="../../tag/monitoring/index.html" title="monitoring">monitoring</a></span>
             
         </div>
     </header>
 
         <figure class="article-image u-block u-marginTop30">
-            <amp-img src="https://images.unsplash.com/photo-1541741716758-85ac18fb7c62?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;MXwxMTc3M3wwfDF8c2VhcmNofDl8fHZhbmNvdXZlciUyMHNoaXB8ZW58MHx8fA&amp;ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;w&#x3D;2000" width="600" height="350" layout="responsive" alt="Global load balancing with Kubernetes"></amp-img>
+            <amp-img src="https://images.unsplash.com/photo-1648075082746-2511f68e57b5?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlciUyMGxpZ2h0aG91c2V8ZW58MHx8fHwxNzg5OTMyNTgwfDA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" width="600" height="350" layout="responsive" alt="Watch the Net: measuring the pulse of the Internet"></amp-img>
         </figure>
 
-    <div class="article-body u-container"> <p>If you’re in the world of cloud infrastructure, then you’ve heard of Kubernetes. Some of you are experts already, while some of us are just learning or getting started. In this blog, we’ll introduce a mysocket controller for Kubernetes and demonstrate how easy it is to use mysocket.io as your cloud-delivered load balancer for your Kubernetes Services. If you’re a Kubernetes user already, then it should just take a minute to get this mysocket controller setup.</p><blockquote><strong>See this video for a demo of the Mysocket.io integration with Kubernetes</strong></blockquote><figure class="kg-card kg-embed-card"><amp-youtube width="267" height="200" data-videoid="tFfLfI1jYi4" layout="fixed"></amp-youtube></figure><h3 id="pods-deployments-and-services">Pods, Deployments, and Services</h3><p>Before we continue, let’s review some of the main Kubernetes building blocks we will be using to make this work.</p><p>A typical workload running in Kubernetes will look something like the diagram below. It typically starts with a <em>deployment</em>, in which you define how many replicas (<em>pods) you’d like</em>.</p><p>Since pods are ephemeral and can scale in and out as needed, the Pod IP addresses will be dynamic. As a result, communicating with the pods in your deployment from other Deployments would require constant service discovery, which may be challenging for certain apps. To solve this, Kubernetes has the concept of a Service. A service acts as a logical network abstraction for all the pods in a workload and is a way to expose an application running on a set of<a href="https://kubernetes.io/docs/concepts/workloads/pods/" rel="noopener"> Pods</a> as a network service.</p><p>In the diagram below the <em>service</em> is reachable via 10.245.253.152 on port 8000. The <em>Service</em> will make sure traffic is distributed over all the healthy endpoints for this service.</p><figure class="kg-card kg-image-card"><amp-img src="https://cdn-images-1.medium.com/max/1455/1*_0YBbv7_koFiZgcHsbZyNg.png" class="kg-image" alt width="1455" height="876" layout="responsive"></amp-img></figure><h3 id="taking-your-service-global">Taking your Service Global</h3><p>Now that we know how a service makes your workload available within the cluster, it’s time to take your workload global! Kubernetes has a few ways to do this, typically using an ingress service. We’re going to use the architecture as outlined in the diagram below. We’ll use Mysocket.io to create a secure tunnel between our ‘myApp’ Service and the Mysocket cloud. From there on, it will be globally available via its anycasted edge nodes.</p><figure class="kg-card kg-image-card kg-width-wide"><amp-img src="https://cdn-images-1.medium.com/max/2182/1*P7oVKsk2X0xBF53Xbp3Biw.png" class="kg-image" alt width="2182" height="1183" layout="responsive"></amp-img></figure><p>To make this work, we’ll deploy a controller pod that runs the mysocketd container. The Container Image can be found on <a href="https://hub.docker.com/r/mysocket/mysocketd/tags?page=1&amp;ordering=last_updated" rel="noopener">Docker Hub</a>, and the corresponding Dockerfile on our <a href="https://github.com/mysocketio/kubernetes_controller" rel="noopener">github repo here</a>.</p><p>The mysocketd controller does two things:</p><p>1) it subscribes to the Kubernetes API and listens for events related to <em>services</em>. Specifically, it will watch for <em>service</em> events that have the <em>annotation</em> <strong><em>mysocket.io/enabled</em></strong></p><p>If a service has the following <em>annotation</em> mysocket.io/enabled: “true” then the mysocketd app will start a thread for that service.</p><p>2) In the per service thread, using the Mysocket API, a new mysocket.io “Socket” object is created if needed. This will give the “myApp” service a public DNS name and public IP. Next, it will check with the mysocket.io API to see if a tunnel already exists; if not, then a new one is created.</p><p>Finally, the secure tunnel is established, and the “myApp” service is now globally available and benefits from the mysocket.io high-performance infrastructure.</p><h3 id="demo-time-how-to-deploy-mysocketd-to-your-cluster">Demo time. How to Deploy mysocketd to your cluster</h3><p>The easiest way to get started is to download the <a href="https://github.com/mysocketio/kubernetes_controller/blob/main/mysocketd.yaml" rel="noopener">mysocketd workload yaml </a>file from the <a href="https://github.com/mysocketio/kubernetes_controller" rel="noopener">Mysocket Kubernetes controller repository</a>  and update the following three secrets to the ones for your mysocket account (<a href="https://github.com/mysocketio/kubernetes_controller/blob/main/mysocketd.yaml#L14-L16" rel="noopener">line 14,15,16</a>).</p><pre><code>email: &lt;mysocket login email in base64&gt; 
-password: &lt;mysocket password in base64&gt; 
-privatekey: &lt;mysocket private ssh key in base64&gt;</code></pre><p>Then simply apply like this and you’re good to go!</p><pre><code class="language-bash">kubectl apply -f mysocketd.yaml</code></pre><p>Cool, now we have the controller running!</p><h4 id="a-simple-demo-work-load">A simple demo work load</h4><p>Next up, we’d like to make our myApp service available to the Internet by using the mysocket.io service. I’m going to use <a href="https://github.com/mysocketio/examples/blob/main/2020-12-21-kubernetes-integration/demo-deploy.yaml" rel="noopener">this deployment</a> as our demo app. The deployment consists of three pods, with a little python web app, printing its hostname.</p><p>Next up, we’ll build a service (<a href="https://github.com/mysocketio/examples/blob/main/2020-12-21-kubernetes-integration/demo-service.yaml" rel="noopener">see definition here</a>) that acts as an in-cluster load balancer for the demo workload, and we’ll request the Service to be enabled for Mysocket.io.</p><pre><code class="language-bash">$ kubectl apply -f demo-deploy.yaml
-
-$ kubectl apply -f demo-service.yaml
-
-$ kubectl get all -n demo-app
-NAME                            READY   STATUS    RESTARTS   AGE
-pod/demo-app-6896cd4b88-5jzgn   1/1     Running   0          2m22s
-pod/demo-app-6896cd4b88-78ngc   1/1     Running   0          2m22s
-pod/demo-app-6896cd4b88-pzbc7   1/1     Running   0          2m22s
-NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
-service/demo-service   ClusterIP   10.245.114.194   &lt;none&gt;        8000/TCP   64s
-NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/demo-app   3/3     3            3           2m22s
-NAME                                  DESIRED   CURRENT   READY   AGE
-replicaset.apps/demo-app-6896cd4b88   3         3         3       2m22s</code></pre><figure class="kg-card kg-image-card kg-card-hascaption"><amp-img src="https://cdn-images-1.medium.com/max/1455/1*Aw8DFTKHqtz6M77I2lKscQ.png" class="kg-image" alt width="810" height="720" layout="responsive"></amp-img><figcaption><strong><em>Simply set mysocket.io/enabled to “true” and your service will be globally available.</em></strong></figcaption></figure><p>The same can be done for existing services: to do so, just edit your existing Service definition and add the “<strong>mysocket,io/enabled</strong>” <em>annotation, </em>like this:</p><pre><code class="language-yaml">kind: Service
-metadata:
-  annotations:
-    mysocket.io/enabled: "true"</code></pre><p>After applying this change, the mysocketd controller will detect that the service has requested to be connected to the Mysocket global infrastructure. The controller will create the Socket and Tunnels as needed and start the tunnel.</p><p>A quick load balancing test shows that requests to our global mysocket endpoint are now being load-balanced over the three endpoints.</p><pre><code class="language-bash">$ for i in {1..60}; do  curl -s \ 
-  https://blue-snowflake-1578.edge.mysocket.io/ &amp; ;done | sort | uniq -c | sort -n  
-  
-  19 Server: demo-app-6896cd4b88-pzbc7  
-  20 Server: demo-app-6896cd4b88-5jzgn  
-  21 Server: demo-app-6896cd4b88-78ngc  
-  60</code></pre><p>Just like that, in a few seconds, your workload is globally available. Pretty neat he!? Make sure to watch the <a href="https://www.youtube.com/watch?v=tFfLfI1jYi4" rel="noopener nofollow">video recording of this demo</a> as well.</p><h3 id="wrapping-up">Wrapping up</h3><p>In this article, we looked at how we can easily connect Kubernetes Services to Mysocket.io. We saw that it was easy to use. All that is needed is to: 1) start the Mysocketd controller, and: 2) add the mysocket annotation to your Services. By doing so, we are giving the Kubernetes service a publicly reachable IP address, a TLS cert, and it instantly benefits from the mysocket.io Anycast infrastructure. Pretty powerful and easy to use.</p><p>I should add that this <a href="https://github.com/mysocketio/kubernetes_controller" rel="noopener">Mysocket Controller for Kubernetes</a> is for now just a starting point, ie. an MVP integration with Kubernetes. There are ways to improve this, both in terms of user-friendliness and high availability (i.e. more than one pod). The code for this Kubernetes integration is open source, and we’d be happy to accept improvements. Mostly it serves as an example of what’s possible and how we can continue to build on the Mysocket services.</p><p>Last but certainly not least, I’d like to thanks <a href="https://github.com/tresni" rel="noopener">Brian</a> for his code to improve the various mysocketctl client libraries. Also, a big thanks to <a href="https://github.com/btoonk" rel="noopener">Bas Toonk</a> (yes, my brother) for his help with this MVP. Most of this was his work, thanks buddy!</p><p>Finally, I hope this sparked your imagination, and you’ll all give it a whirl, and let me know your experience.</p><p><br /></p><p><br /></p><p><br /></p> </div>
+    <div class="article-body u-container"> <p>Today I'm releasing a fun new project I've been working on called <a href="https://watchthenet.com/"><strong>Watch the Net</strong>.</a></p><p>It's a live view of what's happening on the Internet, based entirely on active measurements. It continuously measures Internet reachability around the world and lets you drill down by country, region, city, ASN, organization, or even an individual IP address.</p>
+<p>I've been posting screenshots from it on Twitter for the last few weeks, usually when something interesting breaks, and quite a few people have asked if they could play with it themselves. Well, I registered a fresh domain and now you can :)</p>
+<p><strong>Watch the Net is live at <a href="https://watchthenet.com/">watchthenet.com</a>.</strong></p>
+<p>At the simplest level, the question I'm trying to answer is:<br />
+<strong>What's happening on the Internet right now?</strong><br />
+Not inferred from BGP updates, news reports, or someone else's telemetry. I wanted to continuously measure it myself.</p>
+<p>And perhaps unsurprisingly, this project combines two things I've been slightly obsessed with for a long time: monitoring the Internet and sending packets fast.</p>
+<p></p>
+<h2 id="bethefirsttoknow">Be the first to know</h2>
+<p>I've spent most of my career around Internet infrastructure, which also means I've spent a lot of time dealing with outages :)</p>
+<p>A few years ago I wrote about some of the lessons I've learned from those outages. One of the main ones was something I call <strong><a href="https://toonk.io/navigating-infrastructure-outages-battle-scars-and-lessons-learned/index.html">be the first to know</a></strong>.<br />
+If you're responsible for a service, you don't want your customers telling you it's broken. You want to already know.</p>
+<p>That's why I've always been a big fan of synthetic monitoring. Don't just look at CPU counters, interface stats, BGP sessions, or logs. Actually send some traffic and check whether the thing works.<br />
+I've always wanted something similar for the Internet itself (and at times <a href="https://blackhat.com/us-15/briefings.html#bgp-stream">have built</a> versions of it).</p>
+<p>Countries, cities and networks all have their own rhythm. Most of the time things just work. Then something breaks and you wonder: what's the impact, and who else is affected? I wanted to see that happening as close to real time as possible.</p>
+<h2 id="meanwhileiwasmakingpacketsgofast">Meanwhile, I was making packets go fast</h2>
+<p>The other half of this started as a completely different project.<br />
+Over the last few months I've gone pretty deep into high-speed packet processing in Go. First AF_XDP, then DPDK, then Mellanox Direct Verbs, and eventually all of them behind one library called <a href="https://toonk.io/packetio/">packetio</a>.</p>
+<p>On a 100G ConnectX NIC, packetio can send around <strong>148 million packets per second</strong> with just a few cores. I was pretty happy with that number.<br />
+Then one evening I did some very simple math that I somehow hadn't done before.</p>
+<p>There are 4,294,967,296 possible IPv4 addresses. Remove private space, multicast, loopback, reserved ranges and everything else we don't care about, then look at what is actually announced in BGP today, and you're left with roughly <strong>3.1 billion routed IPv4 addresses</strong>.</p>
+<p>At 148 million packets per second, you could send one packet to every routed IPv4 address in about 21 seconds.<br />
+Even if you sent two probes to every address, you're still talking about reaching every routed IP on the Internet in under a minute. That's pretty crazy, right?!</p>
+<p>Combining my interest in Internet events like outages and sending packets fast is kind of how Watch the Net started.</p>
+<p><a href="https://x.com/atoonk/status/2089071263386042377"></a></p>
+<h2 id="whatwatchthenetdoes">What Watch the Net does</h2>
+<p>The basic idea is relatively simple. Watch the Net continuously walks the routed IPv4 Internet and sends two very small probes to each address: an ICMP echo request and a TCP SYN.</p>
+<p>If an address responds to either, I consider it reachable. I’m using two probe types, plenty of networks drop ICMP entirely but will happily respond to a TCP SYN. A SYN-ACK obviously counts, but so does a TCP RST. If a machine tells me there's nothing listening on that port, it still answered.</p>
+<p>The same is true for ICMP. If the target itself sends back an error, that's still evidence that it's there. I don't really need to know much more than that.<br />
+I don't inspect payloads or try to figure out what software you're running. I'm really only asking one question: <strong>Are you there?</strong></p>
+<p>There is one thing I do check. Every probe contains a small fingerprint derived from the destination address and a secret that's unique to that scan. I tuck that into fields that come back in the response, such as the ICMP sequence number or the TCP sequence number.</p>
+<p>When a response arrives, I can calculate what that fingerprint should have been based on the source address. If it does, I know it was in response to something I sent. If it doesn't match, I ignore the packet.</p>
+<p>But there's another nice benefit to doing it this way: the scanner can be completely stateless.<br />
+Because the fingerprint can be reconstructed from the address itself, I never have to remember what I sent. There's no giant table of outstanding probes and no per-target state to maintain. One goroutine sends packets, another receives them, and they're completely asynchronous. They don't even need to talk to each other.</p>
+<p>The receiver simply looks at an incoming packet, calculates what the fingerprint should be, and checks whether it matches. I really like this part and it keeps the scanner surprisingly simple, even if you'd scale it to millions of probes per second.</p>
+<h2 id="beingagoodinternetneighbour">Being a good Internet neighbour</h2>
+<p>Those responses are grouped by geography and network metadata and turned into time series for countries, regions, cities, ASNs and organizations. On top of that sits an outage detector looking for significant changes from normal reachability.</p>
+<p>Right now I'm scanning just over <strong>3 billion IPv4 addresses</strong> at around <strong>500,000 packets per second</strong>, which works out to a full sweep every <strong>3.5 hours</strong>. I could go much faster, but deliberately don't.</p>
+<p>At that rate, an entire /24 sees a pair of probes roughly once every <strong>49 seconds</strong>. The scan order is randomized as well, using <strong>BlackRock</strong> from the masscan lineage, so consecutive probes land in completely different parts of the Internet rather than creating bursts toward individual networks.<br />
+The end result is a very small, evenly distributed amount of traffic. I want the measurements to be useful, but also want to be a good Internet neighbour.</p>
+<p>All of the resulting measurement data ends up in DuckDB. I've been looking for a good excuse to use it for a while, and this turned out to be a great one. I've been really impressed by how well it performs with this kind of data.</p>
+<h2 id="sowhatdoesitsee">So, what does it see?</h2>
+<p>This is where it gets fun :)</p>
+<h3 id="iraqdisappearseverymorning">Iraq disappears every morning</h3>
+<p>One of the first patterns that jumped out at me was Iraq.<br />
+At almost exactly the same time every morning, roughly 80% of the country's normal responding addresses would disappear.</p>
+<p>Some of the events looked like this:</p>
+<table>
+<thead>
+<tr>
+<th><strong>Date</strong></th>
+<th><strong>Start</strong></th>
+<th><strong>End</strong></th>
+<th><strong>Drop</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Aug 31</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>79%</td>
+</tr>
+<tr>
+<td>Sep 1</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>79%</td>
+</tr>
+<tr>
+<td>Sep 2</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>78%</td>
+</tr>
+<tr>
+<td>Sep 3</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>80%</td>
+</tr>
+<tr>
+<td>Sep 5</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>74%</td>
+</tr>
+<tr>
+<td>Sep 6</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>77%</td>
+</tr>
+<tr>
+<td>Sep 7</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>79%</td>
+</tr>
+<tr>
+<td>Sep 8</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>76%</td>
+</tr>
+<tr>
+<td>Sep 9</td>
+<td>03:30</td>
+<td>04:14</td>
+<td>77%</td>
+</tr>
+</tbody>
+</table>
+<p>Not approximately half past three. The drop starts around <strong>03:30 UTC</strong> and things come back around <strong>04:14 UTC</strong>, almost every time.</p>
+<p>I've followed Internet outages and measurements for a long time, so this pattern looked familiar. Iraq has been shutting down Internet access during school exams for years as a way to prevent cheating.</p>
+<p>A quick search confirmed that they were doing it again this year. <a href="https://pulse.internetsociety.org/en/shutdowns/exams-shutdown-iraq-01-september-2026/">Internet Society Pulse</a> lists the official shutdown window as <strong>06:20 to 07:10 local time</strong>.<br />
+Iraq is UTC+3, so that's <strong>03:20 to 04:10 UTC</strong>.<br />
+Watch the Net measured roughly <strong>03:30 to 04:14 UTC</strong>.</p>
+<p>That's the part I thought was really cool. I'd known these shutdowns happened, but now I could actually see one in my own measurements and pinpoint the start and recovery almost to the minute.<br />
+And there was another nice detail in the data. September 4th is missing from the sequence. That was a Friday, the weekend in Iraq.</p>
+<p>One thing that might seem surprising is how quickly a change like this shows up when I'm probing each individual network so lightly. The trick is that at country scale I'm sampling thousands of /24s continuously. Any one /24 only sees a probe pair every 49 seconds or so, but all of those samples are happening at different times. When 80% of a country disappears at once, the aggregate changes very quickly.</p>
+<p>That's exactly the kind of thing I wanted to make visible.<br />
+<a href="https://watchthenet.com/e/country/IQ?from=1788133762&amp;to=1789178910"></a></p>
+<h2 id="portugal">Portugal</h2>
+<p>Another good example happened recently in Portugal.<br />
+Late on September 13 UTC, Portugal's measured reachability suddenly dropped by around <strong>86%</strong>, representing roughly 5.9 million addresses.<br />
+The big one was MEO, AS3243.</p>
+<p>Its measured reachability basically went to zero. Porto dropped 87%, Braga 97% and Lisbon 79%. Then it recovered.</p>
+<p>About seventeen hours later, almost exactly the same thing happened again. Same country, same operator, same magnitude.</p>
+<p>At the time, all I had was the measurement. But it already told me something useful: this wasn't a random collection of endpoints disappearing across Portugal. The impact was heavily concentrated in one operator.</p>
+<p>A couple of days later, <a href="https://observador.pt/2026/09/15/instabilidade-da-meo-foi-provocada-por-ataque-distribuido-de-negacao-de-servico-comunicacoes-estao-estabilizadas/">MEO confirmed</a> that it had been hit by a large DDoS attack that caused congestion and temporary degradation of its international network.</p>
+<p>The timing lines up surprisingly well too.<br />
+Watch the Net saw the first event begin at <strong>23:48 UTC</strong>, which was <strong>00:48 local time in Portugal</strong>. MEO later reported impact beginning around <strong>00:45</strong>.<br />
+That's exactly the kind of visibility I was hoping to get from this project.</p>
+<p><a href="https://watchthenet.com/e/country/PT?from=1789299554&amp;to=1789440300"></a></p>
+<h2 id="donetskhawaii">Donetsk, Hawaii</h2>
+<p>There have been plenty of other interesting examples.</p>
+<p><strong>Donetsk, September 18.</strong> The region's measured reachability dropped roughly 90%, with the city itself dropping even further. Ukraine is somewhere I watch fairly closely, and outages there often have a very geographic shape. Parts disappear and then recover in stages.</p>
+<p><strong>Hawaii, August 17.</strong> This was the first big one I spotted when i just started. Around 57% of the state's measured responding addresses disappeared. Kailua-Kona dropped 79%, 'Ewa Beach 81%, and Waipahu 64%. A few hours later it recovered. This was due to a tropical storm causing power outages.</p>
+<p></p>
+<h2 id="theinternethasarhythm">The Internet has a rhythm</h2>
+<p>At country scale, Internet reachability is generally pretty stable. There is some normal variation throughout the day, but complete countries don't just disappear very often.</p>
+<p>That's part of what makes the bigger outages so easy to spot. When a country suddenly loses 50%, 70%, or 90% of its normal reachability, the shape changes dramatically.<br />
+Things get more interesting when you zoom in to individual networks.</p>
+<p>University networks are a great example. You can actually watch the campus wake up in the morning and quiet down again at night. Weekends look different from weekdays, and the start of a new school year can show up directly in the number of responding IP addresses.</p>
+<p>I saw this recently at the University of British Columbia. Over the long weekend the network was relatively quiet, then students started coming back and the number of responding addresses climbed noticeably. <a href="https://x.com/atoonk/status/2097872160312394060">I posted a graph of that here.</a></p>
+<p>The same thing is even clearer on SURF, the Dutch university network and, coincidentally, one of the first ASes I ever worked on. During the week you get these very obvious daily peaks as campuses wake up, almost nothing on the weekends, and then much larger peaks once the academic year starts.<br />
+<a href="https://watchthenet.com/e/asn/AS1103?from=1788053895&amp;to=1789957939"></a></p>
+<p>I really like this part of the data. Outages are obviously interesting, but you can also see the normal ebb and flow of how networks are actually being used. (It does make you wonder though: do all those students get public IP addresses?).</p>
+<h2 id="gohavealook">Go have a look</h2>
+<p>You can search for a country, region, city, ASN, organization, network, or individual IP address and see its reachability over time.</p>
+<p>There's also a worldwide view, a map, recent outage advisories, and individual outage pages where you can drill into which underlying networks were affected.</p>
+<p>For now, an outage advisory requires an entity to lose at least <strong>50% of its normal reachability for five consecutive minutes</strong>.</p>
+<p>That's deliberately conservative. I'd much rather have a small number of alerts worth looking at than a constant stream of noise.</p>
+<p>I've been using the site myself for the last few weeks, and it's quickly become one of those tabs I leave open all day. Most mornings I check it to see what happened overnight :)</p>
+<h2 id="wrappingup">Wrapping up</h2>
+<p>This has been a really fun project to work on because it brought together two things I've been obsessed with for a while: understanding what's happening on the Internet, and figuring out how to send packets really fast from Go. It's been fun to use the packetIO library for an actual application.</p>
+<p>For this, the speed was never really the interesting part. What matters is that it makes it practical to continuously ask billions of Internet addresses a very simple question and turn the answers into something we can watch.</p>
+<p>There are a couple of obvious caveats. <strong>Watch the Net is IPv4 only for now</strong>, and all of these measurements currently come from <strong>a single vantage point</strong>. IPv6 needs a very different approach, and adding more vantage points would give a much richer view of what's happening from different parts of the Internet.</p>
+<p>For now, though, I'm pretty happy with what this already makes visible.</p>
+<p>So go have a look at <a href="https://watchthenet.com/"><strong>watchthenet.com</strong></a>.</p>
+<p>If you find something interesting, weird, or just plain wrong, I'd love to hear about it.</p>
+<p>That's it, thanks for reading!</p>
+<p>Cheers<br />
+-Andree</p>
+ </div>
 
         <div class="article-tags u-container u-marginTop30">
             <span class="share-title">Tags:</span>
-                <a href="../../tag/mysocket/index.html" title="mysocket" class="button--tags">mysocket</a>
+                <a href="../../tag/monitoring/index.html" title="monitoring" class="button--tags">monitoring</a>
+                <a href="../../tag/dpdk/index.html" title="dpdk" class="button--tags">dpdk</a>
+                <a href="../../tag/go/index.html" title="Go" class="button--tags">Go</a>
         </div>
 
     <footer class="share u-container u-marginTop30">
@@ -204,21 +348,33 @@ metadata:
         <div class="related-title">Related Articles</div>
 
         <div class="story">
-            <a href="../../easy-multi-region-load-balancing-with-mysocket/amp.html" class="story-link u-block u-relative">
+            <a href="../../how-fast-can-you-actually-go-on-aws-pushing-packets-on-the-biggest-network-optimized-ec2-instances/amp.html" class="story-link u-block u-relative">
                 <span class="story-border u-flexCenter u-absolute">1</span>
-                <h3 class="story-title">Easy Multi-region load balancing with Mysocket.io</h3>
+                <h3 class="story-title">How fast can you actually go on AWS? Pushing packets on the biggest network optimized EC2 instances</h3>
             </a>
         </div>
         <div class="story">
-            <a href="../../static-dns-names-for-your-sockets-and-a-new-gif-service/amp.html" class="story-link u-block u-relative">
+            <a href="../../packetio/amp.html" class="story-link u-block u-relative">
                 <span class="story-border u-flexCenter u-absolute">2</span>
-                <h3 class="story-title">Static DNS names for your mysocket.io services (and a new gif service)</h3>
+                <h3 class="story-title">Four ways to do super fast packet processing in Go</h3>
             </a>
         </div>
         <div class="story">
-            <a href="../../introducing-mysocket-io/amp.html" class="story-link u-block u-relative">
+            <a href="../../wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/amp.html" class="story-link u-block u-relative">
                 <span class="story-border u-flexCenter u-absolute">3</span>
-                <h3 class="story-title">Introducing Mysocket.io</h3>
+                <h3 class="story-title">Wireblast: a 100Gbs packet generator in Go with AF_XDP</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../line-rate-packet-processing-in-go-with-af_xdp/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">4</span>
+                <h3 class="story-title">Line-rate packet processing in Go with AF_XDP</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../sending-network-packets-in-go/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">5</span>
+                <h3 class="story-title">High-Speed Packet Transmission in Go: From net.Dial to AF_XDP</h3>
             </a>
         </div>
 
@@ -248,7 +404,7 @@ metadata:
 
     <footer class="footer">
         <section class="u-container copyright u-textCenter">
-            &copy; 2020 <a href="../../index.html">Andree&#x27;s Musings</a>
+            &copy; 2026 <a href="../../index.html">Andree&#x27;s Musings</a>
         </section>
     </footer>
 </body>
