@@ -18,7 +18,7 @@
     <meta property="og:url" content="http://toonk.io/blog-watch-the-net/" />
     <meta property="og:image" content="https://images.unsplash.com/photo-1648075082746-2511f68e57b5?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlciUyMGxpZ2h0aG91c2V8ZW58MHx8fHwxNzg5OTMyNTgwfDA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" />
     <meta property="article:published_time" content="2026-09-20T19:20:07.000Z" />
-    <meta property="article:modified_time" content="2026-09-21T03:58:11.000Z" />
+    <meta property="article:modified_time" content="2026-09-21T04:13:08.000Z" />
     <meta property="article:tag" content="monitoring" />
     <meta property="article:tag" content="dpdk" />
     <meta property="article:tag" content="Go" />
@@ -70,7 +70,7 @@
     "headline": "Watch the Net: measuring the pulse of the Internet",
     "url": "http://toonk.io/blog-watch-the-net/",
     "datePublished": "2026-09-20T19:20:07.000Z",
-    "dateModified": "2026-09-21T03:58:11.000Z",
+    "dateModified": "2026-09-21T04:13:08.000Z",
     "image": {
         "@type": "ImageObject",
         "url": "https://images.unsplash.com/photo-1648075082746-2511f68e57b5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlciUyMGxpZ2h0aG91c2V8ZW58MHx8fHwxNzg5OTMyNTgwfDA&ixlib=rb-4.1.0&q=80&w=2000",
@@ -180,84 +180,14 @@ The end result is a very small, evenly distributed amount of traffic. I want the
 <h2 id="sowhatdoesitsee">So, what does it see?</h2>
 <p>This is where it gets fun :)</p>
 <h3 id="iraqdisappearseverymorning">Iraq disappears every morning</h3>
-<p>One of the first patterns that jumped out at me was Iraq.<br />
-At almost exactly the same time every morning, roughly 80% of the country's normal responding addresses would disappear.</p>
-<p>Some of the events looked like this:</p>
-<table>
-<thead>
-<tr>
-<th><strong>Date</strong></th>
-<th><strong>Start</strong></th>
-<th><strong>End</strong></th>
-<th><strong>Drop</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Aug 31</td>
-<td>03:30</td>
-<td>04:14</td>
-<td>79%</td>
-</tr>
-<tr>
-<td>Sep 1</td>
-<td>03:30</td>
-<td>04:14</td>
-<td>79%</td>
-</tr>
-<tr>
-<td>Sep 2</td>
-<td>03:30</td>
-<td>04:14</td>
-<td>78%</td>
-</tr>
-<tr>
-<td>Sep 3</td>
-<td>03:30</td>
-<td>04:14</td>
-<td>80%</td>
-</tr>
-<tr>
-<td>Sep 5</td>
-<td>03:30</td>
-<td>04:14</td>
-<td>74%</td>
-</tr>
-<tr>
-<td>Sep 6</td>
-<td>03:30</td>
-<td>04:14</td>
-<td>77%</td>
-</tr>
-<tr>
-<td>Sep 7</td>
-<td>03:30</td>
-<td>04:14</td>
-<td>79%</td>
-</tr>
-<tr>
-<td>Sep 8</td>
-<td>03:30</td>
-<td>04:14</td>
-<td>76%</td>
-</tr>
-<tr>
-<td>Sep 9</td>
-<td>03:30</td>
-<td>04:14</td>
-<td>77%</td>
-</tr>
-</tbody>
-</table>
-<p>Not approximately half past three. The drop starts around <strong>03:30 UTC</strong> and things come back around <strong>04:14 UTC</strong>, almost every time.</p>
-<p>I've followed Internet outages and measurements for a long time, so this pattern looked familiar. Iraq has been shutting down Internet access during school exams for years as a way to prevent cheating.</p>
-<p>A quick search confirmed that they were doing it again this year. <a href="https://pulse.internetsociety.org/en/shutdowns/exams-shutdown-iraq-01-september-2026/">Internet Society Pulse</a> lists the official shutdown window as <strong>06:20 to 07:10 local time</strong>.<br />
-Iraq is UTC+3, so that's <strong>03:20 to 04:10 UTC</strong>.<br />
+<p>One of the first patterns that jumped out at me was Iraq. At almost exactly the same time every morning, roughly 80% of the country's responding addresses would disappear, then come back about 44 minutes later.</p>
+<p>The timing was remarkably consistent: around <strong>03:30 to 04:14 UTC</strong>.<br />
+I've followed Internet outages for a long time and I'd heard of this before. Iraq has been shutting down Internet access during school exams for years to prevent cheating.</p>
+<p>A quick search confirmed they were doing it again this year. <a href="https://pulse.internetsociety.org/en/shutdowns/exams-shutdown-iraq-01-september-2026/">Internet Society Pulse</a> lists the official shutdown window as <strong>06:20 to 07:10 local time</strong>, or <strong>03:20 to 04:10 UTC</strong>.<br />
 Watch the Net measured roughly <strong>03:30 to 04:14 UTC</strong>.</p>
-<p>That's the part I thought was really cool. I'd known these shutdowns happened, but now I could actually see one in my own measurements and pinpoint the start and recovery almost to the minute.<br />
-And there was another nice detail in the data. September 4th is missing from the sequence. That was a Friday, the weekend in Iraq.</p>
-<p>One thing that might seem surprising is how quickly a change like this shows up when I'm probing each individual network so lightly. The trick is that at country scale I'm sampling thousands of /24s continuously. Any one /24 only sees a probe pair every 49 seconds or so, but all of those samples are happening at different times. When 80% of a country disappears at once, the aggregate changes very quickly.</p>
-<p>That's exactly the kind of thing I wanted to make visible.<br />
+<p>That was really cool to see. I already knew these shutdowns happened, but now I could see them firsthand in my own measurements and pinpoint them almost to the minute.<br />
+There was one other nice detail: September 4th was missing from the sequence. That was a Friday, the weekend in Iraq.</p>
+<p>When 80% of a country disappears at once, the aggregate changes quickly, even though each individual /24 is only being probed lightly.<br />
 <a href="https://watchthenet.com/e/country/IQ?from=1788133762&amp;to=1789178910"></a></p>
 <h2 id="portugal">Portugal</h2>
 <p>Another good example happened recently in Portugal.<br />
