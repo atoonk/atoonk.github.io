@@ -34,7 +34,7 @@
     <meta property="og:url" content="http://toonk.io/wireguard-dpdk/" />
     <meta property="og:image" content="https://images.unsplash.com/photo-1486411959861-41a3eb8da389?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIxfHx2YW5jb3V2ZXIlMjBib2F0fGVufDB8fHx8MTc5MDU2NDY1M3ww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" />
     <meta property="article:published_time" content="2026-09-28T03:02:38.000Z" />
-    <meta property="article:modified_time" content="2026-09-28T03:11:57.000Z" />
+    <meta property="article:modified_time" content="2026-09-28T03:53:14.000Z" />
     <meta property="article:tag" content="Go" />
     <meta property="article:tag" content="dpdk" />
     <meta property="article:tag" content="wireguard" />
@@ -88,7 +88,7 @@
     "headline": "WireGuard at 40 Mpps with DPDK, in Go",
     "url": "http://toonk.io/wireguard-dpdk/",
     "datePublished": "2026-09-28T03:02:38.000Z",
-    "dateModified": "2026-09-28T03:11:57.000Z",
+    "dateModified": "2026-09-28T03:53:14.000Z",
     "image": {
         "@type": "ImageObject",
         "url": "https://images.unsplash.com/photo-1486411959861-41a3eb8da389?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDIxfHx2YW5jb3V2ZXIlMjBib2F0fGVufDB8fHx8MTc5MDU2NDY1M3ww&ixlib=rb-4.1.0&q=80&w=2000",
@@ -96,7 +96,7 @@
         "height": 1333
     },
     "keywords": "Go, dpdk, wireguard, networking, xdp",
-    "description": "Over the last few months, I’ve been spending a lot of time experimenting with\nhigh-performance packet processing in Go. A lot of that work turned into \npacketio [https://toonk.io/packetio/index.html], one Go API for sending and\nreceiving packets using DPDK, AF_XDP and Mellanox Direct Verbs.\n\nI’ve built a few things on top of it already. wireblast\n[https://toonk.io/wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/index.html] \nis a packet generator, and last week I wrote about Wat",
+    "description": "Over the last few months, I’ve been spending a lot of time experimenting with\nhigh-performance packet processing in Go. A lot of that work turned into \npacketio [https://toonk.io/packetio/index.html], one Go API for sending and\nreceiving packets using DPDK, AF_XDP and Mellanox Direct Verbs.\n\nI’ve built a few things on top of it already. wireblast\n[https://toonk.io/wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/index.html] \nis a packet generator, and last weekend I wrote about ",
     "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "http://toonk.io/"
@@ -278,8 +278,8 @@
 
     <div class="post-wrap u-maxWidth1000 u-relative u-marginAuto">
         <div id="post-body" class="post-body u-container u-maxWidth740 u-relative"><!--kg-card-begin: markdown--><p>Over the last few months, I’ve been spending a lot of time experimenting with high-performance packet processing in Go. A lot of that work turned into <a href="https://toonk.io/packetio/index.html">packetio</a>, one Go API for sending and receiving packets using DPDK, AF_XDP and Mellanox Direct Verbs.</p>
-<p>I’ve built a few things on top of it already. <a href="https://toonk.io/wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/index.html">wireblast</a> is a packet generator, and last week I wrote about <a href="https://toonk.io/blog-watch-the-net/index.html">Watch the Net</a>, a fast Internet scanner.</p>
-<p>This week I finally got around to writing up something I’ve been working on for a little while: <strong>WireGuard and DPDK</strong>. WireGuard is a fun target because a lot of people run it, there’s an excellent Go implementation in <a href="https://git.zx2c4.com/wireguard-go">wireguard-go</a>, and packetio is Go too. So the question was pretty simple: <strong>what happens if I put packetio underneath wireguard-go and try to run WireGuard over DPDK?</strong></p>
+<p>I’ve built a few things on top of it already. <a href="https://toonk.io/wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/index.html">wireblast</a> is a packet generator, and last weekend I wrote about <a href="https://toonk.io/blog-watch-the-net/index.html">Watch the Net</a>, a fast Internet scanner.</p>
+<p>This weekend I finally got around to writing up something I’ve been working on for a little while: <strong>WireGuard and DPDK</strong>. WireGuard is a fun target because a lot of people run it, there’s an excellent Go implementation in <a href="https://git.zx2c4.com/wireguard-go">wireguard-go</a>, and packetio is Go too. So the question was pretty simple: <strong>what happens if I put packetio underneath wireguard-go and try to run WireGuard over DPDK?</strong></p>
 <p>Short answer: it works, and it goes pretty fast.<br>
 The more interesting answer is that along the way I ran into a few bottlenecks, and some of the fixes turned out to be useful even outside the DPDK case.</p>
 <h2 id="thecompetition">The competition</h2>
@@ -580,7 +580,7 @@ But there is a tradeoff. The fastest version of <code>wgpio</code> keeps the pac
 <p>We worked through each of those one at a time, and I'm really happy with where it ended up.</p>
 <p>The other surprise is that one of the biggest improvements doesn't need packetio at all. Give stock wireguard-go a multi-queue TUN and it goes from a few hundred thousand packets per second to around <strong>1.5 Mpps</strong> on this workload.</p>
 <p>If you want to go much beyond that, though, you have to start changing the datapath. That's where keeping more of the packet processing in userspace, using something like packetio over Direct Verbs, AF_XDP or DPDK, starts to make a real difference.</p>
-<p>The code is at <a href="https://github.com/atoonk/packetio-wireguard">github.com/atoonk/packetio-wireguard</a>. The repo includes the gateway, the four wireguard-go patches, the benchmark harness and the results.</p>
+<p>The code of this experiment is at <a href="https://github.com/atoonk/packetio-wireguard">github.com/atoonk/packetio-wireguard</a>. The repo includes the gateway, the four wireguard-go patches, the benchmark harness and the results.</p>
 <p>Anyway, that's it. You made it to the end :) Thanks for reading.<br>
 Let's push some packets, encrypted this time.</p>
 <p>Cheers,<br>
