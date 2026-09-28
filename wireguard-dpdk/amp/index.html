@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html amp lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>WireGuard at 40 Mpps with DPDK, in Go</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <link rel="icon" href="../../favicon.png" type="image/png" />
+    <link rel="canonical" href="../index.html" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    
+    <meta property="og:site_name" content="Andree&#x27;s Musings" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="WireGuard at 40 Mpps with DPDK, in Go" />
+    <meta property="og:description" content="Over the last few months, I’ve been spending a lot of time experimenting with high-performance packet processing in Go. A lot of that work turned into packetio, one Go API for sending and receiving packets using DPDK, AF_XDP and Mellanox Direct Verbs.  I’ve built a few things" />
+    <meta property="og:url" content="http://toonk.io/wireguard-dpdk/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1486411959861-41a3eb8da389?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIxfHx2YW5jb3V2ZXIlMjBib2F0fGVufDB8fHx8MTc5MDU2NDY1M3ww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta property="article:published_time" content="2026-09-28T03:02:38.000Z" />
+    <meta property="article:modified_time" content="2026-09-28T03:11:57.000Z" />
+    <meta property="article:tag" content="Go" />
+    <meta property="article:tag" content="dpdk" />
+    <meta property="article:tag" content="wireguard" />
+    <meta property="article:tag" content="networking" />
+    <meta property="article:tag" content="xdp" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="WireGuard at 40 Mpps with DPDK, in Go" />
+    <meta name="twitter:description" content="Over the last few months, I’ve been spending a lot of time experimenting with high-performance packet processing in Go. A lot of that work turned into packetio, one Go API for sending and receiving packets using DPDK, AF_XDP and Mellanox Direct Verbs.  I’ve built a few things" />
+    <meta name="twitter:url" content="http://toonk.io/wireguard-dpdk/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1486411959861-41a3eb8da389?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIxfHx2YW5jb3V2ZXIlMjBib2F0fGVufDB8fHx8MTc5MDU2NDY1M3ww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Andree Toonk" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Go, dpdk, wireguard, networking, xdp" />
+    <meta name="twitter:site" content="@atoonk" />
+    <meta name="twitter:creator" content="@atoonk" />
+    <meta property="og:image:width" content="2000" />
+    <meta property="og:image:height" content="1333" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Andree&#x27;s Musings",
+        "url": "http://toonk.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "http://toonk.io/content/images/2024/03/toonk-io-icon-1.png",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Andree Toonk",
+        "image": {
+            "@type": "ImageObject",
+            "url": "http://toonk.io/content/images/2020/09/andreetoonk.png",
+            "width": 360,
+            "height": 360
+        },
+        "url": "http://toonk.io/author/andree/",
+        "sameAs": [
+            "http://toonk.io/about/",
+            "https://twitter.com/atoonk"
+        ]
+    },
+    "headline": "WireGuard at 40 Mpps with DPDK, in Go",
+    "url": "http://toonk.io/wireguard-dpdk/",
+    "datePublished": "2026-09-28T03:02:38.000Z",
+    "dateModified": "2026-09-28T03:11:57.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1486411959861-41a3eb8da389?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDIxfHx2YW5jb3V2ZXIlMjBib2F0fGVufDB8fHx8MTc5MDU2NDY1M3ww&ixlib=rb-4.1.0&q=80&w=2000",
+        "width": 2000,
+        "height": 1333
+    },
+    "keywords": "Go, dpdk, wireguard, networking, xdp",
+    "description": "Over the last few months, I’ve been spending a lot of time experimenting with\nhigh-performance packet processing in Go. A lot of that work turned into \npacketio [https://toonk.io/packetio/index.html], one Go API for sending and\nreceiving packets using DPDK, AF_XDP and Mellanox Direct Verbs.\n\nI’ve built a few things on top of it already. wireblast\n[https://toonk.io/wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/index.html] \nis a packet generator, and last week I wrote about Wat",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://toonk.io/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.34" />
+    <link rel="alternate" type="application/rss+xml" title="Andree&#x27;s Musings" href="../../rss/index.html" />
+
+    <link href="https://fonts.googleapis.com/css?family=Domine|Rubik:400,500,700&display=swap" rel="stylesheet">
+
+
+    <style amp-custom>.u-bgColor{background-color:#161D25}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}[hidden],template{display:none}.kg-bookmark-container,body,figcaption,h1,h2,h3,h4,h5,h6{font-family:Rubik,Whitney SSm A,Whitney SSm B,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif}.article-excerpt{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif}.u-flexCenter{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex}.u-block{display:block}.u-relative{position:relative}.u-overflowHidden{overflow:hidden}.u-fontSizeSmaller{font-size:.875rem}.u-flex1{-webkit-box-flex:1;flex:1 1 auto}.u-absolute{position:absolute}.u-textCenter{text-align:center}.u-marginTop30{margin-top:30px}.u-container{margin-left:auto;margin-right:auto;padding-left:16px;padding-right:16px}*,:after,:before{box-sizing:border-box}body{font-size:1rem;font-style:normal;font-weight:400;letter-spacing:0;line-height:1.5em;text-rendering:optimizeLegibility;-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;-ms-text-size-adjust:100%;text-size-adjust:100%;color:#212529}a{color:#00a562;text-decoration:none;word-break:break-word}a:active,a:hover{outline:0}blockquote{border-left:4px solid #212529;font-size:1.125rem;font-style:italic;margin-left:-5px;margin-right:0;padding-bottom:2px;padding-left:20px}figure{margin:0;padding:0}img{-o-object-fit:cover;object-fit:cover;-o-object-position:center;object-position:center}figcaption{color:#6c757d;display:block;font-size:.875rem;font-style:normal;font-weight:400;margin-top:10px;text-align:center;width:100%}h1,h2,h3,h4,h5,h6{color:#111;font-style:normal;font-weight:700;line-height:1.2;margin:25px 0 0;word-break:break-word}h1{font-size:2rem}h2{font-size:1.75rem}h3{font-size:1.5rem}h4{font-size:1.375rem}h5{font-size:1.25rem}h6{font-size:1.125rem}strong{font-weight:700}p{margin:20px 0 0}hr{box-sizing:content-box;height:0;margin:1rem 0;overflow:visible;border:0;border-top:1px solid rgba(0,0,0,.1)}mark{background-color:transparent;background-image:linear-gradient(180deg,#d7fdd3,#d7fdd3);color:rgba(0,0,0,.8)}code,pre{font-family:Menlo,Courier,monospace;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-ms-hyphens:none;hyphens:none}p code{border-radius:2px;padding:1px 6px}p code,pre{background:#2a3644;color:#e5eff5;font-size:.875rem}pre{overflow-x:auto;margin:0;padding:20px;border:none;line-height:1.6em}pre code{padding:0;background:transparent}svg{width:100%;height:100%}svg:not(:root){overflow:hidden}table{border-collapse:collapse;border-spacing:0;display:inline-block;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;font-size:1rem;line-height:1.5;margin:20px 0 0;max-width:100%;overflow-x:auto;vertical-align:top;white-space:nowrap;width:auto;-webkit-overflow-scrolling:touch}table td,table th{padding:6px 13px;border:1px solid #dfe2e5}table tr:nth-child(2n){background-color:#f6f8fa}table th{letter-spacing:.0125rem;text-transform:uppercase;font-weight:500}.header{position:relative;width:100%;height:50px;line-height:1}.logo-link{color:#fff;font-size:1.5rem;font-weight:500}.social-media a{background:#212529;border-radius:4px;color:#fff;display:inline-block;height:36px;margin:0 2px;padding:8px;vertical-align:middle;width:36px}.social-media svg{fill:#fff;stroke:none}.sidebar{width:280px;background:#fff}.sidebar ul{list-style:none;list-style-image:none;margin:18px 0 20px;padding:0}.sidebar ul li a{padding:6px 20px;font-weight:500;font-size:1rem;display:block}.sidebar .social-media{padding:20px;border-top:1px solid #ddd}.close-sidebar{height:50px;font-size:1.5625rem;line-height:3.125rem;text-align:right;padding-right:20px;color:#fff}.hamburgermenu{background-color:transparent;border:none;padding:0;height:48px;position:relative;-webkit-transition:-webkit-transform .4s;transition:-webkit-transform .4s;transition:transform .4s;transition:transform .4s,-webkit-transform .4s;width:48px;margin-right:-15px}.hamburgermenu span{background-color:#fff;display:block;height:2px;left:14px;margin-top:-1px;position:absolute;top:50%;width:20px}.hamburgermenu span:first-child{-webkit-transform:translateY(-6px);transform:translateY(-6px)}.hamburgermenu span:last-child{-webkit-transform:translateY(6px);transform:translateY(6px)}.main{max-width:500px;margin:0 auto}.article{padding-top:25px}.article-title{margin-top:0}.article-excerpt{margin-bottom:20px;margin-top:15px;color:#6c757d;font-size:1.25rem;line-height:1.4}.article-meta{color:#6c757d;margin:15px 0;font-size:.875rem}.article-body{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif;line-height:1.7em;font-size:1.125rem;padding:20px 1rem}.article-body>*{margin-bottom:28px}.article-body a:not(.kg-bookmark-container){word-break:break-word;text-decoration:underline}.article-body ol,.article-body ul{padding-left:20px}.article-body ol li,.article-body ul li{margin-bottom:5px}.button--tags{border-radius:3px;color:#212529;display:inline-block;font-size:.875rem;font-weight:500;height:37px;line-height:2.1875rem;margin:0 8px 8px 0;padding:0 10px;border:2px solid #212529}.button--tags:before{content:"#"}.share-title{display:block;margin-bottom:8px}amp-social-share.custom-style{background-color:teal;background-image:url(https://raw.githubusercontent.com/google/material-design-icons/master/social/1x_web/ic_share_white_48dp.png);background-repeat:no-repeat;background-position:50%;background-size:contain}amp-social-share.rounded{border-radius:10%;background-size:85%}.related{padding-top:40px;padding-bottom:20px;margin-top:20px;background:#efefef}.related-title{border-bottom:1px solid rgba(0,0,0,.15);padding-bottom:15px;margin-bottom:30px;color:#212529;font-weight:500;font-size:1.25rem}.story-border{border-left:3px solid #cc116e;bottom:0;color:rgba(0,0,0,.2);font-size:2.25rem;font-weight:700;left:0;padding:15px 10px 10px;top:0;-webkit-text-fill-color:transparent;-webkit-text-stroke-width:1.4px;-webkit-text-stroke-color:#888}.story:nth-child(3n) .story-border{border-color:#f59e00}.story:nth-child(3n+2) .story-border{border-color:#26a8ed}.story-link{background-color:#fff;border-bottom:1px solid #e2e0e0;box-shadow:0 1px 7px rgba(0,0,0,.05);min-height:50px;padding:15px 15px 15px 55px}.story-title{color:#212529;line-height:1.2;font-size:1.0625rem;font-weight:500;margin:0}.kg-bookmark-container{display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;flex-direction:column;border:1px solid rgba(0,0,0,.1)}.kg-bookmark-content{padding:20px;-webkit-box-ordinal-group:2;order:1}.kg-bookmark-title{font-weight:500;line-height:1.2;font-size:1.125rem}.kg-bookmark-description{color:#6c757d;line-height:1.4;margin-top:10px;font-size:.875rem}.kg-bookmark-metadata{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;font-size:.875rem;margin-top:10px}.kg-bookmark-icon{margin-right:5px}.kg-bookmark-author:after{content:"•";margin:0 6px}.footer{background-color:#efefef;color:rgba(0,0,0,.44);padding-top:20px;font-size:.9375rem;padding-bottom:45px}</style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
+    <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+
+    
+</head>
+<body class="amp-template">
+    <header class="header u-bgColor u-flexCenter u-container">
+    <div class="u-flex1">
+
+
+
+        <a href="../../index.html" class="logo-link">Andree&#x27;s Musings</a>
+    </div>
+
+    <button class="hamburgermenu" on="tap:sidenav.open" tabindex="0"><span></span><span></span><span></span></button>
+
+</header>
+
+    <main class="main">
+        
+<article class="article">
+    <header class="article-header u-container">
+        <h1 class="article-title">WireGuard at 40 Mpps with DPDK, in Go</h1>
+
+        
+
+        <hr>
+
+        <div class="article-meta">
+            <span class="author-name">By <a href="../../author/andree/index.html">Andree Toonk</a></span>
+
+            <span class="timestamp">
+                <time class="datetime" datetime="2026-09-28">16 minutes ago</time>
+            </span>
+
+            
+                <span>in</span>
+                <span class="categories"><a href="../../tag/go/index.html" title="Go">Go</a></span>
+            
+        </div>
+    </header>
+
+        <figure class="article-image u-block u-marginTop30">
+            <amp-img src="https://images.unsplash.com/photo-1486411959861-41a3eb8da389?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIxfHx2YW5jb3V2ZXIlMjBib2F0fGVufDB8fHx8MTc5MDU2NDY1M3ww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" width="600" height="350" layout="responsive" alt="WireGuard at 40 Mpps with DPDK, in Go"></amp-img>
+        </figure>
+
+    <div class="article-body u-container"> <p>Over the last few months, I’ve been spending a lot of time experimenting with high-performance packet processing in Go. A lot of that work turned into <a href="https://toonk.io/packetio/index.html">packetio</a>, one Go API for sending and receiving packets using DPDK, AF_XDP and Mellanox Direct Verbs.</p>
+<p>I’ve built a few things on top of it already. <a href="https://toonk.io/wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/index.html">wireblast</a> is a packet generator, and last week I wrote about <a href="https://toonk.io/blog-watch-the-net/index.html">Watch the Net</a>, a fast Internet scanner.</p>
+<p>This week I finally got around to writing up something I’ve been working on for a little while: <strong>WireGuard and DPDK</strong>. WireGuard is a fun target because a lot of people run it, there’s an excellent Go implementation in <a href="https://git.zx2c4.com/wireguard-go">wireguard-go</a>, and packetio is Go too. So the question was pretty simple: <strong>what happens if I put packetio underneath wireguard-go and try to run WireGuard over DPDK?</strong></p>
+<p>Short answer: it works, and it goes pretty fast.<br />
+The more interesting answer is that along the way I ran into a few bottlenecks, and some of the fixes turned out to be useful even outside the DPDK case.</p>
+<h2 id="thecompetition">The competition</h2>
+<p>There are two common WireGuard implementations you’ll run into on Linux today.</p>
+<p><strong>Kernel WireGuard</strong> is the one most people use. Once a packet enters the WireGuard interface, it stays in the kernel. The kernel routes it, encrypts it, wraps it in UDP, and sends it out the NIC.</p>
+<p><strong>wireguard-go</strong> implements the same protocol in userspace. Here <code>wg0</code> is a TUN interface, so plaintext packets cross from the kernel into userspace, get encrypted, and then go back into the kernel through a UDP socket.</p>
+<p>For these tests I’m deliberately looking at a difficult case: <strong>one WireGuard peer pair</strong>. One tunnel between two gateways, with lots of traffic flowing through it.</p>
+<p>That matters because one WireGuard peer normally looks like a single UDP flow: same source and destination addresses, same UDP ports. A NIC doing RSS sees that as one flow and tends to put all of it on one receive queue. So even if the machine has 24 cores, one tunnel doesn’t automatically spread itself across them.</p>
+<p>The test rig is three identical boxes: AMD EPYC 9275F CPUs with 24 cores, ConnectX-6 Dx NICs at 100 GbE, Ubuntu 24.04, all connected through a switch on one tagged VLAN.</p>
+<pre><code>                 WireGuard
+box 3 ──► box 1 ═══════════► box 2
+  ▲         encrypt            decrypt
+  └────────── plaintext ◄────────┘
+</code></pre>
+<p>Box 3 sends plaintext traffic toward box 1. Box 1 encrypts it and sends it through the WireGuard tunnel to box 2. Box 2 decrypts it and sends the plaintext back to box 3, where I count what actually arrived.</p>
+<h2 id="firsthowfastcanthewireactuallygo">First, how fast can the wire actually go?</h2>
+<p>Since this is a 100 GbE test rig, the max number is 148.8 million packets per second. That’s for minimum-size Ethernet frames, though, and WireGuard makes packets quite a bit bigger.</p>
+<p>My smallest plaintext frame is 68 bytes because I’m using a tagged interface. After WireGuard padding, the 16-byte transport header, 16-byte authentication tag, plus UDP, IP and Ethernet, that becomes a 130-byte frame on the wire.</p>
+<p>So for the smallest packets in this test, the real ceiling isn’t 148.8 Mpps. It’s about <strong>83.3 Mpps</strong>.</p>
+<table>
+<thead>
+<tr>
+<th><strong>plaintext</strong></th>
+<th><strong>encrypted on wire</strong></th>
+<th><strong>100 GbE ceiling</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>68 B</td>
+<td>130 B</td>
+<td><strong>83.3 Mpps</strong></td>
+</tr>
+<tr>
+<td>512 B</td>
+<td>578 B</td>
+<td><strong>20.9 Mpps</strong></td>
+</tr>
+<tr>
+<td>1442 B</td>
+<td>1506 B</td>
+<td><strong>8.19 Mpps</strong></td>
+</tr>
+</tbody>
+</table>
+<p>So that’s the target. For tiny packets, “line rate” means about 83 million packets per second.</p>
+<h2 id="startingfromthebottom">Starting from the bottom</h2>
+<p>Before adding WireGuard, I wanted a basic reference point for the rig itself.<br />
+With plain Linux forwarding between the three boxes, no tunnel and no encryption, I get about <strong>15 million packets per second clean</strong>.<br />
+That’s useful to keep in mind, because if I keep Linux in the packet path, that 15 Mpps number is already a pretty important ceiling to beat.</p>
+<p>Then I turned on WireGuard:</p>
+<table>
+<thead>
+<tr>
+<th><br /></th>
+<th><strong>packets/sec</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>kernel WireGuard</td>
+<td><strong>550 kpps</strong></td>
+</tr>
+<tr>
+<td>wireguard-go</td>
+<td><strong>350 kpps</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Those are the first numbers to beat.</p>
+<p>One thing jumped out immediately: packet size barely matters. I tried 68-byte packets, 512-byte packets and full-sized packets, and the packet rate stays roughly the same.</p>
+<p>That’s interesting because the large packets contain around thirty times more data to encrypt, but the packets-per-second number hardly moves at all.</p>
+<p>So whatever is limiting us, it probably isn’t the cipher itself. It looks much more like some fixed cost we pay once per packet.</p>
+<p>You can see the effect pretty clearly in bandwidth terms. With full-sized packets, kernel WireGuard is only doing around <strong>6 Gbit/s</strong> of plaintext on a 100 GbE NIC. With tiny packets, it’s around <strong>0.25 Gbit/s</strong>.</p>
+<p>And compared with plain kernel forwarding, kernel WireGuard is about <strong>27× lower</strong> on this small-packet workload: roughly 550 kpps versus 15 Mpps.</p>
+<p>That’s a pretty big gap. So the next question is obvious: <strong>where is all that time going?</strong></p>
+<h2 id="oneverybusycpu">One very busy CPU</h2>
+<p>I was curious where all that time was going. My first assumption was that I’d screwed up the benchmark, which wouldn’t be the first time :)</p>
+<p>Then I looked at the CPUs. On the encrypting gateway, <strong>one core was at 99%</strong>, while almost everything else still had plenty of room. <code>perf</code> pointed straight at:</p>
+<pre><code>wg_packet_tx_worker
+</code></pre>
+<p>WireGuard already parallelizes the expensive part. Encryption gets farmed out across CPUs, but packets for a given peer eventually come back through a serialized per-peer transmit path before they go on the wire.</p>
+<p>That’s a perfectly reasonable design when you have lots of peers, because different peers can make progress independently. In my test, though, I have one very busy peer.</p>
+<p>So the 24-core box is effectively waiting on one serialized part of the pipeline. wireguard-go has a different single-core bottleneck. We’ll get to that in a minute.</p>
+<h2 id="givingwireguardgothenic">Giving wireguard-go the NIC</h2>
+<p>Now for the interesting part: making packetio work with wireguard-go.<br />
+wireguard-go has two really nice interfaces: a <code>conn.Bind</code> for encrypted WireGuard traffic and a <code>tun.Device</code> for plaintext traffic. That’s basically the API boundary.</p>
+<p>I implemented both on top of packetio.  This gives wireguard-go packetio-backed versions of those interfaces, plus the boring but necessary Ethernet and ARP bits that come with owning a NIC.</p>
+<p>Importantly, wireguard-go still does all the actual WireGuard work: handshakes, key rotation, peer configuration, cryptokey routing and <code>wg(8)</code> configuration. I haven’t changed any of that code.</p>
+<p>With <strong>completely unmodified wireguard-go</strong>, I get about <strong>1.5 million packets per second</strong>.</p>
+<p>That’s immediately around 4× faster than stock wireguard-go and 2.7× faster than kernel WireGuard, without changing a single line of WireGuard itself. That’s pretty neat!</p>
+<h3 id="why">Why?</h3>
+<p>The obvious answer is kernel bypass, and yes, that’s part of it. packetio gets rid of a lot of normal kernel work. The NIC DMAs packets straight into memory the application already owns, so there’s no normal socket receive path, no TUN copy, and no trip back through a UDP socket.</p>
+<p>In other words, we avoid quite a bit of work moving packets back and forth between the kernel and userspace. But profiling showed something more interesting.</p>
+<p>In stock wireguard-go, the kernel was only around a third of the CPU cost, while the actual encryption was around <strong>6%</strong>. So simply removing kernel overhead doesn’t really explain a 4× improvement. The important part was <em>where</em> the bottleneck was.</p>
+<p>Every outbound packet in wireguard-go eventually passes through a single goroutine, <code>RoutineReadFromTUN</code>, which reads plaintext from the TUN and feeds it into the encryption workers. Those workers are already parallel, and when I looked at the profiler, most of them were simply waiting for work.</p>
+<p>So the bottleneck wasn’t the cryptography. It was <code>RoutineReadFromTUN</code>, the one goroutine feeding the crypto workers. That gives the whole pipeline one serial stage. No matter how many encryption workers are available behind it, they can only go as fast as that one goroutine can feed them.</p>
+<p>packetio made that serial stage much cheaper, which is how we got to around <strong>1.5 Mpps</strong>.<br />
+But the serial stage was still there. So the next step was pretty obvious: remove it.</p>
+<h2 id="fourpatches">Four patches</h2>
+<p>Up to this point, wireguard-go itself was completely unmodified. From here on out, I started changing it.</p>
+<h3 id="patch1stayonthesamecore">Patch 1: stay on the same core</h3>
+<p>The first patch adds a small fast-path API. It exposes the current session ciphers, a safe way to reserve nonce ranges, access to the replay check, and enough bookkeeping for wireguard-go to keep owning handshakes, rekeying and timers.</p>
+<p>The important part is what happens to the packet.<br />
+Instead of receiving a packet on one goroutine, handing it through shared queues, letting another goroutine encrypt it, and eventually handing it to yet another sender, the packet can stay on the core that received it:</p>
+<pre><code>receive
+  ↓
+encrypt
+  ↓
+transmit
+</code></pre>
+<p>No central reader. No shared encryption handoff. No per-peer sender in the fast path.</p>
+<p>That removes a lot of queueing and synchronization and I assume better cache locality, since the packet stops bouncing between goroutines and CPUs.</p>
+<p>With that first patch alone, throughput jumps from about <strong>1.5 Mpps to roughly 10 Mpps</strong>.</p>
+<p>Pretty good! And then things started to fall apart :)<br />
+At higher rates, the receiving gateway began rejecting huge numbers of perfectly legitimate packets through WireGuard's anti-replay logic.</p>
+<h3 id="patch2and3thereplaywindow">Patch 2 and 3: the replay window</h3>
+<p>Every WireGuard data packet carries a counter. The receiver remembers which counters it has already seen so somebody can't capture a valid encrypted packet and replay it later.</p>
+<p>wireguard-go's replay window is 8,128 counters wide. Normally that's plenty.<br />
+But now I have 16 cores processing packets from the same WireGuard session in parallel. One core might still be working on counter 10,000 while another has already processed counter 18,500. In this case counter 10,000 isn't a replay. It's just late.</p>
+<p>But once it falls far enough behind the highest counter the receiver has seen, it's outside the replay window and gets rejected as too old. That became the next bottleneck.</p>
+<p><strong>Patch 2</strong> changes how the replay check is locked. Instead of taking the replay-window lock once for every packet, the fast path takes it once for a whole batch and checks all the packets together.</p>
+<p>The logic is the same. The difference is that 16 cores are no longer fighting over the same lock once per packet. That made a big difference to peak throughput, but it didn't solve the deeper problem: the replay window itself was still too small for the amount of parallelism we'd introduced.</p>
+<p>So <strong>patch 3</strong> widens the window from 8,128 counters to 131,008. That sounds like a huge change, but the state is just a bitmap. It goes from roughly <strong>1 KB to 16 KB per session</strong>. Pretty cheap.</p>
+<p>I tried removing patch 3 again later just to make sure it was actually doing useful work. Peak performance dropped by about 17%, and the throughput became unstable again as I added queues. So we're keeping that one.</p>
+<h3 id="patch4stoptouchingthetimers">Patch 4: stop touching the timers</h3>
+<p>At this point, something else floated to the top of the profiler: Timers.</p>
+<p>Every batch reports activity back to wireguard-go so keepalives, roaming and rekeying continue to work. At tens of millions of packets per second, that meant multiple cores were touching locks and resetting timers millions of times per second.</p>
+<p>These are timers that expire in 5, 10 or 120 seconds. Resetting them millions of times a second seemed a little excessive :)</p>
+<p><strong>Patch 4</strong> coalesces that bookkeeping so it happens at most once every 50 milliseconds per peer.</p>
+<p>At 16 queues, it barely moves the headline number. At 24 queues, where every core is fighting over the same peer's timer bookkeeping, it matters much more: roughly <strong>34 Mpps without it versus just under 40 Mpps with it</strong>.</p>
+<p>Here's what the progression looks like on the three-box rig with 16 receive queues:</p>
+<table>
+<thead>
+<tr>
+<th><br /></th>
+<th><strong>clean</strong></th>
+<th><strong>peak</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>unmodified wireguard-go on packetio</td>
+<td>1.5 M</td>
+<td>1.7 M</td>
+</tr>
+<tr>
+<td>+ patch 1: fast path</td>
+<td>9.8 M*</td>
+<td>10.2 M</td>
+</tr>
+<tr>
+<td>+ patch 2: batched replay check</td>
+<td>—**</td>
+<td>24.4 M</td>
+</tr>
+<tr>
+<td>+ patch 3: wider replay window</td>
+<td><strong>29.7 M</strong></td>
+<td>36.0 M</td>
+</tr>
+<tr>
+<td>+ patch 4: quieter timers</td>
+<td><strong>29.9 M</strong></td>
+<td>37.9 M</td>
+</tr>
+</tbody>
+</table>
+<p><em>'Clean' is the highest rate with under 1% loss, median of three runs; 'peak' is the most that ever came out, whatever the loss.</em></p>
+<p><em>* 2% loss; patch 1 never reached the &lt;1% "clean" threshold.</em><br />
+<em>** No offered rate stayed below 1% loss.</em></p>
+<p>I like this progression because there wasn't one giant rewrite or some magic crypto optimization. Each bottleneck only became visible after the previous one was removed.</p>
+<p>The whole patch series adds about <strong>370 lines</strong> to wireguard-go and changes five existing lines.</p>
+<h2 id="sohowfastisit">So, how fast is it?</h2>
+<p>For 68-byte plaintext packets:</p>
+<table>
+<thead>
+<tr>
+<th><br /></th>
+<th><strong>delivered</strong></th>
+<th><strong>vs kernel</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>wireguard-go</td>
+<td>350 kpps</td>
+<td>0.6×</td>
+</tr>
+<tr>
+<td>kernel WireGuard</td>
+<td>550 kpps</td>
+<td>1×</td>
+</tr>
+<tr>
+<td>wgpio, unmodified wireguard-go</td>
+<td>1.5 Mpps</td>
+<td>2.7×</td>
+</tr>
+<tr>
+<td>wgpio + patches, 8 cores</td>
+<td>19.9 Mpps</td>
+<td>36×</td>
+</tr>
+<tr>
+<td>wgpio + patches, 16 cores</td>
+<td><strong>29.9 Mpps</strong></td>
+<td><strong>54×</strong></td>
+</tr>
+</tbody>
+</table>
+<p>At 24 queues it peaks just under <strong>40 Mpps</strong>, although the 16-queue configuration gives me the better clean number on this rig.</p>
+<p>That was fun! And because packetio has multiple backends, I tried those too. On my earlier two-box test.  Direct Verbs landed within half a percent of DPDK. Switching to AF_XDP was slightly more expensive because we still have NAPI kernel work, but still got me about 17Mpps. Pretty cool that it’s so easy to change the driver, and really why packetio exists.</p>
+<h2 id="thenistartedworryingabouttcp">Then I started worrying about TCP</h2>
+<p>At this point I had something really fast, and I was pretty happy with it. But then I started wondering about packet ordering.</p>
+<p>To make one WireGuard tunnel use multiple receive queues,  I sent tunnel traffic using 64 different UDP source ports. That changes the outer 5-tuple enough that RSS on the peer's NIC spreads traffic across queues, which is how we get multiple cores working on the same tunnel.</p>
+<p>Without doing that, one WireGuard tunnel lands on one receive queue and effectively one core does all the work. On my system that tops out at around <strong>3 Mpps</strong>.</p>
+<p>With the source port randomization, I can get into the <strong>30 Mpps</strong> range. So the trick matters a lot and I wanted to keep it.</p>
+<p>The problem was that my first implementation rotated the source port <strong>per packet</strong>. That gave me a beautiful spread across all the RSS queues, but it also meant packets from the same inner TCP connection could land on different receive queues at the remote gateway.</p>
+<p>For example:</p>
+<pre><code>TCP packet 1 → WireGuard UDP source port 51821
+TCP packet 2 → WireGuard UDP source port 51822
+TCP packet 3 → WireGuard UDP source port 51823
+...
+</code></pre>
+<p>At the other side, RSS hashes those packets onto different queues. Different queues are handled by different goroutines, and those goroutines don't necessarily finish at the same time. And there was my packet reordering :(</p>
+<p>Most of my testing up to that point had been UDP packet-rate testing, so everything looked great. To see what this actually meant for real traffic, I put a Linux TCP sender and receiver behind the two gateways and ran <code>iperf3</code>.</p>
+<p>For one (single) inner TCP stream:</p>
+<table>
+<thead>
+<tr>
+<th><br /></th>
+<th><strong>Gbit/s</strong></th>
+<th><strong>retransmits</strong></th>
+<th><strong>reorder events</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>kernel WireGuard</td>
+<td>7.9</td>
+<td>15,019</td>
+<td>4</td>
+</tr>
+<tr>
+<td>wgpio, rotating port per packet</td>
+<td>10.9</td>
+<td>28,107</td>
+<td><strong>1,641,020</strong></td>
+</tr>
+<tr>
+<td>wgpio, one port per inner flow</td>
+<td><strong>12.0</strong></td>
+<td><strong>211</strong></td>
+<td><strong>27</strong></td>
+</tr>
+</tbody>
+</table>
+<p>That made the problem pretty obvious. The fix was about fifteen lines.</p>
+<p>Instead of rotating the outer source port for every packet, I hash the <strong>inner flow</strong> and use that hash to pick the WireGuard source port. That means a given inner flow keeps the same outer 5-tuple, so RSS keeps it on the same receive queue at the other gateway.</p>
+<p>You still get parallelism across different inner flows. You just stop spraying packets from the same flow across different CPUs.</p>
+<p>With eight TCP streams, throughput went from an erratic <strong>16–46 Gbit/s to 66 Gbit/s</strong>. With 32 streams, it reached <strong>89 Gbit/s</strong>.</p>
+<p>The tradeoff is the usual RSS tradeoff: one elephant flow stays on one receive core. I'm okay with that. That's a pretty normal design tradeoff, and the flow-affine version is what I'm using now.</p>
+<h2 id="iff_multi_queueandwireguardgo">IFF_MULTI_QUEUE and wireguard-go</h2>
+<p>There was still one result bothering me. Unmodified wireguard-go on packetio topped out at around <strong>1.5 million packets per second</strong>.</p>
+<p>I started wondering how much of that was really packetio, and how much was something simpler that I had accidentally fixed along the way.</p>
+<p>So I put a normal TUN interface back on the plaintext side. packetio still handled the encrypted traffic from the NIC, but plaintext packets went through a regular kernel TUN again, much closer to how wireguard-go normally runs.</p>
+<p>With wireguard-go's usual single-queue TUN, I got about <strong>450 kpps</strong>. That looked familiar.</p>
+<p>Then I opened the TUN using Linux's multi-queue support and added a reader for each queue. <strong>1.5 Mpps.</strong></p>
+<p>Interesting. So I took packetio out completely. Upstream wireguard-go. Normal UDP sockets. Normal kernel networking. The only change was opening the TUN with <code>IFF_MULTI_QUEUE</code> and giving it multiple readers.</p>
+<p>The result was the same: <strong>1.5 million packets per second</strong>, on about five cores.<br />
+That's roughly three times kernel WireGuard on this particular single-peer, small-packet workload, with wireguard-go's protocol and packet-processing code otherwise unchanged.</p>
+<p>I think that's one of the most useful results from this whole project.<br />
+You don't need DPDK if all you want is to get stock wireguard-go from a few hundred thousand packets per second to around <strong>1.5 Mpps</strong>, just stop feeding it through a single TUN queue.</p>
+<p>After that, both versions hit the same next bottleneck: <code>RoutineReadFromTUN</code>, wireguard-go's central plaintext reader, at around 1.5 to 1.6 million packets per second.</p>
+<p>Same path, same wall. So the lesson is pretty simple: multi-queue TUN gets you to about 1.5 Mpps with otherwise stock wireguard-go. If you want to go beyond that, you need to change the architecture.</p>
+<p>That's where the fast path and packetio start to matter, and where the numbers jump from around 1.5 Mpps into the tens of millions.</p>
+<h2 id="sowhendoespacketiomatter">So when does packetio matter?</h2>
+<p>This experiment gave me a much cleaner answer than I had when I started. Up to about <strong>1.5 million packets per second</strong>, you don't really need packetio. A multi-queue TUN gets stock wireguard-go there with normal UDP sockets and the normal Linux networking stack.</p>
+<p>Past that point, though, you have to change the architecture.</p>
+<p>The first fast-path patch gets us to roughly <strong>10 Mpps</strong>. Once the replay-window and timer bottlenecks are fixed as well, that climbs to around <strong>30 Mpps clean</strong>, with peaks just under <strong>40 Mpps</strong>.</p>
+<p>At that point we're more than an order of magnitude beyond stock wireguard-go.<br />
+But there is a tradeoff. The fastest version of <code>wgpio</code> keeps the packet path entirely in userspace. It owns the NIC and forwards packets itself, which is exactly why it can go so fast.</p>
+<p>It also means Linux no longer sees that transit traffic. Your normal routing table isn't forwarding it. Your firewall isn't filtering it. <code>tcpdump</code> on the host won't see those packets either.</p>
+<p>If you want to keep those Linux features, you can put the plaintext side back through a TUN interface and hand the traffic back to the kernel. That still performs well, but you pay for the extra kernel crossings.</p>
+<p>That's really the tradeoff with userland networking: the further you move the dataplane out of the kernel, the more performance and control you get, but the more of the kernel's networking machinery you have to replace yourself.</p>
+<h2 id="caveats">Caveats</h2>
+<p>A few things to keep in mind. <strong>One peer pair.</strong> All of these tests use a single WireGuard peer pair. That's deliberately the difficult case. With hundreds of peers, you get much more natural parallelism.</p>
+<p><strong>No GSO or TSO.</strong> One frame in, one frame out. I left segmentation offload out on purpose because I was mostly interested in packets per second, and that's where the bottlenecks in this post really show up.</p>
+<p><strong>IPv4 only.</strong> That's all I tested here.</p>
+<p><strong>Flow affinity has a tradeoff.</strong> Keeping one inner flow on one outer UDP tuple means one elephant flow also stays on one receive core. That's intentional, and it's a pretty normal RSS-style tradeoff.</p>
+<p>And finally, <strong>the patches touch some important WireGuard state</strong>, especially the nonce counter and anti-replay logic. I've tried to be careful, and added tests around the dangerous parts. But this is still a hobby project. It has not been independently audited, and I built it mostly to see what was possible. If you're thinking about using these patches somewhere important, please review them very carefully.</p>
+<h2 id="wrappingup">Wrapping up</h2>
+<p>I started this experiment because I wanted to know whether packetio could carry a real application instead of just another packet generator. Now we know it can.</p>
+<p>A single WireGuard tunnel gets essentially line rate on a 100 GbE  link once the packets get moderately large, and with small packets it gets to around <strong>30 million packets per second</strong>, with peaks close to <strong>40 Mpps</strong>. For comparison, kernel WireGuard on the same workload did about <strong>550 kpps</strong>. So we're talking roughly <strong>54× more packets per second clean</strong>, and more than <strong>70× at peak</strong>.</p>
+<p>But the part I found most interesting wasn't really the headline number. It was how little code it took, and how different the bottlenecks were from what I expected going in.</p>
+<p>I assumed the crypto would be the hard part. It wasn't. One goroutine was holding back dozens of encryption workers. A replay window that had always been more than large enough suddenly wasn't. Timer bookkeeping started to matter. And my clever RSS trick for spreading one tunnel across many cores turned out to be terrible for TCP ordering.</p>
+<p>We worked through each of those one at a time, and I'm really happy with where it ended up.</p>
+<p>The other surprise is that one of the biggest improvements doesn't need packetio at all. Give stock wireguard-go a multi-queue TUN and it goes from a few hundred thousand packets per second to around <strong>1.5 Mpps</strong> on this workload.</p>
+<p>If you want to go much beyond that, though, you have to start changing the datapath. That's where keeping more of the packet processing in userspace, using something like packetio over Direct Verbs, AF_XDP or DPDK, starts to make a real difference.</p>
+<p>The code is at <a href="https://github.com/atoonk/packetio-wireguard">github.com/atoonk/packetio-wireguard</a>. The repo includes the gateway, the four wireguard-go patches, the benchmark harness and the results.</p>
+<p>Anyway, that's it. You made it to the end :) Thanks for reading.<br />
+Let's push some packets, encrypted this time.</p>
+<p>Cheers,<br />
+Andree</p>
+ </div>
+
+        <div class="article-tags u-container u-marginTop30">
+            <span class="share-title">Tags:</span>
+                <a href="../../tag/go/index.html" title="Go" class="button--tags">Go</a>
+                <a href="../../tag/dpdk/index.html" title="dpdk" class="button--tags">dpdk</a>
+                <a href="../../tag/wireguard/index.html" title="wireguard" class="button--tags">wireguard</a>
+                <a href="../../tag/networking/index.html" title="networking" class="button--tags">networking</a>
+                <a href="../../tag/xdp/index.html" title="xdp" class="button--tags">xdp</a>
+        </div>
+
+    <footer class="share u-container u-marginTop30">
+        <span class="share-title">Share this:</span>
+        <amp-social-share class="rounded"
+        type="email"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="facebook"
+        data-param-app_id="254325784911610"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="twitter"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="linkedin"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="whatsapp"
+        width="36"
+        height="36"></amp-social-share>
+    </footer>
+
+</article>
+
+
+            <div class="related u-container">
+        <div class="related-title">Related Articles</div>
+
+        <div class="story">
+            <a href="../../blog-watch-the-net/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">1</span>
+                <h3 class="story-title">Watch the Net: measuring the pulse of the Internet</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../how-fast-can-you-actually-go-on-aws-pushing-packets-on-the-biggest-network-optimized-ec2-instances/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">2</span>
+                <h3 class="story-title">How fast can you actually go on AWS? Pushing packets on the biggest network optimized EC2 instances</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../packetio/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">3</span>
+                <h3 class="story-title">Four ways to do super fast packet processing in Go</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">4</span>
+                <h3 class="story-title">Wireblast: a 100Gbs packet generator in Go with AF_XDP</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../line-rate-packet-processing-in-go-with-af_xdp/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">5</span>
+                <h3 class="story-title">Line-rate packet processing in Go with AF_XDP</h3>
+            </a>
+        </div>
+
+    </div>
+    </main>
+
+    <amp-sidebar id="sidenav" class="sidebar" layout="nodisplay" side="right">
+    <div class="close-sidebar u-bgColor" role="button" aria-label="close sidebar" on="tap:sidenav.close" tabindex="0">✕</div>
+
+    <ul class="nav" role="menu">
+    <li role="menuitem"><a href="../../index.html" class="nav-home">Home</a></li>
+    <li role="menuitem"><a href="../../contact/index.html" class="nav-contact">Contact</a></li>
+    <li role="menuitem"><a href="../../about/index.html" class="nav-about">About</a></li>
+</ul>
+
+    <div class="social-media">
+
+            <a href="https://twitter.com/atoonk" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 18 18" width="100%" height="100%"><path d="M12.077 2c-1.812 0-3.282 1.582-3.282 3.534 0 .277.03.547.085.806-2.728-.148-5.147-1.555-6.766-3.693-.283.522-.445 1.13-.445 1.777 0 1.226.58 2.308 1.46 2.942-.54-.02-1.05-.178-1.49-.443v.045c0 1.712 1.13 3.14 2.63 3.465-.28.08-.57.124-.87.124-.21 0-.418-.022-.62-.063.418 1.404 1.63 2.426 3.067 2.455-1.125.94-2.54 1.51-4.078 1.51-.267 0-.528-.02-.785-.05 1.46 1 3.185 1.59 5.04 1.59 6.037 0 9.34-5.39 9.34-10.06 0-.153-.005-.306-.01-.457.64-.5 1.197-1.12 1.637-1.83-.59.28-1.22.47-1.885.557.677-.437 1.198-1.13 1.443-1.955-.633.405-1.336.7-2.084.858C13.88 2.43 13.028 2 12.08 2"></path></svg>
+</a>
+
+
+
+
+    </div>
+
+</amp-sidebar>
+
+    <footer class="footer">
+        <section class="u-container copyright u-textCenter">
+            &copy; 2026 <a href="../../index.html">Andree&#x27;s Musings</a>
+        </section>
+    </footer>
+</body>
+</html>

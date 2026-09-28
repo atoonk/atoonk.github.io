@@ -1,4 +1,313 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:media="http://search.yahoo.com/mrss/"><channel><title><![CDATA[Andree's Musings]]></title><description><![CDATA[Thoughts, stories and wild ideas from the world of Infrastructure Engineering.]]></description><link>http://toonk.io/</link><image><url>http://toonk.io/favicon.png</url><title>Andree&apos;s Musings</title><link>http://toonk.io/</link></image><generator>Ghost 3.34</generator><lastBuildDate>Mon, 21 Sep 2026 04:13:59 GMT</lastBuildDate><atom:link href="http://toonk.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Watch the Net: measuring the pulse of the Internet]]></title><description><![CDATA[<p>Today I'm releasing a fun new project I've been working on called <a href="https://watchthenet.com/"><strong>Watch the Net</strong>.</a></p><!--kg-card-begin: markdown--><p>It's a live view of what's happening on the Internet, based entirely on active measurements. You can drill down by country, region, city, ASN, organization, or even an individual IP address.</p>
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:media="http://search.yahoo.com/mrss/"><channel><title><![CDATA[Andree's Musings]]></title><description><![CDATA[Thoughts, stories and wild ideas from the world of Infrastructure Engineering.]]></description><link>http://toonk.io/</link><image><url>http://toonk.io/favicon.png</url><title>Andree&apos;s Musings</title><link>http://toonk.io/</link></image><generator>Ghost 3.34</generator><lastBuildDate>Mon, 28 Sep 2026 03:18:26 GMT</lastBuildDate><atom:link href="http://toonk.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[WireGuard at 40 Mpps with DPDK, in Go]]></title><description><![CDATA[<!--kg-card-begin: markdown--><p>Over the last few months, I’ve been spending a lot of time experimenting with high-performance packet processing in Go. A lot of that work turned into <a href="https://toonk.io/packetio/index.html">packetio</a>, one Go API for sending and receiving packets using DPDK, AF_XDP and Mellanox Direct Verbs.</p>
+<p>I’ve built a few things</p>]]></description><link>http://toonk.io/wireguard-dpdk/</link><guid isPermaLink="false">6ab9d722ed81a12c01da682b</guid><category><![CDATA[Go]]></category><category><![CDATA[dpdk]]></category><category><![CDATA[wireguard]]></category><category><![CDATA[networking]]></category><category><![CDATA[xdp]]></category><dc:creator><![CDATA[Andree Toonk]]></dc:creator><pubDate>Mon, 28 Sep 2026 03:02:38 GMT</pubDate><media:content url="https://images.unsplash.com/photo-1486411959861-41a3eb8da389?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3wxMTc3M3wwfDF8c2VhcmNofDIxfHx2YW5jb3V2ZXIlMjBib2F0fGVufDB8fHx8MTc5MDU2NDY1M3ww&amp;ixlib=rb-4.1.0&amp;q=80&amp;w=2000" medium="image"/><content:encoded><![CDATA[<!--kg-card-begin: markdown--><img src="https://images.unsplash.com/photo-1486411959861-41a3eb8da389?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDIxfHx2YW5jb3V2ZXIlMjBib2F0fGVufDB8fHx8MTc5MDU2NDY1M3ww&ixlib=rb-4.1.0&q=80&w=2000" alt="WireGuard at 40 Mpps with DPDK, in Go"><p>Over the last few months, I’ve been spending a lot of time experimenting with high-performance packet processing in Go. A lot of that work turned into <a href="https://toonk.io/packetio/index.html">packetio</a>, one Go API for sending and receiving packets using DPDK, AF_XDP and Mellanox Direct Verbs.</p>
+<p>I’ve built a few things on top of it already. <a href="https://toonk.io/wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/index.html">wireblast</a> is a packet generator, and last week I wrote about <a href="https://toonk.io/blog-watch-the-net/index.html">Watch the Net</a>, a fast Internet scanner.</p>
+<p>This week I finally got around to writing up something I’ve been working on for a little while: <strong>WireGuard and DPDK</strong>. WireGuard is a fun target because a lot of people run it, there’s an excellent Go implementation in <a href="https://git.zx2c4.com/wireguard-go">wireguard-go</a>, and packetio is Go too. So the question was pretty simple: <strong>what happens if I put packetio underneath wireguard-go and try to run WireGuard over DPDK?</strong></p>
+<p>Short answer: it works, and it goes pretty fast.<br>
+The more interesting answer is that along the way I ran into a few bottlenecks, and some of the fixes turned out to be useful even outside the DPDK case.</p>
+<h2 id="thecompetition">The competition</h2>
+<p>There are two common WireGuard implementations you’ll run into on Linux today.</p>
+<p><strong>Kernel WireGuard</strong> is the one most people use. Once a packet enters the WireGuard interface, it stays in the kernel. The kernel routes it, encrypts it, wraps it in UDP, and sends it out the NIC.</p>
+<p><strong>wireguard-go</strong> implements the same protocol in userspace. Here <code>wg0</code> is a TUN interface, so plaintext packets cross from the kernel into userspace, get encrypted, and then go back into the kernel through a UDP socket.</p>
+<p>For these tests I’m deliberately looking at a difficult case: <strong>one WireGuard peer pair</strong>. One tunnel between two gateways, with lots of traffic flowing through it.</p>
+<p>That matters because one WireGuard peer normally looks like a single UDP flow: same source and destination addresses, same UDP ports. A NIC doing RSS sees that as one flow and tends to put all of it on one receive queue. So even if the machine has 24 cores, one tunnel doesn’t automatically spread itself across them.</p>
+<p>The test rig is three identical boxes: AMD EPYC 9275F CPUs with 24 cores, ConnectX-6 Dx NICs at 100 GbE, Ubuntu 24.04, all connected through a switch on one tagged VLAN.</p>
+<pre><code>                 WireGuard
+box 3 ──► box 1 ═══════════► box 2
+  ▲         encrypt            decrypt
+  └────────── plaintext ◄────────┘
+</code></pre>
+<p>Box 3 sends plaintext traffic toward box 1. Box 1 encrypts it and sends it through the WireGuard tunnel to box 2. Box 2 decrypts it and sends the plaintext back to box 3, where I count what actually arrived.</p>
+<h2 id="firsthowfastcanthewireactuallygo">First, how fast can the wire actually go?</h2>
+<p>Since this is a 100 GbE test rig, the max number is 148.8 million packets per second. That’s for minimum-size Ethernet frames, though, and WireGuard makes packets quite a bit bigger.</p>
+<p>My smallest plaintext frame is 68 bytes because I’m using a tagged interface. After WireGuard padding, the 16-byte transport header, 16-byte authentication tag, plus UDP, IP and Ethernet, that becomes a 130-byte frame on the wire.</p>
+<p>So for the smallest packets in this test, the real ceiling isn’t 148.8 Mpps. It’s about <strong>83.3 Mpps</strong>.</p>
+<table>
+<thead>
+<tr>
+<th><strong>plaintext</strong></th>
+<th><strong>encrypted on wire</strong></th>
+<th><strong>100 GbE ceiling</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>68 B</td>
+<td>130 B</td>
+<td><strong>83.3 Mpps</strong></td>
+</tr>
+<tr>
+<td>512 B</td>
+<td>578 B</td>
+<td><strong>20.9 Mpps</strong></td>
+</tr>
+<tr>
+<td>1442 B</td>
+<td>1506 B</td>
+<td><strong>8.19 Mpps</strong></td>
+</tr>
+</tbody>
+</table>
+<p>So that’s the target. For tiny packets, “line rate” means about 83 million packets per second.</p>
+<h2 id="startingfromthebottom">Starting from the bottom</h2>
+<p>Before adding WireGuard, I wanted a basic reference point for the rig itself.<br>
+With plain Linux forwarding between the three boxes, no tunnel and no encryption, I get about <strong>15 million packets per second clean</strong>.<br>
+That’s useful to keep in mind, because if I keep Linux in the packet path, that 15 Mpps number is already a pretty important ceiling to beat.</p>
+<p>Then I turned on WireGuard:</p>
+<table>
+<thead>
+<tr>
+<th><br></th>
+<th><strong>packets/sec</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>kernel WireGuard</td>
+<td><strong>550 kpps</strong></td>
+</tr>
+<tr>
+<td>wireguard-go</td>
+<td><strong>350 kpps</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Those are the first numbers to beat.</p>
+<p>One thing jumped out immediately: packet size barely matters. I tried 68-byte packets, 512-byte packets and full-sized packets, and the packet rate stays roughly the same.</p>
+<p>That’s interesting because the large packets contain around thirty times more data to encrypt, but the packets-per-second number hardly moves at all.</p>
+<p>So whatever is limiting us, it probably isn’t the cipher itself. It looks much more like some fixed cost we pay once per packet.</p>
+<p>You can see the effect pretty clearly in bandwidth terms. With full-sized packets, kernel WireGuard is only doing around <strong>6 Gbit/s</strong> of plaintext on a 100 GbE NIC. With tiny packets, it’s around <strong>0.25 Gbit/s</strong>.</p>
+<p>And compared with plain kernel forwarding, kernel WireGuard is about <strong>27× lower</strong> on this small-packet workload: roughly 550 kpps versus 15 Mpps.</p>
+<p>That’s a pretty big gap. So the next question is obvious: <strong>where is all that time going?</strong></p>
+<h2 id="oneverybusycpu">One very busy CPU</h2>
+<p>I was curious where all that time was going. My first assumption was that I’d screwed up the benchmark, which wouldn’t be the first time :)</p>
+<p>Then I looked at the CPUs. On the encrypting gateway, <strong>one core was at 99%</strong>, while almost everything else still had plenty of room. <code>perf</code> pointed straight at:</p>
+<pre><code>wg_packet_tx_worker
+</code></pre>
+<p>WireGuard already parallelizes the expensive part. Encryption gets farmed out across CPUs, but packets for a given peer eventually come back through a serialized per-peer transmit path before they go on the wire.</p>
+<p>That’s a perfectly reasonable design when you have lots of peers, because different peers can make progress independently. In my test, though, I have one very busy peer.</p>
+<p>So the 24-core box is effectively waiting on one serialized part of the pipeline. wireguard-go has a different single-core bottleneck. We’ll get to that in a minute.</p>
+<h2 id="givingwireguardgothenic">Giving wireguard-go the NIC</h2>
+<p>Now for the interesting part: making packetio work with wireguard-go.<br>
+wireguard-go has two really nice interfaces: a <code>conn.Bind</code> for encrypted WireGuard traffic and a <code>tun.Device</code> for plaintext traffic. That’s basically the API boundary.</p>
+<p>I implemented both on top of packetio.  This gives wireguard-go packetio-backed versions of those interfaces, plus the boring but necessary Ethernet and ARP bits that come with owning a NIC.</p>
+<p>Importantly, wireguard-go still does all the actual WireGuard work: handshakes, key rotation, peer configuration, cryptokey routing and <code>wg(8)</code> configuration. I haven’t changed any of that code.</p>
+<p>With <strong>completely unmodified wireguard-go</strong>, I get about <strong>1.5 million packets per second</strong>.</p>
+<p>That’s immediately around 4× faster than stock wireguard-go and 2.7× faster than kernel WireGuard, without changing a single line of WireGuard itself. That’s pretty neat!</p>
+<h3 id="why">Why?</h3>
+<p>The obvious answer is kernel bypass, and yes, that’s part of it. packetio gets rid of a lot of normal kernel work. The NIC DMAs packets straight into memory the application already owns, so there’s no normal socket receive path, no TUN copy, and no trip back through a UDP socket.</p>
+<p>In other words, we avoid quite a bit of work moving packets back and forth between the kernel and userspace. But profiling showed something more interesting.</p>
+<p>In stock wireguard-go, the kernel was only around a third of the CPU cost, while the actual encryption was around <strong>6%</strong>. So simply removing kernel overhead doesn’t really explain a 4× improvement. The important part was <em>where</em> the bottleneck was.</p>
+<p>Every outbound packet in wireguard-go eventually passes through a single goroutine, <code>RoutineReadFromTUN</code>, which reads plaintext from the TUN and feeds it into the encryption workers. Those workers are already parallel, and when I looked at the profiler, most of them were simply waiting for work.</p>
+<p>So the bottleneck wasn’t the cryptography. It was <code>RoutineReadFromTUN</code>, the one goroutine feeding the crypto workers. That gives the whole pipeline one serial stage. No matter how many encryption workers are available behind it, they can only go as fast as that one goroutine can feed them.</p>
+<p>packetio made that serial stage much cheaper, which is how we got to around <strong>1.5 Mpps</strong>.<br>
+But the serial stage was still there. So the next step was pretty obvious: remove it.</p>
+<h2 id="fourpatches">Four patches</h2>
+<p>Up to this point, wireguard-go itself was completely unmodified. From here on out, I started changing it.</p>
+<h3 id="patch1stayonthesamecore">Patch 1: stay on the same core</h3>
+<p>The first patch adds a small fast-path API. It exposes the current session ciphers, a safe way to reserve nonce ranges, access to the replay check, and enough bookkeeping for wireguard-go to keep owning handshakes, rekeying and timers.</p>
+<p>The important part is what happens to the packet.<br>
+Instead of receiving a packet on one goroutine, handing it through shared queues, letting another goroutine encrypt it, and eventually handing it to yet another sender, the packet can stay on the core that received it:</p>
+<pre><code>receive
+  ↓
+encrypt
+  ↓
+transmit
+</code></pre>
+<p>No central reader. No shared encryption handoff. No per-peer sender in the fast path.</p>
+<p>That removes a lot of queueing and synchronization and I assume better cache locality, since the packet stops bouncing between goroutines and CPUs.</p>
+<p>With that first patch alone, throughput jumps from about <strong>1.5 Mpps to roughly 10 Mpps</strong>.</p>
+<p>Pretty good! And then things started to fall apart :)<br>
+At higher rates, the receiving gateway began rejecting huge numbers of perfectly legitimate packets through WireGuard's anti-replay logic.</p>
+<h3 id="patch2and3thereplaywindow">Patch 2 and 3: the replay window</h3>
+<p>Every WireGuard data packet carries a counter. The receiver remembers which counters it has already seen so somebody can't capture a valid encrypted packet and replay it later.</p>
+<p>wireguard-go's replay window is 8,128 counters wide. Normally that's plenty.<br>
+But now I have 16 cores processing packets from the same WireGuard session in parallel. One core might still be working on counter 10,000 while another has already processed counter 18,500. In this case counter 10,000 isn't a replay. It's just late.</p>
+<p>But once it falls far enough behind the highest counter the receiver has seen, it's outside the replay window and gets rejected as too old. That became the next bottleneck.</p>
+<p><strong>Patch 2</strong> changes how the replay check is locked. Instead of taking the replay-window lock once for every packet, the fast path takes it once for a whole batch and checks all the packets together.</p>
+<p>The logic is the same. The difference is that 16 cores are no longer fighting over the same lock once per packet. That made a big difference to peak throughput, but it didn't solve the deeper problem: the replay window itself was still too small for the amount of parallelism we'd introduced.</p>
+<p>So <strong>patch 3</strong> widens the window from 8,128 counters to 131,008. That sounds like a huge change, but the state is just a bitmap. It goes from roughly <strong>1 KB to 16 KB per session</strong>. Pretty cheap.</p>
+<p>I tried removing patch 3 again later just to make sure it was actually doing useful work. Peak performance dropped by about 17%, and the throughput became unstable again as I added queues. So we're keeping that one.</p>
+<h3 id="patch4stoptouchingthetimers">Patch 4: stop touching the timers</h3>
+<p>At this point, something else floated to the top of the profiler: Timers.</p>
+<p>Every batch reports activity back to wireguard-go so keepalives, roaming and rekeying continue to work. At tens of millions of packets per second, that meant multiple cores were touching locks and resetting timers millions of times per second.</p>
+<p>These are timers that expire in 5, 10 or 120 seconds. Resetting them millions of times a second seemed a little excessive :)</p>
+<p><strong>Patch 4</strong> coalesces that bookkeeping so it happens at most once every 50 milliseconds per peer.</p>
+<p>At 16 queues, it barely moves the headline number. At 24 queues, where every core is fighting over the same peer's timer bookkeeping, it matters much more: roughly <strong>34 Mpps without it versus just under 40 Mpps with it</strong>.</p>
+<p>Here's what the progression looks like on the three-box rig with 16 receive queues:</p>
+<table>
+<thead>
+<tr>
+<th><br></th>
+<th><strong>clean</strong></th>
+<th><strong>peak</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>unmodified wireguard-go on packetio</td>
+<td>1.5 M</td>
+<td>1.7 M</td>
+</tr>
+<tr>
+<td>+ patch 1: fast path</td>
+<td>9.8 M*</td>
+<td>10.2 M</td>
+</tr>
+<tr>
+<td>+ patch 2: batched replay check</td>
+<td>—**</td>
+<td>24.4 M</td>
+</tr>
+<tr>
+<td>+ patch 3: wider replay window</td>
+<td><strong>29.7 M</strong></td>
+<td>36.0 M</td>
+</tr>
+<tr>
+<td>+ patch 4: quieter timers</td>
+<td><strong>29.9 M</strong></td>
+<td>37.9 M</td>
+</tr>
+</tbody>
+</table>
+<p><em>'Clean' is the highest rate with under 1% loss, median of three runs; 'peak' is the most that ever came out, whatever the loss.</em></p>
+<p><em>* 2% loss; patch 1 never reached the &lt;1% &quot;clean&quot; threshold.</em><br>
+<em>** No offered rate stayed below 1% loss.</em></p>
+<p>I like this progression because there wasn't one giant rewrite or some magic crypto optimization. Each bottleneck only became visible after the previous one was removed.</p>
+<p>The whole patch series adds about <strong>370 lines</strong> to wireguard-go and changes five existing lines.</p>
+<h2 id="sohowfastisit">So, how fast is it?</h2>
+<p>For 68-byte plaintext packets:</p>
+<table>
+<thead>
+<tr>
+<th><br></th>
+<th><strong>delivered</strong></th>
+<th><strong>vs kernel</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>wireguard-go</td>
+<td>350 kpps</td>
+<td>0.6×</td>
+</tr>
+<tr>
+<td>kernel WireGuard</td>
+<td>550 kpps</td>
+<td>1×</td>
+</tr>
+<tr>
+<td>wgpio, unmodified wireguard-go</td>
+<td>1.5 Mpps</td>
+<td>2.7×</td>
+</tr>
+<tr>
+<td>wgpio + patches, 8 cores</td>
+<td>19.9 Mpps</td>
+<td>36×</td>
+</tr>
+<tr>
+<td>wgpio + patches, 16 cores</td>
+<td><strong>29.9 Mpps</strong></td>
+<td><strong>54×</strong></td>
+</tr>
+</tbody>
+</table>
+<p>At 24 queues it peaks just under <strong>40 Mpps</strong>, although the 16-queue configuration gives me the better clean number on this rig.</p>
+<p>That was fun! And because packetio has multiple backends, I tried those too. On my earlier two-box test.  Direct Verbs landed within half a percent of DPDK. Switching to AF_XDP was slightly more expensive because we still have NAPI kernel work, but still got me about 17Mpps. Pretty cool that it’s so easy to change the driver, and really why packetio exists.</p>
+<h2 id="thenistartedworryingabouttcp">Then I started worrying about TCP</h2>
+<p>At this point I had something really fast, and I was pretty happy with it. But then I started wondering about packet ordering.</p>
+<p>To make one WireGuard tunnel use multiple receive queues,  I sent tunnel traffic using 64 different UDP source ports. That changes the outer 5-tuple enough that RSS on the peer's NIC spreads traffic across queues, which is how we get multiple cores working on the same tunnel.</p>
+<p>Without doing that, one WireGuard tunnel lands on one receive queue and effectively one core does all the work. On my system that tops out at around <strong>3 Mpps</strong>.</p>
+<p>With the source port randomization, I can get into the <strong>30 Mpps</strong> range. So the trick matters a lot and I wanted to keep it.</p>
+<p>The problem was that my first implementation rotated the source port <strong>per packet</strong>. That gave me a beautiful spread across all the RSS queues, but it also meant packets from the same inner TCP connection could land on different receive queues at the remote gateway.</p>
+<p>For example:</p>
+<pre><code>TCP packet 1 → WireGuard UDP source port 51821
+TCP packet 2 → WireGuard UDP source port 51822
+TCP packet 3 → WireGuard UDP source port 51823
+...
+</code></pre>
+<p>At the other side, RSS hashes those packets onto different queues. Different queues are handled by different goroutines, and those goroutines don't necessarily finish at the same time. And there was my packet reordering :(</p>
+<p>Most of my testing up to that point had been UDP packet-rate testing, so everything looked great. To see what this actually meant for real traffic, I put a Linux TCP sender and receiver behind the two gateways and ran <code>iperf3</code>.</p>
+<p>For one (single) inner TCP stream:</p>
+<table>
+<thead>
+<tr>
+<th><br></th>
+<th><strong>Gbit/s</strong></th>
+<th><strong>retransmits</strong></th>
+<th><strong>reorder events</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>kernel WireGuard</td>
+<td>7.9</td>
+<td>15,019</td>
+<td>4</td>
+</tr>
+<tr>
+<td>wgpio, rotating port per packet</td>
+<td>10.9</td>
+<td>28,107</td>
+<td><strong>1,641,020</strong></td>
+</tr>
+<tr>
+<td>wgpio, one port per inner flow</td>
+<td><strong>12.0</strong></td>
+<td><strong>211</strong></td>
+<td><strong>27</strong></td>
+</tr>
+</tbody>
+</table>
+<p>That made the problem pretty obvious. The fix was about fifteen lines.</p>
+<p>Instead of rotating the outer source port for every packet, I hash the <strong>inner flow</strong> and use that hash to pick the WireGuard source port. That means a given inner flow keeps the same outer 5-tuple, so RSS keeps it on the same receive queue at the other gateway.</p>
+<p>You still get parallelism across different inner flows. You just stop spraying packets from the same flow across different CPUs.</p>
+<p>With eight TCP streams, throughput went from an erratic <strong>16–46 Gbit/s to 66 Gbit/s</strong>. With 32 streams, it reached <strong>89 Gbit/s</strong>.</p>
+<p>The tradeoff is the usual RSS tradeoff: one elephant flow stays on one receive core. I'm okay with that. That's a pretty normal design tradeoff, and the flow-affine version is what I'm using now.</p>
+<h2 id="iff_multi_queueandwireguardgo">IFF_MULTI_QUEUE and wireguard-go</h2>
+<p>There was still one result bothering me. Unmodified wireguard-go on packetio topped out at around <strong>1.5 million packets per second</strong>.</p>
+<p>I started wondering how much of that was really packetio, and how much was something simpler that I had accidentally fixed along the way.</p>
+<p>So I put a normal TUN interface back on the plaintext side. packetio still handled the encrypted traffic from the NIC, but plaintext packets went through a regular kernel TUN again, much closer to how wireguard-go normally runs.</p>
+<p>With wireguard-go's usual single-queue TUN, I got about <strong>450 kpps</strong>. That looked familiar.</p>
+<p>Then I opened the TUN using Linux's multi-queue support and added a reader for each queue. <strong>1.5 Mpps.</strong></p>
+<p>Interesting. So I took packetio out completely. Upstream wireguard-go. Normal UDP sockets. Normal kernel networking. The only change was opening the TUN with <code>IFF_MULTI_QUEUE</code> and giving it multiple readers.</p>
+<p>The result was the same: <strong>1.5 million packets per second</strong>, on about five cores.<br>
+That's roughly three times kernel WireGuard on this particular single-peer, small-packet workload, with wireguard-go's protocol and packet-processing code otherwise unchanged.</p>
+<p>I think that's one of the most useful results from this whole project.<br>
+You don't need DPDK if all you want is to get stock wireguard-go from a few hundred thousand packets per second to around <strong>1.5 Mpps</strong>, just stop feeding it through a single TUN queue.</p>
+<p>After that, both versions hit the same next bottleneck: <code>RoutineReadFromTUN</code>, wireguard-go's central plaintext reader, at around 1.5 to 1.6 million packets per second.</p>
+<p>Same path, same wall. So the lesson is pretty simple: multi-queue TUN gets you to about 1.5 Mpps with otherwise stock wireguard-go. If you want to go beyond that, you need to change the architecture.</p>
+<p>That's where the fast path and packetio start to matter, and where the numbers jump from around 1.5 Mpps into the tens of millions.</p>
+<h2 id="sowhendoespacketiomatter">So when does packetio matter?</h2>
+<p>This experiment gave me a much cleaner answer than I had when I started. Up to about <strong>1.5 million packets per second</strong>, you don't really need packetio. A multi-queue TUN gets stock wireguard-go there with normal UDP sockets and the normal Linux networking stack.</p>
+<p>Past that point, though, you have to change the architecture.</p>
+<p>The first fast-path patch gets us to roughly <strong>10 Mpps</strong>. Once the replay-window and timer bottlenecks are fixed as well, that climbs to around <strong>30 Mpps clean</strong>, with peaks just under <strong>40 Mpps</strong>.</p>
+<p>At that point we're more than an order of magnitude beyond stock wireguard-go.<br>
+But there is a tradeoff. The fastest version of <code>wgpio</code> keeps the packet path entirely in userspace. It owns the NIC and forwards packets itself, which is exactly why it can go so fast.</p>
+<p>It also means Linux no longer sees that transit traffic. Your normal routing table isn't forwarding it. Your firewall isn't filtering it. <code>tcpdump</code> on the host won't see those packets either.</p>
+<p>If you want to keep those Linux features, you can put the plaintext side back through a TUN interface and hand the traffic back to the kernel. That still performs well, but you pay for the extra kernel crossings.</p>
+<p>That's really the tradeoff with userland networking: the further you move the dataplane out of the kernel, the more performance and control you get, but the more of the kernel's networking machinery you have to replace yourself.</p>
+<h2 id="caveats">Caveats</h2>
+<p>A few things to keep in mind. <strong>One peer pair.</strong> All of these tests use a single WireGuard peer pair. That's deliberately the difficult case. With hundreds of peers, you get much more natural parallelism.</p>
+<p><strong>No GSO or TSO.</strong> One frame in, one frame out. I left segmentation offload out on purpose because I was mostly interested in packets per second, and that's where the bottlenecks in this post really show up.</p>
+<p><strong>IPv4 only.</strong> That's all I tested here.</p>
+<p><strong>Flow affinity has a tradeoff.</strong> Keeping one inner flow on one outer UDP tuple means one elephant flow also stays on one receive core. That's intentional, and it's a pretty normal RSS-style tradeoff.</p>
+<p>And finally, <strong>the patches touch some important WireGuard state</strong>, especially the nonce counter and anti-replay logic. I've tried to be careful, and added tests around the dangerous parts. But this is still a hobby project. It has not been independently audited, and I built it mostly to see what was possible. If you're thinking about using these patches somewhere important, please review them very carefully.</p>
+<h2 id="wrappingup">Wrapping up</h2>
+<p>I started this experiment because I wanted to know whether packetio could carry a real application instead of just another packet generator. Now we know it can.</p>
+<p>A single WireGuard tunnel gets essentially line rate on a 100 GbE  link once the packets get moderately large, and with small packets it gets to around <strong>30 million packets per second</strong>, with peaks close to <strong>40 Mpps</strong>. For comparison, kernel WireGuard on the same workload did about <strong>550 kpps</strong>. So we're talking roughly <strong>54× more packets per second clean</strong>, and more than <strong>70× at peak</strong>.</p>
+<p>But the part I found most interesting wasn't really the headline number. It was how little code it took, and how different the bottlenecks were from what I expected going in.</p>
+<p>I assumed the crypto would be the hard part. It wasn't. One goroutine was holding back dozens of encryption workers. A replay window that had always been more than large enough suddenly wasn't. Timer bookkeeping started to matter. And my clever RSS trick for spreading one tunnel across many cores turned out to be terrible for TCP ordering.</p>
+<p>We worked through each of those one at a time, and I'm really happy with where it ended up.</p>
+<p>The other surprise is that one of the biggest improvements doesn't need packetio at all. Give stock wireguard-go a multi-queue TUN and it goes from a few hundred thousand packets per second to around <strong>1.5 Mpps</strong> on this workload.</p>
+<p>If you want to go much beyond that, though, you have to start changing the datapath. That's where keeping more of the packet processing in userspace, using something like packetio over Direct Verbs, AF_XDP or DPDK, starts to make a real difference.</p>
+<p>The code is at <a href="https://github.com/atoonk/packetio-wireguard">github.com/atoonk/packetio-wireguard</a>. The repo includes the gateway, the four wireguard-go patches, the benchmark harness and the results.</p>
+<p>Anyway, that's it. You made it to the end :) Thanks for reading.<br>
+Let's push some packets, encrypted this time.</p>
+<p>Cheers,<br>
+Andree</p>
+<!--kg-card-end: markdown-->]]></content:encoded></item><item><title><![CDATA[Watch the Net: measuring the pulse of the Internet]]></title><description><![CDATA[<p>Today I'm releasing a fun new project I've been working on called <a href="https://watchthenet.com/"><strong>Watch the Net</strong>.</a></p><!--kg-card-begin: markdown--><p>It's a live view of what's happening on the Internet, based entirely on active measurements. You can drill down by country, region, city, ASN, organization, or even an individual IP address.</p>
 <p>I've been posting screenshots</p>]]></description><link>http://toonk.io/blog-watch-the-net/</link><guid isPermaLink="false">6ab0318aed81a12c01da67ea</guid><category><![CDATA[monitoring]]></category><category><![CDATA[dpdk]]></category><category><![CDATA[Go]]></category><dc:creator><![CDATA[Andree Toonk]]></dc:creator><pubDate>Sun, 20 Sep 2026 19:20:07 GMT</pubDate><media:content url="https://images.unsplash.com/photo-1648075082746-2511f68e57b5?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlciUyMGxpZ2h0aG91c2V8ZW58MHx8fHwxNzg5OTMyNTgwfDA&amp;ixlib=rb-4.1.0&amp;q=80&amp;w=2000" medium="image"/><content:encoded><![CDATA[<img src="https://images.unsplash.com/photo-1648075082746-2511f68e57b5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlciUyMGxpZ2h0aG91c2V8ZW58MHx8fHwxNzg5OTMyNTgwfDA&ixlib=rb-4.1.0&q=80&w=2000" alt="Watch the Net: measuring the pulse of the Internet"><p>Today I'm releasing a fun new project I've been working on called <a href="https://watchthenet.com/"><strong>Watch the Net</strong>.</a></p><!--kg-card-begin: markdown--><p>It's a live view of what's happening on the Internet, based entirely on active measurements. You can drill down by country, region, city, ASN, organization, or even an individual IP address.</p>
 <p>I've been posting screenshots from it on Twitter for the last few weeks, usually when something interesting breaks, and quite a few people have asked if they could play with it themselves. Well, now you can :)</p>
 <p>The question I'm trying to answer with <a href="https://watchthenet.com/">watchthenet.com</a> is: <strong>What's happening on the Internet right now?</strong> Not inferred from BGP updates, news reports, or someone else's telemetry. I wanted to measure it myself.</p>
@@ -942,26 +1251,4 @@ metadata:
   19 Server: demo-app-6896cd4b88-pzbc7  
   20 Server: demo-app-6896cd4b88-5jzgn  
   21 Server: demo-app-6896cd4b88-78ngc  
-  60</code></pre><p>Just like that, in a few seconds, your workload is globally available. Pretty neat he!? Make sure to watch the <a href="https://www.youtube.com/watch?v=tFfLfI1jYi4" rel="noopener nofollow">video recording of this demo</a> as well.</p><h3 id="wrapping-up">Wrapping up</h3><p>In this article, we looked at how we can easily connect Kubernetes Services to Mysocket.io. We saw that it was easy to use. All that is needed is to: 1) start the Mysocketd controller, and: 2) add the mysocket annotation to your Services. By doing so, we are giving the Kubernetes service a publicly reachable IP address, a TLS cert, and it instantly benefits from the mysocket.io Anycast infrastructure. Pretty powerful and easy to use.</p><p>I should add that this <a href="https://github.com/mysocketio/kubernetes_controller" rel="noopener">Mysocket Controller for Kubernetes</a> is for now just a starting point, ie. an MVP integration with Kubernetes. There are ways to improve this, both in terms of user-friendliness and high availability (i.e. more than one pod). The code for this Kubernetes integration is open source, and we’d be happy to accept improvements. Mostly it serves as an example of what’s possible and how we can continue to build on the Mysocket services.</p><p>Last but certainly not least, I’d like to thanks <a href="https://github.com/tresni" rel="noopener">Brian</a> for his code to improve the various mysocketctl client libraries. Also, a big thanks to <a href="https://github.com/btoonk" rel="noopener">Bas Toonk</a> (yes, my brother) for his help with this MVP. Most of this was his work, thanks buddy!</p><p>Finally, I hope this sparked your imagination, and you’ll all give it a whirl, and let me know your experience.</p><p><br></p><p><br></p><p><br></p>]]></content:encoded></item><item><title><![CDATA[Easy Multi-region load balancing with Mysocket.io]]></title><description><![CDATA[<p>Last week AWS had a major outage in its US-EAST1 region, lasting for most of the day, just before the big black Friday sales! Incidents like this are a great reminder of the importance of multi-region or even multi-cloud deployments for your services.</p><p>Depending on your “cloud maturity” and your</p>]]></description><link>http://toonk.io/easy-multi-region-load-balancing-with-mysocket/</link><guid isPermaLink="false">5fcd79a451a5ff44fb64d968</guid><category><![CDATA[mysocket]]></category><category><![CDATA[terraform]]></category><dc:creator><![CDATA[Andree Toonk]]></dc:creator><pubDate>Mon, 07 Dec 2020 00:42:46 GMT</pubDate><media:content url="https://images.unsplash.com/photo-1544161519-0690a8886606?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=MXwxMTc3M3wwfDF8c2VhcmNofDY2fHx8ZW58MHx8fA&amp;ixlib=rb-1.2.1&amp;q=80&amp;w=2000" medium="image"/><content:encoded><![CDATA[<img src="https://images.unsplash.com/photo-1544161519-0690a8886606?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwxMTc3M3wwfDF8c2VhcmNofDY2fHx8ZW58MHx8fA&ixlib=rb-1.2.1&q=80&w=2000" alt="Easy Multi-region load balancing with Mysocket.io"><p>Last week AWS had a major outage in its US-EAST1 region, lasting for most of the day, just before the big black Friday sales! Incidents like this are a great reminder of the importance of multi-region or even multi-cloud deployments for your services.</p><p>Depending on your “cloud maturity” and your products’ complexity, you may already be there or just getting started. Either way, in today’s blog, we will take a look at how we can use mysocket’s load balancing features to make deployments over multi-region easier.</p><h3 id="a-global-load-balancing-service">A global load balancing service</h3><p>In earlier blogs, we looked mostly at how the mysocket.io tunnel service can help securely connect your resources that may be behind NAT and firewalls to the Internet. In this article, we’ll look at Mysocket’s global load balancing feature.</p><h3 id="three-types-of-load-balancers">Three types of load balancers</h3><p>Mysocket today supports three different types of cloud-native load balancers.</p><p><em>1) Application load balancers, for your HTTP and HTTPS services. </em><br><em>2) Network load balancer, for your TCP services.</em><br><em>3) TLS Load balancer, for your TCP services, where we take care of the encryption.</em></p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="http://toonk.io/content/images/2020/12/Screen-Shot-2020-12-06-at-2.58.50-PM.png" class="kg-image" alt="Easy Multi-region load balancing with Mysocket.io" srcset="http://toonk.io/content/images/size/w600/2020/12/Screen-Shot-2020-12-06-at-2.58.50-PM.png 600w, http://toonk.io/content/images/size/w1000/2020/12/Screen-Shot-2020-12-06-at-2.58.50-PM.png 1000w, http://toonk.io/content/images/size/w1600/2020/12/Screen-Shot-2020-12-06-at-2.58.50-PM.png 1600w, http://toonk.io/content/images/size/w2400/2020/12/Screen-Shot-2020-12-06-at-2.58.50-PM.png 2400w" sizes="(min-width: 720px) 720px"><figcaption>Load balancer types for mysocket.io&nbsp;</figcaption></figure><blockquote><em>When deploying Mysocket with your services, you now have a new front door. It just happens to be a front door that is anycasted, and as such has many doorbells around the globe made available to you. As a result, you’re always close to your users.</em></blockquote><h3 id="demo-creating-a-multi-region-service-in-two-minutes-">Demo: Creating a multi-region service in two minutes!</h3><p>Alright, time to get building! In this demo, we’ll continue using the Gif service we built in our last blog. Just like your workloads, I think this is a “critical” service, so we need it to be deployed in multiple regions. The service will need a 100% uptime, which means that even if a region is down, the Gif service will need to be available to our users.</p><figure class="kg-card kg-embed-card"><iframe width="459" height="344" src="https://www.youtube.com/embed/N96ghctEhb4?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></figure><h3 id="infrastructure-as-code">Infrastructure as code</h3><p>In this example, we’re going to deploy the service on Digital ocean VM’s in two of its regions, New York and Toronto. We’re big fans of infrastructure as code and require our service to be deployed with a simple deploy script. So we’ll use Terraform to spin up the instances and use a cloud-init script to bootstrap the necessary work to install the required software, start the Gif service and connect it to the Mysocket global infrastructure.</p><h3 id="step-1-terraform">Step 1: terraform</h3><p>We’re using terraform to define what type VM’s we’d like, which regions we want them to be deployed in, and how many per region. For this demo we’re using just two VM’s in two regions. But I’m sure, by just looking at the terraform file, you can see how easy it is to deploy many VM’s per region by just changing the ‘count’ number. It’s also easy to add additional regions. So scaling our Gif service for the future will be easy ;)</p><h3 id="step-2-cloud-init">Step 2: cloud-init</h3><p>The VM’s we’re launching are just vanilla Ubuntu machines. So we’ll need to modify them slightly to get our software and our ‘secrets’ on the machine. To do that, we’ll use cloud-init. <br>Cloud-init allows us to define a set of tasks that need to be executed when the VM is created. In our case, we’re asking it to create a user ‘mysocket’, we’re adding the Giphy API key, and mysocket credentials as secrets to the mysocket home directory. Finally, we’re telling it to download and execute a bootstrap script.</p><h3 id="step-3-bootstrapping-and-starting-our-services-">Step 3: bootstrapping and starting our services.</h3><p>Cloud-init’s last step was to start the bootstrap script that it download from <a href="https://gist.githubusercontent.com/atoonk/37ef0062fc1d90d31e2fc87e8f12d674/raw/ee83755af5214260fc9e6ad18849e77b7c8f7781/lb-do.sh" rel="noopener">here</a>. Basically, all it does is install the two python packages (mysocketctl and giphy_client) and download and start two more programs. The first program is our Gif application, which will run on port 8000. The second program is a small python script that makes sure the VM registers and connects to the mysocket.io infrastructure.</p><p>The code to connect to mysocket is <a href="https://github.com/mysocketio/examples/tree/main/2020-12-06-multi-region" rel="noopener">available on github</a>. It’s pretty easy, and I’m sure it’s low friction to get started with, even if you have limited experience. Below are the most important parts:</p><pre><code class="language-python">#These variables were made available as secrets in cloud Init.
-username = os.getenv("email")
-password = os.getenv("password")
-socket_id = os.getenv("socket_id")
-
-#Login to mysocket API and get a token. We can contruct the Auth header using this token.
-token = get_token(username, password)
-authorization_header = {
-   "x-access-token": token["token"],    
-   "accept": "application/json",    
-   "Content-Type": "application/json",}
-   
-# register the service by creating a new tunnel for this VM
-tunnel = new_tunnel(authorization_header, socket_id)
-# setup the tunnel to mysocket and ready to serve traffic!
-ssh_tunnel(port, tunnel["local_port"], ssh_server, ssh_user)</code></pre><blockquote><em>Make sure you take a quick peak at the code, it’s pretty easy to get started with and a good “getting started” example for both terraform and cloud-init.</em></blockquote><p>And with that, we now have four VM’s in two regions. All four VM’s registered with the Mysocket service and are now serving our ‘critical’ Gif app. You can see the demo service yourself here: <a href="https://fluffy-bunny-5697.edge.mysocket.io/" rel="noopener">https://fluffy-bunny-5697.edge.mysocket.io/</a></p><figure class="kg-card kg-image-card"><img src="http://toonk.io/content/images/2020/12/Screen-Shot-2020-12-06-at-4.44.43-PM-1.png" class="kg-image" alt="Easy Multi-region load balancing with Mysocket.io" srcset="http://toonk.io/content/images/size/w600/2020/12/Screen-Shot-2020-12-06-at-4.44.43-PM-1.png 600w, http://toonk.io/content/images/size/w1000/2020/12/Screen-Shot-2020-12-06-at-4.44.43-PM-1.png 1000w, http://toonk.io/content/images/2020/12/Screen-Shot-2020-12-06-at-4.44.43-PM-1.png 1364w" sizes="(min-width: 720px) 720px"></figure><p>The example below shows how the mysocket load balancing service distributes traffic evenly over all four of the origin servers in New York and Toronto.</p><pre><code class="language-bash">$ for i in {1..20}; do  curl -s \
- https://fluffy-bunny-5697.edge.mysocket.io/ | grep Server; 
-done | sort | uniq -c
-
-   5 Server: compute-000-nyc1
-   5 Server: compute-000-tor1
-   5 Server: compute-001-nyc1
-   5 Server: compute-001-tor1</code></pre><p></p><p>Horizontally scaling the service is easy; simply change the count number in the <a href="https://github.com/mysocketio/examples/blob/main/2020-12-06-multi-region/main.tf">terraform file,</a> or add / remove regions. Since the VM’s will call the mysocket api on boot, these new VM’s will automatically become part of the load balancing pool. Pretty neat and easy, right?!</p><h3 id="failover-scenarios">Failover scenarios</h3><p>So what happens when a server or region becomes unavailable? There are a few things that make this as painless as possible for users. First, the origin service can de-register itself; this will allow for the most graceful scenario.</p><p>For less graceful scenarios, mysocket load balancers will, after 60 seconds automatically detect that a tunnel has gone down and take the origin out of the load balancing pool. And even during this 60-second degradation before the tunnel is declared down, our load balancers will use a 10 second connect time out when connecting to origin service and automatically fail back to the remaining origins. So, all in all, failures should be hidden as much as possible from your users.</p><h3 id="wrapping-up">Wrapping up</h3><p>In this blog, we looked at how Mysocket can be used as a global load balancer, for your multi-region load deployments. In our demo, we looked at two Digital ocean regions, but this could also be over multiple AWS regions, or even Multi-cloud, with one cluster in AWS, one in Digital Ocean, and throw in some Google cloud for good measure.</p><p>We saw how Mysocket provides users with a global anycasted ingress point and provides seamless load balancing for your services. Best of all, it only took us 90 seconds to get all of this going! I guess it’s fair to say that Mysocket makes going multi-region and even multi-cloud easier.</p>]]></content:encoded></item></channel></rss>
+  60</code></pre><p>Just like that, in a few seconds, your workload is globally available. Pretty neat he!? Make sure to watch the <a href="https://www.youtube.com/watch?v=tFfLfI1jYi4" rel="noopener nofollow">video recording of this demo</a> as well.</p><h3 id="wrapping-up">Wrapping up</h3><p>In this article, we looked at how we can easily connect Kubernetes Services to Mysocket.io. We saw that it was easy to use. All that is needed is to: 1) start the Mysocketd controller, and: 2) add the mysocket annotation to your Services. By doing so, we are giving the Kubernetes service a publicly reachable IP address, a TLS cert, and it instantly benefits from the mysocket.io Anycast infrastructure. Pretty powerful and easy to use.</p><p>I should add that this <a href="https://github.com/mysocketio/kubernetes_controller" rel="noopener">Mysocket Controller for Kubernetes</a> is for now just a starting point, ie. an MVP integration with Kubernetes. There are ways to improve this, both in terms of user-friendliness and high availability (i.e. more than one pod). The code for this Kubernetes integration is open source, and we’d be happy to accept improvements. Mostly it serves as an example of what’s possible and how we can continue to build on the Mysocket services.</p><p>Last but certainly not least, I’d like to thanks <a href="https://github.com/tresni" rel="noopener">Brian</a> for his code to improve the various mysocketctl client libraries. Also, a big thanks to <a href="https://github.com/btoonk" rel="noopener">Bas Toonk</a> (yes, my brother) for his help with this MVP. Most of this was his work, thanks buddy!</p><p>Finally, I hope this sparked your imagination, and you’ll all give it a whirl, and let me know your experience.</p><p><br></p><p><br></p><p><br></p>]]></content:encoded></item></channel></rss>

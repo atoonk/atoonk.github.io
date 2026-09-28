@@ -12,7 +12,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <title>Kernel bypass networking with FD.io and VPP.</title>
+    <title>WireGuard at 40 Mpps with DPDK, in Go</title>
 
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -25,31 +25,35 @@
     <link rel="icon" href="../favicon.png" type="image/png" />
     <link rel="canonical" href="index.html" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
-    <link rel="amphtml" href="amp/index.html" />
+    <link rel="amphtml" href="amp.html" />
     
     <meta property="og:site_name" content="Andree&#x27;s Musings" />
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="Kernel bypass networking with FD.io and VPP." />
-    <meta property="og:description" content="In this blog, we’ll look at VPP, a fast, flexible, and open-source network forwarding plane. I think you will be blown away by the performance numbers." />
-    <meta property="og:url" content="http://toonk.io/kernel-bypass-networking-with-fd-io-and-vpp/" />
-    <meta property="og:image" content="https://images.unsplash.com/photo-1570854226992-255c6e78e342?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIyfHx2YW5jb3V2ZXIlMjBieXBhc3N8ZW58MHx8fHwxNzEyMDI5NDUwfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000" />
-    <meta property="article:published_time" content="2020-04-05T18:14:00.000Z" />
-    <meta property="article:modified_time" content="2024-04-02T03:44:28.000Z" />
+    <meta property="og:title" content="WireGuard at 40 Mpps with DPDK, in Go" />
+    <meta property="og:description" content="Over the last few months, I’ve been spending a lot of time experimenting with high-performance packet processing in Go. A lot of that work turned into packetio, one Go API for sending and receiving packets using DPDK, AF_XDP and Mellanox Direct Verbs.  I’ve built a few things" />
+    <meta property="og:url" content="http://toonk.io/wireguard-dpdk/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1486411959861-41a3eb8da389?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIxfHx2YW5jb3V2ZXIlMjBib2F0fGVufDB8fHx8MTc5MDU2NDY1M3ww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta property="article:published_time" content="2026-09-28T03:02:38.000Z" />
+    <meta property="article:modified_time" content="2026-09-28T03:11:57.000Z" />
+    <meta property="article:tag" content="Go" />
+    <meta property="article:tag" content="dpdk" />
+    <meta property="article:tag" content="wireguard" />
     <meta property="article:tag" content="networking" />
+    <meta property="article:tag" content="xdp" />
     
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Kernel bypass networking with FD.io and VPP." />
-    <meta name="twitter:description" content="In this blog, we’ll look at VPP, a fast, flexible, and open-source network forwarding plane. I think you will be blown away by the performance numbers." />
-    <meta name="twitter:url" content="http://toonk.io/kernel-bypass-networking-with-fd-io-and-vpp/" />
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1570854226992-255c6e78e342?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIyfHx2YW5jb3V2ZXIlMjBieXBhc3N8ZW58MHx8fHwxNzEyMDI5NDUwfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta name="twitter:title" content="WireGuard at 40 Mpps with DPDK, in Go" />
+    <meta name="twitter:description" content="Over the last few months, I’ve been spending a lot of time experimenting with high-performance packet processing in Go. A lot of that work turned into packetio, one Go API for sending and receiving packets using DPDK, AF_XDP and Mellanox Direct Verbs.  I’ve built a few things" />
+    <meta name="twitter:url" content="http://toonk.io/wireguard-dpdk/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1486411959861-41a3eb8da389?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIxfHx2YW5jb3V2ZXIlMjBib2F0fGVufDB8fHx8MTc5MDU2NDY1M3ww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Andree Toonk" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="networking" />
+    <meta name="twitter:data2" content="Go, dpdk, wireguard, networking, xdp" />
     <meta name="twitter:site" content="@atoonk" />
     <meta name="twitter:creator" content="@atoonk" />
     <meta property="og:image:width" content="2000" />
-    <meta property="og:image:height" content="1247" />
+    <meta property="og:image:height" content="1333" />
     
     <script type="application/ld+json">
 {
@@ -81,18 +85,18 @@
             "https://twitter.com/atoonk"
         ]
     },
-    "headline": "Kernel bypass networking with FD.io and VPP.",
-    "url": "http://toonk.io/kernel-bypass-networking-with-fd-io-and-vpp/",
-    "datePublished": "2020-04-05T18:14:00.000Z",
-    "dateModified": "2024-04-02T03:44:28.000Z",
+    "headline": "WireGuard at 40 Mpps with DPDK, in Go",
+    "url": "http://toonk.io/wireguard-dpdk/",
+    "datePublished": "2026-09-28T03:02:38.000Z",
+    "dateModified": "2026-09-28T03:11:57.000Z",
     "image": {
         "@type": "ImageObject",
-        "url": "https://images.unsplash.com/photo-1570854226992-255c6e78e342?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDIyfHx2YW5jb3V2ZXIlMjBieXBhc3N8ZW58MHx8fHwxNzEyMDI5NDUwfDA&ixlib=rb-4.0.3&q=80&w=2000",
+        "url": "https://images.unsplash.com/photo-1486411959861-41a3eb8da389?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDIxfHx2YW5jb3V2ZXIlMjBib2F0fGVufDB8fHx8MTc5MDU2NDY1M3ww&ixlib=rb-4.1.0&q=80&w=2000",
         "width": 2000,
-        "height": 1247
+        "height": 1333
     },
-    "keywords": "networking",
-    "description": "In this blog, we’ll look at VPP, a fast, flexible, and open-source network forwarding plane. I think you will be blown away by the performance numbers.",
+    "keywords": "Go, dpdk, wireguard, networking, xdp",
+    "description": "Over the last few months, I’ve been spending a lot of time experimenting with\nhigh-performance packet processing in Go. A lot of that work turned into \npacketio [https://toonk.io/packetio/index.html], one Go API for sending and\nreceiving packets using DPDK, AF_XDP and Mellanox Direct Verbs.\n\nI’ve built a few things on top of it already. wireblast\n[https://toonk.io/wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/index.html] \nis a packet generator, and last week I wrote about Wat",
     "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "http://toonk.io/"
@@ -205,8 +209,8 @@
 
 <article class="post u-marginBottom40 u-relative">
     <header class="post-header u-container u-maxWidth740 u-paddingTop30 u-relative zindex3">
-    <h1 class="post-title u-marginBottom20 u-fontSizeLargest u-md-fontSize36">Kernel bypass networking with FD.io and VPP.</h1>
-    <p class="post-excerpt u-marginBottom30 u-fontSize22 u-textMuted">In this blog, we’ll look at VPP, a fast, flexible, and open-source network forwarding plane. I think you will be blown away by the performance numbers.</p>
+    <h1 class="post-title u-marginBottom20 u-fontSizeLargest u-md-fontSize36">WireGuard at 40 Mpps with DPDK, in Go</h1>
+    
 
     <hr>
 
@@ -228,29 +232,29 @@
         <div class="hh-author-name u-fontSize15 u-noWrapWithEllipsis"><a href="../author/andree/index.html">Andree Toonk</a></div>
 
         <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2020-04-05">5 Apr 2020</time>
+    <time class="datetime u-textCapitalize" datetime="2026-09-28">28 Sep 2026</time>
     <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="6 min read">6 min read</span>
+    <span class="readingTime" style="cursor:default" title="14 min read">14 min read</span>
     
 </div>    </div>
 </div>
         <aside class="post-shasre u-flex0 u-flexCenter u-hide-before-md">
             <span class="share-label u-textMuted u-fontSizeSmaller">Share:</span>
-            <a href="https://twitter.com/share?text=Kernel%20bypass%20networking%20with%20FD.io%20and%C2%A0VPP.&amp;url=http://toonk.io/kernel-bypass-networking-with-fd-io-and-vpp/"
+            <a href="https://twitter.com/share?text=WireGuard%20at%2040%20Mpps%20with%20DPDK%2C%20in%20Go&amp;url=http://toonk.io/wireguard-dpdk/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Twitter"
                 class="share-link button button--circle godo-tracking js-share">
                 <svg class="icon"><use xlink:href="#icon-twitter"></use></svg>
             </a>
-            <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://toonk.io/kernel-bypass-networking-with-fd-io-and-vpp/&amp;title=Kernel%20bypass%20networking%20with%20FD.io%20and%C2%A0VPP."
+            <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://toonk.io/wireguard-dpdk/&amp;title=WireGuard%20at%2040%20Mpps%20with%20DPDK%2C%20in%20Go"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Linkedin"
                 class="share-link button button--circle godo-tracking js-share">
                 <svg class="icon"><use xlink:href="#icon-linkedin"></use></svg>
             </a>
-            <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/kernel-bypass-networking-with-fd-io-and-vpp/"
+            <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/wireguard-dpdk/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Share on Facebook"
@@ -262,52 +266,331 @@
 </header>
         <figure class="post-image u-block u-marginAuto u-sizeFullHeight u-sizeFullWidth u-maxWidth1000">
             <img class="u-block u-marginAuto u-sizeFullWidth simply-zoom"
-                srcset="https://images.unsplash.com/photo-1570854226992-255c6e78e342?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIyfHx2YW5jb3V2ZXIlMjBieXBhc3N8ZW58MHx8fHwxNzEyMDI5NDUwfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000 300w,
-                        https://images.unsplash.com/photo-1570854226992-255c6e78e342?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIyfHx2YW5jb3V2ZXIlMjBieXBhc3N8ZW58MHx8fHwxNzEyMDI5NDUwfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000 600w,
-                        https://images.unsplash.com/photo-1570854226992-255c6e78e342?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIyfHx2YW5jb3V2ZXIlMjBieXBhc3N8ZW58MHx8fHwxNzEyMDI5NDUwfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000 1000w,
-                        https://images.unsplash.com/photo-1570854226992-255c6e78e342?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIyfHx2YW5jb3V2ZXIlMjBieXBhc3N8ZW58MHx8fHwxNzEyMDI5NDUwfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000 2000w"
+                srcset="https://images.unsplash.com/photo-1486411959861-41a3eb8da389?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIxfHx2YW5jb3V2ZXIlMjBib2F0fGVufDB8fHx8MTc5MDU2NDY1M3ww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000 300w,
+                        https://images.unsplash.com/photo-1486411959861-41a3eb8da389?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIxfHx2YW5jb3V2ZXIlMjBib2F0fGVufDB8fHx8MTc5MDU2NDY1M3ww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000 600w,
+                        https://images.unsplash.com/photo-1486411959861-41a3eb8da389?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIxfHx2YW5jb3V2ZXIlMjBib2F0fGVufDB8fHx8MTc5MDU2NDY1M3ww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000 1000w,
+                        https://images.unsplash.com/photo-1486411959861-41a3eb8da389?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIxfHx2YW5jb3V2ZXIlMjBib2F0fGVufDB8fHx8MTc5MDU2NDY1M3ww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000 2000w"
                 sizes="(max-width: 400px) 300px,(max-width: 730px) 600px, (max-width: 1600px) 100vw"
-                src="https://images.unsplash.com/photo-1570854226992-255c6e78e342?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIyfHx2YW5jb3V2ZXIlMjBieXBhc3N8ZW58MHx8fHwxNzEyMDI5NDUwfDA&amp;ixlib&#x3D;rb-4.0.3&amp;q&#x3D;80&amp;w&#x3D;2000"
-                alt="Kernel bypass networking with FD.io and VPP."
+                src="https://images.unsplash.com/photo-1486411959861-41a3eb8da389?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIxfHx2YW5jb3V2ZXIlMjBib2F0fGVufDB8fHx8MTc5MDU2NDY1M3ww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000"
+                alt="WireGuard at 40 Mpps with DPDK, in Go"
             />
         </figure>
 
     <div class="post-wrap u-maxWidth1000 u-relative u-marginAuto">
-        <div id="post-body" class="post-body u-container u-maxWidth740 u-relative"><p></p><p>Over the last few years, I have experimented with various flavors of userland, kernel-bypass networking. In this article, we’ll take <a href="https://fd.io/" rel="noopener">FD.IO</a> for a spin.</p><p>We will compare the result with the results of my <a href="https://medium.com/@atoonk/linux-kernel-and-measuring-network-throughput-547c3b68c4d2?source=friends_link&amp;sk=b8a74c58f8b7a0d998a8796410b3fb96">last blog</a> in which we looked at how much a vanilla Linux kernel could do in terms of forwarding (routing) packets. We observed that on Linux, to achieve 14Mpps we needed roughly 16 and 26 cores for a unidirectional and bidirectional test. In this article, we’ll look at what we need to accomplish this with FD.io</p><h3 id="userland-networking">Userland networking</h3><p>The principle of Userland networking is that the networking stack is no longer handled by the kernel, but instead by a userland program. The Linux kernel is incredibly feature-rich, but for fast networking, it also requires a lot of cores to deal with all the (soft) interrupts. Several of the userland networking projects rely on DPDK to achieve incredible numbers. One reason why DPDK is so fast is that it doesn’t rely on Interrupts. Instead, it’s a poll mode driver. Meaning it’s continuously spinning at 100% picking up packets from the NIC. A typical server nowadays comes with quite a few CPU cores, and dedicating one or more cores for picking packets of the NIC is, in some cases, entirely worth it. Especially if the server needs to process lots of network traffic.</p><p>So DPDK provides us with the ability to efficiently and extremely fast, send and receive packets. But that’s also it! Since you’re not using the kernel, we now need a program that takes the packets from DPDK and does something with it. Like for example, a virtual switch or router.</p><h3 id="fd-io">FD.IO</h3><figure class="kg-card kg-image-card"><img src="https://cdn-images-1.medium.com/max/1200/1*xnuX9v2emwe179_6PGIp7g.png" class="kg-image" alt></figure><p><a href="https://fd.io/" rel="noopener">FD.IO</a> is an open-source software dataplane developed by Cisco. At the heart of FD.io is something called Vector Packet Processing (VPP).</p><p>The VPP platform is an <a href="https://fd.io/vppproject/vpptech/" rel="noopener">extensible framework </a>that provides switching and routing functionality. VPP is built on a ‘packet processing graph.’ This modular approach means that anyone can ‘plugin’ new graph nodes. This makes extensibility rather simple, and it means that plugins can be customized for specific purposes.</p><p>FD.io can use DPDK as the drivers for the NIC and can then process the packets at a high performant rate that can run on commodity CPU. It’s important to remember that it is not a fully-featured router, ie. it doesn’t really have a control plane; instead, it’s a forwarding engine. Think of it as a router line-card, with the NIC and the DPDK drivers as the ports. VPP allows us to take a packet from one NIC to another, transform it if needed, do table lookups, and send it out again. There are API’s that allow you to manipulate the forwarding tables. Or you can use the CLI to, for example, configure static routes, VLAN, vrf’s etc.</p><h3 id="test-setup">Test setup</h3><p>I’ll use mostly the same test setup as in my previous test. Again using two<a href="https://www.packet.com/cloud/servers/n2-xlarge/" rel="noopener"> n2.xlarge.x86</a> servers from<a href="https://www.packet.com/" rel="noopener"> packet.com</a> and our <a href="https://medium.com/@atoonk/building-a-high-performance-linux-based-traffic-generator-with-dpdk-93bb9904416c?source=friends_link&amp;sk=fb002771094f1f79654ec9a8be5761c7">DPDK traffic generator</a>. The set up is as below.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*bPwcK3XnekCTdwU3HVgeeQ.png" class="kg-image" alt><figcaption>Test setup</figcaption></figure><p>I’m using the VPP code from the FD.io master branch and installed it on a vanilla Ubuntu 18.04 system <a href="https://fd.io/docs/vpp/master/gettingstarted/installing/ubuntu.html" rel="noopener">following these steps</a>.</p><h3 id="test-results-packet-forwarding-using-vpp">Test results — Packet forwarding using VPP</h3><p>Now that we have our test setup ready to go, it’s time to start our testing!<br>To start, I configured VPP with “vppctl” like this, note that I need to set static ARP entries since the packet generator doesn’t respond to ARP.</p><p>set int ip address TenGigabitEthernet19/0/1 10.10.10.2/24<br>set int ip address TenGigabitEthernet19/0/3 10.10.11.2/24<br>set int state TenGigabitEthernet19/0/1 up<br>set int state TenGigabitEthernet19/0/3 up<br>set ip neighbor TenGigabitEthernet19/0/1 10.10.10.3 e4:43:4b:2e:b1:d1<br>set ip neighbor TenGigabitEthernet19/0/3 10.10.11.3 e4:43:4b:2e:b1:d3</p><p>That’s it! Pretty simple right?</p><p>Ok, time to look at the results just like before we did a single flow test, both unidirectional and bidirectional, as well as a 10,000 flow test.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*SOuQiKUviuPLjlOlAlAP8Q.png" class="kg-image" alt><figcaption>VPP forwarding test&nbsp;results</figcaption></figure><p>Those are some remarkable numbers! With a single flow, VPP can process and forward about 8Mpps, not bad. The perhaps more realistic test with 10,000 flows, shows us that it can handle 14Mpps with just two cores. To get to a full bi-directional scenario where both NICs are sending and receiving at line rate (28 Mpps per NIC) we need three cores and three receive queues on the NIC. To achieve this last scenario with Linux, we needed approximately 26 cores. Not bad, not bad at all!</p><figure class="kg-card kg-image-card kg-width-wide kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/2400/1*CnHwc00tX2BSnE5c424zuA.png" class="kg-image" alt><figcaption>Traffic generator on the left, VPP server on the right. This shows the full line-rate bidirectional test: 14Mpps per NIC, while VPP uses 3&nbsp;cores.</figcaption></figure><h3 id="test-results-nat-using-vpp">Test results — NAT using VPP</h3><p>In my previous blog we saw that when doing SNAT on Linux with iptables, we got as high as 3Mpps per direction needing about 29 CPUs per direction. This showed us that packet rewriting is significantly more expensive than just forwarding. Let’s take a look at how VPP does nat.</p><p>To enable nat on VPP, I used the following commands:</p><pre><code>nat44 add interface address TenGigabitEthernet19/0/3
-nat addr-port-assignment-alg default
-set interface nat44 in TenGigabitEthernet19/0/1 out TenGigabitEthernet19/0/3 output-feature</code></pre><p>My first test is with one flow only in one direction. With that, I’m able to get 4.3Mpps. That’s’ exactly half of what we saw in the performance test without nat. It’s no surprise this is slower due to the additional work needed. Note that with Linux iptables I was seeing about 1.1Mpps.</p><p>A single flow for nat isn’t super representative of a real-life nat example where you’d be translating many sources. So for the next measurements, I’m using 255 different source IP addresses and 255 destination IP addresses as well as different port numbers; with this setup, the nat code is seeing about 16k sessions. I can now see the numbers go to 3.2Mpps; more flows mean more nat work. Interestingly, this number is exactly the same as I saw with iptables. There is however one big difference, with iptables the system was using about 29 cores. In this test, I’m only using two cores. That’s a low number of workers, and also the reason I’m capped. To remove that cap, I added more cores and validated that the VPP code scales horizontally. Eventually, I need 12 cores to run 14Mpps for a stable experience.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1600/1*Rrh8rnpAB-SMMqdpe5pG5w.png" class="kg-image" alt><figcaption>VPP forwarding with NAT test&nbsp;results</figcaption></figure><p>Below is the relevant VPP config to control the number of cores used by VPP. Also, I should note that I <a href="https://www.linuxtopia.org/online_books/linux_kernel/kernel_configuration/re46.html" rel="noopener">isolated the cores</a> I allocated to VPP so that the kernel wouldn’t schedule anything else on it.</p><pre><code>cpu {
-    main-core 1
-    # CPU placement:
-    corelist-workers 3–14
-    # Also added this to grub: isolcpus=3-31,34-63
-}
-dpdk {
-   dev default {
-      # RSS, number of queues
-      num-rx-queues 12
-      num-tx-queues 12
-      num-rx-desc 2048
-      num-tx-desc 2048
-   }
-   dev 0000:19:00.1
-   dev 0000:19:00.3
-}
-plugins {
-   plugin default { enable }
-   plugin dpdk_plugin.so { enable }
-}
-nat {
-   endpoint-dependent
-   translation hash buckets 1048576
-   translation hash memory 268435456
-   user hash buckets 1024
-   max translations per user 10000
- }</code></pre><h3 id="conclusion">Conclusion</h3><figure class="kg-card kg-image-card kg-card-hascaption"><img src="https://cdn-images-1.medium.com/max/1200/0*6AoxbyuX5YbpSjeu" class="kg-image" alt="conclusion"><figcaption>Photo by <a href="https://unsplash.com/@nci?utm_source=medium&amp;utm_medium=referral" data-href="https://unsplash.com/@nci?utm_source=medium&amp;utm_medium=referral" class="markup--anchor markup--figure-anchor" rel="photo-creator noopener noopener" target="_blank">National Cancer Institute</a> on&nbsp;<a href="https://unsplash.com?utm_source=medium&amp;utm_medium=referral" data-href="https://unsplash.com?utm_source=medium&amp;utm_medium=referral" class="markup--anchor markup--figure-anchor" rel="photo-source noopener noopener" target="_blank">Unsplash</a></figcaption></figure><p>In this blog, we looked at VPP from the FD.io project as a userland forwarding engine. VPP is one example of a kernel bypass method for processing packets. It works closely with and further augments DPDK.</p><p>We’ve seen that the VPP code is <a href="https://wiki.fd.io/view/VPP/What_is_VPP%3F#Feature_Rich" rel="noopener">feature-rich</a>, especially for a kernel bypass packet forwarder. Most of all, <strong>it’s crazy fast</strong>.</p><p>We need just three cores to have two NICs forward full line-rate (14Mpps) in both directions. Comparing that to the Linux kernel, which needed 26 cores, we see an almost 9x increase in performance. <br>We noticed that the results were even better when using nat. In Linux, I wasn’t able to get any higher than 3.2Mpps for which I needed about 29 cores. With VPP we can do 3.2Mpps with just two cores and get to full line rate nat with 12 cores.</p><p>I think <a href="https://fd.io/" rel="noopener">FD.io</a> is an interesting and exciting project, and I’m a bit surprised it’s not more widely used. One of the reasons is likely that there’s a bit of a learning curve. But if you need high-performance packet forwarding, it’s certainly something to explore! Perhaps this is the start of your VPP project? if so, <a href="https://twitter.com/atoonk" rel="noopener">let me know!</a></p><p><em>Cheers</em><br><em> -Andree</em></p></div>
+        <div id="post-body" class="post-body u-container u-maxWidth740 u-relative"><!--kg-card-begin: markdown--><p>Over the last few months, I’ve been spending a lot of time experimenting with high-performance packet processing in Go. A lot of that work turned into <a href="https://toonk.io/packetio/index.html">packetio</a>, one Go API for sending and receiving packets using DPDK, AF_XDP and Mellanox Direct Verbs.</p>
+<p>I’ve built a few things on top of it already. <a href="https://toonk.io/wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/index.html">wireblast</a> is a packet generator, and last week I wrote about <a href="https://toonk.io/blog-watch-the-net/index.html">Watch the Net</a>, a fast Internet scanner.</p>
+<p>This week I finally got around to writing up something I’ve been working on for a little while: <strong>WireGuard and DPDK</strong>. WireGuard is a fun target because a lot of people run it, there’s an excellent Go implementation in <a href="https://git.zx2c4.com/wireguard-go">wireguard-go</a>, and packetio is Go too. So the question was pretty simple: <strong>what happens if I put packetio underneath wireguard-go and try to run WireGuard over DPDK?</strong></p>
+<p>Short answer: it works, and it goes pretty fast.<br>
+The more interesting answer is that along the way I ran into a few bottlenecks, and some of the fixes turned out to be useful even outside the DPDK case.</p>
+<h2 id="thecompetition">The competition</h2>
+<p>There are two common WireGuard implementations you’ll run into on Linux today.</p>
+<p><strong>Kernel WireGuard</strong> is the one most people use. Once a packet enters the WireGuard interface, it stays in the kernel. The kernel routes it, encrypts it, wraps it in UDP, and sends it out the NIC.</p>
+<p><strong>wireguard-go</strong> implements the same protocol in userspace. Here <code>wg0</code> is a TUN interface, so plaintext packets cross from the kernel into userspace, get encrypted, and then go back into the kernel through a UDP socket.</p>
+<p>For these tests I’m deliberately looking at a difficult case: <strong>one WireGuard peer pair</strong>. One tunnel between two gateways, with lots of traffic flowing through it.</p>
+<p>That matters because one WireGuard peer normally looks like a single UDP flow: same source and destination addresses, same UDP ports. A NIC doing RSS sees that as one flow and tends to put all of it on one receive queue. So even if the machine has 24 cores, one tunnel doesn’t automatically spread itself across them.</p>
+<p>The test rig is three identical boxes: AMD EPYC 9275F CPUs with 24 cores, ConnectX-6 Dx NICs at 100 GbE, Ubuntu 24.04, all connected through a switch on one tagged VLAN.</p>
+<pre><code>                 WireGuard
+box 3 ──► box 1 ═══════════► box 2
+  ▲         encrypt            decrypt
+  └────────── plaintext ◄────────┘
+</code></pre>
+<p>Box 3 sends plaintext traffic toward box 1. Box 1 encrypts it and sends it through the WireGuard tunnel to box 2. Box 2 decrypts it and sends the plaintext back to box 3, where I count what actually arrived.</p>
+<h2 id="firsthowfastcanthewireactuallygo">First, how fast can the wire actually go?</h2>
+<p>Since this is a 100 GbE test rig, the max number is 148.8 million packets per second. That’s for minimum-size Ethernet frames, though, and WireGuard makes packets quite a bit bigger.</p>
+<p>My smallest plaintext frame is 68 bytes because I’m using a tagged interface. After WireGuard padding, the 16-byte transport header, 16-byte authentication tag, plus UDP, IP and Ethernet, that becomes a 130-byte frame on the wire.</p>
+<p>So for the smallest packets in this test, the real ceiling isn’t 148.8 Mpps. It’s about <strong>83.3 Mpps</strong>.</p>
+<table>
+<thead>
+<tr>
+<th><strong>plaintext</strong></th>
+<th><strong>encrypted on wire</strong></th>
+<th><strong>100 GbE ceiling</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>68 B</td>
+<td>130 B</td>
+<td><strong>83.3 Mpps</strong></td>
+</tr>
+<tr>
+<td>512 B</td>
+<td>578 B</td>
+<td><strong>20.9 Mpps</strong></td>
+</tr>
+<tr>
+<td>1442 B</td>
+<td>1506 B</td>
+<td><strong>8.19 Mpps</strong></td>
+</tr>
+</tbody>
+</table>
+<p>So that’s the target. For tiny packets, “line rate” means about 83 million packets per second.</p>
+<h2 id="startingfromthebottom">Starting from the bottom</h2>
+<p>Before adding WireGuard, I wanted a basic reference point for the rig itself.<br>
+With plain Linux forwarding between the three boxes, no tunnel and no encryption, I get about <strong>15 million packets per second clean</strong>.<br>
+That’s useful to keep in mind, because if I keep Linux in the packet path, that 15 Mpps number is already a pretty important ceiling to beat.</p>
+<p>Then I turned on WireGuard:</p>
+<table>
+<thead>
+<tr>
+<th><br></th>
+<th><strong>packets/sec</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>kernel WireGuard</td>
+<td><strong>550 kpps</strong></td>
+</tr>
+<tr>
+<td>wireguard-go</td>
+<td><strong>350 kpps</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Those are the first numbers to beat.</p>
+<p>One thing jumped out immediately: packet size barely matters. I tried 68-byte packets, 512-byte packets and full-sized packets, and the packet rate stays roughly the same.</p>
+<p>That’s interesting because the large packets contain around thirty times more data to encrypt, but the packets-per-second number hardly moves at all.</p>
+<p>So whatever is limiting us, it probably isn’t the cipher itself. It looks much more like some fixed cost we pay once per packet.</p>
+<p>You can see the effect pretty clearly in bandwidth terms. With full-sized packets, kernel WireGuard is only doing around <strong>6 Gbit/s</strong> of plaintext on a 100 GbE NIC. With tiny packets, it’s around <strong>0.25 Gbit/s</strong>.</p>
+<p>And compared with plain kernel forwarding, kernel WireGuard is about <strong>27× lower</strong> on this small-packet workload: roughly 550 kpps versus 15 Mpps.</p>
+<p>That’s a pretty big gap. So the next question is obvious: <strong>where is all that time going?</strong></p>
+<h2 id="oneverybusycpu">One very busy CPU</h2>
+<p>I was curious where all that time was going. My first assumption was that I’d screwed up the benchmark, which wouldn’t be the first time :)</p>
+<p>Then I looked at the CPUs. On the encrypting gateway, <strong>one core was at 99%</strong>, while almost everything else still had plenty of room. <code>perf</code> pointed straight at:</p>
+<pre><code>wg_packet_tx_worker
+</code></pre>
+<p>WireGuard already parallelizes the expensive part. Encryption gets farmed out across CPUs, but packets for a given peer eventually come back through a serialized per-peer transmit path before they go on the wire.</p>
+<p>That’s a perfectly reasonable design when you have lots of peers, because different peers can make progress independently. In my test, though, I have one very busy peer.</p>
+<p>So the 24-core box is effectively waiting on one serialized part of the pipeline. wireguard-go has a different single-core bottleneck. We’ll get to that in a minute.</p>
+<h2 id="givingwireguardgothenic">Giving wireguard-go the NIC</h2>
+<p>Now for the interesting part: making packetio work with wireguard-go.<br>
+wireguard-go has two really nice interfaces: a <code>conn.Bind</code> for encrypted WireGuard traffic and a <code>tun.Device</code> for plaintext traffic. That’s basically the API boundary.</p>
+<p>I implemented both on top of packetio.  This gives wireguard-go packetio-backed versions of those interfaces, plus the boring but necessary Ethernet and ARP bits that come with owning a NIC.</p>
+<p>Importantly, wireguard-go still does all the actual WireGuard work: handshakes, key rotation, peer configuration, cryptokey routing and <code>wg(8)</code> configuration. I haven’t changed any of that code.</p>
+<p>With <strong>completely unmodified wireguard-go</strong>, I get about <strong>1.5 million packets per second</strong>.</p>
+<p>That’s immediately around 4× faster than stock wireguard-go and 2.7× faster than kernel WireGuard, without changing a single line of WireGuard itself. That’s pretty neat!</p>
+<h3 id="why">Why?</h3>
+<p>The obvious answer is kernel bypass, and yes, that’s part of it. packetio gets rid of a lot of normal kernel work. The NIC DMAs packets straight into memory the application already owns, so there’s no normal socket receive path, no TUN copy, and no trip back through a UDP socket.</p>
+<p>In other words, we avoid quite a bit of work moving packets back and forth between the kernel and userspace. But profiling showed something more interesting.</p>
+<p>In stock wireguard-go, the kernel was only around a third of the CPU cost, while the actual encryption was around <strong>6%</strong>. So simply removing kernel overhead doesn’t really explain a 4× improvement. The important part was <em>where</em> the bottleneck was.</p>
+<p>Every outbound packet in wireguard-go eventually passes through a single goroutine, <code>RoutineReadFromTUN</code>, which reads plaintext from the TUN and feeds it into the encryption workers. Those workers are already parallel, and when I looked at the profiler, most of them were simply waiting for work.</p>
+<p>So the bottleneck wasn’t the cryptography. It was <code>RoutineReadFromTUN</code>, the one goroutine feeding the crypto workers. That gives the whole pipeline one serial stage. No matter how many encryption workers are available behind it, they can only go as fast as that one goroutine can feed them.</p>
+<p>packetio made that serial stage much cheaper, which is how we got to around <strong>1.5 Mpps</strong>.<br>
+But the serial stage was still there. So the next step was pretty obvious: remove it.</p>
+<h2 id="fourpatches">Four patches</h2>
+<p>Up to this point, wireguard-go itself was completely unmodified. From here on out, I started changing it.</p>
+<h3 id="patch1stayonthesamecore">Patch 1: stay on the same core</h3>
+<p>The first patch adds a small fast-path API. It exposes the current session ciphers, a safe way to reserve nonce ranges, access to the replay check, and enough bookkeeping for wireguard-go to keep owning handshakes, rekeying and timers.</p>
+<p>The important part is what happens to the packet.<br>
+Instead of receiving a packet on one goroutine, handing it through shared queues, letting another goroutine encrypt it, and eventually handing it to yet another sender, the packet can stay on the core that received it:</p>
+<pre><code>receive
+  ↓
+encrypt
+  ↓
+transmit
+</code></pre>
+<p>No central reader. No shared encryption handoff. No per-peer sender in the fast path.</p>
+<p>That removes a lot of queueing and synchronization and I assume better cache locality, since the packet stops bouncing between goroutines and CPUs.</p>
+<p>With that first patch alone, throughput jumps from about <strong>1.5 Mpps to roughly 10 Mpps</strong>.</p>
+<p>Pretty good! And then things started to fall apart :)<br>
+At higher rates, the receiving gateway began rejecting huge numbers of perfectly legitimate packets through WireGuard's anti-replay logic.</p>
+<h3 id="patch2and3thereplaywindow">Patch 2 and 3: the replay window</h3>
+<p>Every WireGuard data packet carries a counter. The receiver remembers which counters it has already seen so somebody can't capture a valid encrypted packet and replay it later.</p>
+<p>wireguard-go's replay window is 8,128 counters wide. Normally that's plenty.<br>
+But now I have 16 cores processing packets from the same WireGuard session in parallel. One core might still be working on counter 10,000 while another has already processed counter 18,500. In this case counter 10,000 isn't a replay. It's just late.</p>
+<p>But once it falls far enough behind the highest counter the receiver has seen, it's outside the replay window and gets rejected as too old. That became the next bottleneck.</p>
+<p><strong>Patch 2</strong> changes how the replay check is locked. Instead of taking the replay-window lock once for every packet, the fast path takes it once for a whole batch and checks all the packets together.</p>
+<p>The logic is the same. The difference is that 16 cores are no longer fighting over the same lock once per packet. That made a big difference to peak throughput, but it didn't solve the deeper problem: the replay window itself was still too small for the amount of parallelism we'd introduced.</p>
+<p>So <strong>patch 3</strong> widens the window from 8,128 counters to 131,008. That sounds like a huge change, but the state is just a bitmap. It goes from roughly <strong>1 KB to 16 KB per session</strong>. Pretty cheap.</p>
+<p>I tried removing patch 3 again later just to make sure it was actually doing useful work. Peak performance dropped by about 17%, and the throughput became unstable again as I added queues. So we're keeping that one.</p>
+<h3 id="patch4stoptouchingthetimers">Patch 4: stop touching the timers</h3>
+<p>At this point, something else floated to the top of the profiler: Timers.</p>
+<p>Every batch reports activity back to wireguard-go so keepalives, roaming and rekeying continue to work. At tens of millions of packets per second, that meant multiple cores were touching locks and resetting timers millions of times per second.</p>
+<p>These are timers that expire in 5, 10 or 120 seconds. Resetting them millions of times a second seemed a little excessive :)</p>
+<p><strong>Patch 4</strong> coalesces that bookkeeping so it happens at most once every 50 milliseconds per peer.</p>
+<p>At 16 queues, it barely moves the headline number. At 24 queues, where every core is fighting over the same peer's timer bookkeeping, it matters much more: roughly <strong>34 Mpps without it versus just under 40 Mpps with it</strong>.</p>
+<p>Here's what the progression looks like on the three-box rig with 16 receive queues:</p>
+<table>
+<thead>
+<tr>
+<th><br></th>
+<th><strong>clean</strong></th>
+<th><strong>peak</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>unmodified wireguard-go on packetio</td>
+<td>1.5 M</td>
+<td>1.7 M</td>
+</tr>
+<tr>
+<td>+ patch 1: fast path</td>
+<td>9.8 M*</td>
+<td>10.2 M</td>
+</tr>
+<tr>
+<td>+ patch 2: batched replay check</td>
+<td>—**</td>
+<td>24.4 M</td>
+</tr>
+<tr>
+<td>+ patch 3: wider replay window</td>
+<td><strong>29.7 M</strong></td>
+<td>36.0 M</td>
+</tr>
+<tr>
+<td>+ patch 4: quieter timers</td>
+<td><strong>29.9 M</strong></td>
+<td>37.9 M</td>
+</tr>
+</tbody>
+</table>
+<p><em>'Clean' is the highest rate with under 1% loss, median of three runs; 'peak' is the most that ever came out, whatever the loss.</em></p>
+<p><em>* 2% loss; patch 1 never reached the &lt;1% &quot;clean&quot; threshold.</em><br>
+<em>** No offered rate stayed below 1% loss.</em></p>
+<p>I like this progression because there wasn't one giant rewrite or some magic crypto optimization. Each bottleneck only became visible after the previous one was removed.</p>
+<p>The whole patch series adds about <strong>370 lines</strong> to wireguard-go and changes five existing lines.</p>
+<h2 id="sohowfastisit">So, how fast is it?</h2>
+<p>For 68-byte plaintext packets:</p>
+<table>
+<thead>
+<tr>
+<th><br></th>
+<th><strong>delivered</strong></th>
+<th><strong>vs kernel</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>wireguard-go</td>
+<td>350 kpps</td>
+<td>0.6×</td>
+</tr>
+<tr>
+<td>kernel WireGuard</td>
+<td>550 kpps</td>
+<td>1×</td>
+</tr>
+<tr>
+<td>wgpio, unmodified wireguard-go</td>
+<td>1.5 Mpps</td>
+<td>2.7×</td>
+</tr>
+<tr>
+<td>wgpio + patches, 8 cores</td>
+<td>19.9 Mpps</td>
+<td>36×</td>
+</tr>
+<tr>
+<td>wgpio + patches, 16 cores</td>
+<td><strong>29.9 Mpps</strong></td>
+<td><strong>54×</strong></td>
+</tr>
+</tbody>
+</table>
+<p>At 24 queues it peaks just under <strong>40 Mpps</strong>, although the 16-queue configuration gives me the better clean number on this rig.</p>
+<p>That was fun! And because packetio has multiple backends, I tried those too. On my earlier two-box test.  Direct Verbs landed within half a percent of DPDK. Switching to AF_XDP was slightly more expensive because we still have NAPI kernel work, but still got me about 17Mpps. Pretty cool that it’s so easy to change the driver, and really why packetio exists.</p>
+<h2 id="thenistartedworryingabouttcp">Then I started worrying about TCP</h2>
+<p>At this point I had something really fast, and I was pretty happy with it. But then I started wondering about packet ordering.</p>
+<p>To make one WireGuard tunnel use multiple receive queues,  I sent tunnel traffic using 64 different UDP source ports. That changes the outer 5-tuple enough that RSS on the peer's NIC spreads traffic across queues, which is how we get multiple cores working on the same tunnel.</p>
+<p>Without doing that, one WireGuard tunnel lands on one receive queue and effectively one core does all the work. On my system that tops out at around <strong>3 Mpps</strong>.</p>
+<p>With the source port randomization, I can get into the <strong>30 Mpps</strong> range. So the trick matters a lot and I wanted to keep it.</p>
+<p>The problem was that my first implementation rotated the source port <strong>per packet</strong>. That gave me a beautiful spread across all the RSS queues, but it also meant packets from the same inner TCP connection could land on different receive queues at the remote gateway.</p>
+<p>For example:</p>
+<pre><code>TCP packet 1 → WireGuard UDP source port 51821
+TCP packet 2 → WireGuard UDP source port 51822
+TCP packet 3 → WireGuard UDP source port 51823
+...
+</code></pre>
+<p>At the other side, RSS hashes those packets onto different queues. Different queues are handled by different goroutines, and those goroutines don't necessarily finish at the same time. And there was my packet reordering :(</p>
+<p>Most of my testing up to that point had been UDP packet-rate testing, so everything looked great. To see what this actually meant for real traffic, I put a Linux TCP sender and receiver behind the two gateways and ran <code>iperf3</code>.</p>
+<p>For one (single) inner TCP stream:</p>
+<table>
+<thead>
+<tr>
+<th><br></th>
+<th><strong>Gbit/s</strong></th>
+<th><strong>retransmits</strong></th>
+<th><strong>reorder events</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>kernel WireGuard</td>
+<td>7.9</td>
+<td>15,019</td>
+<td>4</td>
+</tr>
+<tr>
+<td>wgpio, rotating port per packet</td>
+<td>10.9</td>
+<td>28,107</td>
+<td><strong>1,641,020</strong></td>
+</tr>
+<tr>
+<td>wgpio, one port per inner flow</td>
+<td><strong>12.0</strong></td>
+<td><strong>211</strong></td>
+<td><strong>27</strong></td>
+</tr>
+</tbody>
+</table>
+<p>That made the problem pretty obvious. The fix was about fifteen lines.</p>
+<p>Instead of rotating the outer source port for every packet, I hash the <strong>inner flow</strong> and use that hash to pick the WireGuard source port. That means a given inner flow keeps the same outer 5-tuple, so RSS keeps it on the same receive queue at the other gateway.</p>
+<p>You still get parallelism across different inner flows. You just stop spraying packets from the same flow across different CPUs.</p>
+<p>With eight TCP streams, throughput went from an erratic <strong>16–46 Gbit/s to 66 Gbit/s</strong>. With 32 streams, it reached <strong>89 Gbit/s</strong>.</p>
+<p>The tradeoff is the usual RSS tradeoff: one elephant flow stays on one receive core. I'm okay with that. That's a pretty normal design tradeoff, and the flow-affine version is what I'm using now.</p>
+<h2 id="iff_multi_queueandwireguardgo">IFF_MULTI_QUEUE and wireguard-go</h2>
+<p>There was still one result bothering me. Unmodified wireguard-go on packetio topped out at around <strong>1.5 million packets per second</strong>.</p>
+<p>I started wondering how much of that was really packetio, and how much was something simpler that I had accidentally fixed along the way.</p>
+<p>So I put a normal TUN interface back on the plaintext side. packetio still handled the encrypted traffic from the NIC, but plaintext packets went through a regular kernel TUN again, much closer to how wireguard-go normally runs.</p>
+<p>With wireguard-go's usual single-queue TUN, I got about <strong>450 kpps</strong>. That looked familiar.</p>
+<p>Then I opened the TUN using Linux's multi-queue support and added a reader for each queue. <strong>1.5 Mpps.</strong></p>
+<p>Interesting. So I took packetio out completely. Upstream wireguard-go. Normal UDP sockets. Normal kernel networking. The only change was opening the TUN with <code>IFF_MULTI_QUEUE</code> and giving it multiple readers.</p>
+<p>The result was the same: <strong>1.5 million packets per second</strong>, on about five cores.<br>
+That's roughly three times kernel WireGuard on this particular single-peer, small-packet workload, with wireguard-go's protocol and packet-processing code otherwise unchanged.</p>
+<p>I think that's one of the most useful results from this whole project.<br>
+You don't need DPDK if all you want is to get stock wireguard-go from a few hundred thousand packets per second to around <strong>1.5 Mpps</strong>, just stop feeding it through a single TUN queue.</p>
+<p>After that, both versions hit the same next bottleneck: <code>RoutineReadFromTUN</code>, wireguard-go's central plaintext reader, at around 1.5 to 1.6 million packets per second.</p>
+<p>Same path, same wall. So the lesson is pretty simple: multi-queue TUN gets you to about 1.5 Mpps with otherwise stock wireguard-go. If you want to go beyond that, you need to change the architecture.</p>
+<p>That's where the fast path and packetio start to matter, and where the numbers jump from around 1.5 Mpps into the tens of millions.</p>
+<h2 id="sowhendoespacketiomatter">So when does packetio matter?</h2>
+<p>This experiment gave me a much cleaner answer than I had when I started. Up to about <strong>1.5 million packets per second</strong>, you don't really need packetio. A multi-queue TUN gets stock wireguard-go there with normal UDP sockets and the normal Linux networking stack.</p>
+<p>Past that point, though, you have to change the architecture.</p>
+<p>The first fast-path patch gets us to roughly <strong>10 Mpps</strong>. Once the replay-window and timer bottlenecks are fixed as well, that climbs to around <strong>30 Mpps clean</strong>, with peaks just under <strong>40 Mpps</strong>.</p>
+<p>At that point we're more than an order of magnitude beyond stock wireguard-go.<br>
+But there is a tradeoff. The fastest version of <code>wgpio</code> keeps the packet path entirely in userspace. It owns the NIC and forwards packets itself, which is exactly why it can go so fast.</p>
+<p>It also means Linux no longer sees that transit traffic. Your normal routing table isn't forwarding it. Your firewall isn't filtering it. <code>tcpdump</code> on the host won't see those packets either.</p>
+<p>If you want to keep those Linux features, you can put the plaintext side back through a TUN interface and hand the traffic back to the kernel. That still performs well, but you pay for the extra kernel crossings.</p>
+<p>That's really the tradeoff with userland networking: the further you move the dataplane out of the kernel, the more performance and control you get, but the more of the kernel's networking machinery you have to replace yourself.</p>
+<h2 id="caveats">Caveats</h2>
+<p>A few things to keep in mind. <strong>One peer pair.</strong> All of these tests use a single WireGuard peer pair. That's deliberately the difficult case. With hundreds of peers, you get much more natural parallelism.</p>
+<p><strong>No GSO or TSO.</strong> One frame in, one frame out. I left segmentation offload out on purpose because I was mostly interested in packets per second, and that's where the bottlenecks in this post really show up.</p>
+<p><strong>IPv4 only.</strong> That's all I tested here.</p>
+<p><strong>Flow affinity has a tradeoff.</strong> Keeping one inner flow on one outer UDP tuple means one elephant flow also stays on one receive core. That's intentional, and it's a pretty normal RSS-style tradeoff.</p>
+<p>And finally, <strong>the patches touch some important WireGuard state</strong>, especially the nonce counter and anti-replay logic. I've tried to be careful, and added tests around the dangerous parts. But this is still a hobby project. It has not been independently audited, and I built it mostly to see what was possible. If you're thinking about using these patches somewhere important, please review them very carefully.</p>
+<h2 id="wrappingup">Wrapping up</h2>
+<p>I started this experiment because I wanted to know whether packetio could carry a real application instead of just another packet generator. Now we know it can.</p>
+<p>A single WireGuard tunnel gets essentially line rate on a 100 GbE  link once the packets get moderately large, and with small packets it gets to around <strong>30 million packets per second</strong>, with peaks close to <strong>40 Mpps</strong>. For comparison, kernel WireGuard on the same workload did about <strong>550 kpps</strong>. So we're talking roughly <strong>54× more packets per second clean</strong>, and more than <strong>70× at peak</strong>.</p>
+<p>But the part I found most interesting wasn't really the headline number. It was how little code it took, and how different the bottlenecks were from what I expected going in.</p>
+<p>I assumed the crypto would be the hard part. It wasn't. One goroutine was holding back dozens of encryption workers. A replay window that had always been more than large enough suddenly wasn't. Timer bookkeeping started to matter. And my clever RSS trick for spreading one tunnel across many cores turned out to be terrible for TCP ordering.</p>
+<p>We worked through each of those one at a time, and I'm really happy with where it ended up.</p>
+<p>The other surprise is that one of the biggest improvements doesn't need packetio at all. Give stock wireguard-go a multi-queue TUN and it goes from a few hundred thousand packets per second to around <strong>1.5 Mpps</strong> on this workload.</p>
+<p>If you want to go much beyond that, though, you have to start changing the datapath. That's where keeping more of the packet processing in userspace, using something like packetio over Direct Verbs, AF_XDP or DPDK, starts to make a real difference.</p>
+<p>The code is at <a href="https://github.com/atoonk/packetio-wireguard">github.com/atoonk/packetio-wireguard</a>. The repo includes the gateway, the four wireguard-go patches, the benchmark harness and the results.</p>
+<p>Anyway, that's it. You made it to the end :) Thanks for reading.<br>
+Let's push some packets, encrypted this time.</p>
+<p>Cheers,<br>
+Andree</p>
+<!--kg-card-end: markdown--></div>
     </div>
 
     <footer class="post-footer u-container u-maxWidth740">
             <div class="post-tags buttonSet u-marginTop30">
-        <a href="../tag/networking/index.html" title="networking" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="networking" data-event-non-interaction="true">networking</a>
+        <a href="../tag/go/index.html" title="Go" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="Go" data-event-non-interaction="true">Go</a><a href="../tag/dpdk/index.html" title="dpdk" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="dpdk" data-event-non-interaction="true">dpdk</a><a href="../tag/wireguard/index.html" title="wireguard" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="wireguard" data-event-non-interaction="true">wireguard</a><a href="../tag/networking/index.html" title="networking" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="networking" data-event-non-interaction="true">networking</a><a href="../tag/xdp/index.html" title="xdp" class="button button--tags godo-tracking" data-event-category="Article" data-event-action="Tags" data-event-label="xdp" data-event-non-interaction="true">xdp</a>
     </div>
 
         <hr>
@@ -315,39 +598,22 @@ nat {
                 <div class="u-flex u-relative godo-tracking u-marginBottom30"
     data-event-category="Article"
     data-event-action="Previous article"
-    data-event-label="http://toonk.io/linux-kernel-and-measuring-network-throughput/"
+    data-event-label="http://toonk.io/blog-watch-the-net/"
     data-event-non-interaction="true">
 
-    <a href="../linux-kernel-and-measuring-network-throughput/index.html" class="prev-next-image-link u-relative u-bgColorGrayLight u-flex0" aria-label="Linux Kernel and Measuring network throughput.">
-        <img class="u-absolute u-image blur-up lazyload" data-src="https://images.unsplash.com/photo-1448056975861-28196f26abd6?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" alt="Linux Kernel and Measuring network throughput."/>
+    <a href="../blog-watch-the-net/index.html" class="prev-next-image-link u-relative u-bgColorGrayLight u-flex0" aria-label="Watch the Net: measuring the pulse of the Internet">
+        <img class="u-absolute u-image blur-up lazyload" data-src="https://images.unsplash.com/photo-1648075082746-2511f68e57b5?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlciUyMGxpZ2h0aG91c2V8ZW58MHx8fHwxNzg5OTMyNTgwfDA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" alt="Watch the Net: measuring the pulse of the Internet"/>
     </a>
 
     <div class="prev-next-body u-paddingLeft20 u-flex1">
         <div class="u-fontSizeSmaller u-lineHeight1 u-textMuted u-marginBottom10">Previous article</div>
-        <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../linux-kernel-and-measuring-network-throughput/index.html" class="u-relative zindex3">Linux Kernel and Measuring network throughput.</a></h2>
-        <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">can Linux route at line-rate between two network interfaces? That’s the question we will try to answer in the next few minutes.</p>
+        <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../blog-watch-the-net/index.html" class="u-relative zindex3">Watch the Net: measuring the pulse of the Internet</a></h2>
+        <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">Today I'm releasing a fun new project I've been working on called Watch the Net. It's a live view of what's happening on the Internet,</p>
     </div>
 
-    <a href="../linux-kernel-and-measuring-network-throughput/index.html" aria-label="Linux Kernel and Measuring network throughput." class="u-absolute0 zindex2"></a>
+    <a href="../blog-watch-the-net/index.html" aria-label="Watch the Net: measuring the pulse of the Internet" class="u-absolute0 zindex2"></a>
 </div>
-                <div class="u-flex u-relative godo-tracking "
-    data-event-category="Article"
-    data-event-action="Next article"
-    data-event-label="http://toonk.io/building-an-xdp-express-data-path-based-bgp-peering-router/"
-    data-event-non-interaction="true">
-
-    <a href="../building-an-xdp-express-data-path-based-bgp-peering-router/index.html" class="prev-next-image-link u-relative u-bgColorGrayLight u-flex0" aria-label="Building an XDP (eXpress Data Path) based BGP peering router">
-        <img class="u-absolute u-image blur-up lazyload" data-src="https://images.unsplash.com/photo-1555496710-2660a86c4557?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;2000&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ" alt="Building an XDP (eXpress Data Path) based BGP peering router"/>
-    </a>
-
-    <div class="prev-next-body u-paddingLeft20 u-flex1">
-        <div class="u-fontSizeSmaller u-lineHeight1 u-textMuted u-marginBottom10">Next article</div>
-        <h2 class="prev-next-title u-contentTitle u-marginBottom10 u-fontSize21"><a href="../building-an-xdp-express-data-path-based-bgp-peering-router/index.html" class="u-relative zindex3">Building an XDP (eXpress Data Path) based BGP peering router</a></h2>
-        <p class="prev-next-excerpt u-fontSizeSmall u-textMuted u-lineClamp2 u-lineHeightTight">Over the last few years, we’ve seen an increase in projects and initiatives to speed up networking in Linux. Because the Linux kernel is</p>
-    </div>
-
-    <a href="../building-an-xdp-express-data-path-based-bgp-peering-router/index.html" aria-label="Building an XDP (eXpress Data Path) based BGP peering router" class="u-absolute0 zindex2"></a>
-</div>        </div>
+        </div>
         <hr>
     </footer>
 </article>
@@ -363,30 +629,30 @@ nat {
             </div>
 
             <div class="col s12 m6 l4 u-flex">
-                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/wireguard-dpdk/" data-event-non-interaction="true">
-    <a href="../wireguard-dpdk/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
+                <div class="cr u-overflowHidden u-flexColumnTop u-relative u-flex1 godo-tracking" data-event-category="Article" data-event-action="Related Posts" data-event-label="http://toonk.io/blog-watch-the-net/" data-event-non-interaction="true">
+    <a href="../blog-watch-the-net/index.html" class="cr-img u-relative u-overflowHidden u-sizeFullWidth u-block">
         <img class="cr-imagen u-absolute u-image u-block blur-up lazyload"
-            src="https://images.unsplash.com/photo-1486411959861-41a3eb8da389?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIxfHx2YW5jb3V2ZXIlMjBib2F0fGVufDB8fHx8MTc5MDU2NDY1M3ww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000"
-            srcset="https://images.unsplash.com/photo-1486411959861-41a3eb8da389?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIxfHx2YW5jb3V2ZXIlMjBib2F0fGVufDB8fHx8MTc5MDU2NDY1M3ww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000"
-            data-srcset="https://images.unsplash.com/photo-1486411959861-41a3eb8da389?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIxfHx2YW5jb3V2ZXIlMjBib2F0fGVufDB8fHx8MTc5MDU2NDY1M3ww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000 300w,https://images.unsplash.com/photo-1486411959861-41a3eb8da389?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDIxfHx2YW5jb3V2ZXIlMjBib2F0fGVufDB8fHx8MTc5MDU2NDY1M3ww&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000 600w"
+            src="https://images.unsplash.com/photo-1648075082746-2511f68e57b5?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlciUyMGxpZ2h0aG91c2V8ZW58MHx8fHwxNzg5OTMyNTgwfDA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000"
+            srcset="https://images.unsplash.com/photo-1648075082746-2511f68e57b5?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlciUyMGxpZ2h0aG91c2V8ZW58MHx8fHwxNzg5OTMyNTgwfDA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000"
+            data-srcset="https://images.unsplash.com/photo-1648075082746-2511f68e57b5?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlciUyMGxpZ2h0aG91c2V8ZW58MHx8fHwxNzg5OTMyNTgwfDA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000 300w,https://images.unsplash.com/photo-1648075082746-2511f68e57b5?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDJ8fHZhbmNvdXZlciUyMGxpZ2h0aG91c2V8ZW58MHx8fHwxNzg5OTMyNTgwfDA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000 600w"
             data-sizes="(max-width: 1000px) 400px, 600px"
-            alt="WireGuard at 40 Mpps with DPDK, in Go"
+            alt="Watch the Net: measuring the pulse of the Internet"
         />
     </a>
 
     <div class="cr-inner u-padding15 u-flexColumnTop">
         <div class="cr-body">
-                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../wireguard-dpdk/index.html">WireGuard at 40 Mpps with DPDK, in Go</a></h2>
+                <h2 class="cr-t u-fontSize21 u-lineClamp2 u-contentTitle" style="margin-bottom:5px"><a href="../blog-watch-the-net/index.html">Watch the Net: measuring the pulse of the Internet</a></h2>
         </div>
 
         <div class="hh-date u-flexCenter u-textMuted u-fontSizeSmaller">
-    <time class="datetime u-textCapitalize" datetime="2026-09-28">28 Sep 2026</time>
+    <time class="datetime u-textCapitalize" datetime="2026-09-20">20 Sep 2026</time>
     <span class="bull">&bull;</span>
-    <span class="readingTime" style="cursor:default" title="14 min read">14 min read</span>
+    <span class="readingTime" style="cursor:default" title="9 min read">9 min read</span>
     
 </div>    </div>
 
-    <a href="../wireguard-dpdk/index.html" class="u-absolute0 zindex3" aria-label="WireGuard at 40 Mpps with DPDK, in Go"></a>
+    <a href="../blog-watch-the-net/index.html" class="u-absolute0 zindex3" aria-label="Watch the Net: measuring the pulse of the Internet"></a>
 </div>
             </div>
             <div class="col s12 m6 l4 u-flex">
@@ -539,7 +805,7 @@ nat {
     <div class="share-sticky u-textAlignRight is-visible">
     <div class="share-sticky-wrap buttonSet u-container u-maxWidth1200">
         <span class="u-textMuted u-fontSize15 u-paddingRight10 u-hide-before-md">Share this article:</span>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/kernel-bypass-networking-with-fd-io-and-vpp/"
+        <a href="https://www.facebook.com/sharer/sharer.php?u=http://toonk.io/wireguard-dpdk/"
             target="_blank"
             rel="noopener noreferrer"
             title="Share on Facebook"
@@ -551,7 +817,7 @@ nat {
             <svg class="icon"><use xlink:href="#icon-facebook"></use></svg>
             Share
         </a>
-        <a href="https://twitter.com/share?text=Kernel%20bypass%20networking%20with%20FD.io%20and%C2%A0VPP.&amp;url=http://toonk.io/kernel-bypass-networking-with-fd-io-and-vpp/"
+        <a href="https://twitter.com/share?text=WireGuard%20at%2040%20Mpps%20with%20DPDK%2C%20in%20Go&amp;url=http://toonk.io/wireguard-dpdk/"
             target="_blank"
             rel="noopener noreferrer"
             title="Share on Twitter"
@@ -563,7 +829,7 @@ nat {
             <svg class="icon"><use xlink:href="#icon-twitter"></use></svg>
             Tweet
         </a>
-        <a href="whatsapp://send?text=http://toonk.io/kernel-bypass-networking-with-fd-io-and-vpp/"
+        <a href="whatsapp://send?text=http://toonk.io/wireguard-dpdk/"
             target="_blank"
             rel="noopener noreferrer"
             class="godo-tracking button button--s u-textColorWhite bg-whatsapp u-hide-after-lg"
@@ -706,8 +972,8 @@ var followSocialMedia = {
     if (typeof disqusShortName === 'undefined') return;
 
     var disqus_config = function () {
-        this.page.url = 'http://toonk.io/kernel-bypass-networking-with-fd-io-and-vpp/';
-        this.page.identifier = 'ghost-5f53d4c53680d46e73ec6097';
+        this.page.url = 'http://toonk.io/wireguard-dpdk/';
+        this.page.identifier = 'ghost-6ab9d722ed81a12c01da682b';
     };
 
     d.querySelector('.js-comments').classList.remove('u-hide')
