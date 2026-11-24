@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html amp lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Five ways to authenticate a Tailscale device</title>
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <link rel="icon" href="../../favicon.png" type="image/png" />
+    <link rel="canonical" href="../index.html" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    
+    <meta property="og:site_name" content="Andree&#x27;s Musings" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Five ways to authenticate a Tailscale device" />
+    <meta property="og:description" content="From a simple browser login to creating short-lived, user-owned machines with one click. I&#x27;ve been using Tailscale for years, and quite a bit more since joining Tailscale earlier this year. For most of that time, getting a device onto my tailnet was simple: install Tailscale, sign in through a browser," />
+    <meta property="og:url" content="http://toonk.io/five-ways-to-authenticate-a-tailscale-device-from-laptops-to-on-demand-sandboxes/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1486325212027-8081e485255e?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDV8fHRvcm9udG98ZW58MHx8fHwxNzk1NTM0MzEwfDA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta property="article:published_time" content="2026-11-24T15:32:18.000Z" />
+    <meta property="article:modified_time" content="2026-11-24T15:33:59.000Z" />
+    <meta property="article:tag" content="tailscale" />
+    <meta property="article:tag" content="networking" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Five ways to authenticate a Tailscale device" />
+    <meta name="twitter:description" content="From a simple browser login to creating short-lived, user-owned machines with one click. I&#x27;ve been using Tailscale for years, and quite a bit more since joining Tailscale earlier this year. For most of that time, getting a device onto my tailnet was simple: install Tailscale, sign in through a browser," />
+    <meta name="twitter:url" content="http://toonk.io/five-ways-to-authenticate-a-tailscale-device-from-laptops-to-on-demand-sandboxes/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1486325212027-8081e485255e?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDV8fHRvcm9udG98ZW58MHx8fHwxNzk1NTM0MzEwfDA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Andree Toonk" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="tailscale, networking" />
+    <meta name="twitter:site" content="@atoonk" />
+    <meta name="twitter:creator" content="@atoonk" />
+    <meta property="og:image:width" content="2000" />
+    <meta property="og:image:height" content="1333" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Andree&#x27;s Musings",
+        "url": "http://toonk.io/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "http://toonk.io/content/images/2024/03/toonk-io-icon-1.png",
+            "width": 60,
+            "height": 60
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Andree Toonk",
+        "image": {
+            "@type": "ImageObject",
+            "url": "http://toonk.io/content/images/2020/09/andreetoonk.png",
+            "width": 360,
+            "height": 360
+        },
+        "url": "http://toonk.io/author/andree/",
+        "sameAs": [
+            "http://toonk.io/about/",
+            "https://twitter.com/atoonk"
+        ]
+    },
+    "headline": "Five ways to authenticate a Tailscale device",
+    "url": "http://toonk.io/five-ways-to-authenticate-a-tailscale-device-from-laptops-to-on-demand-sandboxes/",
+    "datePublished": "2026-11-24T15:32:18.000Z",
+    "dateModified": "2026-11-24T15:33:59.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1486325212027-8081e485255e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDV8fHRvcm9udG98ZW58MHx8fHwxNzk1NTM0MzEwfDA&ixlib=rb-4.1.0&q=80&w=2000",
+        "width": 2000,
+        "height": 1333
+    },
+    "keywords": "tailscale, networking",
+    "description": "From a simple browser login to creating short-lived, user-owned machines with\none click.\n\nI&#x27;ve been using Tailscale for years, and quite a bit more since joining\nTailscale earlier this year. For most of that time, getting a device onto my\ntailnet was simple: install Tailscale, sign in through a browser, done.\n\nBut what if the device isn&#x27;t your laptop? Maybe it&#x27;s a CI runner, a hundred\nservers, or a disposable sandbox someone just created through a web portal.\n\nThat last one is what got me experi",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://toonk.io/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.34" />
+    <link rel="alternate" type="application/rss+xml" title="Andree&#x27;s Musings" href="../../rss/index.html" />
+
+    <link href="https://fonts.googleapis.com/css?family=Domine|Rubik:400,500,700&display=swap" rel="stylesheet">
+
+
+    <style amp-custom>.u-bgColor{background-color:#161D25}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}[hidden],template{display:none}.kg-bookmark-container,body,figcaption,h1,h2,h3,h4,h5,h6{font-family:Rubik,Whitney SSm A,Whitney SSm B,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif}.article-excerpt{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif}.u-flexCenter{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex}.u-block{display:block}.u-relative{position:relative}.u-overflowHidden{overflow:hidden}.u-fontSizeSmaller{font-size:.875rem}.u-flex1{-webkit-box-flex:1;flex:1 1 auto}.u-absolute{position:absolute}.u-textCenter{text-align:center}.u-marginTop30{margin-top:30px}.u-container{margin-left:auto;margin-right:auto;padding-left:16px;padding-right:16px}*,:after,:before{box-sizing:border-box}body{font-size:1rem;font-style:normal;font-weight:400;letter-spacing:0;line-height:1.5em;text-rendering:optimizeLegibility;-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;-ms-text-size-adjust:100%;text-size-adjust:100%;color:#212529}a{color:#00a562;text-decoration:none;word-break:break-word}a:active,a:hover{outline:0}blockquote{border-left:4px solid #212529;font-size:1.125rem;font-style:italic;margin-left:-5px;margin-right:0;padding-bottom:2px;padding-left:20px}figure{margin:0;padding:0}img{-o-object-fit:cover;object-fit:cover;-o-object-position:center;object-position:center}figcaption{color:#6c757d;display:block;font-size:.875rem;font-style:normal;font-weight:400;margin-top:10px;text-align:center;width:100%}h1,h2,h3,h4,h5,h6{color:#111;font-style:normal;font-weight:700;line-height:1.2;margin:25px 0 0;word-break:break-word}h1{font-size:2rem}h2{font-size:1.75rem}h3{font-size:1.5rem}h4{font-size:1.375rem}h5{font-size:1.25rem}h6{font-size:1.125rem}strong{font-weight:700}p{margin:20px 0 0}hr{box-sizing:content-box;height:0;margin:1rem 0;overflow:visible;border:0;border-top:1px solid rgba(0,0,0,.1)}mark{background-color:transparent;background-image:linear-gradient(180deg,#d7fdd3,#d7fdd3);color:rgba(0,0,0,.8)}code,pre{font-family:Menlo,Courier,monospace;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-ms-hyphens:none;hyphens:none}p code{border-radius:2px;padding:1px 6px}p code,pre{background:#2a3644;color:#e5eff5;font-size:.875rem}pre{overflow-x:auto;margin:0;padding:20px;border:none;line-height:1.6em}pre code{padding:0;background:transparent}svg{width:100%;height:100%}svg:not(:root){overflow:hidden}table{border-collapse:collapse;border-spacing:0;display:inline-block;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;font-size:1rem;line-height:1.5;margin:20px 0 0;max-width:100%;overflow-x:auto;vertical-align:top;white-space:nowrap;width:auto;-webkit-overflow-scrolling:touch}table td,table th{padding:6px 13px;border:1px solid #dfe2e5}table tr:nth-child(2n){background-color:#f6f8fa}table th{letter-spacing:.0125rem;text-transform:uppercase;font-weight:500}.header{position:relative;width:100%;height:50px;line-height:1}.logo-link{color:#fff;font-size:1.5rem;font-weight:500}.social-media a{background:#212529;border-radius:4px;color:#fff;display:inline-block;height:36px;margin:0 2px;padding:8px;vertical-align:middle;width:36px}.social-media svg{fill:#fff;stroke:none}.sidebar{width:280px;background:#fff}.sidebar ul{list-style:none;list-style-image:none;margin:18px 0 20px;padding:0}.sidebar ul li a{padding:6px 20px;font-weight:500;font-size:1rem;display:block}.sidebar .social-media{padding:20px;border-top:1px solid #ddd}.close-sidebar{height:50px;font-size:1.5625rem;line-height:3.125rem;text-align:right;padding-right:20px;color:#fff}.hamburgermenu{background-color:transparent;border:none;padding:0;height:48px;position:relative;-webkit-transition:-webkit-transform .4s;transition:-webkit-transform .4s;transition:transform .4s;transition:transform .4s,-webkit-transform .4s;width:48px;margin-right:-15px}.hamburgermenu span{background-color:#fff;display:block;height:2px;left:14px;margin-top:-1px;position:absolute;top:50%;width:20px}.hamburgermenu span:first-child{-webkit-transform:translateY(-6px);transform:translateY(-6px)}.hamburgermenu span:last-child{-webkit-transform:translateY(6px);transform:translateY(6px)}.main{max-width:500px;margin:0 auto}.article{padding-top:25px}.article-title{margin-top:0}.article-excerpt{margin-bottom:20px;margin-top:15px;color:#6c757d;font-size:1.25rem;line-height:1.4}.article-meta{color:#6c757d;margin:15px 0;font-size:.875rem}.article-body{font-family:Domine,Mercury SSm A,Mercury SSm B,Georgia,serif;line-height:1.7em;font-size:1.125rem;padding:20px 1rem}.article-body>*{margin-bottom:28px}.article-body a:not(.kg-bookmark-container){word-break:break-word;text-decoration:underline}.article-body ol,.article-body ul{padding-left:20px}.article-body ol li,.article-body ul li{margin-bottom:5px}.button--tags{border-radius:3px;color:#212529;display:inline-block;font-size:.875rem;font-weight:500;height:37px;line-height:2.1875rem;margin:0 8px 8px 0;padding:0 10px;border:2px solid #212529}.button--tags:before{content:"#"}.share-title{display:block;margin-bottom:8px}amp-social-share.custom-style{background-color:teal;background-image:url(https://raw.githubusercontent.com/google/material-design-icons/master/social/1x_web/ic_share_white_48dp.png);background-repeat:no-repeat;background-position:50%;background-size:contain}amp-social-share.rounded{border-radius:10%;background-size:85%}.related{padding-top:40px;padding-bottom:20px;margin-top:20px;background:#efefef}.related-title{border-bottom:1px solid rgba(0,0,0,.15);padding-bottom:15px;margin-bottom:30px;color:#212529;font-weight:500;font-size:1.25rem}.story-border{border-left:3px solid #cc116e;bottom:0;color:rgba(0,0,0,.2);font-size:2.25rem;font-weight:700;left:0;padding:15px 10px 10px;top:0;-webkit-text-fill-color:transparent;-webkit-text-stroke-width:1.4px;-webkit-text-stroke-color:#888}.story:nth-child(3n) .story-border{border-color:#f59e00}.story:nth-child(3n+2) .story-border{border-color:#26a8ed}.story-link{background-color:#fff;border-bottom:1px solid #e2e0e0;box-shadow:0 1px 7px rgba(0,0,0,.05);min-height:50px;padding:15px 15px 15px 55px}.story-title{color:#212529;line-height:1.2;font-size:1.0625rem;font-weight:500;margin:0}.kg-bookmark-container{display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;flex-direction:column;border:1px solid rgba(0,0,0,.1)}.kg-bookmark-content{padding:20px;-webkit-box-ordinal-group:2;order:1}.kg-bookmark-title{font-weight:500;line-height:1.2;font-size:1.125rem}.kg-bookmark-description{color:#6c757d;line-height:1.4;margin-top:10px;font-size:.875rem}.kg-bookmark-metadata{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;font-size:.875rem;margin-top:10px}.kg-bookmark-icon{margin-right:5px}.kg-bookmark-author:after{content:"•";margin:0 6px}.footer{background-color:#efefef;color:rgba(0,0,0,.44);padding-top:20px;font-size:.9375rem;padding-bottom:45px}</style>
+
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
+    <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+
+    <script async custom-element="amp-youtube" src="https://cdn.ampproject.org/v0/amp-youtube-0.1.js"></script>
+</head>
+<body class="amp-template">
+    <header class="header u-bgColor u-flexCenter u-container">
+    <div class="u-flex1">
+
+
+
+        <a href="../../index.html" class="logo-link">Andree&#x27;s Musings</a>
+    </div>
+
+    <button class="hamburgermenu" on="tap:sidenav.open" tabindex="0"><span></span><span></span><span></span></button>
+
+</header>
+
+    <main class="main">
+        
+<article class="article">
+    <header class="article-header u-container">
+        <h1 class="article-title">Five ways to authenticate a Tailscale device</h1>
+
+        
+
+        <hr>
+
+        <div class="article-meta">
+            <span class="author-name">By <a href="../../author/andree/index.html">Andree Toonk</a></span>
+
+            <span class="timestamp">
+                <time class="datetime" datetime="2026-11-24">2 minutes ago</time>
+            </span>
+
+            
+                <span>in</span>
+                <span class="categories"><a href="../../tag/tailscale/index.html" title="tailscale">tailscale</a></span>
+            
+        </div>
+    </header>
+
+        <figure class="article-image u-block u-marginTop30">
+            <amp-img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;fit&#x3D;max&amp;fm&#x3D;jpg&amp;ixid&#x3D;M3wxMTc3M3wwfDF8c2VhcmNofDV8fHRvcm9udG98ZW58MHx8fHwxNzk1NTM0MzEwfDA&amp;ixlib&#x3D;rb-4.1.0&amp;q&#x3D;80&amp;w&#x3D;2000" width="600" height="350" layout="responsive" alt="Five ways to authenticate a Tailscale device"></amp-img>
+        </figure>
+
+    <div class="article-body u-container"> <p><em>From a simple browser login to creating short-lived, user-owned machines with one click.</em></p><p>I've been using Tailscale for years, and quite a bit more since joining Tailscale earlier this year. For most of that time, getting a device onto my tailnet was simple: install Tailscale, sign in through a browser, done.</p><p>But what if the device isn't your laptop? Maybe it's a CI runner, a hundred servers, or a disposable sandbox someone just created through a web portal.</p><p>That last one is what got me experimenting. I built a little Firecracker demo where you click <strong>Create sandbox</strong>, approve a Tailscale prompt, and a few seconds later a fresh VM joins your tailnet <strong>as your device</strong>, marked as a sandbox so you can give it different access than your laptop. No auth keys to copy around, and no Tailscale credentials inside the VM. When you're done, you destroy it and the ephemeral device disappears too.</p><p>It turns out there are quite a few ways to authenticate a Tailscale client, from the obvious to some surprisingly clever ones. I figured it'd be useful to write down all(?) five of them, how they work, and when you might use each.</p><p>We'll start with the familiar stuff and work our way toward that sandbox demo. Let's dive in!</p><figure class="kg-card kg-embed-card"><amp-youtube width="356" height="200" title="Five ways to authenticate a Tailscale device" data-videoid="opP_rAZDNg8" layout="responsive"></amp-youtube></figure><h2 id="first-what-does-authenticating-a-device-actually-mean">First, what does authenticating a device actually mean?</h2><p>Before looking at the different methods, let's quickly cover what happens when a device joins a tailnet.</p><p>Tailscale uses WireGuard for encrypted connections between devices. Each device generates a WireGuard key pair. The private key stays on the device, while the public key can be shared with other devices it is allowed to communicate with.</p><p>But before Tailscale can register a new device, it needs to establish its identity. <br />In simplified terms:</p><ol><li>The Tailscale client generates its cryptographic keys.</li><li>The client authenticates with Tailscale's coordination service.</li><li>Tailscale associates the device with an identity on your tailnet.</li><li>Based on your access policies, other devices can learn about it and establish encrypted connections.</li></ol><p>The interesting part for this post is step two: <strong>How does the client prove it's allowed to join?</strong></p><p>There's another important distinction worth understanding upfront. A device can belong to either a <strong>user</strong> or a <strong>tag</strong>.</p><p>A user-owned device might belong to <code>alice@example.com</code>. It gets access based on Alice's identity and whatever policies apply to her.</p><p>A tagged device might belong to <code>tag:server</code> or <code>tag:ci</code>. Tags are identities for machines and services rather than people. I think of them as service accounts, making them particularly useful for infrastructure that shouldn't depend on an individual employee's account. <br />Keep that distinction in mind. It'll come up again.</p><h2 id="1-interactive-login-the-one-everyone-knows">1. Interactive login: the one everyone knows</h2><p>This is where most of us started. Install Tailscale and run:</p><pre><code class="language-bash">sudo tailscale up
+</code></pre><p>You'll get something like:</p><pre><code class="language-text">To authenticate, visit:
+
+https://login.tailscale.com/a/1f3c9a7b2d4e
+</code></pre><p>Open the URL, sign in using your identity provider (Google, Microsoft, Okta, GitHub, etc.), and your device joins the tailnet.  On macOS, Windows, or mobile, it's essentially the same process, just with a login button instead of a terminal command.</p><p><strong>The device becomes associated with the user who signed in. </strong><br />For personal devices like laptops, desktops, and phones, this is generally exactly what you want. <br />Simple enough. But it requires a person to authenticate when registering a new device. That's fine for a laptop, less convenient when you're launching a hundred servers or creating temporary machines automatically.</p><p>So how do we take the human out of the process?</p><h2 id="2-auth-keys-authenticate-without-a-browser">2. Auth keys: authenticate without a browser</h2><p>The next option is probably familiar to anyone who has automated Tailscale deployments. <br />Instead of authenticating interactively, you generate an <strong>auth key</strong> ahead of time. You can create one in the Tailscale admin console under <strong>Keys</strong>, or through the API.<br />Then:</p><pre><code class="language-bash">sudo tailscale up --auth-key=tskey-auth-...
+</code></pre><p>That's it. No browser, no user interaction. <br />Auth keys are useful for cloud-init, containers, server deployments, and CI/CD systems.</p><p>There are a few options worth knowing about:</p><ul><li><strong>One-off or reusable:</strong> A one-off key registers one device. A reusable key can register multiple devices.</li><li><strong>Ephemeral:</strong> Useful for temporary workloads. The device is automatically removed after it goes offline.</li><li><strong>Pre-approved:</strong> Skips manual device approval, if your tailnet requires it.</li><li><strong>Tagged:</strong> Registers the device with a tag such as <code>tag:server</code> instead of an individual user.</li></ul><p>That last option is particularly useful. Without a tag, a device registered using an auth key belongs to the user who created the key. With a tag, it belongs to the tag instead. There's one limitation, though.<br /><br /><strong>Auth keys expire after at most 90 days.</strong></p><p>That doesn't mean devices already registered with the key suddenly disconnect. It just means the key can no longer register <em>new</em> devices. Existing devices follow their own node-key expiration rules.</p><p>For a one-time deployment, that's probably fine. But if you're continuously bringing up new machines, rotating auth keys every few months gets a little annoying. Fortunately, there's another way.</p><h2 id="3-oauth-clients-long-lived-credentials-for-automation">3. OAuth clients: long-lived credentials for automation</h2><p>Tailscale also supports <strong>OAuth clients</strong>, essentially service credentials that can authenticate to the Tailscale API. You create one under <strong>Trust credentials</strong> in the admin console, and Tailscale gives you:</p><ul><li>A <strong>client ID</strong>, identifying the OAuth client.</li><li>A <strong>client secret</strong>, which your automation needs to keep secure.</li></ul><p>You also configure its permissions, or scopes. To register devices, you need the <code>auth_keys</code> scope and permission to use one or more tags, such as <code>tag:ci</code>.</p><p>You could use the OAuth client to call the Tailscale API, generate an auth key, and pass that key to your device.</p><p>But here's a neat shortcut: <strong>you can pass the OAuth client secret directly to <code>tailscale up</code>.</strong></p><pre><code class="language-bash">sudo tailscale up \
+  --auth-key="$OAUTH_CLIENT_SECRET" \
+  --advertise-tags=tag:ci
+</code></pre><p>Here, <code>OAUTH_CLIENT_SECRET</code> is the secret you received when creating the OAuth client. Tailscale handles obtaining an auth key behind the scenes and registers the device. Pretty convenient!</p><p>There's another interesting detail: devices registered this way are <strong>ephemeral by default</strong>. Great for short-lived CI runners, but perhaps not what you want for a permanent server. <br />You can change that by appending a couple of parameters:</p><pre><code class="language-bash">sudo tailscale up \
+  --auth-key="${OAUTH_CLIENT_SECRET}?ephemeral=false&amp;preauthorized=true" \
+  --advertise-tags=tag:ci
+</code></pre><p>Now we're creating a non-ephemeral device and asking Tailscale to skip manual device approval.</p><p>Unlike regular auth keys, OAuth client secrets don't have that same 90-day expiration limit. Your automation can keep registering devices without replacing the auth key every few months.</p><p>One important restriction: <strong>devices registered using OAuth clients are always tag-owned</strong>. <br />That makes sense. We're authenticating a service, not a person.</p><p>For automated infrastructure, this is a great solution. But we still have a long-lived secret sitting somewhere, probably in a secret manager or CI environment. <br />Wouldn't it be nice if we could get rid of that secret entirely? Well, we can :)</p><h2 id="4-workload-identity-federation-authenticate-without-storing-secrets">4. Workload identity federation: authenticate without storing secrets</h2><p>This is one of my favorite options. The idea behind <a href="https://tailscale.com/docs/features/workload-identity-federation">workload identity federation</a> is pretty simple. Many cloud and CI environments already provide a way for workloads to prove their identity.</p><p>For example, a GitHub Actions job can obtain a signed OpenID Connect (OIDC) token from GitHub. That token can contain information about which repository, branch, or workflow is running, who issued the token, and who it's intended for.</p><p>In other words, GitHub can already prove that a particular workload is running. So rather than giving that workload a Tailscale secret, why not let it use the identity it already has? That's exactly what workload identity federation does.</p><h3 id="setting-it-up">Setting it up</h3><p>First, we tell Tailscale which identity provider and workloads to trust. In the Tailscale admin console, go to <strong>Trust credentials</strong>, create a new credential, and select <strong>OpenID Connect</strong>.</p><p>For a GitHub Actions example, we'd configure something like:</p><ul><li><strong>Issuer:</strong> <code>https://token.actions.githubusercontent.com</code></li><li><strong>Subject:</strong> <code>repo:acme/app:*</code></li><li><strong>Scope:</strong> <code>auth_keys</code>, with permission to use <code>tag:ci</code></li></ul><p>The issuer identifies who's signing the token. The subject specifies which workloads we'll accept. In this example, we're matching workflows from the <code>acme/app</code> repository.</p><p>You can add more specific claim restrictions too, for example to limit access to particular branches or environments. Once you've created the credential, <strong>Tailscale gives you a Client ID and an Audience value</strong>.</p><p>These two values are worth explaining. <br /><br />The Client ID identifies the federated identity configuration you just created in Tailscale. It's not a GitHub OAuth client ID, and it's not a secret.</p><p>The Audience tells the identity provider who the token is intended for. Tailscale verifies that the token was issued for this trust relationship.</p><p>Now the client can authenticate like this:</p><pre><code class="language-bash">sudo tailscale up \
+  --client-id="$CLIENT_ID" \
+  --audience="$AUDIENCE" \
+  --advertise-tags=tag:ci
+</code></pre><p>Both variables come from the Tailscale configuration we just created.  On supported platforms, including GitHub Actions, AWS, and GCP, recent Tailscale clients can automatically request the identity token from the environment. <br />You can also obtain the token yourself and pass it explicitly:</p><pre><code class="language-bash">sudo tailscale up \
+  --client-id="$CLIENT_ID" \
+  --id-token="$ID_TOKEN" \
+  --advertise-tags=tag:ci
+</code></pre><p>Here, <code>ID_TOKEN</code> is the short-lived, signed OIDC token issued by the platform running your workload. Tailscale validates the token's signature, issuer, audience, and configured claims before allowing the device to join. And that's it.</p><p><strong>No long-lived Tailscale secret to distribute or rotate.</strong></p><p>The workload gets its identity from the platform it's already running on. Tokens are short-lived, and your trust configuration determines which workloads are allowed to authenticate.</p><p>I really like this approach. It removes an entire class of credential-management problems. Like OAuth clients, these devices are tag-owned. <br />So far, we've covered some good options for infrastructure. But there's one interesting use case we haven't solved.</p><p><strong>What if we want to automatically create a device that belongs to an actual person?</strong></p><h2 id="5-oauth-apps-create-devices-on-behalf-of-users">5. OAuth apps: create devices on behalf of users</h2><p>This is probably the most interesting option of the five, at least for what I've been playing with recently.</p><p>Imagine you're building an internal developer portal. A developer visits a web page, clicks <strong>Create sandbox</strong>, and a few seconds later a fresh virtual machine is running.</p><p>Now imagine we want that sandbox to join the developer's tailnet automatically. Not as <code>tag:sandbox</code>, but as a device that actually belongs to the developer.</p><p>If Alice creates a sandbox, we want it associated with Alice's identity and subject to her access policies. If Bob creates one, it should belong to Bob.</p><p>We could ask each developer to create an auth key and paste it into our portal. But that's not a great experience, and collecting users' auth keys isn't something I'd want to build into a service.</p><p>This is where <a href="https://tailscale.com/docs/features/oauth-apps/device-provisioning">Tailscale OAuth apps</a> come in. Despite the similar names, OAuth apps and the OAuth clients we discussed earlier solve different problems.</p><p>OAuth clients authenticate services and create tag-owned devices. <strong>OAuth apps let users authorize an application to create devices on their behalf.</strong><br />The result is a user-owned device, without the user ever having to generate or share an auth key.</p><h3 id="how-it-works">How it works</h3><p>The process uses a standard OAuth authorization code flow, much like the familiar "Sign in with..." experience.<br />For our sandbox portal, it looks like this:</p><ol><li>Alice visits the portal and clicks <strong>Create sandbox</strong>.</li><li>The portal redirects her to Tailscale, asking permission to add a device on her behalf.</li><li>Alice signs in if necessary and approves the request.</li><li>Tailscale redirects her back with a temporary authorization code.</li><li>The portal exchanges that code for a single-use access token.</li><li>The portal uses that token to register the sandbox device.</li></ol><p>The really neat part is step five. The access token returned by Tailscale <strong>can be used directly as an auth key</strong>:</p><pre><code class="language-bash">sudo tailscale up --auth-key="$ONE_TIME_TOKEN"
+</code></pre><p>The token is valid for one hour and can only be used once. The resulting device belongs to Alice, the person who approved the request.</p><p>To set this up, <a href="https://tailscale.com/docs/features/oauth-apps/device-provisioning">a tailnet admin creates an OAuth app through the API</a>, registers a callback URL, and grants it the <code>auth_keys:create:once</code> scope.</p><p>The portal keeps its own OAuth app client secret securely on the server to exchange authorization codes. But it never needs Alice's personal credentials or a reusable auth key belonging to her.<br /><br />Each new device requires fresh user consent, and this flow works within a single tailnet. For an internal developer portal, that's a pretty nice model.</p><h3 id="one-more-neat-trick-device-posture-attributes">One more neat trick: device posture attributes</h3><p>There's another feature of this flow that I particularly like. Remember how the sandbox belongs to Alice?</p><p>That's great, but <strong>how do we distinguish Alice's laptop from a sandbox created on her behalf?</strong></p><p>Both belong to Alice, but they're clearly not the same kind of machine. Her laptop might be a trusted, company-managed device. Her sandbox could be a temporary VM running all sorts of experimental code. We probably don't want to give them exactly the same access.</p><p>Fortunately, OAuth apps can automatically assign <strong>custom device posture attributes</strong> when provisioning devices. For example, when creating our OAuth app, we can allow it to assign an attribute called <code>custom:sandbox</code>.</p><p>In the API request that creates the app, we'd include:</p><pre><code class="language-json">"allowedNodeAttributes": ["custom:sandbox"]
+</code></pre><p>Then, when the portal exchanges Alice's authorization code for a token, it can attach that attribute. Here's an example of the token request I used:</p><pre><code class="language-bash">curl -X POST https://api.tailscale.com/api/v2/oauth/token \
+  -d grant_type=authorization_code \
+  -d code="$CODE" \
+  -d client_id="$CLIENT_ID" \
+  -d client_secret="$CLIENT_SECRET" \
+  -d redirect_uri="$REDIRECT_URI" \
+  -d ephemeral=true \
+  --data-urlencode 'node_attributes={"custom:sandbox":true}'
+</code></pre><p>The <code>CLIENT_ID</code> and <code>CLIENT_SECRET</code> here are the credentials of the OAuth app, rather than the federated identity from the previous section.</p><p>Notice two interesting things in this request. First, we're attaching <code>custom:sandbox</code> to the device.</p><p><strong>The sandbox still belongs to Alice, but now we know it's Alice's sandbox, not Alice's laptop.</strong></p><p>Because these are device posture attributes, we can use them in Tailscale's access policies. For example, we could configure policies that allow Alice's regular laptop to access production infrastructure while restricting what her sandbox can reach.</p><p>This is different from assigning a Tailscale tag. Tags replace the user identity for access control purposes. Device posture attributes let us preserve the user's identity while also describing what kind of device it is.</p><p>That's a pretty useful combination. We get user-level identity and attribution without treating every device belonging to that user as equally trusted. </p><p>The second interesting thing in that API request is <code>ephemeral=true</code>. <br />Yes, <strong>OAuth app provisioning supports ephemeral devices too!</strong></p><p>I tested this with my sandbox setup, and it works. The sandbox joins as Alice's device, carries the custom posture attribute, and is registered as ephemeral. That makes it a particularly good fit for temporary development environments.</p><h3 id="a-little-firecracker-sandbox-demo">A little Firecracker sandbox demo</h3><p>I liked this approach enough that I built a small demo using Firecracker.</p><p>In the video below, I pick a sandbox size, leave <strong>Put it on my tailnet</strong> checked, and click <strong>Create sandbox</strong>. Tailscale asks me to authorize the portal to add a device on my behalf. A few seconds later, the Firecracker VM has booted and the new device shows up in my tailnet.</p><p>I open the sandbox's terminal, check connectivity, and reach another service on my tailnet. Then I destroy the sandbox and confirm that its device disappears from the Tailscale admin console.</p><p><strong>Demo: Creating a Firecracker sandbox, connecting it to my tailnet, and cleaning it up</strong></p><figure class="kg-card kg-embed-card"><amp-youtube width="267" height="200" title="Tailscale OAuth apps and sandboxes" data-videoid="aQnmLV-KyCg" layout="fixed"></amp-youtube></figure><p>There's one implementation detail I particularly like. <strong>Tailscale doesn't actually run inside the Firecracker VM.</strong></p><p>Instead, I run it on the host, alongside the VM. The sandbox uses that host-side Tailscale connection. That way, the one-time authentication token never enters the guest VM. Whatever runs inside the sandbox can use the tailnet connection, but it doesn't get access to the Tailscale credentials or control over the Tailscale client.</p><p>For disposable, potentially untrusted development environments, that's a nice separation. And because we're using an ephemeral device, cleanup is easier too. Once the corresponding Tailscale instance goes offline, its device registration is automatically removed from the tailnet, normally within 30–60 minutes. You can also use <code>tailscale logout</code> to remove it immediately.No more abandoned sandbox devices piling up in the admin console :) <br /><br />For developer tooling and temporary workspaces, I think this is a pretty neat pattern: on-demand infrastructure that belongs to the right user, connected to the tailnet without giving the sandbox their Tailscale credentials. Pretty cool!</p><p>For more implementation details, check out the <a href="https://tailscale.com/docs/features/oauth-apps/device-provisioning">Tailscale documentation on device provisioning with OAuth apps</a>.</p><h2 id="so-which-method-should-you-use">So which method should you use?</h2><p>Here's a quick summary of the five options.</p><figure class="kg-card kg-image-card"></figure><p>I think the easiest way to choose is to start with one question: <strong>Who should own the device?</strong></p><p>For personal devices, interactive login is the obvious choice. For servers, CI runners, and other automated infrastructure, tagged devices generally make more sense.</p><p>If you're automating those deployments, auth keys work fine for simple use cases. OAuth clients avoid the 90-day auth key rotation problem, and workload identity federation is particularly attractive when your environment supports it, since you don't have to manage long-lived Tailscale credentials.</p><p>And if you're building something that creates devices on behalf of users, OAuth apps offer a really interesting option.</p><p>There are also plenty of integrations that simplify these methods, including the Tailscale GitHub Action, Kubernetes operator, Docker integration, Terraform provider, and various MDM solutions.</p><p>What I find interesting is how far we've come from the original browser login. The underlying goal is still the same, getting a device onto your tailnet with the right identity, but there are now some pretty clever ways to accomplish that.</p><p>I've especially enjoyed experimenting with the OAuth app flow. Being able to create a temporary sandbox, associate it with a real user, and attach device posture attributes opens up some interesting possibilities.</p><p>If you're building something fun with any of these approaches, I'd love to hear about it. That's it. You made it to the end :) Thanks for reading!</p><p>Cheers, <br /> Andree</p> </div>
+
+        <div class="article-tags u-container u-marginTop30">
+            <span class="share-title">Tags:</span>
+                <a href="../../tag/tailscale/index.html" title="tailscale" class="button--tags">tailscale</a>
+                <a href="../../tag/networking/index.html" title="networking" class="button--tags">networking</a>
+        </div>
+
+    <footer class="share u-container u-marginTop30">
+        <span class="share-title">Share this:</span>
+        <amp-social-share class="rounded"
+        type="email"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="facebook"
+        data-param-app_id="254325784911610"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="twitter"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="linkedin"
+        width="36"
+        height="36"></amp-social-share>
+        <amp-social-share class="rounded"
+        type="whatsapp"
+        width="36"
+        height="36"></amp-social-share>
+    </footer>
+
+</article>
+
+
+            <div class="related u-container">
+        <div class="related-title">Related Articles</div>
+
+        <div class="story">
+            <a href="../../wireguard-dpdk/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">1</span>
+                <h3 class="story-title">WireGuard at 40 Mpps with DPDK, in Go</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../how-fast-can-you-actually-go-on-aws-pushing-packets-on-the-biggest-network-optimized-ec2-instances/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">2</span>
+                <h3 class="story-title">How fast can you actually go on AWS? Pushing packets on the biggest network optimized EC2 instances</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../packetio/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">3</span>
+                <h3 class="story-title">Four ways to do super fast packet processing in Go</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../wireblast-building-a-line-rate-packet-generator-in-go-with-af_xdp/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">4</span>
+                <h3 class="story-title">Wireblast: a 100Gbs packet generator in Go with AF_XDP</h3>
+            </a>
+        </div>
+        <div class="story">
+            <a href="../../line-rate-packet-processing-in-go-with-af_xdp/amp.html" class="story-link u-block u-relative">
+                <span class="story-border u-flexCenter u-absolute">5</span>
+                <h3 class="story-title">Line-rate packet processing in Go with AF_XDP</h3>
+            </a>
+        </div>
+
+    </div>
+    </main>
+
+    <amp-sidebar id="sidenav" class="sidebar" layout="nodisplay" side="right">
+    <div class="close-sidebar u-bgColor" role="button" aria-label="close sidebar" on="tap:sidenav.close" tabindex="0">✕</div>
+
+    <ul class="nav" role="menu">
+    <li role="menuitem"><a href="../../index.html" class="nav-home">Home</a></li>
+    <li role="menuitem"><a href="../../contact/index.html" class="nav-contact">Contact</a></li>
+    <li role="menuitem"><a href="../../about/index.html" class="nav-about">About</a></li>
+</ul>
+
+    <div class="social-media">
+
+            <a href="https://twitter.com/atoonk" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 18 18" width="100%" height="100%"><path d="M12.077 2c-1.812 0-3.282 1.582-3.282 3.534 0 .277.03.547.085.806-2.728-.148-5.147-1.555-6.766-3.693-.283.522-.445 1.13-.445 1.777 0 1.226.58 2.308 1.46 2.942-.54-.02-1.05-.178-1.49-.443v.045c0 1.712 1.13 3.14 2.63 3.465-.28.08-.57.124-.87.124-.21 0-.418-.022-.62-.063.418 1.404 1.63 2.426 3.067 2.455-1.125.94-2.54 1.51-4.078 1.51-.267 0-.528-.02-.785-.05 1.46 1 3.185 1.59 5.04 1.59 6.037 0 9.34-5.39 9.34-10.06 0-.153-.005-.306-.01-.457.64-.5 1.197-1.12 1.637-1.83-.59.28-1.22.47-1.885.557.677-.437 1.198-1.13 1.443-1.955-.633.405-1.336.7-2.084.858C13.88 2.43 13.028 2 12.08 2"></path></svg>
+</a>
+
+
+
+
+    </div>
+
+</amp-sidebar>
+
+    <footer class="footer">
+        <section class="u-container copyright u-textCenter">
+            &copy; 2026 <a href="../../index.html">Andree&#x27;s Musings</a>
+        </section>
+    </footer>
+</body>
+</html>
